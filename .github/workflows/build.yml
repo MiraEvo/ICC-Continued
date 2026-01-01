@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  push:
+    branches: [ main]
+  pull_request:
+    branches: [ main]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  SOLUTION_PATH: 'Ink Canvas.sln'
+
+jobs:
+  quick-build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore "${{ env.SOLUTION_PATH }}"
+
+    - name: Build Release (x86)
+      run: dotnet build "${{ env.SOLUTION_PATH }}" `
+        --configuration Release `
+        --no-restore `
+        -p:Platform=x86
+
+    - name: Build Release (x64)
+      run: dotnet build "${{ env.SOLUTION_PATH }}" `
+        --configuration Release `
+        --no-restore `
+        -p:Platform=x64
