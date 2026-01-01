@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_LastSelectedProfileId>D:\vs\ica\Ink Canvas\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
+    <ActiveDebugProfile>InkCanvasForClass</ActiveDebugProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="MainWindow_cs\MW_ShapeDrawingLayer.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow_cs\MW_Toast.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Popups\ColorPalette.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Popups\FloatingBarWindowV2.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Popups\ScreenshotWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Popups\SelectionPopup.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Popups\ShapeDrawingPopup.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="MainWindow_cs\MW_ContextMenus.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow_cs\MW_Eraser.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow_cs\MW_ShapeDrawingLayer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow_cs\MW_Toast.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Popups\ColorPalette.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Popups\FloatingBarV2Resources.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Popups\FloatingBarWindowV2.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Popups\ScreenshotWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Popups\SelectionPopup.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Popups\ShapeDrawingPopup.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\GeometryIcons.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\DarkFloatingBarTheme.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>

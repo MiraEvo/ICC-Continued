@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkCanvasForClass", "InkCanvasForClass\InkCanvasForClass.csproj", "{2474F5B0-6FA7-4D70-8A00-167BBB03264D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+		x86 Debug|Any CPU = x86 Debug|Any CPU
+		x86 Debug|ARM = x86 Debug|ARM
+		x86 Debug|ARM64 = x86 Debug|ARM64
+		x86 Debug|x64 = x86 Debug|x64
+		x86 Debug|x86 = x86 Debug|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Debug|ARM.Build.0 = Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Debug|x64.Build.0 = Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Debug|x86.Build.0 = Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Release|ARM.ActiveCfg = Release|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Release|ARM.Build.0 = Release|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Release|ARM64.Build.0 = Release|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Release|x64.ActiveCfg = Release|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Release|x64.Build.0 = Release|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Release|x86.ActiveCfg = Release|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.Release|x86.Build.0 = Release|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.x86 Debug|Any CPU.ActiveCfg = x86 Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.x86 Debug|Any CPU.Build.0 = x86 Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.x86 Debug|ARM.ActiveCfg = x86 Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.x86 Debug|ARM.Build.0 = x86 Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.x86 Debug|ARM64.ActiveCfg = x86 Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.x86 Debug|ARM64.Build.0 = x86 Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.x86 Debug|x64.ActiveCfg = x86 Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.x86 Debug|x64.Build.0 = x86 Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.x86 Debug|x86.ActiveCfg = x86 Debug|Any CPU
+		{2474F5B0-6FA7-4D70-8A00-167BBB03264D}.x86 Debug|x86.Build.0 = x86 Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89B9DD11-110D-428C-AB08-859B7F4B4E19}
+	EndGlobalSection
+EndGlobal
