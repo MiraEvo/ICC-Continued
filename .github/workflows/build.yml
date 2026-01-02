@@ -17,14 +17,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: true  # 保持开启 LFS，防止图片丢失
           submodules: recursive
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-          cache: true  
 
       - name: Verify SDK
         run: dotnet --info
