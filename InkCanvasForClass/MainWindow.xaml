@@ -3418,10 +3418,8 @@
                             <ui:SimpleStackPanel Margin="2,0" Name="StackPanelFloatingBar" Orientation="Horizontal">
                                 <!--<ui:SimpleStackPanel Name="Cursor_Icon" MouseDown="Border_MouseDown" MouseUp="CursorIcon_Click"-->
                                 <ui:SimpleStackPanel Name="Cursor_Icon"
-                                                     MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
-                                                     MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
-                                                     MouseUp="CursorIcon_Click"
                                                      behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToCursorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                     behaviors:FloatingBarButton.IsSelected="{Binding ViewModel.IsCursorMode, RelativeSource={RelativeSource AncestorType=Window}}"
                                                      Background="Transparent" Orientation="Vertical"
                                                      HorizontalAlignment="Center" Width="28" Margin="0,-2">
                                     <Image RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0"
@@ -3441,10 +3439,8 @@
                                                Margin="0,1,0,0" TextAlignment="Center" />
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Name="Pen_Icon"
-                                                     MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
-                                                     MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
-                                                     MouseUp="PenIcon_Click"
                                                      behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToPenCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                     behaviors:FloatingBarButton.IsSelected="{Binding ViewModel.IsPenMode, RelativeSource={RelativeSource AncestorType=Window}}"
                                                      Background="Transparent" Orientation="Vertical"
                                                      HorizontalAlignment="Center" Width="28" Margin="0,-2">
                                     <Image x:Name="PenIcon"
@@ -3464,9 +3460,6 @@
                                                Margin="0,1,0,0" TextAlignment="Center" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}" />
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Name="SymbolIconDelete"
-                                                     MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
-                                                     MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
-                                                     MouseUp="SymbolIconDelete_MouseUp"
                                                      behaviors:FloatingBarButton.Command="{Binding ViewModel.ClearCanvasCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                      behaviors:FloatingBarButton.IsDeleteButton="True"
                                                      Background="Transparent" Orientation="Vertical"
@@ -4266,10 +4259,8 @@
                                     </ui:SimpleStackPanel>
 
                                     <ui:SimpleStackPanel Name="EraserByStrokes_Icon"
-                                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
-                                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
-                                                         MouseUp="EraserIconByStrokes_Click"
                                                          behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToEraseByStrokeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                         behaviors:FloatingBarButton.IsSelected="{Binding ViewModel.IsEraseByStrokeMode, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          Background="Transparent" Orientation="Vertical" Width="28"
                                                          Margin="0,-2" HorizontalAlignment="Center">
                                         <Image x:Name="StrokeEraserToolbarIconImage"
@@ -4290,10 +4281,8 @@
                                                    FontSize="8" Margin="0,1,0,0" TextAlignment="Center" />
                                     </ui:SimpleStackPanel>
                                     <ui:SimpleStackPanel Name="Eraser_Icon"
-                                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
-                                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
-                                                         MouseUp="EraserIcon_Click"
                                                          behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToEraseByGeometryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                         behaviors:FloatingBarButton.IsSelected="{Binding ViewModel.IsEraseByGeometryMode, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          Background="Transparent" Orientation="Vertical"
                                                          HorizontalAlignment="Center" Margin="0,-2" Width="28">
                                         <Image x:Name="CircleEraserToolbarIconImage"
@@ -4314,11 +4303,9 @@
                                                    FontSize="8" Margin="0,1,0,0" TextAlignment="Center" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}" />
                                     </ui:SimpleStackPanel>
                                     <ui:SimpleStackPanel Name="SymbolIconSelect"
-                                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
-                                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
-                                                         MouseUp="SymbolIconSelect_MouseUp" Background="Transparent"
                                                          behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToLassoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                         Orientation="Vertical" Margin="0,-2" Width="28"
+                                                         behaviors:FloatingBarButton.IsSelected="{Binding ViewModel.IsLassoMode, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                         Background="Transparent" Orientation="Vertical" Margin="0,-2" Width="28"
                                                          HorizontalAlignment="Center">
                                         <Image x:Name="LassoSelect" RenderOptions.BitmapScalingMode="HighQuality"
                                                Height="17" Margin="0,3,0,0">
@@ -4644,9 +4631,6 @@
                                     </ui:SimpleStackPanel>
                                     <ui:SimpleStackPanel
                                         Name="SymbolIconUndo"
-                                        MouseUp="SymbolIconUndo_MouseUp"
-                                        MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
-                                        MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                         behaviors:FloatingBarButton.Command="{Binding ViewModel.UndoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Background="Transparent" Orientation="Vertical"
                                         HorizontalAlignment="Center" Margin="0,-2"
@@ -4673,9 +4657,6 @@
                                     </ui:SimpleStackPanel>
                                     <ui:SimpleStackPanel
                                         Name="SymbolIconRedo"
-                                        MouseUp="SymbolIconRedo_MouseUp"
-                                        MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
-                                        MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                         behaviors:FloatingBarButton.Command="{Binding ViewModel.RedoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Background="Transparent" Orientation="Vertical"
                                         HorizontalAlignment="Center"

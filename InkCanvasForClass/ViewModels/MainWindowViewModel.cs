@@ -299,12 +299,19 @@ namespace Ink_Canvas.ViewModels
         #region 工具切换命令
 
         /// <summary>
+        /// 工具按钮被点击事件 - 每次点击都会触发，用于处理弹窗切换
+        /// </summary>
+        public event EventHandler<ICCToolsEnum> ToolButtonClicked;
+
+        /// <summary>
         /// 切换到光标模式
         /// </summary>
         [RelayCommand]
         private void SwitchToCursor()
         {
             SelectedTool = ICCToolsEnum.CursorMode;
+            // 总是触发 ToolButtonClicked 事件，即使工具没变
+            ToolButtonClicked?.Invoke(this, ICCToolsEnum.CursorMode);
             HideAllSubPanels();
         }
 
@@ -315,7 +322,8 @@ namespace Ink_Canvas.ViewModels
         private void SwitchToPen()
         {
             SelectedTool = ICCToolsEnum.PenMode;
-            HideAllSubPanels();
+            // 总是触发 ToolButtonClicked 事件，即使工具没变
+            ToolButtonClicked?.Invoke(this, ICCToolsEnum.PenMode);
         }
 
         /// <summary>
@@ -325,7 +333,8 @@ namespace Ink_Canvas.ViewModels
         private void SwitchToEraseByStroke()
         {
             SelectedTool = ICCToolsEnum.EraseByStrokeMode;
-            HideAllSubPanels();
+            // 总是触发 ToolButtonClicked 事件，即使工具没变
+            ToolButtonClicked?.Invoke(this, ICCToolsEnum.EraseByStrokeMode);
         }
 
         /// <summary>
@@ -335,7 +344,8 @@ namespace Ink_Canvas.ViewModels
         private void SwitchToEraseByGeometry()
         {
             SelectedTool = ICCToolsEnum.EraseByGeometryMode;
-            HideAllSubPanels();
+            // 总是触发 ToolButtonClicked 事件，即使工具没变
+            ToolButtonClicked?.Invoke(this, ICCToolsEnum.EraseByGeometryMode);
         }
 
         /// <summary>
@@ -345,7 +355,8 @@ namespace Ink_Canvas.ViewModels
         private void SwitchToLasso()
         {
             SelectedTool = ICCToolsEnum.LassoMode;
-            HideAllSubPanels();
+            // 总是触发 ToolButtonClicked 事件，即使工具没变
+            ToolButtonClicked?.Invoke(this, ICCToolsEnum.LassoMode);
         }
 
         #endregion

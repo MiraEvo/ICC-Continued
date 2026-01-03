@@ -22,8 +22,8 @@ namespace Ink_Canvas {
 
         public StylusPointCollection RawStylusPointCollection { get; set; }
 
-        public MainWindow.ShapeDrawingHelper.ArrowLineConfig ArrowLineConfig { get; set; } =
-            new MainWindow.ShapeDrawingHelper.ArrowLineConfig();
+        public ShapeDrawingHelper.ArrowLineConfig ArrowLineConfig { get; set; } =
+            new ShapeDrawingHelper.ArrowLineConfig();
 
         /// <summary>
         /// 根据这个属性判断当前 Stroke 是否是原始输入
@@ -146,7 +146,7 @@ namespace Ink_Canvas {
                 
                 var pointList = new List<Point>(20);
                 pointList.Add(startPoint);
-                pointList.AddRange(MainWindow.ShapeDrawingHelper.DistributePointsOnLine(startPoint, endPoint));
+                pointList.AddRange(ShapeDrawingHelper.DistributePointsOnLine(startPoint, endPoint));
                 pointList.Add(endPoint);
                 
                 StylusPoints = new StylusPointCollection(pointList);
@@ -169,7 +169,7 @@ namespace Ink_Canvas {
                 pointList.Add(pt0);
                 
                 if (IsDistributePointsOnLineShape) {
-                    pointList.AddRange(MainWindow.ShapeDrawingHelper.DistributePointsOnLine(pt0, pt1));
+                    pointList.AddRange(ShapeDrawingHelper.DistributePointsOnLine(pt0, pt1));
                 }
                 
                 pointList.Add(pt1);

@@ -205,7 +205,7 @@ namespace Ink_Canvas {
                         _shapeType == MainWindow.ShapeDrawingType.ArrowOneSide ||
                         _shapeType == MainWindow.ShapeDrawingType.ArrowTwoSide) {
                         
-                        var angle = MainWindow.ShapeDrawingHelper.CaculateRotateAngleByGivenTwoPoints(points[0], points[1]);
+                        var angle = ShapeDrawingHelper.CaculateRotateAngleByGivenTwoPoints(points[0], points[1]);
                         if (AngleTooltip.Visibility == Visibility.Collapsed) AngleTooltip.Visibility = Visibility.Visible;
                         AngleText.Text = $"{angle}°";
                         

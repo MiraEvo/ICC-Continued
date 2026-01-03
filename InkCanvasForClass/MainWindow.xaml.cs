@@ -98,6 +98,39 @@ namespace Ink_Canvas {
             
             // 隐藏子面板请求
             ViewModel.HideSubPanelsRequested += OnHideSubPanelsRequested;
+            
+            // 工具按钮点击事件 - 每次点击都会触发，用于处理弹窗切换
+            ViewModel.ToolButtonClicked += OnToolButtonClicked;
+        }
+        
+        /// <summary>
+        /// 处理工具按钮点击 - 每次点击都会调用对应的 Click 方法
+        /// 这样可以正确处理弹窗的显示/隐藏逻辑
+        /// </summary>
+        private void OnToolButtonClicked(object sender, ViewModels.ICCToolsEnum tool)
+        {
+            // 根据工具类型调用原有的工具切换方法
+            // 这些方法内部已经有逻辑来处理：
+            // 1. 从其他工具切换到此工具时，进入该工具模式
+            // 2. 再次点击已选中的工具时，切换弹窗的显示/隐藏
+            switch (tool)
+            {
+                case ViewModels.ICCToolsEnum.CursorMode:
+                    CursorIcon_Click(null, null);
+                    break;
+                case ViewModels.ICCToolsEnum.PenMode:
+                    PenIcon_Click(null, null);
+                    break;
+                case ViewModels.ICCToolsEnum.EraseByStrokeMode:
+                    EraserIconByStrokes_Click(null, null);
+                    break;
+                case ViewModels.ICCToolsEnum.EraseByGeometryMode:
+                    EraserIcon_Click(null, null);
+                    break;
+                case ViewModels.ICCToolsEnum.LassoMode:
+                    SymbolIconSelect_MouseUp(null, null);
+                    break;
+            }
         }
         
         /// <summary>
@@ -121,6 +154,8 @@ namespace Ink_Canvas {
                 ViewModel.ExitAppRequested -= OnExitAppRequested;
                 ViewModel.ChangeToPenRequested -= OnChangeToPenRequested;
                 ViewModel.DrawLineRequested -= OnDrawLineRequested;
+                ViewModel.HideSubPanelsRequested -= OnHideSubPanelsRequested;
+                ViewModel.ToolButtonClicked -= OnToolButtonClicked;
             }
         }
 

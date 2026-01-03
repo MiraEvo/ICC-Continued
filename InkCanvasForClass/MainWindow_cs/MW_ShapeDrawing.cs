@@ -1332,151 +1332,48 @@ namespace Ink_Canvas {
 
         private bool isWaitUntilNextTouchDown = false;
 
+        /// <summary>
+        /// 生成椭圆几何点集（包装方法，调用 ShapeDrawingHelper）
+        /// </summary>
         private List<Point> GenerateEllipseGeometry(Point st, Point ed, bool isDrawTop = true,
             bool isDrawBottom = true) {
-            var a = 0.5 * (ed.X - st.X);
-            var b = 0.5 * (ed.Y - st.Y);
-            var pointList = new List<Point>();
-            if (isDrawTop && isDrawBottom) {
-                for (double r = 0; r <= 2 * Math.PI; r = r + 0.01)
-                    pointList.Add(new Point(0.5 * (st.X + ed.X) + a * Math.Cos(r),
-                        0.5 * (st.Y + ed.Y) + b * Math.Sin(r)));
-            }
-            else {
-                if (isDrawBottom)
-                    for (double r = 0; r <= Math.PI; r = r + 0.01)
-                        pointList.Add(new Point(0.5 * (st.X + ed.X) + a * Math.Cos(r),
-                            0.5 * (st.Y + ed.Y) + b * Math.Sin(r)));
-                if (isDrawTop)
-                    for (var r = Math.PI; r <= 2 * Math.PI; r = r + 0.01)
-                        pointList.Add(new Point(0.5 * (st.X + ed.X) + a * Math.Cos(r),
-                            0.5 * (st.Y + ed.Y) + b * Math.Sin(r)));
-            }
-
-            return pointList;
+            return ShapeDrawingHelper.GenerateEllipseGeometry(st, ed, isDrawTop, isDrawBottom);
         }
 
+        /// <summary>
+        /// 生成虚线椭圆墨迹集合（包装方法，调用 ShapeDrawingHelper）
+        /// </summary>
         private StrokeCollection GenerateDashedLineEllipseStrokeCollection(Point st, Point ed, bool isDrawTop = true,
             bool isDrawBottom = true) {
-            var a = 0.5 * (ed.X - st.X);
-            var b = 0.5 * (ed.Y - st.Y);
-            var step = 0.05;
-            var pointList = new List<Point>();
-            StylusPointCollection point;
-            Stroke stroke;
-            var strokes = new StrokeCollection();
-            if (isDrawBottom)
-                for (var i = 0.0; i < 1.0; i += step * 1.66) {
-                    pointList = new List<Point>();
-                    for (var r = Math.PI * i; r <= Math.PI * (i + step); r = r + 0.01)
-                        pointList.Add(new Point(0.5 * (st.X + ed.X) + a * Math.Cos(r),
-                            0.5 * (st.Y + ed.Y) + b * Math.Sin(r)));
-                    point = new StylusPointCollection(pointList);
-                    stroke = new Stroke(point) {
-                        DrawingAttributes = inkCanvas.DefaultDrawingAttributes.Clone()
-                    };
-                    strokes.Add(stroke.Clone());
-                }
-
-            if (isDrawTop)
-                for (var i = 1.0; i < 2.0; i += step * 1.66) {
-                    pointList = new List<Point>();
-                    for (var r = Math.PI * i; r <= Math.PI * (i + step); r = r + 0.01)
-                        pointList.Add(new Point(0.5 * (st.X + ed.X) + a * Math.Cos(r),
-                            0.5 * (st.Y + ed.Y) + b * Math.Sin(r)));
-                    point = new StylusPointCollection(pointList);
-                    stroke = new Stroke(point) {
-                        DrawingAttributes = inkCanvas.DefaultDrawingAttributes.Clone()
-                    };
-                    strokes.Add(stroke.Clone());
-                }
-
-            return strokes;
+            return ShapeDrawingHelper.GenerateDashedLineEllipseStrokeCollection(st, ed, inkCanvas.DefaultDrawingAttributes, isDrawTop, isDrawBottom);
         }
 
+        /// <summary>
+        /// 生成直线墨迹（包装方法，调用 ShapeDrawingHelper）
+        /// </summary>
         private Stroke GenerateLineStroke(Point st, Point ed) {
-            var pointList = new List<Point>();
-            StylusPointCollection point;
-            Stroke stroke;
-            pointList = new List<Point> {
-                new Point(st.X, st.Y),
-                new Point(ed.X, ed.Y)
-            };
-            point = new StylusPointCollection(pointList);
-            stroke = new Stroke(point) {
-                DrawingAttributes = inkCanvas.DefaultDrawingAttributes.Clone()
-            };
-            return stroke;
+            return ShapeDrawingHelper.GenerateLineStroke(st, ed, inkCanvas.DefaultDrawingAttributes);
         }
 
+        /// <summary>
+        /// 生成箭头直线墨迹（包装方法，调用 ShapeDrawingHelper）
+        /// </summary>
         private Stroke GenerateArrowLineStroke(Point st, Point ed) {
-            var pointList = new List<Point>();
-            StylusPointCollection point;
-            Stroke stroke;
-
-            double w = 20, h = 7;
-            var theta = Math.Atan2(st.Y - ed.Y, st.X - ed.X);
-            var sint = Math.Sin(theta);
-            var cost = Math.Cos(theta);
-
-            pointList = new List<Point> {
-                new Point(st.X, st.Y),
-                new Point(ed.X, ed.Y),
-                new Point(ed.X + (w * cost - h * sint), ed.Y + (w * sint + h * cost)),
-                new Point(ed.X, ed.Y),
-                new Point(ed.X + (w * cost + h * sint), ed.Y - (h * cost - w * sint))
-            };
-            point = new StylusPointCollection(pointList);
-            stroke = new Stroke(point) {
-                DrawingAttributes = inkCanvas.DefaultDrawingAttributes.Clone()
-            };
-            return stroke;
+            return ShapeDrawingHelper.GenerateArrowLineStroke(st, ed, inkCanvas.DefaultDrawingAttributes);
         }
 
-
+        /// <summary>
+        /// 生成虚线墨迹集合（包装方法，调用 ShapeDrawingHelper）
+        /// </summary>
         private StrokeCollection GenerateDashedLineStrokeCollection(Point st, Point ed) {
-            const double step = 5;
-            const double stepMultiplier = 2.76;
-            
-            var d = GetDistance(st, ed);
-            if (d < 0.01) return new StrokeCollection();
-            
-            var strokes = new StrokeCollection();
-            var sinTheta = (ed.Y - st.Y) / d;
-            var cosTheta = (ed.X - st.X) / d;
-            var drawingAttrs = inkCanvas.DefaultDrawingAttributes.Clone();
-            
-            for (var i = 0.0; i < d; i += step * stepMultiplier) {
-                var endI = Math.Min(i + step, d);
-                var points = new StylusPoint[] {
-                    new StylusPoint(st.X + i * cosTheta, st.Y + i * sinTheta),
-                    new StylusPoint(st.X + endI * cosTheta, st.Y + endI * sinTheta)
-                };
-                strokes.Add(new Stroke(new StylusPointCollection(points)) { DrawingAttributes = drawingAttrs.Clone() });
-            }
-
-            return strokes;
+            return ShapeDrawingHelper.GenerateDashedLineStrokeCollection(st, ed, inkCanvas.DefaultDrawingAttributes);
         }
 
+        /// <summary>
+        /// 生成点线墨迹集合（包装方法，调用 ShapeDrawingHelper）
+        /// </summary>
         private StrokeCollection GenerateDotLineStrokeCollection(Point st, Point ed) {
-            const double step = 3;
-            const double stepMultiplier = 2.76;
-            
-            var d = GetDistance(st, ed);
-            if (d < 0.01) return new StrokeCollection();
-            
-            var strokes = new StrokeCollection();
-            var sinTheta = (ed.Y - st.Y) / d;
-            var cosTheta = (ed.X - st.X) / d;
-            var drawingAttrs = inkCanvas.DefaultDrawingAttributes.Clone();
-            
-            for (var i = 0.0; i < d; i += step * stepMultiplier) {
-                var stylusPoint = new StylusPoint(st.X + i * cosTheta, st.Y + i * sinTheta, 0.8f);
-                var point = new StylusPointCollection(1) { stylusPoint };
-                strokes.Add(new Stroke(point) { DrawingAttributes = drawingAttrs.Clone() });
-            }
-
-            return strokes;
+            return ShapeDrawingHelper.GenerateDotLineStrokeCollection(st, ed, inkCanvas.DefaultDrawingAttributes);
         }
 
         private bool isMouseDown = false;

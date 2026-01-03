@@ -343,11 +343,13 @@ namespace Ink_Canvas.Behaviors
         private static readonly Brush TransparentBrush = Brushes.Transparent;
         private static readonly Brush ButtonPressedBrush = new SolidColorBrush(Color.FromArgb(30, 0, 0, 0));
         private static readonly Brush DeleteButtonPressedBrush = new SolidColorBrush(Color.FromArgb(30, 220, 38, 38));
+        private static readonly Brush SelectedBrush = new SolidColorBrush(Color.FromArgb(40, 37, 99, 235)); // #2563eb with alpha
 
         static FloatingBarButton()
         {
             ButtonPressedBrush.Freeze();
             DeleteButtonPressedBrush.Freeze();
+            SelectedBrush.Freeze();
         }
 
         #endregion
@@ -403,6 +405,38 @@ namespace Ink_Canvas.Behaviors
 
         #endregion
 
+        #region IsSelected 附加属性
+
+        /// <summary>
+        /// IsSelected 附加属性 - 用于绑定工具选中状态
+        /// </summary>
+        public static readonly DependencyProperty IsSelectedProperty =
+            DependencyProperty.RegisterAttached(
+                "IsSelected",
+                typeof(bool),
+                typeof(FloatingBarButton),
+                new PropertyMetadata(false, OnIsSelectedChanged));
+
+        public static bool GetIsSelected(DependencyObject obj) =>
+            (bool)obj.GetValue(IsSelectedProperty);
+
+        public static void SetIsSelected(DependencyObject obj, bool value) =>
+            obj.SetValue(IsSelectedProperty, value);
+
+        private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is UIElement element)
+            {
+                // 只有在没有按下时才应用选中样式
+                if (!GetIsPressed(element))
+                {
+                    ApplySelectionStyle(element, (bool)e.NewValue);
+                }
+            }
+        }
+
+        #endregion
+
         #region IsPressed 内部附加属性
 
         private static readonly DependencyProperty IsPressedProperty =
@@ -455,7 +489,8 @@ namespace Ink_Canvas.Behaviors
             if (sender is UIElement element && GetIsPressed(element) && element.IsEnabled)
             {
                 SetIsPressed(element, false);
-                ApplyPressedStyle(element, false);
+                // 恢复时检查是否选中
+                ApplySelectionStyle(element, GetIsSelected(element));
                 ExecuteCommand(element);
             }
         }
@@ -465,7 +500,8 @@ namespace Ink_Canvas.Behaviors
             if (sender is UIElement element)
             {
                 SetIsPressed(element, false);
-                ApplyPressedStyle(element, false);
+                // 恢复时检查是否选中
+                ApplySelectionStyle(element, GetIsSelected(element));
             }
         }
 
@@ -473,8 +509,19 @@ namespace Ink_Canvas.Behaviors
         {
             Brush brush = isPressed
                 ? (GetIsDeleteButton(element) ? DeleteButtonPressedBrush : ButtonPressedBrush)
-                : TransparentBrush;
+                : (GetIsSelected(element) ? SelectedBrush : TransparentBrush);
 
+            SetElementBackground(element, brush);
+        }
+
+        private static void ApplySelectionStyle(UIElement element, bool isSelected)
+        {
+            Brush brush = isSelected ? SelectedBrush : TransparentBrush;
+            SetElementBackground(element, brush);
+        }
+
+        private static void SetElementBackground(UIElement element, Brush brush)
+        {
             switch (element)
             {
                 case Panel panel:

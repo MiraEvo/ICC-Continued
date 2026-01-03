@@ -186,11 +186,7 @@ namespace Ink_Canvas
 
         [JsonProperty("isEnableNibMode")]
         public bool IsEnableNibMode { get; set; } = false;
-        /*
-        [JsonProperty("isAutoHideCanvas")]
-        public bool IsAutoHideCanvas { get; set; } = true;
-        [JsonProperty("isAutoEnterModeFinger")]
-        public bool IsAutoEnterModeFinger { get; set; } = false;*/
+
         [JsonProperty("isFoldAtStartup")]
         public bool IsFoldAtStartup { get; set; } = false;
         [JsonProperty("enableWindowChromeRendering")]
@@ -362,10 +358,7 @@ namespace Ink_Canvas
 
         [JsonProperty("isAutoFoldInWxBoardMain")]
         public bool IsAutoFoldInWxBoardMain { get; set; } = false;
-        /*
-        [JsonProperty("isAutoFoldInZySmartBoard")]
-        public bool IsAutoFoldInZySmartBoard { get; set; } = false;
-        */
+
         [JsonProperty("isAutoFoldInOldZyBoard")]
         public bool IsAutoFoldInOldZyBoard { get; set; } = false;
 
