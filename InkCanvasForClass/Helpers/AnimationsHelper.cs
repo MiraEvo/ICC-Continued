@@ -8,10 +8,7 @@ namespace Ink_Canvas.Helpers
 {
     internal class AnimationsHelper
     {
-        // 缓存的缓动函数，避免重复创建
         private static readonly CubicEase CachedCubicEase;
-        
-        // 预定义的 PropertyPath，避免重复创建
         private static readonly PropertyPath OpacityPropertyPath;
         private static readonly PropertyPath TranslateYPropertyPath;
         private static readonly PropertyPath TranslateXPropertyPath;
@@ -36,7 +33,6 @@ namespace Ink_Canvas.Helpers
 
             var sb = new Storyboard();
 
-            // 渐变动画
             var fadeInAnimation = new DoubleAnimation
             {
                 From = 0.5,
@@ -61,7 +57,6 @@ namespace Ink_Canvas.Helpers
                 var sb = new Storyboard();
                 var durationTimeSpan = TimeSpan.FromSeconds(duration);
 
-                // 渐变动画
                 var fadeInAnimation = new DoubleAnimation
                 {
                     From = 0.5,
@@ -71,7 +66,6 @@ namespace Ink_Canvas.Helpers
                 };
                 Storyboard.SetTargetProperty(fadeInAnimation, OpacityPropertyPath);
 
-                // 滑动动画
                 var slideAnimation = new DoubleAnimation
                 {
                     From = element.RenderTransform.Value.OffsetY + 10, // 滑动距离
@@ -103,7 +97,6 @@ namespace Ink_Canvas.Helpers
                 var sb = new Storyboard();
                 var durationTimeSpan = TimeSpan.FromSeconds(duration);
 
-                // 渐变动画
                 var fadeInAnimation = new DoubleAnimation
                 {
                     From = 0.5,
@@ -112,7 +105,6 @@ namespace Ink_Canvas.Helpers
                 };
                 Storyboard.SetTargetProperty(fadeInAnimation, OpacityPropertyPath);
 
-                // 滑动动画
                 var slideAnimation = new DoubleAnimation
                 {
                     From = element.RenderTransform.Value.OffsetX - 20, // 滑动距离
@@ -143,7 +135,6 @@ namespace Ink_Canvas.Helpers
                 var sb = new Storyboard();
                 var durationTimeSpan = TimeSpan.FromSeconds(duration);
 
-                // 水平方向的缩放动画
                 var scaleXAnimation = new DoubleAnimation
                 {
                     From = 0,
@@ -153,7 +144,6 @@ namespace Ink_Canvas.Helpers
                 };
                 Storyboard.SetTargetProperty(scaleXAnimation, ScaleXPropertyPath);
 
-                // 垂直方向的缩放动画
                 var scaleYAnimation = new DoubleAnimation
                 {
                     From = 0,
@@ -186,7 +176,6 @@ namespace Ink_Canvas.Helpers
                 var sb = new Storyboard();
                 var durationTimeSpan = TimeSpan.FromSeconds(duration);
 
-                // 水平方向的缩放动画
                 var scaleXAnimation = new DoubleAnimation
                 {
                     From = 0,
@@ -196,7 +185,6 @@ namespace Ink_Canvas.Helpers
                 };
                 Storyboard.SetTargetProperty(scaleXAnimation, ScaleXPropertyPath);
 
-                // 垂直方向的缩放动画
                 var scaleYAnimation = new DoubleAnimation
                 {
                     From = 0,
@@ -229,7 +217,6 @@ namespace Ink_Canvas.Helpers
                 var sb = new Storyboard();
                 var durationTimeSpan = TimeSpan.FromSeconds(duration);
 
-                // 渐变动画
                 var fadeOutAnimation = new DoubleAnimation
                 {
                     From = 1,
@@ -239,7 +226,6 @@ namespace Ink_Canvas.Helpers
                 };
                 Storyboard.SetTargetProperty(fadeOutAnimation, OpacityPropertyPath);
 
-                // 滑动动画
                 var slideAnimation = new DoubleAnimation
                 {
                     From = 0,
@@ -271,7 +257,6 @@ namespace Ink_Canvas.Helpers
 
             var sb = new Storyboard();
 
-            // 渐变动画
             var fadeOutAnimation = new DoubleAnimation
             {
                 From = 1,

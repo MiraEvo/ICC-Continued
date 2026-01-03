@@ -21,7 +21,6 @@ namespace Ink_Canvas.Helpers
             if (_disposed) return;
             
             lock (_lockObject) {
-                // 保存待执行的动作和同步上下文
                 _pendingAction = action;
                 _syncInvoke = inv;
                 
@@ -29,7 +28,6 @@ namespace Ink_Canvas.Helpers
                     _timerDebounce = new Timer(timeMs) { AutoReset = false };
                     _timerDebounce.Elapsed += OnTimerElapsed;
                 } else {
-                    // 重用现有 Timer，只需更新间隔
                     _timerDebounce.Interval = timeMs;
                 }
                 

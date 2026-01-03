@@ -230,13 +230,15 @@
                             ToolTipText="InkCanvasForClass"
                             ContextMenu="{StaticResource SysTrayMenu}"
                             IconSource="/Resources/icc.ico"/>
-                <ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources RequestedTheme="Light"/>
                 <ui:XamlControlsResources />
                 <ResourceDictionary Source="Resources/SeewoImageDictionary.xaml"/>
                 <ResourceDictionary Source="Resources/DrawShapeImageDictionary.xaml"/>
                 <ResourceDictionary Source="Resources/IconImageDictionary.xaml"/>
                 <ResourceDictionary Source="Resources/Styles/Light.xaml"/>
+                <!-- MVVM 转换器资源字典 -->
+                <ResourceDictionary Source="Converters/ConvertersDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

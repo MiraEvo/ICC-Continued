@@ -40,22 +40,15 @@ namespace Ink_Canvas {
         /// </summary>
         public bool IsErasedStrokePart = false;
 
-        // 缓存字段，避免重复查询 PropertyData
         private bool? _cachedIsShape = null;
         private int? _cachedShapeType = null;
-        
-        // 缓存几何图形和画笔
         private StreamGeometry _cachedGeometry = null;
         private Pen _cachedPen = null;
         private Color _cachedPenColor;
         private double _cachedPenWidth;
         private bool _geometryNeedsUpdate = true;
-        
-        // 缓存填充画刷
         private SolidColorBrush _cachedFillBrush = null;
         private Color _cachedFillColor;
-        
-        // 静态透明画刷缓存
         private static readonly Brush TransparentBrush = Brushes.Transparent;
 
         /// <summary>
@@ -83,14 +76,10 @@ namespace Ink_Canvas {
             return _cachedIsShape.Value;
         }
 
-        /// <summary>
-        /// 标记几何图形需要更新
-        /// </summary>
         public void InvalidateGeometryCache() {
             _geometryNeedsUpdate = true;
         }
 
-        // 自定义的墨迹渲染
         protected override void DrawCore(DrawingContext drawingContext,
             DrawingAttributes drawingAttributes) {
             
@@ -100,8 +89,6 @@ namespace Ink_Canvas {
             }
 
             int shapeType = GetCachedShapeType();
-            
-            // 检查是否是线条类形状
             bool isLineShape = shapeType == (int)MainWindow.ShapeDrawingType.DashedLine ||
                                shapeType == (int)MainWindow.ShapeDrawingType.Line ||
                                shapeType == (int)MainWindow.ShapeDrawingType.DottedLine ||
@@ -118,13 +105,12 @@ namespace Ink_Canvas {
                 return;
             }
 
-            // 检查画笔是否需要更新
             double penWidth = (drawingAttributes.Width + drawingAttributes.Height) / 2;
             Color penColor = DrawingAttributes.Color;
             
             if (_cachedPen == null || _cachedPenColor != penColor || Math.Abs(_cachedPenWidth - penWidth) > 0.001) {
                 var penBrush = new SolidColorBrush(penColor);
-                penBrush.Freeze(); // 冻结画刷以提高性能
+                penBrush.Freeze();
                 
                 _cachedPen = new Pen(penBrush, penWidth) {
                     DashCap = PenLineCap.Round,
@@ -132,7 +118,6 @@ namespace Ink_Canvas {
                     EndLineCap = PenLineCap.Round,
                 };
                 
-                // 设置虚线样式
                 if (shapeType != (int)MainWindow.ShapeDrawingType.Line &&
                     shapeType != (int)MainWindow.ShapeDrawingType.ArrowOneSide &&
                     shapeType != (int)MainWindow.ShapeDrawingType.ArrowTwoSide) {
@@ -141,14 +126,13 @@ namespace Ink_Canvas {
                         : DashStyles.Dash;
                 }
                 
-                _cachedPen.Freeze(); // 冻结Pen以提高性能
+                _cachedPen.Freeze();
                 _cachedPenColor = penColor;
                 _cachedPenWidth = penWidth;
                 _geometryNeedsUpdate = true;
             }
 
-            // 处理需要分布点的线条形状
-            if (IsDistributePointsOnLineShape && 
+            if (IsDistributePointsOnLineShape &&
                 (shapeType == (int)MainWindow.ShapeDrawingType.DashedLine ||
                  shapeType == (int)MainWindow.ShapeDrawingType.Line ||
                  shapeType == (int)MainWindow.ShapeDrawingType.DottedLine) && 
@@ -160,7 +144,7 @@ namespace Ink_Canvas {
                 var startPoint = new Point(StylusPoints[0].X, StylusPoints[0].Y);
                 var endPoint = new Point(StylusPoints[1].X, StylusPoints[1].Y);
                 
-                var pointList = new List<Point>(20); // 预分配容量
+                var pointList = new List<Point>(20);
                 pointList.Add(startPoint);
                 pointList.AddRange(MainWindow.ShapeDrawingHelper.DistributePointsOnLine(startPoint, endPoint));
                 pointList.Add(endPoint);
@@ -169,7 +153,6 @@ namespace Ink_Canvas {
                 _geometryNeedsUpdate = true;
             }
 
-            // 处理单向箭头
             if (shapeType == (int)MainWindow.ShapeDrawingType.ArrowOneSide && IsRawStylusPoints) {
                 IsRawStylusPoints = false;
                 
@@ -182,7 +165,7 @@ namespace Ink_Canvas {
                 var sint = Math.Sin(theta);
                 var cost = Math.Cos(theta);
                 
-                var pointList = new List<Point>(10); // 预分配容量
+                var pointList = new List<Point>(10);
                 pointList.Add(pt0);
                 
                 if (IsDistributePointsOnLineShape) {
@@ -198,7 +181,6 @@ namespace Ink_Canvas {
                 _geometryNeedsUpdate = true;
             }
 
-            // 生成或更新几何图形
             if (_geometryNeedsUpdate || _cachedGeometry == null) {
                 _cachedGeometry = new StreamGeometry();
                 
@@ -206,8 +188,6 @@ namespace Ink_Canvas {
                     var points = this.StylusPoints;
                     if (points.Count > 0) {
                         ctx.BeginFigure(new Point(points[0].X, points[0].Y), false, false);
-                        
-                        // 使用数组避免 List 的分配
                         Point[] ptArray = new Point[points.Count - 1];
                         for (int i = 1; i < points.Count; i++) {
                             ptArray[i - 1] = new Point(points[i].X, points[i].Y);
@@ -216,16 +196,15 @@ namespace Ink_Canvas {
                     }
                 }
                 
-                _cachedGeometry.Freeze(); // 冻结几何图形以提高性能
+                _cachedGeometry.Freeze();
                 _geometryNeedsUpdate = false;
             }
 
-            // 绘制 - 使用缓存的填充画刷
             Brush fillBrush;
             if (shapeType == (int)MainWindow.ShapeDrawingType.ArrowOneSide) {
                 if (_cachedFillBrush == null || _cachedFillColor != penColor) {
                     _cachedFillBrush = new SolidColorBrush(penColor);
-                    _cachedFillBrush.Freeze(); // 冻结画刷以提高性能
+                    _cachedFillBrush.Freeze();
                     _cachedFillColor = penColor;
                 }
                 fillBrush = _cachedFillBrush;

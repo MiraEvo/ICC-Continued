@@ -1,4 +1,6 @@
+using Ink_Canvas.Core;
 using Ink_Canvas.Helpers;
+using Ink_Canvas.ViewModels;
 using iNKORE.UI.WPF.Modern;
 using System;
 using System.Collections.ObjectModel;
@@ -31,6 +33,207 @@ using TextBox = System.Windows.Controls.TextBox;
 namespace Ink_Canvas {
     public partial class MainWindow : Window {
 
+        #region ViewModel Properties
+
+        /// <summary>
+        /// 主窗口 ViewModel
+        /// </summary>
+        public MainWindowViewModel ViewModel { get; private set; }
+
+        /// <summary>
+        /// 工具栏 ViewModel
+        /// </summary>
+        public ToolbarViewModel ToolbarVM { get; private set; }
+
+        /// <summary>
+        /// 设置 ViewModel
+        /// </summary>
+        public SettingsViewModel SettingsVM { get; private set; }
+
+        /// <summary>
+        /// 初始化 ViewModels，从 ServiceLocator 中获取实例
+        /// </summary>
+        private void InitializeViewModels()
+        {
+            try
+            {
+                ViewModel = ServiceLocator.GetRequiredService<MainWindowViewModel>();
+                ToolbarVM = ServiceLocator.GetRequiredService<ToolbarViewModel>();
+                SettingsVM = ServiceLocator.GetRequiredService<SettingsViewModel>();
+                
+                // 订阅 ViewModel 事件
+                SubscribeViewModelEvents();
+                
+                LogHelper.WriteLogToFile("ViewModels initialized successfully", LogHelper.LogType.Info);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("Failed to initialize ViewModels: " + ex.Message, LogHelper.LogType.Error);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 订阅 ViewModel 事件
+        /// </summary>
+        private void SubscribeViewModelEvents()
+        {
+            // 清空画布请求
+            ViewModel.ClearCanvasRequested += OnClearCanvasRequested;
+            
+            // 截图请求
+            ViewModel.CaptureRequested += OnCaptureRequested;
+            
+            // 隐藏/显示请求
+            ViewModel.ToggleHideRequested += OnToggleHideRequested;
+            
+            // 退出应用请求
+            ViewModel.ExitAppRequested += OnExitAppRequested;
+            
+            // 画笔切换请求
+            ViewModel.ChangeToPenRequested += OnChangeToPenRequested;
+            
+            // 绘制直线请求
+            ViewModel.DrawLineRequested += OnDrawLineRequested;
+            
+            // 隐藏子面板请求
+            ViewModel.HideSubPanelsRequested += OnHideSubPanelsRequested;
+        }
+        
+        /// <summary>
+        /// 处理隐藏子面板请求
+        /// </summary>
+        private void OnHideSubPanelsRequested(object sender, EventArgs e)
+        {
+            HideSubPanels();
+        }
+
+        /// <summary>
+        /// 取消订阅 ViewModel 事件
+        /// </summary>
+        private void UnsubscribeViewModelEvents()
+        {
+            if (ViewModel != null)
+            {
+                ViewModel.ClearCanvasRequested -= OnClearCanvasRequested;
+                ViewModel.CaptureRequested -= OnCaptureRequested;
+                ViewModel.ToggleHideRequested -= OnToggleHideRequested;
+                ViewModel.ExitAppRequested -= OnExitAppRequested;
+                ViewModel.ChangeToPenRequested -= OnChangeToPenRequested;
+                ViewModel.DrawLineRequested -= OnDrawLineRequested;
+            }
+        }
+
+        #region ViewModel 事件处理
+
+        /// <summary>
+        /// 处理清空画布请求
+        /// </summary>
+        private void OnClearCanvasRequested(object sender, EventArgs e)
+        {
+            // 调用现有的清空逻辑
+            try
+            {
+                // 这里调用现有的清空画布方法
+                // 在后续重构中会将此方法迁移到服务层
+                if (inkCanvas.Strokes.Count > 0)
+                {
+                    timeMachine.CommitStrokeEraseHistory(inkCanvas.Strokes);
+                    inkCanvas.Strokes.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnClearCanvasRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理截图请求
+        /// </summary>
+        private void OnCaptureRequested(object sender, EventArgs e)
+        {
+            // 调用现有的截图逻辑
+            try
+            {
+                // 这里调用现有的截图方法
+                // KeyCapture 或相关方法
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnCaptureRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理隐藏/显示请求
+        /// </summary>
+        private void OnToggleHideRequested(object sender, EventArgs e)
+        {
+            // 调用现有的隐藏/显示逻辑
+            try
+            {
+                // 这里调用现有的隐藏/显示方法
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnToggleHideRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理退出应用请求
+        /// </summary>
+        private void OnExitAppRequested(object sender, EventArgs e)
+        {
+            // 调用现有的退出逻辑
+            try
+            {
+                CloseIsFromButton = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnExitAppRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理画笔切换请求
+        /// </summary>
+        private void OnChangeToPenRequested(object sender, int penIndex)
+        {
+            try
+            {
+                // 这里调用现有的画笔切换方法
+                // 例如：SwitchToPen(penIndex)
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnChangeToPenRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理绘制直线请求
+        /// </summary>
+        private void OnDrawLineRequested(object sender, EventArgs e)
+        {
+            try
+            {
+                // 这里调用现有的绘制直线方法
+                // 例如：SwitchToShapeDrawing(ShapeType.Line)
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnDrawLineRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        #endregion
+
+        #endregion
+
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
@@ -57,7 +260,14 @@ namespace Ink_Canvas {
                 处于画板模式内：Topmost == false / currentMode != 0
                 处于 PPT 放映内：BtnPPTSlideShowEnd.Visibility
             */
+            
+            // 初始化 ViewModel
+            InitializeViewModels();
+            
             InitializeComponent();
+            
+            // 设置 DataContext
+            DataContext = ViewModel;
 
             BlackboardLeftSide.Visibility = Visibility.Collapsed;
             BlackboardCenterSide.Visibility = Visibility.Collapsed;

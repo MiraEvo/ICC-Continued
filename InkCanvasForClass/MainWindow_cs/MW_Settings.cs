@@ -189,12 +189,6 @@ namespace Ink_Canvas {
             }
         }
 
-        //private void ToggleSwitchIsColorfulViewboxFloatingBar_Toggled(object sender, RoutedEventArgs e) {
-        //    if (!isLoaded) return;
-        //    Settings.Appearance.IsColorfulViewboxFloatingBar = ToggleSwitchColorfulViewboxFloatingBar.IsOn;
-        //    SaveSettingsToFile();
-        //}
-
         private void ToggleSwitchEnableQuickPanel_Toggled(object sender, RoutedEventArgs e) {
             if (!isLoaded) return;
             Settings.Appearance.IsShowQuickPanel = ToggleSwitchEnableQuickPanel.IsOn;
@@ -381,45 +375,6 @@ namespace Ink_Canvas {
 
             SaveSettingsToFile();
         }
-
-        //[Obsolete]
-        //private void ToggleSwitchShowButtonPPTNavigation_OnToggled(object sender, RoutedEventArgs e) {
-        //    if (!isLoaded) return;
-        //    Settings.PowerPointSettings.IsShowPPTNavigation = ToggleSwitchShowButtonPPTNavigation.IsOn;
-        //    var vis = Settings.PowerPointSettings.IsShowPPTNavigation ? Visibility.Visible : Visibility.Collapsed;
-        //    PPTLBPageButton.Visibility = vis;
-        //    PPTRBPageButton.Visibility = vis;
-        //    PPTLSPageButton.Visibility = vis;
-        //    PPTRSPageButton.Visibility = vis;
-        //    SaveSettingsToFile();
-        //}
-
-        //[Obsolete]
-        //private void ToggleSwitchShowBottomPPTNavigationPanel_OnToggled(object sender, RoutedEventArgs e) {
-        //    if (!isLoaded) return;
-        //    Settings.PowerPointSettings.IsShowBottomPPTNavigationPanel = ToggleSwitchShowBottomPPTNavigationPanel.IsOn;
-        //    if (BtnPPTSlideShowEnd.Visibility == Visibility.Visible)
-        //        //BottomViewboxPPTSidesControl.Visibility = Settings.PowerPointSettings.IsShowBottomPPTNavigationPanel
-        //        //    ? Visibility.Visible
-        //        //    : Visibility.Collapsed;
-        //    SaveSettingsToFile();
-        //}
-
-        //[Obsolete]
-        //private void ToggleSwitchShowSidePPTNavigationPanel_OnToggled(object sender, RoutedEventArgs e) {
-        //    if (!isLoaded) return;
-        //    Settings.PowerPointSettings.IsShowSidePPTNavigationPanel = ToggleSwitchShowSidePPTNavigationPanel.IsOn;
-        //    if (BtnPPTSlideShowEnd.Visibility == Visibility.Visible) {
-        //        LeftSidePanelForPPTNavigation.Visibility = Settings.PowerPointSettings.IsShowSidePPTNavigationPanel
-        //            ? Visibility.Visible
-        //            : Visibility.Collapsed;
-        //        RightSidePanelForPPTNavigation.Visibility = Settings.PowerPointSettings.IsShowSidePPTNavigationPanel
-        //            ? Visibility.Visible
-        //            : Visibility.Collapsed;
-        //    }
-
-        //    SaveSettingsToFile();
-        //}
 
         private void ToggleSwitchShowPPTButton_OnToggled(object sender, RoutedEventArgs e) {
             if (!isLoaded) return;
@@ -1294,20 +1249,6 @@ namespace Ink_Canvas {
                 timerKillProcess.Stop();
         }
 
-        //private void ToggleSwitchAutoKillIDT_Toggled(object sender, RoutedEventArgs e)
-        //{
-        //    if (!isLoaded) return;
-        //    Settings.Automation.IsAutoKillIDT = ToggleSwitchAutoKillIDT.IsOn;
-        //    SaveSettingsToFile();
-        //    if (Settings.Automation.IsAutoKillEasiNote || Settings.Automation.IsAutoKillPptService ||
-        //        Settings.Automation.IsAutoKillHiteAnnotation || Settings.Automation.IsAutoKillInkCanvas
-        //        || Settings.Automation.IsAutoKillICA || Settings.Automation.IsAutoKillIDT || Settings.Automation.IsAutoKillVComYouJiao
-        //        || Settings.Automation.IsAutoKillSeewoLauncher2DesktopAnnotation)
-        //        timerKillProcess.Start();
-        //    else
-        //        timerKillProcess.Stop();
-        //}
-
         private void ToggleSwitchSaveScreenshotsInDateFolders_Toggled(object sender, RoutedEventArgs e) {
             if (!isLoaded) return;
             Settings.Automation.IsSaveScreenshotsInDateFolders = ToggleSwitchSaveScreenshotsInDateFolders.IsOn;
@@ -1644,9 +1585,6 @@ namespace Ink_Canvas {
             Settings.Automation.IsEnableLimitAutoSaveAmount = false;
             Settings.Automation.LimitAutoSaveAmount = 3;
 
-            //Settings.PowerPointSettings.IsShowPPTNavigation = true;
-            //Settings.PowerPointSettings.IsShowBottomPPTNavigationPanel = false;
-            //Settings.PowerPointSettings.IsShowSidePPTNavigationPanel = true;
             Settings.PowerPointSettings.PowerPointSupport = true;
             Settings.PowerPointSettings.IsShowCanvasAtNewSlideShow = false;
             Settings.PowerPointSettings.IsNoClearStrokeOnSelectWhenInPowerPoint = true;
@@ -1670,7 +1608,6 @@ namespace Ink_Canvas {
             Settings.Canvas.HideStrokeWhenSelecting = false;
             Settings.Canvas.ClearCanvasAndClearTimeMachine = false;
             Settings.Canvas.FitToCurve = false;
-            //Settings.Canvas.UsingWhiteboard = false;
             Settings.Canvas.HyperbolaAsymptoteOption = 0;
             Settings.Canvas.BlackboardBackgroundColor = BlackboardBackgroundColorEnum.White;
             Settings.Canvas.BlackboardBackgroundPattern = BlackboardBackgroundPatternEnum.None;

@@ -1,6 +1,10 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
+using Ink_Canvas.Core;
 using Ink_Canvas.Helpers;
+using Ink_Canvas.Services;
+using Ink_Canvas.ViewModels;
 using iNKORE.UI.WPF.Modern.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Linq;
@@ -24,10 +28,47 @@ namespace Ink_Canvas
         public static string[] StartArgs = null;
         public static string RootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data") + "\\";
 
+        /// <summary>
+        /// 依赖注入服务提供者
+        /// </summary>
+        public IServiceProvider Services { get; private set; }
+
         public App() {
             AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
             Startup += App_Startup;
             DispatcherUnhandledException += App_DispatcherUnhandledException;
+            
+            // 初始化依赖注入
+            ConfigureServices();
+        }
+
+        /// <summary>
+        /// 配置依赖注入服务
+        /// </summary>
+        private void ConfigureServices()
+        {
+            var services = new ServiceCollection();
+
+            // 注册核心服务
+            services.AddSingleton<ISettingsService, SettingsService>();
+            services.AddSingleton<ITimeMachineService, TimeMachineService>();
+            services.AddSingleton<IPageService, PageService>();
+            // 注意: IInkCanvasService 需要在 MainWindow 初始化后注册，因为它依赖于 IccInkCanvas 实例
+            
+            // 注册 ViewModel
+            services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<ToolbarViewModel>();
+
+            // 构建服务提供者
+            Services = services.BuildServiceProvider();
+            
+            // 设置全局服务定位器
+            ServiceLocator.ServiceProvider = Services;
+            
+            // 预先加载设置服务
+            var settingsService = Services.GetRequiredService<ISettingsService>();
+            settingsService.Load();
         }
 
         private Assembly OnAssemblyResolve(object sender, ResolveEventArgs args) {

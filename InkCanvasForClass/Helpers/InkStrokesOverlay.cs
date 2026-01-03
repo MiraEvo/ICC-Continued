@@ -44,7 +44,7 @@ namespace Ink_Canvas.Helpers
         public InkStrokesOverlay()
         {
             _children = new VisualCollection(this) {
-                _layer // 初始化DrawingVisual
+                _layer
             };
         }
 
@@ -70,7 +70,6 @@ namespace Ink_Canvas.Helpers
                 context = _layer.RenderOpen();
             }
 
-            // 缓存 MatrixTransform 避免重复创建
             MatrixTransform cachedMatrixTransform = null;
             if (matrixTransform != null) {
                 cachedMatrixTransform = new MatrixTransform((Matrix)matrixTransform);
@@ -84,7 +83,6 @@ namespace Ink_Canvas.Helpers
                     cachedDrawingGroup = new DrawingGroup();
                     var gp_context = cachedDrawingGroup.Open();
                     
-                    // 优化：只克隆需要修改的属性，而不是整个StrokeCollection
                     var stks_cloned = strokes.Clone();
                     foreach (var stroke in stks_cloned) {
                         stroke.DrawingAttributes.Width += 2;
@@ -92,14 +90,12 @@ namespace Ink_Canvas.Helpers
                     }
                     stks_cloned.Draw(gp_context);
                     
-                    // 使用缓存的白色画刷
                     foreach (var ori_stk in strokes) {
                         var geo = ori_stk.GetGeometry();
                         gp_context.DrawGeometry(WhiteBrush, null, geo);
                     }
                     gp_context.Close();
                     
-                    // 冻结DrawingGroup以提高性能
                     cachedDrawingGroup.Freeze();
                     isCached = true;
                 }

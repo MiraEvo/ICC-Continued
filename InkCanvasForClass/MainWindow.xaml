@@ -5,9 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
         xmlns:c="clr-namespace:Ink_Canvas.Converter"
-        xmlns:Controls="http://schemas.microsoft.com/netfx/2009/xaml/presentation" xmlns:popups="clr-namespace:Ink_Canvas.Popups"
+        xmlns:Controls="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+        xmlns:popups="clr-namespace:Ink_Canvas.Popups"
         xmlns:inkCanvas="clr-namespace:Ink_Canvas"
         xmlns:helpers="clr-namespace:Ink_Canvas.Helpers"
+        xmlns:vm="clr-namespace:Ink_Canvas.ViewModels"
+        xmlns:behaviors="clr-namespace:Ink_Canvas.Behaviors"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:converters="clr-namespace:Ink_Canvas.Converters"
+        d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
         mc:Ignorable="d"
         WindowStyle="None"
         ResizeMode="NoResize"
@@ -3415,6 +3421,7 @@
                                                      MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                                      MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                                      MouseUp="CursorIcon_Click"
+                                                     behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToCursorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                      Background="Transparent" Orientation="Vertical"
                                                      HorizontalAlignment="Center" Width="28" Margin="0,-2">
                                     <Image RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0"
@@ -3437,6 +3444,7 @@
                                                      MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                                      MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                                      MouseUp="PenIcon_Click"
+                                                     behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToPenCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                      Background="Transparent" Orientation="Vertical"
                                                      HorizontalAlignment="Center" Width="28" Margin="0,-2">
                                     <Image x:Name="PenIcon"
@@ -3459,6 +3467,8 @@
                                                      MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                                      MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                                      MouseUp="SymbolIconDelete_MouseUp"
+                                                     behaviors:FloatingBarButton.Command="{Binding ViewModel.ClearCanvasCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                     behaviors:FloatingBarButton.IsDeleteButton="True"
                                                      Background="Transparent" Orientation="Vertical"
                                                      HorizontalAlignment="Center" Width="28" Margin="0,-2">
                                     <Image RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0">
@@ -4259,6 +4269,7 @@
                                                          MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                                          MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                                          MouseUp="EraserIconByStrokes_Click"
+                                                         behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToEraseByStrokeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          Background="Transparent" Orientation="Vertical" Width="28"
                                                          Margin="0,-2" HorizontalAlignment="Center">
                                         <Image x:Name="StrokeEraserToolbarIconImage"
@@ -4282,6 +4293,7 @@
                                                          MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                                          MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                                          MouseUp="EraserIcon_Click"
+                                                         behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToEraseByGeometryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          Background="Transparent" Orientation="Vertical"
                                                          HorizontalAlignment="Center" Margin="0,-2" Width="28">
                                         <Image x:Name="CircleEraserToolbarIconImage"
@@ -4305,6 +4317,7 @@
                                                          MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                                          MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                                          MouseUp="SymbolIconSelect_MouseUp" Background="Transparent"
+                                                         behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToLassoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          Orientation="Vertical" Margin="0,-2" Width="28"
                                                          HorizontalAlignment="Center">
                                         <Image x:Name="LassoSelect" RenderOptions.BitmapScalingMode="HighQuality"
@@ -4634,9 +4647,10 @@
                                         MouseUp="SymbolIconUndo_MouseUp"
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
+                                        behaviors:FloatingBarButton.Command="{Binding ViewModel.UndoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Background="Transparent" Orientation="Vertical"
                                         HorizontalAlignment="Center" Margin="0,-2"
-                                        IsEnabled="False"
+                                        IsEnabled="{Binding ViewModel.CanUndo, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Width="28">
                                         <Image RenderOptions.BitmapScalingMode="HighQuality" Height="17"
                                                Margin="0,3,0,0"
@@ -4662,9 +4676,10 @@
                                         MouseUp="SymbolIconRedo_MouseUp"
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
+                                        behaviors:FloatingBarButton.Command="{Binding ViewModel.RedoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Background="Transparent" Orientation="Vertical"
                                         HorizontalAlignment="Center"
-                                        IsEnabled="False"
+                                        IsEnabled="{Binding ViewModel.CanRedo, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Width="28" Margin="0,-2">
                                         <Image RenderOptions.BitmapScalingMode="HighQuality" Height="17"
                                                Margin="0,3,0,0"
@@ -4809,6 +4824,7 @@
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                         MouseUp="ImageBlackboard_MouseUp" Background="Transparent"
+                                        behaviors:FloatingBarButton.Command="{Binding ViewModel.ToggleWhiteboardModeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Orientation="Vertical" HorizontalAlignment="Center" Width="28"
                                         Margin="0,-2">
                                         <Image RenderOptions.BitmapScalingMode="HighQuality" Width="28" Height="17"
@@ -4832,6 +4848,7 @@
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                         MouseUp="SymbolIconTools_MouseUp" Background="Transparent"
+                                        behaviors:FloatingBarButton.Command="{Binding ViewModel.ToggleToolsPanelCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Orientation="Vertical" HorizontalAlignment="Center" Width="28"
                                         Margin="0,-2">
                                         <Image RenderOptions.BitmapScalingMode="HighQuality" Width="28" Height="17"
@@ -4856,6 +4873,7 @@
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
                                         MouseUp="FoldFloatingBar_MouseUp" Background="Transparent"
+                                        behaviors:FloatingBarButton.Command="{Binding ViewModel.ToggleFloatingBarFoldCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Orientation="Vertical" HorizontalAlignment="Center" Width="28"
                                         Margin="0,-2">
                                         <Image RenderOptions.BitmapScalingMode="HighQuality" Width="28" Height="17"

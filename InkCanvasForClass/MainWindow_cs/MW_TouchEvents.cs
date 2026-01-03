@@ -51,14 +51,12 @@ namespace Ink_Canvas {
 
             if (!isHidingSubPanelsWhenInking) {
                 isHidingSubPanelsWhenInking = true;
-                HideSubPanels(); // 书写时自动隐藏二级菜单
+                HideSubPanels();
             }
 
-            // 不禁用手势橡皮
             if (!Settings.Gesture.DisableGestureEraser) {
                 double boundWidth = e.GetTouchPoint(null).Bounds.Width;
-                if ((Settings.Advanced.TouchMultiplier != 0 ||
-                     !Settings.Advanced.IsSpecialScreen) //启用特殊屏幕且触摸倍数为 0 时禁用橡皮
+                if ((Settings.Advanced.TouchMultiplier != 0 || !Settings.Advanced.IsSpecialScreen)
                     && (boundWidth > BoundsWidth)) {
                     if (drawingShapeMode == 0 && forceEraser) return;
                     double EraserThresholdValue = Settings.Startup.IsEnableNibMode
@@ -237,7 +235,7 @@ namespace Ink_Canvas {
 
             if (!isHidingSubPanelsWhenInking) {
                 isHidingSubPanelsWhenInking = true;
-                HideSubPanels(); // 书写时自动隐藏二级菜单
+                HideSubPanels();
             }
 
             if (NeedUpdateIniP()) iniP = e.GetTouchPoint(inkCanvas).Position;
@@ -246,8 +244,7 @@ namespace Ink_Canvas {
 
             if (!Settings.Gesture.DisableGestureEraser) {
                 double boundsWidth = GetTouchBoundWidth(e);
-                if ((Settings.Advanced.TouchMultiplier != 0 ||
-                     !Settings.Advanced.IsSpecialScreen) //启用特殊屏幕且触摸倍数为 0 时禁用橡皮
+                if ((Settings.Advanced.TouchMultiplier != 0 || !Settings.Advanced.IsSpecialScreen)
                     && (boundsWidth > BoundsWidth)) {
                     isLastTouchEraser = true;
                     if (drawingShapeMode == 0 && forceEraser) return;
@@ -280,13 +277,10 @@ namespace Ink_Canvas {
         public double GetTouchBoundWidth(TouchEventArgs e) {
             var args = e.GetTouchPoint(null).Bounds;
             if (!Settings.Advanced.IsQuadIR) return args.Width;
-            else return Math.Sqrt(args.Width * args.Height); //四边红外
+            else return Math.Sqrt(args.Width * args.Height);
         }
 
-        //记录触摸设备ID - 使用 HashSet 提升查找和删除性能
         private HashSet<int> dec = new HashSet<int>();
-
-        //中心点
         private Point centerPoint;
         private InkCanvasEditingMode lastInkCanvasEditingMode = InkCanvasEditingMode.Ink;
         private bool isSingleFingerDragMode = false;
@@ -297,16 +291,12 @@ namespace Ink_Canvas {
             BlackboardUIGridForInkReplay.IsHitTestVisible = false;
 
             dec.Add(e.TouchDevice.Id);
-            //设备1个的时候，记录中心点
             if (dec.Count == 1) {
                 var touchPoint = e.GetTouchPoint(inkCanvas);
                 centerPoint = touchPoint.Position;
-
-                //记录第一根手指点击时的 StrokeCollection
                 lastTouchDownStrokeCollection = inkCanvas.Strokes.Clone();
             }
 
-            //设备两个及两个以上，将画笔功能关闭
             if (dec.Count > 1 || isSingleFingerDragMode || !Settings.Gesture.IsEnableTwoFingerGesture) {
                 if (isInMultiTouchMode || !Settings.Gesture.IsEnableTwoFingerGesture) return;
                 if (inkCanvas.EditingMode == InkCanvasEditingMode.None ||
@@ -321,7 +311,6 @@ namespace Ink_Canvas {
             ViewboxFloatingBar.IsHitTestVisible = true;
             BlackboardUIGridForInkReplay.IsHitTestVisible = true;
 
-            //手势完成后切回之前的状态
             if (dec.Count > 1)
                 if (inkCanvas.EditingMode == InkCanvasEditingMode.None)
                     inkCanvas.EditingMode = lastInkCanvasEditingMode;
@@ -348,26 +337,6 @@ namespace Ink_Canvas {
             inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
         }
 
-
-        //private void inkCanvas_ManipulationStarted(object sender, ManipulationStartedEventArgs e)
-        //{
-        //    if (isInMultiTouchMode || !Settings.Gesture.IsEnableTwoFingerGesture || inkCanvas.Strokes.Count == 0 || dec.Count() < 2) return;
-        //    _currentCommitType = CommitReason.Manipulation;
-        //    StrokeCollection strokes = inkCanvas.GetSelectedStrokes();
-        //    if (strokes.Count != 0)
-        //    {
-        //        inkCanvas.Strokes.Replace(strokes, strokes.Clone());
-        //    }
-        //    else
-        //    {
-        //        var originalStrokes = inkCanvas.Strokes;
-        //        var targetStrokes = originalStrokes.Clone();
-        //        originalStrokes.Replace(originalStrokes, targetStrokes);
-        //    }
-        //    _currentCommitType = CommitReason.UserInput;
-        //}
-
-        // 缓存的矩阵变换结构，避免频繁创建新的Matrix对象
         private Matrix _cachedManipulationMatrix = Matrix.Identity;
         
         private void Main_Grid_ManipulationDelta(object sender, ManipulationDeltaEventArgs e) {
@@ -376,30 +345,27 @@ namespace Ink_Canvas {
                                     BorderFloatingBarExitPPTBtn.Visibility != Visibility.Visible)) ||
                 isSingleFingerDragMode) {
                 var md = e.DeltaManipulation;
-                var trans = md.Translation; // 获得位移矢量
+                var trans = md.Translation;
 
-                // 重置矩阵为单位矩阵，避免创建新对象
                 _cachedManipulationMatrix.SetIdentity();
 
                 if (Settings.Gesture.IsEnableTwoFingerTranslate)
-                    _cachedManipulationMatrix.Translate(trans.X, trans.Y); // 移动
+                    _cachedManipulationMatrix.Translate(trans.X, trans.Y);
 
                 if (Settings.Gesture.IsEnableTwoFingerGestureTranslateOrRotation) {
-                    var rotate = md.Rotation; // 获得旋转角度
-                    var scale = md.Scale; // 获得缩放倍数
+                    var rotate = md.Rotation;
+                    var scale = md.Scale;
 
-                    // Find center of element and then transform to get current location of center
                     var fe = e.Source as FrameworkElement;
                     var center = new Point(fe.ActualWidth / 2, fe.ActualHeight / 2);
-                    center = _cachedManipulationMatrix.Transform(center); // 转换为矩阵缩放和旋转的中心点
+                    center = _cachedManipulationMatrix.Transform(center);
 
                     if (Settings.Gesture.IsEnableTwoFingerRotation)
-                        _cachedManipulationMatrix.RotateAt(rotate, center.X, center.Y); // 旋转
+                        _cachedManipulationMatrix.RotateAt(rotate, center.X, center.Y);
                     if (Settings.Gesture.IsEnableTwoFingerZoom)
-                        _cachedManipulationMatrix.ScaleAt(scale.X, scale.Y, center.X, center.Y); // 缩放
+                        _cachedManipulationMatrix.ScaleAt(scale.X, scale.Y, center.X, center.Y);
                 }
 
-                // 缓存选中笔画引用，避免多次调用 GetSelectedStrokes()
                 var strokes = inkCanvas.GetSelectedStrokes();
                 var strokeCount = strokes.Count;
                 var enableTwoFingerZoom = Settings.Gesture.IsEnableTwoFingerZoom;
@@ -410,7 +376,6 @@ namespace Ink_Canvas {
                     foreach (var stroke in strokes) {
                         stroke.Transform(_cachedManipulationMatrix, false);
 
-                        // 使用缓存的 circles 引用进行遍历
                         foreach (var circle in circles)
                             if (stroke == circle.Stroke) {
                                 var stylusPoints = circle.Stroke.StylusPoints;
@@ -433,7 +398,6 @@ namespace Ink_Canvas {
                         }
                     }
                 } else {
-                    // 合并两个分支，减少代码重复
                     foreach (var stroke in inkCanvas.Strokes) {
                         stroke.Transform(_cachedManipulationMatrix, false);
                         if (enableTwoFingerZoom) {

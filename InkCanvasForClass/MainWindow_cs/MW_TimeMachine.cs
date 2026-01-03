@@ -162,7 +162,6 @@ namespace Ink_Canvas {
 
 
 
-        // 缓存的事件处理器委托，避免每次订阅/取消订阅时创建新委托
         private EventHandler _cachedStylusPointsChangedHandler;
         private StylusPointsReplacedEventHandler _cachedStylusPointsReplacedHandler;
         private PropertyDataChangedEventHandler _cachedDrawingAttributesChangedHandler;
@@ -179,16 +178,13 @@ namespace Ink_Canvas {
                 HideSubPanels(); // 书写时自动隐藏二级菜单
             }
 
-            // 确保事件处理器已缓存
             EnsureEventHandlersCached();
 
-            // 缓存集合引用，避免多次访问属性
             var removedStrokes = e?.Removed;
             var addedStrokes = e?.Added;
             var removedCount = removedStrokes?.Count ?? 0;
             var addedCount = addedStrokes?.Count ?? 0;
 
-            // 处理移除的笔画
             if (removedCount > 0) {
                 foreach (var stroke in removedStrokes) {
                     stroke.StylusPointsChanged -= _cachedStylusPointsChangedHandler;
@@ -198,7 +194,6 @@ namespace Ink_Canvas {
                 }
             }
 
-            // 处理添加的笔画
             if (addedCount > 0) {
                 foreach (var stroke in addedStrokes) {
                     stroke.StylusPointsChanged += _cachedStylusPointsChangedHandler;
@@ -245,7 +240,6 @@ namespace Ink_Canvas {
             DrawingAttributesHistory.TryGetValue(key, out var previousTuple);
             var previousValue = previousTuple?.Item1 ?? currentValue.Clone();
             
-            // 缓存 PropertyGuid 和 flag 列表引用
             var propertyGuid = e.PropertyGuid;
             var flagList = DrawingAttributesHistoryFlag[propertyGuid];
             var needUpdateValue = !flagList.Contains(key);
@@ -256,7 +250,6 @@ namespace Ink_Canvas {
                 Debug.Write(e.PreviousValue.ToString());
                 #endif
                 
-                // 使用 switch 表达式替代多个 if 语句，提高可读性和性能
                 var prevValue = e.PreviousValue;
                 if (propertyGuid == DrawingAttributeIds.Color) {
                     previousValue.Color = (Color)prevValue;
@@ -294,10 +287,8 @@ namespace Ink_Canvas {
             var count = selectedStrokes.Count;
             if (count == 0) count = inkCanvas.Strokes.Count;
             
-            // 延迟初始化，使用初始容量
             StrokeManipulationHistory ??= new Dictionary<Stroke, Tuple<StylusPointCollection, StylusPointCollection>>(count);
 
-            // 缓存 sender 转换结果，避免多次 as 转换
             if (StrokeInitialHistory.TryGetValue(stroke, out var initialPoints)) {
                 StrokeManipulationHistory[stroke] =
                     new Tuple<StylusPointCollection, StylusPointCollection>(initialPoints, stroke.StylusPoints.Clone());
