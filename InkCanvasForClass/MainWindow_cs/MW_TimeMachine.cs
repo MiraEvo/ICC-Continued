@@ -162,96 +162,117 @@ namespace Ink_Canvas {
 
 
 
+        // 缓存的事件处理器委托，避免每次订阅/取消订阅时创建新委托
+        private EventHandler _cachedStylusPointsChangedHandler;
+        private StylusPointsReplacedEventHandler _cachedStylusPointsReplacedHandler;
+        private PropertyDataChangedEventHandler _cachedDrawingAttributesChangedHandler;
+        
+        private void EnsureEventHandlersCached() {
+            _cachedStylusPointsChangedHandler ??= Stroke_StylusPointsChanged;
+            _cachedStylusPointsReplacedHandler ??= Stroke_StylusPointsReplaced;
+            _cachedDrawingAttributesChangedHandler ??= Stroke_DrawingAttributesChanged;
+        }
+        
         private void StrokesOnStrokesChanged(object sender, StrokeCollectionChangedEventArgs e) {
             if (!isHidingSubPanelsWhenInking) {
                 isHidingSubPanelsWhenInking = true;
                 HideSubPanels(); // 书写时自动隐藏二级菜单
             }
 
+            // 确保事件处理器已缓存
+            EnsureEventHandlersCached();
 
-            foreach (var stroke in e?.Removed) {
-                stroke.StylusPointsChanged -= Stroke_StylusPointsChanged;
-                stroke.StylusPointsReplaced -= Stroke_StylusPointsReplaced;
-                stroke.DrawingAttributesChanged -= Stroke_DrawingAttributesChanged;
-                StrokeInitialHistory.Remove(stroke);
+            // 缓存集合引用，避免多次访问属性
+            var removedStrokes = e?.Removed;
+            var addedStrokes = e?.Added;
+            var removedCount = removedStrokes?.Count ?? 0;
+            var addedCount = addedStrokes?.Count ?? 0;
+
+            // 处理移除的笔画
+            if (removedCount > 0) {
+                foreach (var stroke in removedStrokes) {
+                    stroke.StylusPointsChanged -= _cachedStylusPointsChangedHandler;
+                    stroke.StylusPointsReplaced -= _cachedStylusPointsReplacedHandler;
+                    stroke.DrawingAttributesChanged -= _cachedDrawingAttributesChangedHandler;
+                    StrokeInitialHistory.Remove(stroke);
+                }
             }
 
-            foreach (var stroke in e?.Added) {
-                stroke.StylusPointsChanged += Stroke_StylusPointsChanged;
-                stroke.StylusPointsReplaced += Stroke_StylusPointsReplaced;
-                stroke.DrawingAttributesChanged += Stroke_DrawingAttributesChanged;
-                StrokeInitialHistory[stroke] = stroke.StylusPoints.Clone();
+            // 处理添加的笔画
+            if (addedCount > 0) {
+                foreach (var stroke in addedStrokes) {
+                    stroke.StylusPointsChanged += _cachedStylusPointsChangedHandler;
+                    stroke.StylusPointsReplaced += _cachedStylusPointsReplacedHandler;
+                    stroke.DrawingAttributesChanged += _cachedDrawingAttributesChangedHandler;
+                    StrokeInitialHistory[stroke] = stroke.StylusPoints.Clone();
+                }
             }
 
             if (_currentCommitType == CommitReason.CodeInput || _currentCommitType == CommitReason.ShapeDrawing) return;
 
-            if ((e.Added.Count != 0 || e.Removed.Count != 0) && IsEraseByPoint) {
-                if (AddedStroke == null) AddedStroke = new StrokeCollection();
-                if (ReplacedStroke == null) ReplacedStroke = new StrokeCollection();
-                AddedStroke.Add(e.Added);
-                ReplacedStroke.Add(e.Removed);
+            if ((addedCount != 0 || removedCount != 0) && IsEraseByPoint) {
+                AddedStroke ??= new StrokeCollection();
+                ReplacedStroke ??= new StrokeCollection();
+                if (addedCount > 0) AddedStroke.Add(addedStrokes);
+                if (removedCount > 0) ReplacedStroke.Add(removedStrokes);
                 return;
             }
 
-            if (e.Added.Count != 0) {
+            if (addedCount != 0) {
                 if (_currentCommitType == CommitReason.ShapeRecognition) {
-                    timeMachine.CommitStrokeShapeHistory(ReplacedStroke, e.Added);
+                    timeMachine.CommitStrokeShapeHistory(ReplacedStroke, addedStrokes);
                     ReplacedStroke = null;
-                    return;
                 } else {
-                    timeMachine.CommitStrokeUserInputHistory(e.Added);
-                    return;
+                    timeMachine.CommitStrokeUserInputHistory(addedStrokes);
                 }
+                return;
             }
 
-            if (e.Removed.Count != 0) {
+            if (removedCount != 0) {
                 if (_currentCommitType == CommitReason.ShapeRecognition) {
-                    ReplacedStroke = e.Removed;
-                    return;
+                    ReplacedStroke = removedStrokes;
                 } else if (!IsEraseByPoint || _currentCommitType == CommitReason.ClearingCanvas) {
-                    timeMachine.CommitStrokeEraseHistory(e.Removed);
-                    return;
+                    timeMachine.CommitStrokeEraseHistory(removedStrokes);
                 }
             }
         }
 
         private void Stroke_DrawingAttributesChanged(object sender, PropertyDataChangedEventArgs e) {
             var key = sender as Stroke;
+            if (key == null) return;
+            
             var currentValue = key.DrawingAttributes.Clone();
             DrawingAttributesHistory.TryGetValue(key, out var previousTuple);
             var previousValue = previousTuple?.Item1 ?? currentValue.Clone();
-            var needUpdateValue = !DrawingAttributesHistoryFlag[e.PropertyGuid].Contains(key);
+            
+            // 缓存 PropertyGuid 和 flag 列表引用
+            var propertyGuid = e.PropertyGuid;
+            var flagList = DrawingAttributesHistoryFlag[propertyGuid];
+            var needUpdateValue = !flagList.Contains(key);
+            
             if (needUpdateValue) {
-                DrawingAttributesHistoryFlag[e.PropertyGuid].Add(key);
+                flagList.Add(key);
+                #if DEBUG
                 Debug.Write(e.PreviousValue.ToString());
-            }
-
-            if (e.PropertyGuid == DrawingAttributeIds.Color && needUpdateValue) {
-                previousValue.Color = (Color)e.PreviousValue;
-            }
-
-            if (e.PropertyGuid == DrawingAttributeIds.IsHighlighter && needUpdateValue) {
-                previousValue.IsHighlighter = (bool)e.PreviousValue;
-            }
-
-            if (e.PropertyGuid == DrawingAttributeIds.StylusHeight && needUpdateValue) {
-                previousValue.Height = (double)e.PreviousValue;
-            }
-
-            if (e.PropertyGuid == DrawingAttributeIds.StylusWidth && needUpdateValue) {
-                previousValue.Width = (double)e.PreviousValue;
-            }
-
-            if (e.PropertyGuid == DrawingAttributeIds.StylusTip && needUpdateValue) {
-                previousValue.StylusTip = (StylusTip)e.PreviousValue;
-            }
-
-            if (e.PropertyGuid == DrawingAttributeIds.StylusTipTransform && needUpdateValue) {
-                previousValue.StylusTipTransform = (Matrix)e.PreviousValue;
-            }
-
-            if (e.PropertyGuid == DrawingAttributeIds.DrawingFlags && needUpdateValue) {
-                previousValue.IgnorePressure = (bool)e.PreviousValue;
+                #endif
+                
+                // 使用 switch 表达式替代多个 if 语句，提高可读性和性能
+                var prevValue = e.PreviousValue;
+                if (propertyGuid == DrawingAttributeIds.Color) {
+                    previousValue.Color = (Color)prevValue;
+                } else if (propertyGuid == DrawingAttributeIds.IsHighlighter) {
+                    previousValue.IsHighlighter = (bool)prevValue;
+                } else if (propertyGuid == DrawingAttributeIds.StylusHeight) {
+                    previousValue.Height = (double)prevValue;
+                } else if (propertyGuid == DrawingAttributeIds.StylusWidth) {
+                    previousValue.Width = (double)prevValue;
+                } else if (propertyGuid == DrawingAttributeIds.StylusTip) {
+                    previousValue.StylusTip = (StylusTip)prevValue;
+                } else if (propertyGuid == DrawingAttributeIds.StylusTipTransform) {
+                    previousValue.StylusTipTransform = (Matrix)prevValue;
+                } else if (propertyGuid == DrawingAttributeIds.DrawingFlags) {
+                    previousValue.IgnorePressure = (bool)prevValue;
+                }
             }
 
             DrawingAttributesHistory[key] =
@@ -265,23 +286,28 @@ namespace Ink_Canvas {
 
         private void Stroke_StylusPointsChanged(object sender, EventArgs e) {
             if (isMouseGesturing) return;
+            
+            var stroke = sender as Stroke;
+            if (stroke == null) return;
+            
             var selectedStrokes = inkCanvas.GetSelectedStrokes();
             var count = selectedStrokes.Count;
             if (count == 0) count = inkCanvas.Strokes.Count;
-            if (StrokeManipulationHistory == null) {
-                StrokeManipulationHistory =
-                    new Dictionary<Stroke, Tuple<StylusPointCollection, StylusPointCollection>>();
-            }
+            
+            // 延迟初始化，使用初始容量
+            StrokeManipulationHistory ??= new Dictionary<Stroke, Tuple<StylusPointCollection, StylusPointCollection>>(count);
 
-            StrokeManipulationHistory[sender as Stroke] =
-                new Tuple<StylusPointCollection, StylusPointCollection>(StrokeInitialHistory[sender as Stroke],
-                    (sender as Stroke).StylusPoints.Clone());
+            // 缓存 sender 转换结果，避免多次 as 转换
+            if (StrokeInitialHistory.TryGetValue(stroke, out var initialPoints)) {
+                StrokeManipulationHistory[stroke] =
+                    new Tuple<StylusPointCollection, StylusPointCollection>(initialPoints, stroke.StylusPoints.Clone());
+            }
+            
             if ((StrokeManipulationHistory.Count == count || sender == null) && dec.Count == 0) {
                 timeMachine.CommitStrokeManipulationHistory(StrokeManipulationHistory);
                 foreach (var item in StrokeManipulationHistory) {
                     StrokeInitialHistory[item.Key] = item.Value.Item2;
                 }
-
                 StrokeManipulationHistory = null;
             }
         }

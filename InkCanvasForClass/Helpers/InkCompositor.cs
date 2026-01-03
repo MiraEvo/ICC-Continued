@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
@@ -14,6 +15,10 @@ namespace Ink_Canvas.Helpers
     /// </summary>
     public static class InkCompositor
     {
+        // 缓存的 TranslateTransform，避免重复创建
+        [ThreadStatic]
+        private static TranslateTransform _cachedTransform;
+        
         /// <summary>
         /// 将墨迹笔画合成到背景位图上
         /// </summary>
@@ -35,10 +40,11 @@ namespace Ink_Canvas.Helpers
 
             using (var graphics = Graphics.FromImage(result))
             {
-                // 设置高质量渲染
-                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                // 设置渲染质量 - 使用较低质量以提高性能，大多数情况下视觉效果差异不大
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighSpeed;
+                graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
 
                 // 绘制背景
                 graphics.DrawImage(background, 0, 0, background.Width, background.Height);
@@ -75,10 +81,15 @@ namespace Ink_Canvas.Helpers
                 var drawingVisual = new DrawingVisual();
                 using (var drawingContext = drawingVisual.RenderOpen())
                 {
-                    // 应用偏移变换
+                    // 应用偏移变换 - 使用缓存的 Transform
                     if (offsetX != 0 || offsetY != 0)
                     {
-                        drawingContext.PushTransform(new TranslateTransform(-offsetX, -offsetY));
+                        if (_cachedTransform == null)
+                            _cachedTransform = new TranslateTransform();
+                        
+                        _cachedTransform.X = -offsetX;
+                        _cachedTransform.Y = -offsetY;
+                        drawingContext.PushTransform(_cachedTransform);
                     }
 
                     // 绘制墨迹
@@ -94,8 +105,8 @@ namespace Ink_Canvas.Helpers
                 var renderBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
                 renderBitmap.Render(drawingVisual);
 
-                // 转换为 System.Drawing.Bitmap
-                return RenderTargetBitmapToBitmap(renderBitmap);
+                // 转换为 System.Drawing.Bitmap - 使用优化的直接像素复制方法
+                return RenderTargetBitmapToBitmapFast(renderBitmap);
             }
             catch (Exception ex)
             {
@@ -105,7 +116,45 @@ namespace Ink_Canvas.Helpers
         }
 
         /// <summary>
-        /// 将 RenderTargetBitmap 转换为 System.Drawing.Bitmap
+        /// 将 RenderTargetBitmap 转换为 System.Drawing.Bitmap（优化版本，直接复制像素数据）
+        /// </summary>
+        private static Bitmap RenderTargetBitmapToBitmapFast(RenderTargetBitmap renderBitmap)
+        {
+            if (renderBitmap == null)
+                return null;
+
+            int width = renderBitmap.PixelWidth;
+            int height = renderBitmap.PixelHeight;
+            int stride = width * 4; // 4 bytes per pixel (BGRA)
+            
+            // 创建像素数组
+            byte[] pixels = new byte[height * stride];
+            renderBitmap.CopyPixels(pixels, stride, 0);
+            
+            // 创建 GDI+ 位图
+            var bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            
+            // 锁定位图内存以进行直接写入
+            var bitmapData = bitmap.LockBits(
+                new Rectangle(0, 0, width, height),
+                ImageLockMode.WriteOnly,
+                System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            
+            try
+            {
+                // 直接复制像素数据到位图
+                Marshal.Copy(pixels, 0, bitmapData.Scan0, pixels.Length);
+            }
+            finally
+            {
+                bitmap.UnlockBits(bitmapData);
+            }
+            
+            return bitmap;
+        }
+        
+        /// <summary>
+        /// 将 RenderTargetBitmap 转换为 System.Drawing.Bitmap（兼容版本，使用 PNG 编码）
         /// </summary>
         private static Bitmap RenderTargetBitmapToBitmap(RenderTargetBitmap renderBitmap)
         {

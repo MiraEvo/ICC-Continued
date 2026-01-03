@@ -40,86 +40,200 @@ namespace Ink_Canvas {
         /// </summary>
         public bool IsErasedStrokePart = false;
 
+        // 缓存字段，避免重复查询 PropertyData
+        private bool? _cachedIsShape = null;
+        private int? _cachedShapeType = null;
+        
+        // 缓存几何图形和画笔
+        private StreamGeometry _cachedGeometry = null;
+        private Pen _cachedPen = null;
+        private Color _cachedPenColor;
+        private double _cachedPenWidth;
+        private bool _geometryNeedsUpdate = true;
+        
+        // 缓存填充画刷
+        private SolidColorBrush _cachedFillBrush = null;
+        private Color _cachedFillColor;
+        
+        // 静态透明画刷缓存
+        private static readonly Brush TransparentBrush = Brushes.Transparent;
+
+        /// <summary>
+        /// 获取缓存的形状类型，避免重复调用 GetPropertyData
+        /// </summary>
+        private int GetCachedShapeType() {
+            if (_cachedShapeType == null) {
+                if (this.ContainsPropertyData(StrokeShapeTypeGuid)) {
+                    _cachedShapeType = (int)this.GetPropertyData(StrokeShapeTypeGuid);
+                } else {
+                    _cachedShapeType = -1;
+                }
+            }
+            return _cachedShapeType.Value;
+        }
+
+        /// <summary>
+        /// 获取缓存的是否是形状标记
+        /// </summary>
+        private bool GetCachedIsShape() {
+            if (_cachedIsShape == null) {
+                _cachedIsShape = this.ContainsPropertyData(StrokeIsShapeGuid) &&
+                                 (bool)this.GetPropertyData(StrokeIsShapeGuid);
+            }
+            return _cachedIsShape.Value;
+        }
+
+        /// <summary>
+        /// 标记几何图形需要更新
+        /// </summary>
+        public void InvalidateGeometryCache() {
+            _geometryNeedsUpdate = true;
+        }
+
         // 自定义的墨迹渲染
         protected override void DrawCore(DrawingContext drawingContext,
             DrawingAttributes drawingAttributes) {
-            if (!(this.ContainsPropertyData(StrokeIsShapeGuid) &&
-                  (bool)this.GetPropertyData(StrokeIsShapeGuid) == true)) {
+            
+            if (!GetCachedIsShape()) {
                 base.DrawCore(drawingContext, drawingAttributes);
                 return;
             }
 
-            if ((int)this.GetPropertyData(StrokeShapeTypeGuid) == (int)MainWindow.ShapeDrawingType.DashedLine ||
-                (int)this.GetPropertyData(StrokeShapeTypeGuid) == (int)MainWindow.ShapeDrawingType.Line ||
-                (int)this.GetPropertyData(StrokeShapeTypeGuid) == (int)MainWindow.ShapeDrawingType.DottedLine ||
-                (int)this.GetPropertyData(StrokeShapeTypeGuid) == (int)MainWindow.ShapeDrawingType.ArrowOneSide ||
-                (int)this.GetPropertyData(StrokeShapeTypeGuid) == (int)MainWindow.ShapeDrawingType.ArrowTwoSide) {
-                if (StylusPoints.Count < 2) {
-                    base.DrawCore(drawingContext, drawingAttributes);
-                    return;
-                }
+            int shapeType = GetCachedShapeType();
+            
+            // 检查是否是线条类形状
+            bool isLineShape = shapeType == (int)MainWindow.ShapeDrawingType.DashedLine ||
+                               shapeType == (int)MainWindow.ShapeDrawingType.Line ||
+                               shapeType == (int)MainWindow.ShapeDrawingType.DottedLine ||
+                               shapeType == (int)MainWindow.ShapeDrawingType.ArrowOneSide ||
+                               shapeType == (int)MainWindow.ShapeDrawingType.ArrowTwoSide;
 
-                var pts = new List<Point>(this.StylusPoints.ToPoints());
-                if (IsDistributePointsOnLineShape && (
-                    (int)this.GetPropertyData(StrokeShapeTypeGuid) == (int)MainWindow.ShapeDrawingType.DashedLine ||
-                    (int)this.GetPropertyData(StrokeShapeTypeGuid) == (int)MainWindow.ShapeDrawingType.Line ||
-                    (int)this.GetPropertyData(StrokeShapeTypeGuid) == (int)MainWindow.ShapeDrawingType.DottedLine) && IsRawStylusPoints) {
-                    IsRawStylusPoints = false;
-                    RawStylusPointCollection = StylusPoints.Clone();
-                    var pointList = new List<Point> { new Point(StylusPoints[0].X, StylusPoints[0].Y) };
-                    pointList.AddRange(MainWindow.ShapeDrawingHelper.DistributePointsOnLine(new Point(StylusPoints[0].X, StylusPoints[0].Y),new Point(StylusPoints[1].X, StylusPoints[1].Y)));
-                    pointList.Add(new Point(StylusPoints[1].X, StylusPoints[1].Y));
-                    StylusPoints = new StylusPointCollection(pointList);
-                }
-                StreamGeometry geometry = new StreamGeometry();
-                using (StreamGeometryContext ctx = geometry.Open()) {
-                    ctx.BeginFigure(pts[0], false , false);
-                    pts.RemoveAt(0);
-                    ctx.PolyLineTo(pts,true, true);
-                }
-                var pen = new Pen(new SolidColorBrush(DrawingAttributes.Color),
-                    (drawingAttributes.Width + drawingAttributes.Height) / 2) {
+            if (!isLineShape) {
+                base.DrawCore(drawingContext, drawingAttributes);
+                return;
+            }
+
+            if (StylusPoints.Count < 2) {
+                base.DrawCore(drawingContext, drawingAttributes);
+                return;
+            }
+
+            // 检查画笔是否需要更新
+            double penWidth = (drawingAttributes.Width + drawingAttributes.Height) / 2;
+            Color penColor = DrawingAttributes.Color;
+            
+            if (_cachedPen == null || _cachedPenColor != penColor || Math.Abs(_cachedPenWidth - penWidth) > 0.001) {
+                var penBrush = new SolidColorBrush(penColor);
+                penBrush.Freeze(); // 冻结画刷以提高性能
+                
+                _cachedPen = new Pen(penBrush, penWidth) {
                     DashCap = PenLineCap.Round,
                     StartLineCap = PenLineCap.Round,
                     EndLineCap = PenLineCap.Round,
                 };
-                if ((int)this.GetPropertyData(StrokeShapeTypeGuid) != (int)MainWindow.ShapeDrawingType.Line && 
-                    (int)this.GetPropertyData(StrokeShapeTypeGuid) != (int)MainWindow.ShapeDrawingType.ArrowOneSide && 
-                    (int)this.GetPropertyData(StrokeShapeTypeGuid) != (int)MainWindow.ShapeDrawingType.ArrowTwoSide)
-                    pen.DashStyle = (int)this.GetPropertyData(StrokeShapeTypeGuid) == (int)MainWindow.ShapeDrawingType.DottedLine ? DashStyles.Dot : DashStyles.Dash;
                 
-                if ((int)this.GetPropertyData(StrokeShapeTypeGuid) == (int)MainWindow.ShapeDrawingType.ArrowOneSide && IsRawStylusPoints) {
-                    IsRawStylusPoints = false;
-                    pts = new List<Point>(this.StylusPoints.ToPoints());
-                    RawStylusPointCollection = StylusPoints.Clone();
-                    double w = ArrowLineConfig.ArrowWidth, h = ArrowLineConfig.ArrowHeight;
-                    var theta = Math.Atan2(pts[0].Y - pts[1].Y, pts[0].X - pts[1].X);
-                    var sint = Math.Sin(theta);
-                    var cost = Math.Cos(theta);
-                    var pointList = new List<Point> {
-                        new Point(pts[0].X, pts[0].Y),
-                    };
-                    if (IsDistributePointsOnLineShape) pointList.AddRange(MainWindow.ShapeDrawingHelper.DistributePointsOnLine(new Point(pts[0].X, pts[0].Y),new Point(pts[1].X, pts[1].Y)));
-                    pointList.AddRange(new List<Point> {
-                        new Point(pts[1].X, pts[1].Y),
-                        new Point(pts[1].X + (w * cost - h * sint), pts[1].Y + (w * sint + h * cost)),
-                        new Point(pts[1].X, pts[1].Y),
-                        new Point(pts[1].X + (w * cost + h * sint), pts[1].Y - (h * cost - w * sint)),
-                    });
-                    StylusPoints = new StylusPointCollection(pointList);
-                    var _pts = new List<Point>(this.StylusPoints.ToPoints());
-                    using (StreamGeometryContext ctx = geometry.Open()) {
-                        ctx.BeginFigure(_pts[0], false , false);
-                        _pts.RemoveAt(0);
-                        ctx.PolyLineTo(_pts,true, true);
-                    }
-                    drawingContext.DrawGeometry(new SolidColorBrush(DrawingAttributes.Color),pen, geometry);
-                    return;
-
+                // 设置虚线样式
+                if (shapeType != (int)MainWindow.ShapeDrawingType.Line &&
+                    shapeType != (int)MainWindow.ShapeDrawingType.ArrowOneSide &&
+                    shapeType != (int)MainWindow.ShapeDrawingType.ArrowTwoSide) {
+                    _cachedPen.DashStyle = shapeType == (int)MainWindow.ShapeDrawingType.DottedLine
+                        ? DashStyles.Dot
+                        : DashStyles.Dash;
                 }
-                drawingContext.DrawGeometry(new SolidColorBrush(Colors.Transparent),pen, geometry);
+                
+                _cachedPen.Freeze(); // 冻结Pen以提高性能
+                _cachedPenColor = penColor;
+                _cachedPenWidth = penWidth;
+                _geometryNeedsUpdate = true;
+            }
+
+            // 处理需要分布点的线条形状
+            if (IsDistributePointsOnLineShape && 
+                (shapeType == (int)MainWindow.ShapeDrawingType.DashedLine ||
+                 shapeType == (int)MainWindow.ShapeDrawingType.Line ||
+                 shapeType == (int)MainWindow.ShapeDrawingType.DottedLine) && 
+                IsRawStylusPoints) {
+                
+                IsRawStylusPoints = false;
+                RawStylusPointCollection = StylusPoints.Clone();
+                
+                var startPoint = new Point(StylusPoints[0].X, StylusPoints[0].Y);
+                var endPoint = new Point(StylusPoints[1].X, StylusPoints[1].Y);
+                
+                var pointList = new List<Point>(20); // 预分配容量
+                pointList.Add(startPoint);
+                pointList.AddRange(MainWindow.ShapeDrawingHelper.DistributePointsOnLine(startPoint, endPoint));
+                pointList.Add(endPoint);
+                
+                StylusPoints = new StylusPointCollection(pointList);
+                _geometryNeedsUpdate = true;
+            }
+
+            // 处理单向箭头
+            if (shapeType == (int)MainWindow.ShapeDrawingType.ArrowOneSide && IsRawStylusPoints) {
+                IsRawStylusPoints = false;
+                
+                var pt0 = new Point(StylusPoints[0].X, StylusPoints[0].Y);
+                var pt1 = new Point(StylusPoints[1].X, StylusPoints[1].Y);
+                RawStylusPointCollection = StylusPoints.Clone();
+                
+                double w = ArrowLineConfig.ArrowWidth, h = ArrowLineConfig.ArrowHeight;
+                var theta = Math.Atan2(pt0.Y - pt1.Y, pt0.X - pt1.X);
+                var sint = Math.Sin(theta);
+                var cost = Math.Cos(theta);
+                
+                var pointList = new List<Point>(10); // 预分配容量
+                pointList.Add(pt0);
+                
+                if (IsDistributePointsOnLineShape) {
+                    pointList.AddRange(MainWindow.ShapeDrawingHelper.DistributePointsOnLine(pt0, pt1));
+                }
+                
+                pointList.Add(pt1);
+                pointList.Add(new Point(pt1.X + (w * cost - h * sint), pt1.Y + (w * sint + h * cost)));
+                pointList.Add(pt1);
+                pointList.Add(new Point(pt1.X + (w * cost + h * sint), pt1.Y - (h * cost - w * sint)));
+                
+                StylusPoints = new StylusPointCollection(pointList);
+                _geometryNeedsUpdate = true;
+            }
+
+            // 生成或更新几何图形
+            if (_geometryNeedsUpdate || _cachedGeometry == null) {
+                _cachedGeometry = new StreamGeometry();
+                
+                using (StreamGeometryContext ctx = _cachedGeometry.Open()) {
+                    var points = this.StylusPoints;
+                    if (points.Count > 0) {
+                        ctx.BeginFigure(new Point(points[0].X, points[0].Y), false, false);
+                        
+                        // 使用数组避免 List 的分配
+                        Point[] ptArray = new Point[points.Count - 1];
+                        for (int i = 1; i < points.Count; i++) {
+                            ptArray[i - 1] = new Point(points[i].X, points[i].Y);
+                        }
+                        ctx.PolyLineTo(ptArray, true, true);
+                    }
+                }
+                
+                _cachedGeometry.Freeze(); // 冻结几何图形以提高性能
+                _geometryNeedsUpdate = false;
+            }
+
+            // 绘制 - 使用缓存的填充画刷
+            Brush fillBrush;
+            if (shapeType == (int)MainWindow.ShapeDrawingType.ArrowOneSide) {
+                if (_cachedFillBrush == null || _cachedFillColor != penColor) {
+                    _cachedFillBrush = new SolidColorBrush(penColor);
+                    _cachedFillBrush.Freeze(); // 冻结画刷以提高性能
+                    _cachedFillColor = penColor;
+                }
+                fillBrush = _cachedFillBrush;
+            } else {
+                fillBrush = TransparentBrush;
             }
             
+            drawingContext.DrawGeometry(fillBrush, _cachedPen, _cachedGeometry);
         }
     }
 

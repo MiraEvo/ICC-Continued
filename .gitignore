@@ -1,8 +1,207 @@
-﻿/InkCanvasForClass/obj
-/InkCanvasForClass/bin
-/InkCanvasForClassX/obj
-/InkCanvasForClassX/bin
-/InkCanvasForClassPPTVsto/obj
-/InkCanvasForClassPPTVsto/bin
-/.vs
-/.idea
+﻿# =========================
+# .NET / Visual Studio
+# =========================
+
+# 构建输出
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio 文件夹
+.vs/
+.vscode/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# 用户特定文件
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet 包
+*.nupkg
+*.snupkg
+# NuGet 符号包
+*.symbols.nupkg
+# 包目录（如果不使用 PackageReference）
+# packages/
+
+# 构建结果
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]uild/
+[Ll]ocalBuild/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Roslyn 缓存
+*.ide/
+
+# MSTest 测试结果
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NUnit
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+
+# xUnit
+xunit.xml
+
+# 覆盖率分析
+*.coverage
+*.coveragexml
+*.tclog
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# MightyMoose
+*.mm.*
+AutoTest.Net/
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JustCode
+.JustCode
+
+# TeamCity
+_TeamCity*
+
+# DotCover
+*.dotCover
+
+# AxoCover
+.axoCover/*
+!.axoCover/settings.json
+
+# Coverlet
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# Visual Studio 代码覆盖结果
+*.coverage
+*.coveragexml
+
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# Web 工作台
+.sass-cache/
+
+# Installshield 输出
+[Ee]xpress/
+
+# DocProject
+DocProject/buildhelp/
+DocProject/Help/*.HxT
+DocProject/Help/*.HxC
+DocProject/Help/*.hhc
+DocProject/Help/*.hhk
+DocProject/Help/*.hhp
+DocProject/Help/Html2
+DocProject/Help/html
+
+# Click-Once
+publish/
+
+# 发布配置
+*.pubxml
+# 注意：取消注释下一行以忽略 web.config 发布转换
+#*.pubxml.user
+PublishScripts/
+
+# NuGet 包配置
+*.nuget.props
+*.nuget.targets
+
+# Chutzpah 测试文件
+_Chutzpah*
+
+# Visual C++ 缓存
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# Windows 缩略图缓存
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+
+# Windows 文件夹配置
+[Dd]esktop.ini
+
+# 回收站
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Rider 快照
+.idea/**/contentModel.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+# =========================
+# 项目特定忽略
+# =========================
+
+# 自定义版权横幅
+custom-copyright-banner.png
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# 日志文件
+*.log
+
+# 本地开发配置（如有）
+appsettings.Development.json
+appsettings.Local.json

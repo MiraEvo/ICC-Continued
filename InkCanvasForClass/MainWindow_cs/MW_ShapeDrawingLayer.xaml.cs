@@ -17,6 +17,18 @@ using System.Windows.Shapes;
 namespace Ink_Canvas {
     public partial class ShapeDrawingLayer : UserControl {
 
+        // 缓存画刷，避免重复创建
+        private static readonly SolidColorBrush TransparentClickableBrush = new SolidColorBrush(Color.FromArgb(1, 0, 0, 0));
+        private static readonly SolidColorBrush ToolButtonPressedBrush = new SolidColorBrush(Color.FromRgb(228, 228, 231));
+        private static readonly SolidColorBrush TransparentBrush = new SolidColorBrush(Colors.Transparent);
+
+        static ShapeDrawingLayer() {
+            // 冻结静态画刷以提高性能
+            TransparentClickableBrush.Freeze();
+            ToolButtonPressedBrush.Freeze();
+            TransparentBrush.Freeze();
+        }
+
         public ShapeDrawingLayer() {
             InitializeComponent();
 
@@ -105,7 +117,7 @@ namespace Ink_Canvas {
 
         public void StartShapeDrawing(MainWindow.ShapeDrawingType type, string name) {
             _shapeType = type;
-            FullscreenGrid.Background = new SolidColorBrush(Color.FromArgb(1,0,0,0));
+            FullscreenGrid.Background = TransparentClickableBrush;
             FullscreenGrid.Visibility = Visibility.Visible;
             Toolbar.Visibility = Visibility.Visible;
             var pt = CaculateCenteredToolbarPosition();
@@ -129,7 +141,7 @@ namespace Ink_Canvas {
         private void ToolButton_MouseDown(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder != null) return;
             ToolButtonMouseDownBorder = (Border)sender;
-            ToolButtonMouseDownBorder.Background = new SolidColorBrush(Color.FromRgb(228, 228, 231));
+            ToolButtonMouseDownBorder.Background = ToolButtonPressedBrush;
         }
 
         private void ToolButton_MouseUp(object sender, MouseButtonEventArgs e) {
@@ -140,7 +152,7 @@ namespace Ink_Canvas {
 
         private void ToolButton_MouseLeave(object sender, MouseEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            ToolButtonMouseDownBorder.Background = new SolidColorBrush(Colors.Transparent);
+            ToolButtonMouseDownBorder.Background = TransparentBrush;
             ToolButtonMouseDownBorder = null;
         }
 
@@ -172,12 +184,19 @@ namespace Ink_Canvas {
         private void FullscreenGrid_MouseMove(object sender, MouseEventArgs e) {
             if (!isFullscreenGridDown) return;
             if (_shapeType == null) return;
-            if (points.Count >= 2) points[1] = e.GetPosition(null); 
-                else points.Add(e.GetPosition(null));
+            
+            if (points.Count >= 2) 
+                points[1] = e.GetPosition(null); 
+            else 
+                points.Add(e.GetPosition(null));
             
             using (DrawingContext dc = DrawingVisualCanvas.DrawingVisual.RenderOpen()) {
                 if (points.Count >= 2) {
                     MainWindow.DrawShapeCore(points, (MainWindow.ShapeDrawingType)_shapeType, true, true).Draw(dc);
+                    
+                    // 预计算差值，避免重复访问 points 集合
+                    double dx = points[1].X - points[0].X;
+                    double dy = points[1].Y - points[0].Y;
                     
                     // 只对线条类型显示角度和长度提示
                     if (_shapeType == MainWindow.ShapeDrawingType.Line ||
@@ -185,16 +204,20 @@ namespace Ink_Canvas {
                         _shapeType == MainWindow.ShapeDrawingType.DottedLine ||
                         _shapeType == MainWindow.ShapeDrawingType.ArrowOneSide ||
                         _shapeType == MainWindow.ShapeDrawingType.ArrowTwoSide) {
+                        
                         var angle = MainWindow.ShapeDrawingHelper.CaculateRotateAngleByGivenTwoPoints(points[0], points[1]);
                         if (AngleTooltip.Visibility == Visibility.Collapsed) AngleTooltip.Visibility = Visibility.Visible;
                         AngleText.Text = $"{angle}°";
+                        
                         if (LengthTooltip.Visibility == Visibility.Collapsed) LengthTooltip.Visibility = Visibility.Visible;
-                        LengthText.Text = $"{Math.Round(Math.Sqrt(Math.Pow((points[1].Y - points[0].Y), 2) + Math.Pow((points[1].X - points[0].X), 2)), 2)} 像素";
+                        // 使用乘法代替 Math.Pow，性能更好
+                        double length = Math.Sqrt(dx * dx + dy * dy);
+                        LengthText.Text = $"{Math.Round(length, 2)} 像素";
                     } else {
                         // 其他形状类型显示宽高信息
                         if (LengthTooltip.Visibility == Visibility.Collapsed) LengthTooltip.Visibility = Visibility.Visible;
-                        var width = Math.Abs(points[1].X - points[0].X);
-                        var height = Math.Abs(points[1].Y - points[0].Y);
+                        double width = Math.Abs(dx);
+                        double height = Math.Abs(dy);
                         LengthText.Text = $"{Math.Round(width, 0)} × {Math.Round(height, 0)} 像素";
                         AngleTooltip.Visibility = Visibility.Collapsed;
                     }

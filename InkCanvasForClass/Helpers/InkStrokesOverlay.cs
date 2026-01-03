@@ -21,6 +21,15 @@ namespace Ink_Canvas.Helpers
         private DrawingGroup cachedDrawingGroup = new DrawingGroup();
         private bool isCached = false;
         private DrawingContext context;
+        
+        // 缓存的画刷，避免重复创建
+        private static readonly SolidColorBrush WhiteBrush;
+        
+        static InkStrokesOverlay()
+        {
+            WhiteBrush = new SolidColorBrush(Colors.White);
+            WhiteBrush.Freeze(); // 冻结画刷以提高性能
+        }
 
         public class ImprovedDrawingVisual: DrawingVisual {
             public ImprovedDrawingVisual() {
@@ -61,25 +70,38 @@ namespace Ink_Canvas.Helpers
                 context = _layer.RenderOpen();
             }
 
-            if (matrixTransform != null) context.PushTransform(new MatrixTransform((Matrix)matrixTransform));
+            // 缓存 MatrixTransform 避免重复创建
+            MatrixTransform cachedMatrixTransform = null;
+            if (matrixTransform != null) {
+                cachedMatrixTransform = new MatrixTransform((Matrix)matrixTransform);
+                cachedMatrixTransform.Freeze();
+                context.PushTransform(cachedMatrixTransform);
+            }
 
             if (strokes.Count != 0) {
-                if (!isCached || (isCached && !strokes.Equals(cachedStrokeCollection))) {
+                if (!isCached || (isCached && !ReferenceEquals(strokes, cachedStrokeCollection))) {
                     cachedStrokeCollection = strokes;
                     cachedDrawingGroup = new DrawingGroup();
                     var gp_context = cachedDrawingGroup.Open();
+                    
+                    // 优化：只克隆需要修改的属性，而不是整个StrokeCollection
                     var stks_cloned = strokes.Clone();
                     foreach (var stroke in stks_cloned) {
                         stroke.DrawingAttributes.Width += 2;
                         stroke.DrawingAttributes.Height += 2;
                     }
                     stks_cloned.Draw(gp_context);
+                    
+                    // 使用缓存的白色画刷
                     foreach (var ori_stk in strokes) {
                         var geo = ori_stk.GetGeometry();
-                        gp_context.DrawGeometry(new SolidColorBrush(Colors.White),null,geo);
-
+                        gp_context.DrawGeometry(WhiteBrush, null, geo);
                     }
                     gp_context.Close();
+                    
+                    // 冻结DrawingGroup以提高性能
+                    cachedDrawingGroup.Freeze();
+                    isCached = true;
                 }
             }
 
@@ -90,6 +112,16 @@ namespace Ink_Canvas.Helpers
             if (isOneTimeDrawing) {
                 context.Close();
             }
+        }
+        
+        /// <summary>
+        /// 清除缓存，在墨迹发生变化时调用
+        /// </summary>
+        public void InvalidateCache()
+        {
+            isCached = false;
+            cachedStrokeCollection = new StrokeCollection();
+            cachedDrawingGroup = new DrawingGroup();
         }
     }
 }

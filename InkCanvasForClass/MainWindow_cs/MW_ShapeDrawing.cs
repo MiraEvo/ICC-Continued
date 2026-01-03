@@ -1385,46 +1385,49 @@ namespace Ink_Canvas {
 
 
         private StrokeCollection GenerateDashedLineStrokeCollection(Point st, Point ed) {
-            double step = 5;
-            var pointList = new List<Point>();
-            StylusPointCollection point;
-            Stroke stroke;
-            var strokes = new StrokeCollection();
+            const double step = 5;
+            const double stepMultiplier = 2.76;
+            
             var d = GetDistance(st, ed);
+            if (d < 0.01) return new StrokeCollection();
+            
+            var strokes = new StrokeCollection();
             var sinTheta = (ed.Y - st.Y) / d;
             var cosTheta = (ed.X - st.X) / d;
-            for (var i = 0.0; i < d; i += step * 2.76) {
-                pointList = new List<Point> {
-                    new Point(st.X + i * cosTheta, st.Y + i * sinTheta),
-                    new Point(st.X + Math.Min(i + step, d) * cosTheta, st.Y + Math.Min(i + step, d) * sinTheta)
+            
+            // 预克隆 DrawingAttributes，避免在循环中重复获取和克隆
+            var drawingAttrs = inkCanvas.DefaultDrawingAttributes.Clone();
+            
+            for (var i = 0.0; i < d; i += step * stepMultiplier) {
+                var endI = Math.Min(i + step, d);
+                var points = new StylusPoint[] {
+                    new StylusPoint(st.X + i * cosTheta, st.Y + i * sinTheta),
+                    new StylusPoint(st.X + endI * cosTheta, st.Y + endI * sinTheta)
                 };
-                point = new StylusPointCollection(pointList);
-                stroke = new Stroke(point) {
-                    DrawingAttributes = inkCanvas.DefaultDrawingAttributes.Clone()
-                };
-                strokes.Add(stroke.Clone());
+                strokes.Add(new Stroke(new StylusPointCollection(points)) { DrawingAttributes = drawingAttrs.Clone() });
             }
 
             return strokes;
         }
 
         private StrokeCollection GenerateDotLineStrokeCollection(Point st, Point ed) {
-            double step = 3;
-            var pointList = new List<Point>();
-            StylusPointCollection point;
-            Stroke stroke;
-            var strokes = new StrokeCollection();
+            const double step = 3;
+            const double stepMultiplier = 2.76;
+            
             var d = GetDistance(st, ed);
+            if (d < 0.01) return new StrokeCollection();
+            
+            var strokes = new StrokeCollection();
             var sinTheta = (ed.Y - st.Y) / d;
             var cosTheta = (ed.X - st.X) / d;
-            for (var i = 0.0; i < d; i += step * 2.76) {
-                var stylusPoint = new StylusPoint(st.X + i * cosTheta, st.Y + i * sinTheta, (float)0.8);
-                point = new StylusPointCollection();
-                point.Add(stylusPoint);
-                stroke = new Stroke(point) {
-                    DrawingAttributes = inkCanvas.DefaultDrawingAttributes.Clone()
-                };
-                strokes.Add(stroke.Clone());
+            
+            // 预克隆 DrawingAttributes，避免在循环中重复获取和克隆
+            var drawingAttrs = inkCanvas.DefaultDrawingAttributes.Clone();
+            
+            for (var i = 0.0; i < d; i += step * stepMultiplier) {
+                var stylusPoint = new StylusPoint(st.X + i * cosTheta, st.Y + i * sinTheta, 0.8f);
+                var point = new StylusPointCollection(1) { stylusPoint };
+                strokes.Add(new Stroke(point) { DrawingAttributes = drawingAttrs.Clone() });
             }
 
             return strokes;

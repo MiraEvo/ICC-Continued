@@ -173,7 +173,6 @@ namespace Ink_Canvas {
 
             var strokeVisual = new StrokeVisual(inkCanvas.DefaultDrawingAttributes.Clone());
             StrokeVisualList[id] = strokeVisual;
-            StrokeVisualList[id] = strokeVisual;
             var visualCanvas = new VisualCanvas(strokeVisual);
             VisualCanvasList[id] = visualCanvas;
             inkCanvas.Children.Add(visualCanvas);
@@ -284,8 +283,8 @@ namespace Ink_Canvas {
             else return Math.Sqrt(args.Width * args.Height); //四边红外
         }
 
-        //记录触摸设备ID
-        private List<int> dec = new List<int>();
+        //记录触摸设备ID - 使用 HashSet 提升查找和删除性能
+        private HashSet<int> dec = new HashSet<int>();
 
         //中心点
         private Point centerPoint;
@@ -368,6 +367,9 @@ namespace Ink_Canvas {
         //    _currentCommitType = CommitReason.UserInput;
         //}
 
+        // 缓存的矩阵变换结构，避免频繁创建新的Matrix对象
+        private Matrix _cachedManipulationMatrix = Matrix.Identity;
+        
         private void Main_Grid_ManipulationDelta(object sender, ManipulationDeltaEventArgs e) {
             if (isInMultiTouchMode || !Settings.Gesture.IsEnableTwoFingerGesture) return;
             if ((dec.Count >= 2 && (Settings.PowerPointSettings.IsEnableTwoFingerGestureInPresentationMode ||
@@ -376,10 +378,11 @@ namespace Ink_Canvas {
                 var md = e.DeltaManipulation;
                 var trans = md.Translation; // 获得位移矢量
 
-                var m = new Matrix();
+                // 重置矩阵为单位矩阵，避免创建新对象
+                _cachedManipulationMatrix.SetIdentity();
 
                 if (Settings.Gesture.IsEnableTwoFingerTranslate)
-                    m.Translate(trans.X, trans.Y); // 移动
+                    _cachedManipulationMatrix.Translate(trans.X, trans.Y); // 移动
 
                 if (Settings.Gesture.IsEnableTwoFingerGestureTranslateOrRotation) {
                     var rotate = md.Rotation; // 获得旋转角度
@@ -388,67 +391,70 @@ namespace Ink_Canvas {
                     // Find center of element and then transform to get current location of center
                     var fe = e.Source as FrameworkElement;
                     var center = new Point(fe.ActualWidth / 2, fe.ActualHeight / 2);
-                    center = m.Transform(center); // 转换为矩阵缩放和旋转的中心点
+                    center = _cachedManipulationMatrix.Transform(center); // 转换为矩阵缩放和旋转的中心点
 
                     if (Settings.Gesture.IsEnableTwoFingerRotation)
-                        m.RotateAt(rotate, center.X, center.Y); // 旋转
+                        _cachedManipulationMatrix.RotateAt(rotate, center.X, center.Y); // 旋转
                     if (Settings.Gesture.IsEnableTwoFingerZoom)
-                        m.ScaleAt(scale.X, scale.Y, center.X, center.Y); // 缩放
+                        _cachedManipulationMatrix.ScaleAt(scale.X, scale.Y, center.X, center.Y); // 缩放
                 }
 
+                // 缓存选中笔画引用，避免多次调用 GetSelectedStrokes()
                 var strokes = inkCanvas.GetSelectedStrokes();
-                if (strokes.Count != 0) {
+                var strokeCount = strokes.Count;
+                var enableTwoFingerZoom = Settings.Gesture.IsEnableTwoFingerZoom;
+                var scaleX = md.Scale.X;
+                var scaleY = md.Scale.Y;
+                
+                if (strokeCount != 0) {
                     foreach (var stroke in strokes) {
-                        stroke.Transform(m, false);
+                        stroke.Transform(_cachedManipulationMatrix, false);
 
+                        // 使用缓存的 circles 引用进行遍历
                         foreach (var circle in circles)
                             if (stroke == circle.Stroke) {
-                                circle.R = GetDistance(circle.Stroke.StylusPoints[0].ToPoint(),
-                                    circle.Stroke.StylusPoints[circle.Stroke.StylusPoints.Count / 2].ToPoint()) / 2;
+                                var stylusPoints = circle.Stroke.StylusPoints;
+                                var halfCount = stylusPoints.Count / 2;
+                                circle.R = GetDistance(stylusPoints[0].ToPoint(),
+                                    stylusPoints[halfCount].ToPoint()) / 2;
                                 circle.Centroid = new Point(
-                                    (circle.Stroke.StylusPoints[0].X +
-                                     circle.Stroke.StylusPoints[circle.Stroke.StylusPoints.Count / 2].X) / 2,
-                                    (circle.Stroke.StylusPoints[0].Y +
-                                     circle.Stroke.StylusPoints[circle.Stroke.StylusPoints.Count / 2].Y) / 2);
+                                    (stylusPoints[0].X + stylusPoints[halfCount].X) / 2,
+                                    (stylusPoints[0].Y + stylusPoints[halfCount].Y) / 2);
                                 break;
                             }
 
-                        if (!Settings.Gesture.IsEnableTwoFingerZoom) continue;
+                        if (!enableTwoFingerZoom) continue;
                         try {
-                            stroke.DrawingAttributes.Width *= md.Scale.X;
-                            stroke.DrawingAttributes.Height *= md.Scale.Y;
+                            stroke.DrawingAttributes.Width *= scaleX;
+                            stroke.DrawingAttributes.Height *= scaleY;
                         }
                         catch (Exception ex) {
                             LogHelper.WriteLogToFile("Error in Main_Grid_ManipulationDelta (Stroke Attributes): " + ex.Message, LogHelper.LogType.Error);
                         }
                     }
                 } else {
-                    if (Settings.Gesture.IsEnableTwoFingerZoom) {
-                        foreach (var stroke in inkCanvas.Strokes) {
-                            stroke.Transform(m, false);
+                    // 合并两个分支，减少代码重复
+                    foreach (var stroke in inkCanvas.Strokes) {
+                        stroke.Transform(_cachedManipulationMatrix, false);
+                        if (enableTwoFingerZoom) {
                             try {
-                                stroke.DrawingAttributes.Width *= md.Scale.X;
-                                stroke.DrawingAttributes.Height *= md.Scale.Y;
+                                stroke.DrawingAttributes.Width *= scaleX;
+                                stroke.DrawingAttributes.Height *= scaleY;
                             }
                             catch (Exception ex) {
                                 LogHelper.WriteLogToFile("Error in Main_Grid_ManipulationDelta (Batch Stroke Attributes): " + ex.Message, LogHelper.LogType.Error);
                             }
                         }
-
-                        ;
-                    } else {
-                        foreach (var stroke in inkCanvas.Strokes) stroke.Transform(m, false);
-                        ;
                     }
 
                     foreach (var circle in circles) {
-                        circle.R = GetDistance(circle.Stroke.StylusPoints[0].ToPoint(),
-                            circle.Stroke.StylusPoints[circle.Stroke.StylusPoints.Count / 2].ToPoint()) / 2;
+                        var stylusPoints = circle.Stroke.StylusPoints;
+                        var halfCount = stylusPoints.Count / 2;
+                        circle.R = GetDistance(stylusPoints[0].ToPoint(),
+                            stylusPoints[halfCount].ToPoint()) / 2;
                         circle.Centroid = new Point(
-                            (circle.Stroke.StylusPoints[0].X +
-                             circle.Stroke.StylusPoints[circle.Stroke.StylusPoints.Count / 2].X) / 2,
-                            (circle.Stroke.StylusPoints[0].Y +
-                             circle.Stroke.StylusPoints[circle.Stroke.StylusPoints.Count / 2].Y) / 2
+                            (stylusPoints[0].X + stylusPoints[halfCount].X) / 2,
+                            (stylusPoints[0].Y + stylusPoints[halfCount].Y) / 2
                         );
                     }
                 }

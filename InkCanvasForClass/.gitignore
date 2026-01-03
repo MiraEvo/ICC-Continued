@@ -1,3 +1,11 @@
-﻿/.vs
-/.idea
+﻿# =========================
+# 项目特定忽略
+# =========================
+
+# 自定义版权横幅（用户自定义文件）
 custom-copyright-banner.png
+
+# 本地 DLL 文件（如果需要忽略）
+# IACore.dll
+# IALoader.dll
+# IAWinFX.dll

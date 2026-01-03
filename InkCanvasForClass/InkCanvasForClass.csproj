@@ -1,553 +1,130 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-	<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-	<OutputType>WinExe</OutputType>
-	<RootNamespace>Ink_Canvas</RootNamespace>
-	<AssemblyName>InkCanvasForClass</AssemblyName>
-	<TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
-	<AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<PublishUrl>publish\</PublishUrl>
-	<Install>true</Install>
-	<InstallFrom>Disk</InstallFrom>
-	<UpdateEnabled>false</UpdateEnabled>
-	<UpdateMode>Foreground</UpdateMode>
-	<UpdateInterval>7</UpdateInterval>
-	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
-	<UpdatePeriodically>false</UpdatePeriodically>
-	<UpdateRequired>false</UpdateRequired>
-	<MapFileExtensions>true</MapFileExtensions>
-	<ApplicationRevision>2</ApplicationRevision>
-	<ApplicationVersion>2.0.2.%2a</ApplicationVersion>
-	<UseApplicationTrust>false</UseApplicationTrust>
-	<BootstrapperEnabled>false</BootstrapperEnabled>
-	<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-	<UseWPF>true</UseWPF>
-	<Configurations>Debug;Release;x86 Debug</Configurations>
-	<PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugType>embedded</DebugType>
-	<OutputPath>bin\$(Configuration)\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='x86 Debug|AnyCPU'">
-	<DebugType>embedded</DebugType>
-	<OutputPath>bin\$(Configuration)\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>embedded</DebugType>
-	<OutputPath>bin\$(Configuration)\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup>
-	<ApplicationIcon>Resources\icc.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-	<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	<DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='x86 Debug|x86'">
-	<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	<DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-	<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	<DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <PropertyGroup>
-	<ApplicationManifest>app.manifest</ApplicationManifest>
-	<Title>InkCanvasForClass</Title>
-	<Version>5.0.4</Version>
-	<Authors>Dubi906w</Authors>
-	<Product>InkCanvasForClass</Product>
-	<Copyright>© Copyright HARKOTEK Studio 2024-now</Copyright>
-	<PackageProjectUrl>https://icc.bliemhax.com</PackageProjectUrl>
-	<FileVersion>bundled</FileVersion>
-	<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
-	<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	<DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='x86 Debug|ARM64'">
-	<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	<DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
-	<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	<DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-	<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	<DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='x86 Debug|x64'">
-	<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	<DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-	<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	<DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <ItemGroup>
-	<!-- Local DLL references (ensure these are .NET 8 compatible) -->
-	<Reference Include="IACore">
-	  <HintPath>.\IACore.dll</HintPath>
-	  <Private>True</Private>
-	</Reference>
-	<Reference Include="IALoader">
-	  <HintPath>.\IALoader.dll</HintPath>
-	  <Private>True</Private>
-	</Reference>
-	<Reference Include="IAWinFX">
-	  <HintPath>.\IAWinFX.dll</HintPath>
-	  <Private>True</Private>
-	</Reference>
-  </ItemGroup>
-  <ItemGroup>
-	<None Include="app.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-	<PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
-	<PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.9.27" NoWarn="NU1701" />
-	<PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
-	<PackageReference Include="Lierda.WPFHelper" Version="1.0.3" NoWarn="NU1701" />
-	<PackageReference Include="Microsoft.Office.Interop.PowerPoint" Version="15.0.4420.1018" />
-	<PackageReference Include="MicrosoftOfficeCore" Version="15.0.0" NoWarn="NU1701" />
 
-  </ItemGroup>
-  <ItemGroup>
-	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-	<PackageReference Include="System.Management" Version="8.0.0" />
-	<PackageReference Include="NHotkey.Wpf" Version="3.0.0" />
-	<PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
-	<PackageReference Include="OSVersionExt" Version="3.0.0" NoWarn="NU1701" />
-	<PackageReference Include="PixiEditor.ColorPicker" Version="3.4.1" />
-	<PackageReference Include="Vanara.PInvoke.Magnification" Version="4.0.2" />
-  </ItemGroup>
-  <ItemGroup>
-	<!-- COM Interop support for .NET 8 -->
-	<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
-	  <PrivateAssets>all</PrivateAssets>
-	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	</PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-	<None Include="Resources\TimerDownNotice.wav" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\contributors.png" />
-	<Resource Include="Resources\Cursors\close-hand-cursor.cur" />
-	<Resource Include="Resources\Cursors\cursor-move.cur" />
-	<Resource Include="Resources\Cursors\cursor-resize-lr.cur" />
-	<Resource Include="Resources\Cursors\cursor-resize-lt-rb.cur" />
-	<Resource Include="Resources\Cursors\cursor-resize-rt-lb.cur" />
-	<Resource Include="Resources\Cursors\cursor-resize-tb.cur" />
-	<Resource Include="Resources\Cursors\open-hand-cursor.cur" />
-	<Resource Include="Resources\Cursors\Pen.cur" />
-	<Resource Include="Resources\icc.ico" />
-	<Resource Include="Resources\Icons-png\AdmoxBooth.png" />
-	<Resource Include="Resources\Icons-png\AdmoxWhiteboard.png" />
-	<Resource Include="Resources\Icons-png\check-box-background.png" />
-	<Resource Include="Resources\Icons-png\classic-icons\desktop-folder.png" />
-	<Resource Include="Resources\Icons-png\classic-icons\desktop-small-icon.png" />
-	<Resource Include="Resources\Icons-png\classic-icons\disk-drive.png" />
-	<Resource Include="Resources\Icons-png\classic-icons\documents-folder.png" />
-	<Resource Include="Resources\Icons-png\classic-icons\folder.png" />
-	<Resource Include="Resources\Icons-png\classic-icons\photo-small-icon.png" />
-	<Resource Include="Resources\Icons-png\classic-icons\program-icon.png" />
-	<Resource Include="Resources\Icons-png\classic-icons\user-folder.png" />
-	<Resource Include="Resources\Icons-png\Donview.png" />
-	<Resource Include="Resources\Icons-png\EasiNote3.png" />
-	<Resource Include="Resources\Icons-png\eraser-line.png" />
-	<Resource Include="Resources\Icons-png\eraser-outline.png" />
-	<Resource Include="Resources\Icons-png\HiteLightBoard.png" />
-	<Resource Include="Resources\Icons-png\ica.png" />
-	<Resource Include="Resources\Icons-png\icc-transparent-dark-small.png" />
-	<Resource Include="Resources\Icons-png\icc-transparent-dark.png" />
-	<Resource Include="Resources\Icons-png\icc-transparent.png" />
-	<Resource Include="Resources\Icons-png\icc.png" />
-	<Resource Include="Resources\Icons-png\InkCanvas.png" />
-	<Resource Include="Resources\Icons-png\kuanciya.png" />
-	<Resource Include="Resources\Icons-png\kuandogeyuanliangwo.png" />
-	<Resource Include="Resources\Icons-png\kuandoujiyanhuaji.png" />
-	<Resource Include="Resources\Icons-png\kuanneikuhuaji.png" />
-	<Resource Include="Resources\Icons-png\kuanshounvhuaji.png" />
-	<Resource Include="Resources\Icons-png\MaxHubWhiteboard.png" />
-	<Resource Include="Resources\Icons-png\menu-back-highlighted.png" />
-	<Resource Include="Resources\Icons-png\menu-back.png" />
-	<Resource Include="Resources\Icons-png\playCircle.png" />
-	<Resource Include="Resources\Icons-png\redo.png" />
-	<Resource Include="Resources\Icons-png\Seewo2Annotation.png" />
-	<Resource Include="Resources\Icons-png\setting.png" />
-	<Resource Include="Resources\Icons-png\tiebahuaji.png" />
-	<Resource Include="Resources\Icons-png\transparent-grid.png" />
-	<Resource Include="Resources\Icons-png\uac_icon.png" />
-	<Resource Include="Resources\Icons-png\undo.png" />
-	<Resource Include="Resources\Icons-png\minimize.png" />
-	<Resource Include="Resources\Icons-png\penUpright.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\twoFingelMove-Blue.png" />
-	<Resource Include="Resources\Icons-png\twoFingelMove.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\close-circle.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\DeveloperAvatars\ChangSakura.png" />
-	<Resource Include="Resources\DeveloperAvatars\WXRIW.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\down.png" />
-	<Resource Include="Resources\Icons-png\up.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\EasiCamera.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\Desmos.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_cursor_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_lasso_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_settings_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_whiteboard_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_dark_theme_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_dual_screen_span_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_timer_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_delete_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_cursorWITHdelete_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_arrow_circle_left_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_arrow_circle_right_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_weather_moon_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_weather_sunny_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_signature_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_save_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_camera_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_copy_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_copy_add_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_add_circle_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_flip_horizontal_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_flip_vertical_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_edit_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_folder_open_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_people_money_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_person_money_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_arrow_rotate_clockwise_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_scale_fit_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_scales_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_arrow_clockwise_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_calendar_sync_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_dismiss_circle_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_drag_24_regular.png" />
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_shapes_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_power_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_clock_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_book_question_mark_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_keyboard_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_control_button_24_regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\ic_fluent_people_24_regular.png" />
-	<Resource Include="Resources\Icons-png\VComYouJiao.png" />
-	<Resource Include="Resources\Icons-png\WenXiang.png" />
-	<Resource Include="Resources\Icons-png\windows-ink.png" />
-	<Resource Include="Resources\Icons-png\YiYunVisualPresenter.png" />
-	<Resource Include="Resources\Icons-png\YiYunWhiteboard.png" />
-	<Resource Include="Resources\new-icons\chevron-left.png" />
-	<Resource Include="Resources\new-icons\end-slides-show.png">
-	  <CopyToOutputDirectory></CopyToOutputDirectory>
-	</Resource>
-	<Resource Include="Resources\new-icons\eye.png" />
-	<Resource Include="Resources\new-icons\hand-move.png" />
-	<Resource Include="Resources\new-icons\highlighter-white.png" />
-	<Resource Include="Resources\new-icons\multi-touch.png" />
-	<Resource Include="Resources\new-icons\osu-lazer-triangles.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\pen-lined.png" />
-	<Resource Include="Resources\new-icons\pen-solid.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\cursor-lined.png" />
-	<Resource Include="Resources\new-icons\cursor-solid.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\eraser-lined.png" />
-	<Resource Include="Resources\new-icons\eraser-solid.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\circle-eraser-lined.png" />
-	<Resource Include="Resources\new-icons\circle-eraser-solid.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\lasso-select-lined.png" />
-	<Resource Include="Resources\new-icons\lasso-select-solid.png" />
-	<Resource Include="Resources\new-icons\pen-white.png" />
-	<Resource Include="Resources\new-icons\rotate.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\trash.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\shapes.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\eye-off.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\grid.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\blackboard.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\cursor-clear.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\DeveloperAvatars\dubi906w.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\gesture.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\gesture-enabled.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\close-white.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\checked-white.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\checked-black.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\pressdown-background.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\geo-icons\arrow.png" />
-	<Resource Include="Resources\Icons-png\geo-icons\dashed-line.png" />
-	<Resource Include="Resources\Icons-png\geo-icons\dotted-line.png" />
-	<Resource Include="Resources\Icons-png\geo-icons\line.png" />
-	<Resource Include="Resources\Icons-png\geo-icons\paralle-lines.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\geo-icons\centered-square.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\geo-icons\centered-circle.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\geo-icons\centered-circle-dashed.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\geo-icons\centered-oval.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\geo-icons\square.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\geo-icons\cylinder.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\geo-icons\cone.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\geo-icons\cube.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\EasiNote.png" />
-	<Resource Include="Resources\Icons-png\EasiNote3C.png" />
-	<Resource Include="Resources\Icons-png\EasiNote5C.png" />
-	<Resource Include="Resources\Icons-png\SeewoPinco.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\HiteBoard.png" />
-	<Resource Include="Resources\Icons-png\HiteCamera.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\Whiteboard.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\Powerpoint.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\PPTTools.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\WPS.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\hatsune-miku1.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-Fluent\party.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\redo.png" />
-	<Resource Include="Resources\new-icons\undo.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\new-icons\unfold-chevron.png" />
-	<Resource Include="Resources\new-icons\zoom.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Compile Remove="AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-	<None Remove="MainWindow.xaml~RF6c3144.TMP" />
-	<None Remove="Resources\contributors.png" />
-	<None Remove="Resources\Cursors\close-hand-cursor.cur" />
-	<None Remove="Resources\Cursors\cursor-move.cur" />
-	<None Remove="Resources\Cursors\cursor-resize-lr.cur" />
-	<None Remove="Resources\Cursors\cursor-resize-lt-rb.cur" />
-	<None Remove="Resources\Cursors\cursor-resize-rt-lb.cur" />
-	<None Remove="Resources\Cursors\cursor-resize-tb.cur" />
-	<None Remove="Resources\Cursors\open-hand-cursor.cur" />
-	<None Remove="Resources\Cursors\Pen.cur" />
-	<None Remove="Resources\icc.ico" />
-	<None Remove="Resources\Icons-png\AdmoxBooth.png" />
-	<None Remove="Resources\Icons-png\AdmoxWhiteboard.png" />
-	<None Remove="Resources\Icons-png\classic-icons\desktop-folder.png" />
-	<None Remove="Resources\Icons-png\classic-icons\desktop-small-icon.png" />
-	<None Remove="Resources\Icons-png\classic-icons\disk-drive.png" />
-	<None Remove="Resources\Icons-png\classic-icons\documents-folder.png" />
-	<None Remove="Resources\Icons-png\classic-icons\folder.png" />
-	<None Remove="Resources\Icons-png\classic-icons\photo-small-icon.png" />
-	<None Remove="Resources\Icons-png\classic-icons\program-icon.png" />
-	<None Remove="Resources\Icons-png\classic-icons\user-folder.png" />
-	<None Remove="Resources\Icons-png\Donview.png" />
-	<None Remove="Resources\Icons-png\EasiNote3.png" />
-	<None Remove="Resources\Icons-png\HiteAnnotation.png" />
-	<None Remove="Resources\Icons-png\HiteLightBoard.png" />
-	<None Remove="Resources\Icons-png\ica.png" />
-	<None Remove="Resources\Icons-png\icc-transparent-dark-small.png" />
-	<None Remove="Resources\Icons-png\icc-transparent-dark.png" />
-	<None Remove="Resources\Icons-png\icc-transparent.png" />
-	<None Remove="Resources\Icons-png\icc.png" />
-	<None Remove="Resources\Icons-png\idt.png" />
-	<None Remove="Resources\Icons-png\InkCanvas.png" />
-	<None Remove="Resources\Icons-png\kuanciya.png" />
-	<None Remove="Resources\Icons-png\kuandogeyuanliangwo.png" />
-	<None Remove="Resources\Icons-png\kuandoujiyanhuaji.png" />
-	<None Remove="Resources\Icons-png\kuanneikuhuaji.png" />
-	<None Remove="Resources\Icons-png\kuanshounvhuaji.png" />
-	<None Remove="Resources\Icons-png\MaxHubWhiteboard.png" />
-	<None Remove="Resources\Icons-png\menu-back-highlighted.png" />
-	<None Remove="Resources\Icons-png\menu-back.png" />
-	<None Remove="Resources\Icons-png\Seewo2Annotation.png" />
-	<None Remove="Resources\Icons-png\tiebahuaji.png" />
-	<None Remove="Resources\Icons-png\transparent-grid.png" />
-	<None Remove="Resources\Icons-png\uac_icon.png" />
-	<None Remove="Resources\Icons-png\VComYouJiao.png" />
-	<None Remove="Resources\Icons-png\WenXiang.png" />
-	<None Remove="Resources\Icons-png\windows-ink.png" />
-	<None Remove="Resources\Icons-png\YiYunVisualPresenter.png" />
-	<None Remove="Resources\Icons-png\YiYunWhiteboard.png" />
-	<None Remove="Resources\new-icons\chevron-left.png" />
-	<None Remove="Resources\new-icons\end-slides-show.png" />
-	<None Remove="Resources\new-icons\eye.png" />
-	<None Remove="Resources\new-icons\hand-move.png" />
-	<None Remove="Resources\new-icons\highlighter-white.png" />
-	<None Remove="Resources\new-icons\multi-touch.png" />
-	<None Remove="Resources\new-icons\osu-lazer-triangles.png" />
-	<None Remove="Resources\new-icons\pen-white.png" />
-	<None Remove="Resources\new-icons\rotate.png" />
-	<None Remove="Resources\new-icons\unfold-chevron.png" />
-	<None Remove="Resources\new-icons\zoom.png" />
-	<None Remove="Resources\PresentationExample\bottombar-dark.png" />
-	<None Remove="Resources\PresentationExample\bottombar-white.png" />
-	<None Remove="Resources\PresentationExample\page.jpg" />
-	<None Remove="Resources\PresentationExample\sidebar-dark.png" />
-	<None Remove="Resources\PresentationExample\sidebar-white.png" />
-	<None Remove="Resources\PresentationExample\toolbar.png" />
-	<None Remove="Resources\qrcodes.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\idt.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Resource Include="Resources\Icons-png\HiteAnnotation.png" />
-	<Resource Include="Resources\PresentationExample\bottombar-dark.png" />
-	<Resource Include="Resources\PresentationExample\bottombar-white.png" />
-	<Resource Include="Resources\PresentationExample\page.jpg" />
-	<Resource Include="Resources\PresentationExample\sidebar-dark.png" />
-	<Resource Include="Resources\PresentationExample\sidebar-white.png" />
-	<Resource Include="Resources\PresentationExample\toolbar.png" />
-	<Resource Include="Resources\qrcodes.png" />
-  </ItemGroup>
-  <ItemGroup>
-	<Compile Update="Properties\Settings.Designer.cs">
-	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>Settings.settings</DependentUpon>
-	</Compile>
-  </ItemGroup>
-  <ItemGroup>
-	<None Update="Properties\Settings.settings">
-	  <Generator>SettingsSingleFileGenerator</Generator>
-	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-	</None>
-	<None Update="custom-copyright-banner.png">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="IACore.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  <PropertyGroup>
+    <!-- 项目基本配置 -->
+    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Ink_Canvas</RootNamespace>
+    <AssemblyName>InkCanvasForClass</AssemblyName>
+    <UseWPF>true</UseWPF>
+    
+    <!-- .NET 8 现代特性 -->
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    
+    <!-- 运行时配置 -->
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <PlatformTarget>x86</PlatformTarget>
+    <Configurations>Debug;Release;x86 Debug</Configurations>
+    
+    <!-- 程序集信息 -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Title>InkCanvasForClass</Title>
+    <Product>InkCanvasForClass</Product>
+    <Version>5.0.4</Version>
+    <Authors>Dubi906w</Authors>
+    <Copyright>© Copyright HARKOTEK Studio 2024-now</Copyright>
+    <PackageProjectUrl>https://icc.bliemhax.com</PackageProjectUrl>
+    <FileVersion>bundled</FileVersion>
+    
+    <!-- 应用程序资源 -->
+    <ApplicationIcon>Resources\icc.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <!-- Debug 配置 -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'x86 Debug'">
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <!-- Release 配置 -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <!-- 本地 DLL 引用 -->
+  <ItemGroup>
+    <Reference Include="IACore">
+      <HintPath>IACore.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="IALoader">
+      <HintPath>IALoader.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="IAWinFX">
+      <HintPath>IAWinFX.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- NuGet 包引用 -->
+  <ItemGroup>
+    <!-- 显式添加以修复 CVE-2021-26701 漏洞 -->
+    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.9.27" NoWarn="NU1701" />
+    <PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
+    <PackageReference Include="Lierda.WPFHelper" Version="1.0.3" NoWarn="NU1701" />
+    <PackageReference Include="Microsoft.Office.Interop.PowerPoint" Version="15.0.4420.1018" />
+    <PackageReference Include="MicrosoftOfficeCore" Version="15.0.0" NoWarn="NU1701" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="NHotkey.Wpf" Version="3.0.0" />
+    <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+    <PackageReference Include="OSVersionExt" Version="3.0.0" NoWarn="NU1701" />
+    <PackageReference Include="PixiEditor.ColorPicker" Version="3.4.1" />
+    <PackageReference Include="Vanara.PInvoke.Magnification" Version="4.0.2" />
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- 资源文件 - 使用通配符简化 -->
+  <ItemGroup>
+    <Resource Include="Resources\**\*.png" />
+    <Resource Include="Resources\**\*.jpg" />
+    <Resource Include="Resources\**\*.cur" />
+    <Resource Include="Resources\**\*.ico" />
+    <None Include="Resources\TimerDownNotice.wav" />
+  </ItemGroup>
+
+  <!-- 排除已通过通配符包含的资源（避免重复） -->
+  <ItemGroup>
+    <Resource Remove="Resources\hatsune-miku1.png" Condition="false" />
+  </ItemGroup>
+
+  <!-- 其他文件配置 -->
+  <ItemGroup>
+    <None Include="app.manifest" />
+    <None Update="IACore.dll" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="IALoader.dll" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="IAWinFX.dll" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="custom-copyright-banner.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Settings 文件配置 -->
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Update="IALoader.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="IAWinFX.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>true</DesignTimeSharedInput>
+      <AutoGen>true</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
+
+  <!-- 移除 AssemblyInfo.cs（使用 SDK 样式项目时通常不需要） -->
   <ItemGroup>
-	<Folder Include="v6\" />
+    <Compile Remove="AssemblyInfo.cs" />
   </ItemGroup>
+
+  <!-- 空文件夹占位 -->
+  <ItemGroup>
+    <Folder Include="v6\" />
+  </ItemGroup>
+
 </Project>
