@@ -101,6 +101,10 @@ namespace Ink_Canvas {
             
             // 工具按钮点击事件 - 每次点击都会触发，用于处理弹窗切换
             ViewModel.ToolButtonClicked += OnToolButtonClicked;
+            
+            // 撤销/重做请求 - 由 View 执行实际操作
+            ViewModel.UndoRequested += OnUndoRequested;
+            ViewModel.RedoRequested += OnRedoRequested;
         }
         
         /// <summary>
@@ -140,6 +144,22 @@ namespace Ink_Canvas {
         {
             HideSubPanels();
         }
+        
+        /// <summary>
+        /// 处理撤销请求 - 调用原有的撤销方法
+        /// </summary>
+        private void OnUndoRequested(object sender, EventArgs e)
+        {
+            BtnUndo_Click(null, null);
+        }
+        
+        /// <summary>
+        /// 处理重做请求 - 调用原有的重做方法
+        /// </summary>
+        private void OnRedoRequested(object sender, EventArgs e)
+        {
+            BtnRedo_Click(null, null);
+        }
 
         /// <summary>
         /// 取消订阅 ViewModel 事件
@@ -156,6 +176,8 @@ namespace Ink_Canvas {
                 ViewModel.DrawLineRequested -= OnDrawLineRequested;
                 ViewModel.HideSubPanelsRequested -= OnHideSubPanelsRequested;
                 ViewModel.ToolButtonClicked -= OnToolButtonClicked;
+                ViewModel.UndoRequested -= OnUndoRequested;
+                ViewModel.RedoRequested -= OnRedoRequested;
             }
         }
 
@@ -614,11 +636,99 @@ namespace Ink_Canvas {
                     
                     LogHelper.WriteLogToFile("Ink Canvas closing: Disposing freeze frame");
                     DisposeFreezeFrame();
+                    
+                    LogHelper.WriteLogToFile("Ink Canvas closing: Unsubscribing system events");
+                    // 取消系统事件订阅，防止进程残留
+                    try {
+                        Microsoft.Win32.SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error unsubscribing UserPreferenceChanged: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
+                    LogHelper.WriteLogToFile("Ink Canvas closing: Releasing PPT COM objects");
+                    // 释放 PPT COM 对象，防止进程残留
+                    try {
+                        if (pptApplication != null) {
+                            try {
+                                pptApplication.PresentationOpen -= PptApplication_PresentationOpen;
+                                pptApplication.PresentationClose -= PptApplication_PresentationClose;
+                                pptApplication.SlideShowBegin -= PptApplication_SlideShowBegin;
+                                pptApplication.SlideShowNextSlide -= PptApplication_SlideShowNextSlide;
+                                pptApplication.SlideShowEnd -= PptApplication_SlideShowEnd;
+                            }
+                            catch { /* 忽略事件解绑错误 */ }
+                            
+                            // 释放 COM 对象引用
+                            try {
+                                System.Runtime.InteropServices.Marshal.ReleaseComObject(pptApplication);
+                            }
+                            catch { /* 忽略 COM 释放错误 */ }
+                            pptApplication = null;
+                        }
+                        
+                        if (presentation != null) {
+                            try {
+                                System.Runtime.InteropServices.Marshal.ReleaseComObject(presentation);
+                            }
+                            catch { /* 忽略 COM 释放错误 */ }
+                            presentation = null;
+                        }
+                        
+                        if (slides != null) {
+                            try {
+                                System.Runtime.InteropServices.Marshal.ReleaseComObject(slides);
+                            }
+                            catch { /* 忽略 COM 释放错误 */ }
+                            slides = null;
+                        }
+                        
+                        if (slide != null) {
+                            try {
+                                System.Runtime.InteropServices.Marshal.ReleaseComObject(slide);
+                            }
+                            catch { /* 忽略 COM 释放错误 */ }
+                            slide = null;
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error releasing PPT COM objects: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
+                    LogHelper.WriteLogToFile("Ink Canvas closing: Unsubscribing ViewModel events");
+                    // 取消 ViewModel 事件订阅
+                    try {
+                        UnsubscribeViewModelEvents();
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error unsubscribing ViewModel events: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
+                    LogHelper.WriteLogToFile("Ink Canvas closing: Disposing TaskbarIcon");
+                    // 释放托盘图标，防止进程残留
+                    try {
+                        var taskbar = (Hardcodet.Wpf.TaskbarNotification.TaskbarIcon)Application.Current.FindResource("TaskbarTrayIcon");
+                        if (taskbar != null) {
+                            taskbar.Dispose();
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error disposing TaskbarIcon: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
                     LogHelper.WriteLogToFile("Ink Canvas closing: Finished cleanup");
                 }
                 catch (Exception ex) {
                     LogHelper.WriteLogToFile("Error during window closing: " + ex.Message, LogHelper.LogType.Error);
                 }
+                
+                // 强制进行垃圾回收，确保 COM 对象被释放
+                try {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+                catch { /* 忽略 GC 错误 */ }
+                
                 Application.Current.Shutdown();
             }
         }

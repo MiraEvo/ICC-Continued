@@ -364,13 +364,24 @@ namespace Ink_Canvas.ViewModels
         #region 撤销/重做命令
 
         /// <summary>
+        /// 撤销请求事件 - 由 View 处理实际的撤销操作
+        /// </summary>
+        public event EventHandler UndoRequested;
+
+        /// <summary>
+        /// 重做请求事件 - 由 View 处理实际的重做操作
+        /// </summary>
+        public event EventHandler RedoRequested;
+
+        /// <summary>
         /// 撤销命令
         /// </summary>
         [RelayCommand(CanExecute = nameof(CanUndo))]
         private void Undo()
         {
-            _timeMachineService.Undo();
-            HideSubPanelsRequested?.Invoke(this, EventArgs.Empty);
+            // 触发事件让 View 执行实际的撤销操作
+            // 因为撤销需要访问 MainWindow 的 timeMachine 和 ApplyHistoryToCanvas
+            UndoRequested?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -379,8 +390,9 @@ namespace Ink_Canvas.ViewModels
         [RelayCommand(CanExecute = nameof(CanRedo))]
         private void Redo()
         {
-            _timeMachineService.Redo();
-            HideSubPanelsRequested?.Invoke(this, EventArgs.Empty);
+            // 触发事件让 View 执行实际的重做操作
+            // 因为重做需要访问 MainWindow 的 timeMachine 和 ApplyHistoryToCanvas
+            RedoRequested?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

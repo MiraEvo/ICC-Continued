@@ -36,10 +36,50 @@ namespace Ink_Canvas
         public App() {
             AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
             Startup += App_Startup;
+            Exit += App_Exit;
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             
             // 初始化依赖注入
             ConfigureServices();
+        }
+        
+        /// <summary>
+        /// 应用程序退出事件处理 - 释放所有资源防止进程残留
+        /// </summary>
+        private void App_Exit(object sender, ExitEventArgs e) {
+            try {
+                LogHelper.WriteLogToFile("Application Exit: Starting cleanup", LogHelper.LogType.Event);
+                
+                // 释放 mutex
+                if (mutex != null) {
+                    try {
+                        mutex.ReleaseMutex();
+                        mutex.Dispose();
+                        mutex = null;
+                        LogHelper.WriteLogToFile("Application Exit: Mutex released", LogHelper.LogType.Info);
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Application Exit: Error releasing mutex - " + ex.Message, LogHelper.LogType.Error);
+                    }
+                }
+                
+                // 释放托盘图标
+                if (_taskbar != null) {
+                    try {
+                        _taskbar.Dispose();
+                        _taskbar = null;
+                        LogHelper.WriteLogToFile("Application Exit: TaskbarIcon disposed", LogHelper.LogType.Info);
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Application Exit: Error disposing TaskbarIcon - " + ex.Message, LogHelper.LogType.Error);
+                    }
+                }
+                
+                LogHelper.WriteLogToFile("Application Exit: Cleanup completed", LogHelper.LogType.Event);
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile("Application Exit: Error during cleanup - " + ex.Message, LogHelper.LogType.Error);
+            }
         }
 
         /// <summary>

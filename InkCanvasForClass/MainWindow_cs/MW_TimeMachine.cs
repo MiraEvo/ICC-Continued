@@ -153,10 +153,18 @@ namespace Ink_Canvas {
 
         private void TimeMachine_OnUndoStateChanged(bool status) {
             SymbolIconUndo.IsEnabled = status;
+            // 同步更新 ViewModel 的 CanUndo 状态
+            if (ViewModel != null) {
+                ViewModel.CanUndo = status;
+            }
         }
 
         private void TimeMachine_OnRedoStateChanged(bool status) {
             SymbolIconRedo.IsEnabled = status;
+            // 同步更新 ViewModel 的 CanRedo 状态
+            if (ViewModel != null) {
+                ViewModel.CanRedo = status;
+            }
         }
 
 
