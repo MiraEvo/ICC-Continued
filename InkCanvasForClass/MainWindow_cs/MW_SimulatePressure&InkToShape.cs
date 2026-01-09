@@ -1,4 +1,5 @@
-﻿using Ink_Canvas.Helpers;
+﻿
+using Ink_Canvas.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,6 +28,8 @@ namespace Ink_Canvas {
                 if (Settings.InkToShape.IsInkToShapeEnabled) {
                     void InkToShapeProcess() {
                         try {
+                            LogHelper.WriteLogToFile($"InkToShapeProcess: Starting with stroke containing {e.Stroke.StylusPoints.Count} points", LogHelper.LogType.Trace);
+                            
                             newStrokes.Add(e.Stroke);
                             if (newStrokes.Count > 4) newStrokes.RemoveAt(0);
                             Dispatcher.InvokeAsync(() => {
@@ -39,18 +42,32 @@ namespace Ink_Canvas {
                                         circles.RemoveAt(i);
                             });
                             var strokeReco = new StrokeCollection();
-                            var result = InkRecognizeHelper.RecognizeShape(newStrokes);
+                            LogHelper.WriteLogToFile($"InkToShapeProcess: Attempting to recognize {newStrokes.Count} strokes", LogHelper.LogType.Trace);
+                            var result = InkRecognizeHelper.RecognizeShape(newStrokes, Settings.InkToShape);
+                            
+                            // 尝试识别单个笔画（圆形/椭圆可能只需要一个笔画）
                             for (var i = newStrokes.Count - 1; i >= 0; i--) {
                                 strokeReco.Add(newStrokes[i]);
-                                var newResult = InkRecognizeHelper.RecognizeShape(strokeReco);
-                                if (newResult.InkDrawingNode.GetShapeName() == "Circle" ||
-                                    newResult.InkDrawingNode.GetShapeName() == "Ellipse") {
-                                    result = newResult;
-                                    break;
+                                var newResult = InkRecognizeHelper.RecognizeShape(strokeReco, Settings.InkToShape);
+                                // 检查 newResult 是否为 null
+                                if (newResult != null && newResult.InkDrawingNode != null) {
+                                    var shapeName = newResult.InkDrawingNode.GetShapeName();
+                                    if (shapeName == "Circle" || shapeName == "Ellipse") {
+                                        result = newResult;
+                                        break;
+                                    }
                                 }
                             }
+                            
+                            // 如果没有识别到任何形状，直接返回
+                            if (result == null || result.InkDrawingNode == null) {
+                                return;
+                            }
+                            
+                            var recognizedShapeName = result.InkDrawingNode.GetShapeName();
+                            LogHelper.WriteLogToFile($"Recognized shape: {recognizedShapeName}", LogHelper.LogType.Info);
 
-                            if (result.InkDrawingNode.GetShapeName() == "Circle" &&
+                            if (recognizedShapeName == "Circle" &&
                                 Settings.InkToShape.IsInkToShapeRounded == true) {
                                 var shapeWidth = Dispatcher.Invoke(()=>result.InkDrawingNode.GetShape().Width);
                                 var shapeHeight = Dispatcher.Invoke(()=>result.InkDrawingNode.GetShape().Height);
@@ -109,17 +126,13 @@ namespace Ink_Canvas {
                                     newStrokes = new StrokeCollection();
                                 }
                             }
-                            else if (result.InkDrawingNode.GetShapeName().Contains("Ellipse") &&
+                            else if (recognizedShapeName.Contains("Ellipse") &&
                                      Settings.InkToShape.IsInkToShapeRounded == true) {
                                 var shapeWidth = Dispatcher.Invoke(()=>result.InkDrawingNode.GetShape().Width);
                                 var shapeHeight = Dispatcher.Invoke(()=>result.InkDrawingNode.GetShape().Height);
-                                PointCollection p = new PointCollection();
-                                Point[] _p = new Point[]{};
-                                Dispatcher.Invoke(() => {
-                                    var arr = result.InkDrawingNode.HotPoints.ToArray();
-                                    _p = arr;
-                                });
-                                p = new PointCollection(_p);
+                                // HotPoints 现在是 Point[]，可以直接跨线程访问
+                                var hotPoints = result.InkDrawingNode.HotPoints;
+                                var p = new PointCollection(hotPoints);
                                 var a = GetDistance(p[0], p[2]) / 2; //长半轴
                                 var b = GetDistance(p[1], p[3]) / 2; //短半轴
                                 if (a < b) {
@@ -131,7 +144,7 @@ namespace Ink_Canvas {
                                 result.Centroid = new Point((p[0].X + p[2].X) / 2, (p[0].Y + p[2].Y) / 2);
                                 var needRotation = true;
 
-                                if (shapeWidth > 75 || (shapeHeight > 75 && p.Count == 4)) {
+                                if (shapeWidth > 75 || (shapeHeight > 75 && hotPoints.Length == 4)) {
                                     var iniP = new Point(result.Centroid.X - shapeWidth / 2,
                                         result.Centroid.Y - shapeHeight / 2);
                                     var endP = new Point(result.Centroid.X + shapeWidth / 2,
@@ -262,20 +275,23 @@ namespace Ink_Canvas {
                                     });
                                 }
                             }
-                            else if (result.InkDrawingNode.GetShapeName().Contains("Triangle") &&
+                            else if (recognizedShapeName.Contains("Triangle") &&
                                      Settings.InkToShape.IsInkToShapeTriangle == true) {
-                                PointCollection p = new PointCollection();
-                                Point[] _p = new Point[]{};
-                                Dispatcher.Invoke(() => {
-                                    var arr = result.InkDrawingNode.HotPoints.ToArray();
-                                    _p = arr;
-                                });
-                                p = new PointCollection(_p);
-                                if ((Math.Max(Math.Max(p[0].X, p[1].X), p[2].X) -
-                                     Math.Min(Math.Min(p[0].X, p[1].X), p[2].X) >= 100 ||
-                                     Math.Max(Math.Max(p[0].Y, p[1].Y), p[2].Y) -
-                                     Math.Min(Math.Min(p[0].Y, p[1].Y), p[2].Y) >= 100) &&
-                                    result.InkDrawingNode.HotPoints.Count == 3) {
+                                // HotPoints 现在是 Point[]，可以直接跨线程访问
+                                var hotPoints = result.InkDrawingNode.HotPoints;
+                                LogHelper.WriteLogToFile($"Triangle: HotPoints.Length={hotPoints?.Length ?? 0}", LogHelper.LogType.Trace);
+                                
+                                if (hotPoints == null || hotPoints.Length < 3) {
+                                    LogHelper.WriteLogToFile($"Triangle: Not enough hot points ({hotPoints?.Length ?? 0}), need at least 3", LogHelper.LogType.Trace);
+                                    return;
+                                }
+                                
+                                var p = new PointCollection(hotPoints);
+                                var sizeX = Math.Max(Math.Max(p[0].X, p[1].X), p[2].X) - Math.Min(Math.Min(p[0].X, p[1].X), p[2].X);
+                                var sizeY = Math.Max(Math.Max(p[0].Y, p[1].Y), p[2].Y) - Math.Min(Math.Min(p[0].Y, p[1].Y), p[2].Y);
+                                LogHelper.WriteLogToFile($"Triangle: Size={sizeX:F1}x{sizeY:F1}, Points=({p[0]}, {p[1]}, {p[2]})", LogHelper.LogType.Trace);
+                                
+                                if ((sizeX >= 50 || sizeY >= 50) && hotPoints.Length == 3) {
                                     //纠正垂直与水平关系
                                     var newPoints = FixPointsDirection(p[0], p[1]);
                                     p[0] = newPoints[0];
@@ -305,24 +321,35 @@ namespace Ink_Canvas {
                                     });
                                 }
                             }
-                            else if ((result.InkDrawingNode.GetShapeName().Contains("Rectangle") ||
-                                      result.InkDrawingNode.GetShapeName().Contains("Diamond") ||
-                                      result.InkDrawingNode.GetShapeName().Contains("Parallelogram") ||
-                                      result.InkDrawingNode.GetShapeName().Contains("Square") ||
-                                      result.InkDrawingNode.GetShapeName().Contains("Trapezoid")) &&
+                            else if ((recognizedShapeName.Contains("Rectangle") ||
+                                      recognizedShapeName.Contains("Diamond") ||
+                                      recognizedShapeName.Contains("Parallelogram") ||
+                                      recognizedShapeName.Contains("Square") ||
+                                      recognizedShapeName.Contains("Trapezoid") ||
+                                      recognizedShapeName.Contains("Pentagon") ||
+                                      recognizedShapeName.Contains("Hexagon")) &&
                                      Settings.InkToShape.IsInkToShapeRectangle == true) {
-                                PointCollection p = new PointCollection();
-                                Point[] _p = new Point[]{};
-                                Dispatcher.Invoke(() => {
-                                    var arr = result.InkDrawingNode.HotPoints.ToArray();
-                                    _p = arr;
-                                });
-                                p = new PointCollection(_p);
-                                if ((Math.Max(Math.Max(Math.Max(p[0].X, p[1].X), p[2].X), p[3].X) -
-                                     Math.Min(Math.Min(Math.Min(p[0].X, p[1].X), p[2].X), p[3].X) >= 100 ||
-                                     Math.Max(Math.Max(Math.Max(p[0].Y, p[1].Y), p[2].Y), p[3].Y) -
-                                     Math.Min(Math.Min(Math.Min(p[0].Y, p[1].Y), p[2].Y), p[3].Y) >= 100) &&
-                                    result.InkDrawingNode.HotPoints.Count == 4) {
+                                // HotPoints 现在是 Point[]，可以直接跨线程访问
+                                var hotPoints = result.InkDrawingNode.HotPoints;
+                                LogHelper.WriteLogToFile($"Rectangle/Quad: HotPoints.Length={hotPoints?.Length ?? 0}", LogHelper.LogType.Trace);
+                                
+                                // 对于多边形（Pentagon, Hexagon），尝试简化为4个点的矩形
+                                if (hotPoints == null || hotPoints.Length < 4) {
+                                    LogHelper.WriteLogToFile($"Rectangle/Quad: Not enough hot points ({hotPoints?.Length ?? 0}), need at least 4", LogHelper.LogType.Trace);
+                                    return;
+                                }
+                                
+                                // 如果是5边形或6边形，取前4个点作为矩形顶点
+                                var pointsToUse = hotPoints.Length > 4
+                                    ? hotPoints.Take(4).ToArray()
+                                    : hotPoints;
+                                
+                                var p = new PointCollection(pointsToUse);
+                                var sizeX = Math.Max(Math.Max(Math.Max(p[0].X, p[1].X), p[2].X), p[3].X) - Math.Min(Math.Min(Math.Min(p[0].X, p[1].X), p[2].X), p[3].X);
+                                var sizeY = Math.Max(Math.Max(Math.Max(p[0].Y, p[1].Y), p[2].Y), p[3].Y) - Math.Min(Math.Min(Math.Min(p[0].Y, p[1].Y), p[2].Y), p[3].Y);
+                                LogHelper.WriteLogToFile($"Rectangle/Quad: Size={sizeX:F1}x{sizeY:F1}, Points=({p[0]}, {p[1]}, {p[2]}, {p[3]}), OriginalCount={hotPoints.Length}", LogHelper.LogType.Trace);
+                                
+                                if ((sizeX >= 50 || sizeY >= 50) && pointsToUse.Length == 4) {
                                     //纠正垂直与水平关系
                                     var newPoints = FixPointsDirection(p[0], p[1]);
                                     p[0] = newPoints[0];
@@ -358,7 +385,14 @@ namespace Ink_Canvas {
                             }
                         }
                         catch (Exception ex) {
-                            LogHelper.WriteLogToFile("Error in InkToShapeProcess: " + ex.Message, LogHelper.LogType.Error);
+                            var errorMessage = $"Error in InkToShapeProcess: {ex.Message}";
+                            if (ex.InnerException != null)
+                            {
+                                errorMessage += $"\nInnerException: {ex.InnerException.Message}";
+                            }
+                            errorMessage += $"\nStackTrace: {ex.StackTrace}";
+                            errorMessage += $"\nHResult: 0x{ex.HResult:X8}";
+                            LogHelper.WriteLogToFile(errorMessage, LogHelper.LogType.Error);
                         }
                     }
 

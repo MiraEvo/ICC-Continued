@@ -511,6 +511,28 @@ namespace Ink_Canvas
         public bool IsInkToShapeRectangle { get; set; } = true;
         [JsonProperty("isInkToShapeRounded")]
         public bool IsInkToShapeRounded { get; set; } = true;
+        
+        // 识别优化设置
+        [JsonProperty("confidenceThreshold")]
+        public double ConfidenceThreshold { get; set; } = 0.3;  // 识别置信度阈值 (0.0-1.0)，降低以提高识别率
+        
+        [JsonProperty("minimumShapeSize")]
+        public double MinimumShapeSize { get; set; } = 30.0;  // 最小形状尺寸（像素），降低以支持更小的形状
+        
+        [JsonProperty("enablePolygonRecognition")]
+        public bool EnablePolygonRecognition { get; set; } = true;  // 启用多边形识别（五边形、六边形）
+        
+        [JsonProperty("enableShapeSmoothing")]
+        public bool EnableShapeSmoothing { get; set; } = false;  // 禁用形状平滑，避免影响识别
+        
+        [JsonProperty("resamplePointCount")]
+        public int ResamplePointCount { get; set; } = 48;  // 重采样点数（用于识别优化）
+        
+        [JsonProperty("enableAdaptiveResampling")]
+        public bool EnableAdaptiveResampling { get; set; } = true;  // 启用自适应重采样
+        
+        [JsonProperty("geometryValidationStrength")]
+        public double GeometryValidationStrength { get; set; } = 0.3;  // 几何验证强度 (0.0-1.0)，降低以提高通过率
     }
 
     public class RandSettings {
