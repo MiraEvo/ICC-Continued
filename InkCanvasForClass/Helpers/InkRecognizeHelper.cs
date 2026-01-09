@@ -381,12 +381,14 @@ namespace Ink_Canvas.Helpers
                         return ValidateQuadrilateral(points, strength);
                         
                     case InkAnalysisDrawingKind.Pentagon:
-                        return ValidatePolygon(points, 5, strength);
-                        
                     case InkAnalysisDrawingKind.Hexagon:
-                        return ValidatePolygon(points, 6, strength);
+                        // 明确禁止识别五边形及以上的多边形
+                        return false;
                         
                     default:
+                        // 对于其他未明确处理的类型，如果有 5 个或更多点，也视为不支持
+                        if (expectedPoints > 4)
+                            return false;
                         return true;
                 }
             }
@@ -416,9 +418,34 @@ namespace Ink_Canvas.Helpers
         private static bool ValidateTriangle(IList<Windows.Foundation.Point> points, double strength)
         {
             if (points.Count < 3) return false;
+            
+            // 简单的三角形验证：只要有三个点，并且不是一条直线（面积不为0）
+            // 在实际手绘中，很难画出完全共线的三个点，所以这里放宽限制
+            var p1 = points[0];
+            var p2 = points[1];
+            var p3 = points[2];
+            
+            // 计算三角形面积（使用叉积公式）
+            double area = Math.Abs((p2.X - p1.X) * (p3.Y - p1.Y) - (p3.X - p1.X) * (p2.Y - p1.Y)) / 2.0;
+            
+            // 计算边界框面积，用于归一化比较
+            double minX = Math.Min(p1.X, Math.Min(p2.X, p3.X));
+            double maxX = Math.Max(p1.X, Math.Max(p2.X, p3.X));
+            double minY = Math.Min(p1.Y, Math.Min(p2.Y, p3.Y));
+            double maxY = Math.Max(p1.Y, Math.Max(p2.Y, p3.Y));
+            double boundArea = (maxX - minX) * (maxY - minY);
+            
+            // 如果三角形面积相对于边界框太小，可能是直线
+            if (boundArea > 0 && area / boundArea < 0.05)
+                return false;
+                
+            // 进一步验证角度，避免极度扁平的三角形
             var angles = CalculatePolygonAngles(points.Take(3).ToList());
-            double minAngle = 10 + (1 - strength) * 10;
-            double maxAngle = 170 - (1 - strength) * 10;
+            // 放宽角度限制，支持更多形态的三角形
+            // 最小角度允许更小，最大角度允许更大，只要不接近180度
+            double minAngle = 5;
+            double maxAngle = 175;
+            
             return angles.All(a => a >= minAngle && a <= maxAngle);
         }
         
@@ -675,9 +702,14 @@ namespace Ink_Canvas.Helpers
         
         /// <summary>
         /// 检查是否是支持的形状类型
+        /// 注意：不再支持 Pentagon 和 Hexagon，因为用户要求只识别四边形及以下的形状
         /// </summary>
         public static bool IsContainShapeType(InkAnalysisDrawingKind kind, bool enablePolygon = true)
         {
+            // 强制忽略 enablePolygon 参数，始终只支持基础形状
+            
+            // 只支持基础形状：圆形、椭圆、三角形、矩形类
+            // 明确排除了 Pentagon (五边形) 和 Hexagon (六边形)
             bool basicShapes = kind == InkAnalysisDrawingKind.Circle ||
                                kind == InkAnalysisDrawingKind.Ellipse ||
                                kind == InkAnalysisDrawingKind.Triangle ||
@@ -687,16 +719,7 @@ namespace Ink_Canvas.Helpers
                                kind == InkAnalysisDrawingKind.Trapezoid ||
                                kind == InkAnalysisDrawingKind.Parallelogram;
             
-            if (basicShapes)
-                return true;
-            
-            if (enablePolygon)
-            {
-                return kind == InkAnalysisDrawingKind.Pentagon ||
-                       kind == InkAnalysisDrawingKind.Hexagon;
-            }
-            
-            return false;
+            return basicShapes;
         }
         
         /// <summary>
@@ -707,16 +730,15 @@ namespace Ink_Canvas.Helpers
             if (string.IsNullOrEmpty(name))
                 return false;
                 
-            return name.Contains("Triangle") || 
+            // 确保不包含 Pentagon 和 Hexagon
+            return name.Contains("Triangle") ||
                    name.Contains("Circle") ||
-                   name.Contains("Rectangle") || 
+                   name.Contains("Rectangle") ||
                    name.Contains("Diamond") ||
-                   name.Contains("Parallelogram") || 
+                   name.Contains("Parallelogram") ||
                    name.Contains("Square") ||
                    name.Contains("Ellipse") ||
-                   name.Contains("Trapezoid") ||
-                   name.Contains("Pentagon") ||
-                   name.Contains("Hexagon");
+                   name.Contains("Trapezoid");
         }
         
         /// <summary>

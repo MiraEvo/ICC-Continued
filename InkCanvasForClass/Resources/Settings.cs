@@ -520,7 +520,7 @@ namespace Ink_Canvas
         public double MinimumShapeSize { get; set; } = 30.0;  // 最小形状尺寸（像素），降低以支持更小的形状
         
         [JsonProperty("enablePolygonRecognition")]
-        public bool EnablePolygonRecognition { get; set; } = true;  // 启用多边形识别（五边形、六边形）
+        public bool EnablePolygonRecognition { get; set; } = false;  // 启用多边形识别（五边形、六边形）- 已禁用
         
         [JsonProperty("enableShapeSmoothing")]
         public bool EnableShapeSmoothing { get; set; } = false;  // 禁用形状平滑，避免影响识别

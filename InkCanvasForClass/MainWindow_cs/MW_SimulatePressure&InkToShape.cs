@@ -325,21 +325,18 @@ namespace Ink_Canvas {
                                       recognizedShapeName.Contains("Diamond") ||
                                       recognizedShapeName.Contains("Parallelogram") ||
                                       recognizedShapeName.Contains("Square") ||
-                                      recognizedShapeName.Contains("Trapezoid") ||
-                                      recognizedShapeName.Contains("Pentagon") ||
-                                      recognizedShapeName.Contains("Hexagon")) &&
+                                      recognizedShapeName.Contains("Trapezoid")) &&
                                      Settings.InkToShape.IsInkToShapeRectangle == true) {
                                 // HotPoints 现在是 Point[]，可以直接跨线程访问
                                 var hotPoints = result.InkDrawingNode.HotPoints;
                                 LogHelper.WriteLogToFile($"Rectangle/Quad: HotPoints.Length={hotPoints?.Length ?? 0}", LogHelper.LogType.Trace);
                                 
-                                // 对于多边形（Pentagon, Hexagon），尝试简化为4个点的矩形
                                 if (hotPoints == null || hotPoints.Length < 4) {
                                     LogHelper.WriteLogToFile($"Rectangle/Quad: Not enough hot points ({hotPoints?.Length ?? 0}), need at least 4", LogHelper.LogType.Trace);
                                     return;
                                 }
                                 
-                                // 如果是5边形或6边形，取前4个点作为矩形顶点
+                                // 始终只取前4个点（我们只支持四边形）
                                 var pointsToUse = hotPoints.Length > 4
                                     ? hotPoints.Take(4).ToArray()
                                     : hotPoints;
