@@ -562,8 +562,8 @@ namespace Ink_Canvas {
                 drawingAttributes.Color = Ink_DefaultColor;
 
 
-                drawingAttributes.Height = 2.5;
-                drawingAttributes.Width = 2.5;
+                drawingAttributes.Height = 5;
+                drawingAttributes.Width = 5;
                 drawingAttributes.IsHighlighter = false;
                 drawingAttributes.FitToCurve = Settings.Canvas.FitToCurve;
 

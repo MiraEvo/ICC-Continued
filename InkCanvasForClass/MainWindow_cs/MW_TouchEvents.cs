@@ -148,7 +148,8 @@ namespace Ink_Canvas {
                 try {
                     if (GetTouchDownPointsList(e.StylusDevice.Id) != InkCanvasEditingMode.None) return;
                     try {
-                        if (e.StylusDevice.StylusButtons[1].StylusButtonState == StylusButtonState.Down) return;
+                        if (e.StylusDevice.StylusButtons.Count > 1 && 
+                            e.StylusDevice.StylusButtons[1].StylusButtonState == StylusButtonState.Down) return;
                     }
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error in MainWindow_StylusMove (Button Check): " + ex.Message, LogHelper.LogType.Error);

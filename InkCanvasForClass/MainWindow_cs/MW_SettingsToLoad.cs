@@ -1,5 +1,6 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using Ink_Canvas.Helpers;
+using Ink_Canvas.Popups;
 using Newtonsoft.Json;
 using Ookii.Dialogs.Wpf;
 using OSVersionExtension;
@@ -562,7 +563,7 @@ namespace Ink_Canvas {
                 drawingAttributes.Height = Settings.Canvas.InkWidth;
                 drawingAttributes.Width = Settings.Canvas.InkWidth;
 
-                InkWidthSlider.Value = Settings.Canvas.InkWidth * 2;
+                InkWidthSlider.Value = Settings.Canvas.InkWidth;
                 HighlighterWidthSlider.Value = Settings.Canvas.HighlighterWidth;
                 
                 // 恢复笔设置
@@ -573,6 +574,10 @@ namespace Ink_Canvas {
                 highlighterColor = Settings.Canvas.LastHighlighterColor;
                 lastPenWidth = Settings.Canvas.InkWidth;
                 lastHighlighterWidth = Settings.Canvas.HighlighterWidth;
+                
+                // 同步ColorPalette的笔模式和笔粗细
+                PenPaletteV2.PenModeSelected = penType == 1 ? ColorPalette.PenMode.HighlighterMode : ColorPalette.PenMode.PenMode;
+                PenPaletteV2.SelectedPenWidth = penType == 1 ? Settings.Canvas.HighlighterWidth : Settings.Canvas.InkWidth;
                 
                 // 根据笔类型设置绘图属性
                 if (penType == 1) {
@@ -772,6 +777,25 @@ namespace Ink_Canvas {
                 ToggleCheckboxEnableInkToShapeRounded.IsChecked = Settings.InkToShape.IsInkToShapeRounded;
             } else {
                 Settings.InkToShape = new InkToShape();
+            }
+            
+            // 初始化调色盘的压感模拟状态
+            // InkStyle: -1 = 不模拟, 0 = 点集笔锋, 1 = 速度笔锋
+            switch (Settings.Canvas.InkStyle) {
+                case -1:
+                    PenPaletteV2.SimulatePressure = ColorPalette.PressureSimulation.None;
+                    break;
+                case 0:
+                    PenPaletteV2.SimulatePressure = ColorPalette.PressureSimulation.PointSimulate;
+                    break;
+                case 1:
+                    PenPaletteV2.SimulatePressure = ColorPalette.PressureSimulation.VelocitySimulate;
+                    break;
+                default:
+                    // 默认使用点集笔锋
+                    PenPaletteV2.SimulatePressure = ColorPalette.PressureSimulation.PointSimulate;
+                    Settings.Canvas.InkStyle = 0;
+                    break;
             }
 
             #endregion

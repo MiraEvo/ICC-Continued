@@ -85,9 +85,9 @@ namespace Ink_Canvas {
         private const int DefaultInkColorIndex = 1;  // 默认红色
 
         // 笔触粗细有效范围常量
-        private const double MinPenWidth = 0.5;
-        private const double MaxPenWidth = 50.0;
-        private const double DefaultPenWidth = 2.5;
+        private const double MinPenWidth = 1.0;
+        private const double MaxPenWidth = 20.0;
+        private const double DefaultPenWidth = 5.0;
         private const double MinHighlighterWidth = 8.0;
         private const double MaxHighlighterWidth = 80.0;
         private const double DefaultHighlighterWidth = 20.0;
@@ -813,6 +813,7 @@ namespace Ink_Canvas {
             PenPaletteV2.PaletteShouldCloseEvent += PenpaletteV2_PaletteShouldCloseEvent;
             PenPaletteV2.PenModeChanged += PenpaletteV2_PenModeChanged;
             PenPaletteV2.InkRecognitionChanged += PenpaletteV2_InkRecognitionChanged;
+            PenPaletteV2.PressureSimulationChanged += PenpaletteV2_PressureSimulationChanged;
             PenPaletteV2.PenWidthChanged += PenpaletteV2_PenWidthChanged;
             PenPaletteV2.SelectedColor = ColorPalette.ColorPaletteColor.ColorRed;
         }
@@ -925,6 +926,28 @@ namespace Ink_Canvas {
             if (e.TriggerMode == ColorPalette.TriggerMode.TriggeredByCode) return;
             Settings.InkToShape.IsInkToShapeEnabled = e.NowStatus;
             ToggleSwitchEnableInkToShape.IsOn = e.NowStatus;
+            SaveSettingsToFile();
+        }
+
+        private void PenpaletteV2_PressureSimulationChanged(object sender, ColorPalette.PressureSimulationChangedEventArgs e) {
+            if (e.TriggerMode == ColorPalette.TriggerMode.TriggeredByCode) return;
+            
+            // 将调色盘的压感模拟模式映射到Settings.Canvas.InkStyle
+            // PressureSimulation.None = 不模拟 (InkStyle = -1)
+            // PressureSimulation.PointSimulate = 点集笔锋 (InkStyle = 0)
+            // PressureSimulation.VelocitySimulate = 速度笔锋 (InkStyle = 1)
+            switch (e.NowMode) {
+                case ColorPalette.PressureSimulation.None:
+                    Settings.Canvas.InkStyle = -1;
+                    break;
+                case ColorPalette.PressureSimulation.PointSimulate:
+                    Settings.Canvas.InkStyle = 0;
+                    break;
+                case ColorPalette.PressureSimulation.VelocitySimulate:
+                    Settings.Canvas.InkStyle = 1;
+                    break;
+            }
+            
             SaveSettingsToFile();
         }
 

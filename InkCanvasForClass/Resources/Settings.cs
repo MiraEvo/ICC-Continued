@@ -138,7 +138,7 @@ namespace Ink_Canvas
     public class Canvas
     {
         [JsonProperty("inkWidth")]
-        public double InkWidth { get; set; } = 2.5;
+        public double InkWidth { get; set; } = 5;
         [JsonProperty("highlighterWidth")]
         public double HighlighterWidth { get; set; } = 20;
         [JsonProperty("inkAlpha")]
@@ -382,6 +382,14 @@ namespace Ink_Canvas
         public bool IsEnableTwoFingerGestureInPresentationMode { get; set; } = false;
         [JsonProperty("isSupportWPS")]
         public bool IsSupportWPS { get; set; } = true;
+
+        /// <summary>
+        /// 是否启用 PPT 联动增强功能
+        /// 基于智绘教 Inkeys 的 PPT 演示助手 3 技术方案
+        /// 提供增强的 COM 兼容性，支持 COM 注册损坏的环境
+        /// </summary>
+        [JsonProperty("enablePPTEnhancedSupport")]
+        public bool IsEnablePPTEnhancedSupport { get; set; } = false;
 
         [JsonProperty("registryShowSlideShowToolbar")]
         public bool RegistryShowSlideShowToolbar { get; set; } = false;

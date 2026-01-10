@@ -147,6 +147,14 @@ namespace Ink_Canvas {
             Settings.PowerPointSettings.RegistryShowBlackScreenLastSlideShow = ToggleSwitchRegistryShowBlackScreenLastSlideShow.IsOn;
         }
 
+        private void ToggleSwitchEnablePPTEnhancedSupport_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!isLoaded) return;
+
+            Settings.PowerPointSettings.IsEnablePPTEnhancedSupport = ToggleSwitchEnablePPTEnhancedSupport.IsOn;
+            SaveSettingsToFile();
+        }
+
         #endregion
 
         #region Startup
@@ -890,9 +898,9 @@ namespace Ink_Canvas {
             if (!isLoaded) return;
             if (sender == BoardInkWidthSlider) InkWidthSlider.Value = ((Slider)sender).Value;
             if (sender == InkWidthSlider) BoardInkWidthSlider.Value = ((Slider)sender).Value;
-            drawingAttributes.Height = ((Slider)sender).Value / 2;
-            drawingAttributes.Width = ((Slider)sender).Value / 2;
-            Settings.Canvas.InkWidth = ((Slider)sender).Value / 2;
+            drawingAttributes.Height = ((Slider)sender).Value;
+            drawingAttributes.Width = ((Slider)sender).Value;
+            Settings.Canvas.InkWidth = ((Slider)sender).Value;
             SaveSettingsToFile();
         }
 
@@ -1598,7 +1606,7 @@ namespace Ink_Canvas {
             Settings.PowerPointSettings.RegistryShowBlackScreenLastSlideShow = false;
             Settings.PowerPointSettings.RegistryShowSlideShowToolbar = false;
 
-            Settings.Canvas.InkWidth = 2.5;
+            Settings.Canvas.InkWidth = 5;
             Settings.Canvas.IsShowCursor = false;
             Settings.Canvas.InkStyle = 0;
             Settings.Canvas.HighlighterWidth = 20;

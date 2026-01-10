@@ -157,14 +157,7 @@ namespace Ink_Canvas
             // 依赖: ISettingsService
             services.AddSingleton<SettingsViewModel>();
             
-            // 设置页面 ViewModel
-            // 依赖: ISettingsService, SettingsViewModel
-            services.AddSingleton<SettingsPageViewModel>(sp =>
-            {
-                var settingsService = sp.GetRequiredService<ISettingsService>();
-                var settingsViewModel = sp.GetRequiredService<SettingsViewModel>();
-                return new SettingsPageViewModel(settingsService, settingsViewModel);
-            });
+            // SettingsPageViewModel 已移除，MainWindow 直接使用 SettingsViewModel
             
             // 主窗口 ViewModel
             // 依赖: ISettingsService, IPageService, ITimeMachineService

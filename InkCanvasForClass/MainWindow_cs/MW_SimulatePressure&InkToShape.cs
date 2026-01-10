@@ -420,6 +420,11 @@ namespace Ink_Canvas {
                     LogHelper.WriteLogToFile("Error in inkCanvas_StrokeCollected (Speed Calc): " + ex.Message, LogHelper.LogType.Error);
                 }
 
+                // 如果InkStyle为-1，不进行压感模拟，直接返回
+                if (Settings.Canvas.InkStyle == -1) {
+                    return;
+                }
+
                 switch (Settings.Canvas.InkStyle) {
                     case 1:
                         if (penType == 0)

@@ -628,6 +628,7 @@ namespace Ink_Canvas.Popups {
                 _penModeSelected = value;
                 UpdatePenModeButtonsCheckedDisplayStatus();
                 ChangedColorButtonsTransparentVisibility(_penModeSelected == PenMode.HighlighterMode);
+                UpdatePenWidthSliderRange(_penModeSelected);
 
                 PenModeChanged?.Invoke(this, new PenModeChangedEventArgs()
                 {
@@ -706,6 +707,7 @@ namespace Ink_Canvas.Popups {
             UpdatePenModeButtonsCheckedDisplayStatus();
             ChangedColorButtonsTransparentVisibility(_penModeSelected == PenMode.HighlighterMode);
             UpdateQuickActionItemsVisibilityByPenMode(_penModeSelected);
+            UpdatePenWidthSliderRange(_penModeSelected);
 
             PenModeChanged?.Invoke(this, new PenModeChangedEventArgs()
             {
@@ -1111,10 +1113,20 @@ namespace Ink_Canvas.Popups {
         /// 根据笔触粗细值获取描述文本
         /// </summary>
         private string GetPenWidthDescription(double width) {
-            if (width <= 18) return "细";
-            if (width <= 25) return "中等";
-            if (width <= 35) return "粗";
-            return "非常粗";
+            // 根据当前笔模式判断
+            if (_penModeSelected == PenMode.PenMode) {
+                // 签字笔模式 (1-20)
+                if (width <= 5) return "细";
+                if (width <= 10) return "中等";
+                if (width <= 15) return "粗";
+                return "非常粗";
+            } else {
+                // 荧光笔模式 (15-45)
+                if (width <= 25) return "细";
+                if (width <= 30) return "中等";
+                if (width <= 38) return "粗";
+                return "非常粗";
+            }
         }
 
         /// <summary>
@@ -1164,7 +1176,33 @@ namespace Ink_Canvas.Popups {
         /// </summary>
         private void PenWidthResetButton_Click(object sender, RoutedEventArgs e) {
             if (PenWidthSlider != null) {
-                PenWidthSlider.Value = 20; // 默认值
+                // 根据笔模式设置默认值
+                PenWidthSlider.Value = _penModeSelected == PenMode.PenMode ? 5 : 20;
+            }
+        }
+
+        /// <summary>
+        /// 根据笔模式更新笔触粗细滑块的范围
+        /// </summary>
+        private void UpdatePenWidthSliderRange(PenMode penMode) {
+            if (PenWidthSlider != null) {
+                if (penMode == PenMode.PenMode) {
+                    // 签字笔模式：范围 1-20
+                    PenWidthSlider.Minimum = 1;
+                    PenWidthSlider.Maximum = 20;
+                    // 如果当前值超出范围，重置为默认值
+                    if (PenWidthSlider.Value < 1 || PenWidthSlider.Value > 20) {
+                        PenWidthSlider.Value = 5;
+                    }
+                } else if (penMode == PenMode.HighlighterMode) {
+                    // 荧光笔模式：范围 15-45
+                    PenWidthSlider.Minimum = 15;
+                    PenWidthSlider.Maximum = 45;
+                    // 如果当前值超出范围，重置为默认值
+                    if (PenWidthSlider.Value < 15 || PenWidthSlider.Value > 45) {
+                        PenWidthSlider.Value = 20;
+                    }
+                }
             }
         }
 
