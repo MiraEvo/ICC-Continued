@@ -373,5 +373,29 @@ namespace Ink_Canvas.Core
         public const int StrokeCountThreshold = 2;
 
         #endregion
+
+        #region Shape Drawing
+
+        /// <summary>
+        /// 网格辅助线默认大小（像素）
+        /// </summary>
+        public const double GridDefaultSize = 20;
+
+        /// <summary>
+        /// 顶点吸附默认距离（像素）
+        /// </summary>
+        public const double SnapDefaultDistance = 15;
+
+        /// <summary>
+        /// 网格线透明度
+        /// </summary>
+        public const byte GridLineAlpha = 40;
+
+        /// <summary>
+        /// 网格线颜色（灰色）
+        /// </summary>
+        public static readonly Color GridLineColor = Color.FromArgb(GridLineAlpha, 100, 100, 100);
+
+        #endregion
     }
 }
