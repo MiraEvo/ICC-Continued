@@ -1499,18 +1499,6 @@ namespace Ink_Canvas {
             SaveSettingsToFile();
         }
 
-        private void ComboBoxWindowsInkEraserButtonAction_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (!isLoaded) return;
-            Settings.Gesture.WindowsInkEraserButtonAction = ComboBoxWindowsInkEraserButtonAction.SelectedIndex;
-            SaveSettingsToFile();
-        }
-
-        private void ComboBoxWindowsInkBarrelButtonAction_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (!isLoaded) return;
-            Settings.Gesture.WindowsInkBarrelButtonAction = ComboBoxWindowsInkBarrelButtonAction.SelectedIndex;
-            SaveSettingsToFile();
-        }
-
         #endregion
 
         #region Reset
@@ -1606,7 +1594,7 @@ namespace Ink_Canvas {
             Settings.PowerPointSettings.RegistryShowBlackScreenLastSlideShow = false;
             Settings.PowerPointSettings.RegistryShowSlideShowToolbar = false;
 
-            Settings.Canvas.InkWidth = 5;
+            Settings.Canvas.InkWidth = 2;
             Settings.Canvas.IsShowCursor = false;
             Settings.Canvas.InkStyle = 0;
             Settings.Canvas.HighlighterWidth = 20;
@@ -1638,8 +1626,6 @@ namespace Ink_Canvas {
             Settings.Gesture.EnableMouseGesture = true;
             Settings.Gesture.EnableMouseRightBtnGesture = true;
             Settings.Gesture.EnableMouseWheelGesture = true;
-            Settings.Gesture.WindowsInkEraserButtonAction = 2;
-            Settings.Gesture.WindowsInkBarrelButtonAction = 2;
 
             Settings.InkToShape.IsInkToShapeEnabled = true;
             Settings.InkToShape.IsInkToShapeNoFakePressureRectangle = false;
@@ -1665,6 +1651,11 @@ namespace Ink_Canvas {
 
             Settings.Storage.StorageLocation = "fr";
             Settings.Storage.UserStorageLocation = "";
+            
+            // 同步设置 AutoSavedStrokesLocation 为安装目录下的 Data 文件夹
+            var runfolder = AppDomain.CurrentDomain.BaseDirectory;
+            Settings.Automation.AutoSavedStrokesLocation =
+                (runfolder.EndsWith("\\") ? runfolder.Substring(0, runfolder.Length - 1) : runfolder) + "\\Data";
         }
 
         private void BtnResetToSuggestion_Click(object sender, RoutedEventArgs e) {
@@ -2040,7 +2031,6 @@ namespace Ink_Canvas {
                 SettingsStorageGroupBox,
                 SettingsSnapshotGroupBox,
                 SettingsRandWindowGroupBox,
-                SettingsDonationGroupBox,
                 SettingsAboutGroupBox
             };
             
@@ -2056,7 +2046,6 @@ namespace Ink_Canvas {
                 SettingsStorageJumpToGroupBoxButton,
                 SettingsSnapshotJumpToGroupBoxButton,
                 SettingsRandWindowJumpToGroupBoxButton,
-                SettingsDonationJumpToGroupBoxButton,
                 SettingsAboutJumpToGroupBoxButton
             };
         }

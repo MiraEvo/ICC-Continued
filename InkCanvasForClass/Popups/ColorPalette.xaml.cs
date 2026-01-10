@@ -1178,7 +1178,7 @@ namespace Ink_Canvas.Popups {
         private void PenWidthResetButton_Click(object sender, RoutedEventArgs e) {
             if (PenWidthSlider != null) {
                 // 根据笔模式设置默认值
-                PenWidthSlider.Value = _penModeSelected == PenMode.PenMode ? 5 : 20;
+                PenWidthSlider.Value = _penModeSelected == PenMode.PenMode ? 2 : 20;
             }
         }
 
@@ -1193,7 +1193,7 @@ namespace Ink_Canvas.Popups {
                     PenWidthSlider.Maximum = 20;
                     // 如果当前值超出范围，重置为默认值
                     if (PenWidthSlider.Value < 1 || PenWidthSlider.Value > 20) {
-                        PenWidthSlider.Value = 5;
+                        PenWidthSlider.Value = 2;
                     }
                 } else if (penMode == PenMode.HighlighterMode) {
                     // 荧光笔模式：范围 15-45

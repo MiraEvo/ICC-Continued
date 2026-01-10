@@ -138,7 +138,7 @@ namespace Ink_Canvas
     public class Canvas
     {
         [JsonProperty("inkWidth")]
-        public double InkWidth { get; set; } = 5;
+        public double InkWidth { get; set; } = 2;
         [JsonProperty("highlighterWidth")]
         public double HighlighterWidth { get; set; } = 20;
         [JsonProperty("inkAlpha")]
@@ -250,10 +250,6 @@ namespace Ink_Canvas
         public bool EnableMouseRightBtnGesture { get; set; } = true;
         [JsonProperty("enableMouseWheelGesture")]
         public bool EnableMouseWheelGesture { get; set; } = true;
-        [JsonProperty("windowsInkEraserButtonAction")]
-        public int WindowsInkEraserButtonAction { get; set; } = 2;
-        [JsonProperty("windowsInkBarrelButtonAction")]
-        public int WindowsInkBarrelButtonAction { get; set; } = 0;
     }
 
     public class Startup

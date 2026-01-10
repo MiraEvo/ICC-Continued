@@ -458,7 +458,7 @@
                                     <Slider x:Name="PenWidthSlider" Minimum="1"
                                             Maximum="20" Width="145" Margin="0,-3,31,-3"
                                             FontFamily="Microsoft YaHei UI" FontSize="20" VerticalAlignment="Center"
-                                            IsSnapToTickEnabled="True" Value="5" HorizontalAlignment="Center"
+                                            IsSnapToTickEnabled="True" Value="2" HorizontalAlignment="Center"
                                             TickFrequency="1" TickPlacement="None" ValueChanged="PenWidthSlider_ValueChanged" />
                                     <Button Padding="3" HorizontalAlignment="Right" Margin="0,0,30,0" Click="PenWidthIncreaseButton_Click">
                                         <Image Height="19" Width="19">

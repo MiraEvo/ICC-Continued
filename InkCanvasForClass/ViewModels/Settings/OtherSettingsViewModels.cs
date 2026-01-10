@@ -91,18 +91,6 @@ namespace Ink_Canvas.ViewModels
             get => _gesture.EnableMouseWheelGesture;
             set { if (SetProperty(_gesture.EnableMouseWheelGesture, value, _gesture, (g, v) => g.EnableMouseWheelGesture = v)) _saveAction?.Invoke(); }
         }
-
-        public int WindowsInkEraserButtonAction
-        {
-            get => _gesture.WindowsInkEraserButtonAction;
-            set { if (SetProperty(_gesture.WindowsInkEraserButtonAction, value, _gesture, (g, v) => g.WindowsInkEraserButtonAction = v)) _saveAction?.Invoke(); }
-        }
-
-        public int WindowsInkBarrelButtonAction
-        {
-            get => _gesture.WindowsInkBarrelButtonAction;
-            set { if (SetProperty(_gesture.WindowsInkBarrelButtonAction, value, _gesture, (g, v) => g.WindowsInkBarrelButtonAction = v)) _saveAction?.Invoke(); }
-        }
     }
 
     /// <summary>

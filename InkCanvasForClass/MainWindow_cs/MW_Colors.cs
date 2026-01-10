@@ -87,7 +87,7 @@ namespace Ink_Canvas {
         // 笔触粗细有效范围常量
         private const double MinPenWidth = 1.0;
         private const double MaxPenWidth = 20.0;
-        private const double DefaultPenWidth = 5.0;
+        private const double DefaultPenWidth = 2.0;
         private const double MinHighlighterWidth = 8.0;
         private const double MaxHighlighterWidth = 80.0;
         private const double DefaultHighlighterWidth = 20.0;

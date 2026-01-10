@@ -26,6 +26,45 @@ using OperatingSystem = OSVersionExtension.OperatingSystem;
 namespace Ink_Canvas {
     public partial class MainWindow : System.Windows.Window {
 
+        /// <summary>
+        /// 根据 StorageLocation 获取期望的存储路径
+        /// </summary>
+        private static string GetExpectedPathFromStorageLocation(string storageLocation, string programDir) {
+            if (string.IsNullOrEmpty(storageLocation)) {
+                return Path.Combine(programDir, "Data");
+            }
+            
+            if (storageLocation == "c-") {
+                // 自定义存储位置，由 UserStorageLocation 决定，不在此处处理
+                return null;
+            } else if (storageLocation.StartsWith("d")) {
+                // 磁盘驱动器存储
+                var driveLetter = storageLocation.Substring(1).ToUpper();
+                return driveLetter + ":\\InkCanvasForClass";
+            } else if (storageLocation == "fw") {
+                // 文档文件夹
+                var docfolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                return Path.Combine(docfolder, "InkCanvasForClass");
+            } else if (storageLocation == "fr") {
+                // icc安装目录
+                return Path.Combine(programDir, "Data");
+            } else if (storageLocation == "fu") {
+                // 当前用户目录
+                var usrfolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                return Path.Combine(usrfolder, "InkCanvasForClass");
+            } else if (storageLocation == "fd") {
+                // 桌面文件夹
+                var dskfolder = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                return Path.Combine(dskfolder, "InkCanvasForClass");
+            } else if (storageLocation == "a-") {
+                // 自动选择，默认使用安装目录
+                return Path.Combine(programDir, "Data");
+            }
+            
+            // 默认使用安装目录
+            return Path.Combine(programDir, "Data");
+        }
+
         private void DisplayWelcomePopup() {
             if( TaskDialog.OSSupportsTaskDialogs ) {
                 var t = new Thread(() => {
@@ -55,10 +94,37 @@ namespace Ink_Canvas {
                         string text = File.ReadAllText(App.RootPath + settingsFileName);
                         Settings = JsonConvert.DeserializeObject<Settings>(text);
 
-                        // Migration: If the storage location is the old default, update it to the new one
-                        string oldDefaultPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Ink Canvas");
-                        if (Settings.Automation.AutoSavedStrokesLocation == oldDefaultPath) {
-                            Settings.Automation.AutoSavedStrokesLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+                        // Migration: 确保 AutoSavedStrokesLocation 和 StorageLocation 同步
+                        string programDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\');
+                        string oldDefaultPath1 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Ink Canvas");
+                        string oldDefaultPath2 = Path.Combine(programDir, "InkCanvasForClass");
+                        string newDefaultPath = Path.Combine(programDir, "Data");
+                        
+                        bool needSave = false;
+                        
+                        // 检查并迁移旧的默认路径
+                        string currentPath = Settings.Automation.AutoSavedStrokesLocation?.TrimEnd('\\') ?? "";
+                        
+                        // 只迁移旧的默认路径（Ink Canvas 或 InkCanvasForClass）
+                        if (currentPath.Equals(oldDefaultPath2, StringComparison.OrdinalIgnoreCase) ||
+                            currentPath.Equals(oldDefaultPath1, StringComparison.OrdinalIgnoreCase)) {
+                            Settings.Automation.AutoSavedStrokesLocation = newDefaultPath;
+                            Settings.Storage.StorageLocation = "fr";
+                            needSave = true;
+                            LogHelper.WriteLogToFile($"Migrated old default path from '{currentPath}' to '{newDefaultPath}'", LogHelper.LogType.Info);
+                        }
+                        // 确保 AutoSavedStrokesLocation 与 StorageLocation 同步
+                        else {
+                            string expectedPath = GetExpectedPathFromStorageLocation(Settings.Storage.StorageLocation, programDir);
+                            if (!string.IsNullOrEmpty(expectedPath) &&
+                                !string.Equals(currentPath, expectedPath.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase)) {
+                                Settings.Automation.AutoSavedStrokesLocation = expectedPath;
+                                needSave = true;
+                                LogHelper.WriteLogToFile($"Synced AutoSavedStrokesLocation from '{currentPath}' to '{expectedPath}' based on StorageLocation '{Settings.Storage.StorageLocation}'", LogHelper.LogType.Info);
+                            }
+                        }
+                        
+                        if (needSave) {
                             SaveSettingsToFile();
                         }
                     }
@@ -546,9 +612,6 @@ namespace Ink_Canvas {
                 ToggleSwitchEnableMouseGesture.IsOn = Settings.Gesture.EnableMouseGesture;
                 ToggleSwitchEnableMouseRightBtnGesture.IsOn = Settings.Gesture.EnableMouseRightBtnGesture;
                 ToggleSwitchEnableMouseWheelGesture.IsOn = Settings.Gesture.EnableMouseWheelGesture;
-
-                ComboBoxWindowsInkEraserButtonAction.SelectedIndex = Settings.Gesture.WindowsInkEraserButtonAction;
-                ComboBoxWindowsInkBarrelButtonAction.SelectedIndex = Settings.Gesture.WindowsInkBarrelButtonAction;
 
                 CheckEnableTwoFingerGestureBtnColorPrompt();
             } else {

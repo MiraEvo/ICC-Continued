@@ -562,8 +562,8 @@ namespace Ink_Canvas {
                 drawingAttributes.Color = Ink_DefaultColor;
 
 
-                drawingAttributes.Height = 5;
-                drawingAttributes.Width = 5;
+                drawingAttributes.Height = 2;
+                drawingAttributes.Width = 2;
                 drawingAttributes.IsHighlighter = false;
                 drawingAttributes.FitToCurve = Settings.Canvas.FitToCurve;
 
@@ -692,8 +692,6 @@ namespace Ink_Canvas {
             }
 
             UpdateFloatingBarIconsLayout();
-
-            StylusInvertedListenerInit();
 
             PenPaletteV2Init();
             SelectionV2Init();
