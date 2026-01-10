@@ -1,0 +1,93 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# All files
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# C# files
+[*.cs]
+
+#### .NET 代码质量分析 ####
+
+# 禁用命名规则检查
+dotnet_diagnostic.IDE1006.severity = none
+
+# 禁用未使用的私有成员警告
+dotnet_diagnostic.IDE0051.severity = none
+
+# 禁用未读取的私有成员警告
+dotnet_diagnostic.IDE0052.severity = none
+
+# 禁用可移除的 using 指令警告
+dotnet_diagnostic.IDE0005.severity = none
+
+# 禁用默认值初始化冗余警告
+dotnet_diagnostic.IDE0034.severity = none
+
+# 禁用字段可设为只读警告
+dotnet_diagnostic.IDE0044.severity = none
+
+#### ReSharper/Rider 代码检查 ####
+
+# 禁用命名规则检查
+resharper_inconsistent_naming = none
+
+# 禁用类型和命名空间命名约定
+resharper_check_namespace = none
+
+# 禁用未使用成员检查
+resharper_unused_member_global = none
+resharper_unused_member_local = none
+resharper_unused_field_compiler = none
+
+# 禁用字段可设为只读的建议
+resharper_field_can_be_made_read_only_local = none
+resharper_field_can_be_made_read_only_global = none
+
+# 禁用冗余默认成员初始化器警告
+resharper_redundant_default_member_initializer = none
+
+# 禁用可移除的 using 指令建议
+resharper_redundant_using_directive = none
+
+# 禁用私有字段未使用警告
+resharper_not_accessed_field_local = none
+resharper_unused_auto_property_accessor_local = none
+resharper_unused_auto_property_accessor_global = none
+
+# 禁用成员可以是静态的建议
+resharper_member_can_be_made_static_local = none
+resharper_member_can_be_made_static_global = none
+
+# 禁用属性命名建议
+resharper_property_naming = none
+resharper_method_naming = none
+resharper_class_naming = none
+resharper_interface_naming = none
+resharper_enum_naming = none
+resharper_field_naming = none
+resharper_constant_naming = none
+resharper_local_variable_naming = none
+resharper_parameter_naming = none
+resharper_type_parameter_naming = none
+
+# 禁用 using 指令可以安全移除的警告
+resharper_remove_redundant_or_unused_imports = none
+
+#### .NET 命名样式 ####
+
+# 禁用所有命名样式规则
+dotnet_naming_rule.interface_should_be_begins_with_i.severity = none
+dotnet_naming_rule.types_should_be_pascal_case.severity = none
+dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = none
+
+[*.xaml]
+indent_size = 4

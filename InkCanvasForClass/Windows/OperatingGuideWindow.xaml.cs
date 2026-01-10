@@ -2,10 +2,10 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace Ink_Canvas
+namespace Ink_Canvas.Dialogs
 {
     /// <summary>
-    /// Interaction logic for StopwatchWindow.xaml
+    /// Interaction logic for OperatingGuideWindow.xaml
     /// </summary>
     public partial class OperatingGuideWindow : Window
     {
@@ -35,7 +35,7 @@ namespace Ink_Canvas
             }
         }
 
-        private void SCManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e) {
+        private void ScrollViewerManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e) {
             e.Handled = true;
         }
     }

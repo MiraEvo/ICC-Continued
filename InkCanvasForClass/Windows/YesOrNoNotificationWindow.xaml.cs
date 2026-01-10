@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 
-namespace Ink_Canvas
+namespace Ink_Canvas.Dialogs
 {
     /// <summary>
-    /// Interaction logic for RestoreHiddenSlidesWindow.xaml
+    /// Interaction logic for YesOrNoNotificationWindow.xaml
     /// </summary>
     public partial class YesOrNoNotificationWindow : Window
     {

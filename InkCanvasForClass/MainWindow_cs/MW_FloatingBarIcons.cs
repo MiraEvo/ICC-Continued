@@ -1,4 +1,6 @@
+using Ink_Canvas.Dialogs;
 using Ink_Canvas.Helpers;
+using Ink_Canvas.Popups;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,12 +21,10 @@ using System.Diagnostics;
 using iNKORE.UI.WPF.Modern.Controls;
 using System.IO;
 using System.Windows.Media.Effects;
-using static System.Net.Mime.MediaTypeNames;
 using System.Text;
 using System.Globalization;
 using System.Windows.Data;
 using System.Xml.Linq;
-using Ink_Canvas.Popups;
 using Image = System.Windows.Controls.Image;
 
 namespace Ink_Canvas {
