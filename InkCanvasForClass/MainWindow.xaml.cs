@@ -51,7 +51,10 @@ namespace Ink_Canvas {
         public SettingsViewModel SettingsVM { get; private set; }
 
         /// <summary>
-        /// 初始化 ViewModels，从 ServiceLocator 中获取实例
+        /// 初始化 ViewModels，从依赖注入容器中获取实例
+        /// 
+        /// 注意：MainWindow 在 XAML 中实例化，无法使用构造函数注入，
+        /// 因此使用 ServiceLocator 是合理的。这是 ServiceLocator 的合法使用场景之一。
         /// </summary>
         private void InitializeViewModels()
         {
@@ -105,6 +108,18 @@ namespace Ink_Canvas {
             // 撤销/重做请求 - 由 View 执行实际操作
             ViewModel.UndoRequested += OnUndoRequested;
             ViewModel.RedoRequested += OnRedoRequested;
+            
+            // 白板页面导航请求
+            ViewModel.PreviousWhiteboardPageRequested += OnPreviousWhiteboardPageRequested;
+            ViewModel.NextWhiteboardPageRequested += OnNextWhiteboardPageRequested;
+            ViewModel.AddWhiteboardPageRequested += OnAddWhiteboardPageRequested;
+            ViewModel.DeleteWhiteboardPageRequested += OnDeleteWhiteboardPageRequested;
+            ViewModel.ShowWhiteboardPageListRequested += OnShowWhiteboardPageListRequested;
+            
+            // 白板背景设置请求
+            ViewModel.SetBoardBackgroundColorRequested += OnSetBoardBackgroundColorRequested;
+            ViewModel.SetBoardBackgroundPatternRequested += OnSetBoardBackgroundPatternRequested;
+            ViewModel.ToggleBoardBackgroundPanelRequested += OnToggleBoardBackgroundPanelRequested;
         }
         
         /// <summary>
@@ -178,6 +193,16 @@ namespace Ink_Canvas {
                 ViewModel.ToolButtonClicked -= OnToolButtonClicked;
                 ViewModel.UndoRequested -= OnUndoRequested;
                 ViewModel.RedoRequested -= OnRedoRequested;
+                
+                // 取消订阅白板相关事件
+                ViewModel.PreviousWhiteboardPageRequested -= OnPreviousWhiteboardPageRequested;
+                ViewModel.NextWhiteboardPageRequested -= OnNextWhiteboardPageRequested;
+                ViewModel.AddWhiteboardPageRequested -= OnAddWhiteboardPageRequested;
+                ViewModel.DeleteWhiteboardPageRequested -= OnDeleteWhiteboardPageRequested;
+                ViewModel.ShowWhiteboardPageListRequested -= OnShowWhiteboardPageListRequested;
+                ViewModel.SetBoardBackgroundColorRequested -= OnSetBoardBackgroundColorRequested;
+                ViewModel.SetBoardBackgroundPatternRequested -= OnSetBoardBackgroundPatternRequested;
+                ViewModel.ToggleBoardBackgroundPanelRequested -= OnToggleBoardBackgroundPanelRequested;
             }
         }
 
@@ -287,6 +312,137 @@ namespace Ink_Canvas {
             }
         }
 
+        /// <summary>
+        /// 处理白板上一页请求
+        /// </summary>
+        private void OnPreviousWhiteboardPageRequested(object sender, EventArgs e)
+        {
+            try
+            {
+                BtnWhiteBoardSwitchPrevious_Click(sender, e);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnPreviousWhiteboardPageRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理白板下一页请求
+        /// </summary>
+        private void OnNextWhiteboardPageRequested(object sender, EventArgs e)
+        {
+            try
+            {
+                BtnWhiteBoardSwitchNext_Click(sender, e);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnNextWhiteboardPageRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理添加新白板页请求
+        /// </summary>
+        private void OnAddWhiteboardPageRequested(object sender, EventArgs e)
+        {
+            try
+            {
+                BtnWhiteBoardAdd_Click(sender, e);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnAddWhiteboardPageRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理删除当前白板页请求
+        /// </summary>
+        private void OnDeleteWhiteboardPageRequested(object sender, EventArgs e)
+        {
+            try
+            {
+                BtnWhiteBoardDelete_Click(sender, null);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnDeleteWhiteboardPageRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理显示白板页面列表请求
+        /// </summary>
+        private void OnShowWhiteboardPageListRequested(object sender, EventArgs e)
+        {
+            try
+            {
+                BtnWhiteBoardPageIndex_Click(sender, e);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnShowWhiteboardPageListRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理设置白板背景颜色请求
+        /// </summary>
+        private void OnSetBoardBackgroundColorRequested(object sender, int colorIndex)
+        {
+            try
+            {
+                UpdateBoardBackground(colorIndex);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnSetBoardBackgroundColorRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理设置白板背景图案请求
+        /// </summary>
+        private void OnSetBoardBackgroundPatternRequested(object sender, int patternIndex)
+        {
+            try
+            {
+                // 根据索引设置背景图案
+                BoardPagesSettingsList[CurrentWhiteboardIndex - 1].BackgroundPattern = (BlackboardBackgroundPatternEnum)patternIndex;
+                ApplyBackgroundPattern();
+                UpdateBoardBackgroundPanelDisplayStatus();
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnSetBoardBackgroundPatternRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 处理显示/隐藏白板背景设置面板请求
+        /// </summary>
+        private void OnToggleBoardBackgroundPanelRequested(object sender, EventArgs e)
+        {
+            try
+            {
+                // 切换白板背景设置面板的显示状态
+                if (BoardBackgroundPopup.Visibility == Visibility.Visible)
+                {
+                    BoardBackgroundPopup.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    BoardBackgroundPopup.Visibility = Visibility.Visible;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("OnToggleBoardBackgroundPanelRequested failed: " + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
         #endregion
 
         #endregion
@@ -340,9 +496,10 @@ namespace Ink_Canvas {
             BoardBorderDrawShape.Visibility = Visibility.Collapsed;
             GridInkCanvasSelectionCover.Visibility = Visibility.Collapsed;
 
-            ViewboxFloatingBar.Margin = new Thickness((SystemParameters.WorkArea.Width - 284) / 2,
-                SystemParameters.WorkArea.Height - 60, -2000, -200);
-            ViewboxFloatingBarMarginAnimation(100, true);
+            ViewboxFloatingBar.Margin = new Thickness((SystemParameters.WorkArea.Width - Constants.FloatingBarWidth) / 2,
+                SystemParameters.WorkArea.Height - Constants.FloatingBarBottomMarginPPT, 
+                Constants.FloatingBarHiddenHorizontalOffset, Constants.FloatingBarHiddenVerticalOffset);
+            ViewboxFloatingBarMarginAnimation(Constants.FloatingBarBottomMarginNormal, true);
 
             try {
                 if (File.Exists("debug.ini")) Label.Visibility = Visibility.Visible;
@@ -354,8 +511,8 @@ namespace Ink_Canvas {
             try {
                 if (File.Exists("Log.txt")) {
                     var fileInfo = new FileInfo("Log.txt");
-                    var fileSizeInKB = fileInfo.Length / 1024;
-                    if (fileSizeInKB > 512)
+                    var fileSizeInKB = fileInfo.Length / Constants.BytesToKilobytes;
+                    if (fileSizeInKB > Constants.LogFileSizeThresholdKB)
                         try {
                             File.Delete("Log.txt");
                             LogHelper.WriteLogToFile(
@@ -504,11 +661,11 @@ namespace Ink_Canvas {
             BlackBoardRightSidePageListView.ItemsSource = blackBoardSidePageListViewObservableCollection;
 
             BtnLeftWhiteBoardSwitchPreviousGeometry.Brush =
-                new SolidColorBrush(System.Windows.Media.Color.FromArgb(127, 24, 24, 27));
-            BtnLeftWhiteBoardSwitchPreviousLabel.Opacity = 0.5;
+                new SolidColorBrush(Constants.ButtonDisabledColor);
+            BtnLeftWhiteBoardSwitchPreviousLabel.Opacity = Constants.ButtonDisabledOpacity;
             BtnRightWhiteBoardSwitchPreviousGeometry.Brush =
-                new SolidColorBrush(System.Windows.Media.Color.FromArgb(127, 24, 24, 27));
-            BtnRightWhiteBoardSwitchPreviousLabel.Opacity = 0.5;
+                new SolidColorBrush(Constants.ButtonDisabledColor);
+            BtnRightWhiteBoardSwitchPreviousLabel.Opacity = Constants.ButtonDisabledOpacity;
 
             BorderInkReplayToolBox.Visibility = Visibility.Collapsed;
             BoardBackgroundPopup.Visibility = Visibility.Collapsed;
@@ -561,11 +718,11 @@ namespace Ink_Canvas {
                     isFloatingBarOutsideScreen = IsOutsideOfScreenHelper.IsOutsideOfScreen(ViewboxFloatingBar);
                     isInPPTPresentationMode = BorderFloatingBarExitPPTBtn.Visibility == Visibility.Visible;
                 });
-                if (isFloatingBarOutsideScreen) dpiChangedDelayAction.DebounceAction(3000, null, () => {
+                if (isFloatingBarOutsideScreen) dpiChangedDelayAction.DebounceAction(Constants.DpiChangeDelayMilliseconds, null, () => {
                     if (!isFloatingBarFolded)
                     {
-                        if (isInPPTPresentationMode) ViewboxFloatingBarMarginAnimation(60);
-                        else ViewboxFloatingBarMarginAnimation(100, true);
+                        if (isInPPTPresentationMode) ViewboxFloatingBarMarginAnimation(Constants.FloatingBarBottomMarginPPT);
+                        else ViewboxFloatingBarMarginAnimation(Constants.FloatingBarBottomMarginNormal, true);
                     }
                 });
             }).Start();
@@ -586,11 +743,11 @@ namespace Ink_Canvas {
                         isFloatingBarOutsideScreen = IsOutsideOfScreenHelper.IsOutsideOfScreen(ViewboxFloatingBar);
                         isInPPTPresentationMode = BorderFloatingBarExitPPTBtn.Visibility == Visibility.Visible;
                     });
-                    if (isFloatingBarOutsideScreen) dpiChangedDelayAction.DebounceAction(3000,null, () => {
+                    if (isFloatingBarOutsideScreen) dpiChangedDelayAction.DebounceAction(Constants.DpiChangeDelayMilliseconds, null, () => {
                         if (!isFloatingBarFolded)
                         {
-                            if (isInPPTPresentationMode) ViewboxFloatingBarMarginAnimation(60);
-                            else ViewboxFloatingBarMarginAnimation(100, true);
+                            if (isInPPTPresentationMode) ViewboxFloatingBarMarginAnimation(Constants.FloatingBarBottomMarginPPT);
+                            else ViewboxFloatingBarMarginAnimation(Constants.FloatingBarBottomMarginNormal, true);
                         }
                     });
                 }).Start();
@@ -612,18 +769,71 @@ namespace Ink_Canvas {
                     
                     LogHelper.WriteLogToFile("Ink Canvas closing: Stopping timers");
                     // 停止所有定时器，防止进程残留
-                    timerCheckPPT.Stop();
-                    timerCheckPPT.Dispose();
-                    timerKillProcess.Stop();
-                    timerKillProcess.Dispose();
-                    timerCheckAutoFold.Stop();
-                    timerCheckAutoFold.Dispose();
-                    timerCheckAutoUpdateWithSilence.Stop();
-                    timerCheckAutoUpdateWithSilence.Dispose();
-                    timerDisplayTime.Stop();
-                    timerDisplayTime.Dispose();
-                    timerDisplayDate.Stop();
-                    timerDisplayDate.Dispose();
+                    try {
+                        if (timerCheckPPT != null) {
+                            timerCheckPPT.Stop();
+                            timerCheckPPT.Elapsed -= TimerCheckPPT_Elapsed;
+                            timerCheckPPT.Dispose();
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error stopping timerCheckPPT: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
+                    try {
+                        if (timerKillProcess != null) {
+                            timerKillProcess.Stop();
+                            timerKillProcess.Elapsed -= TimerKillProcess_Elapsed;
+                            timerKillProcess.Dispose();
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error stopping timerKillProcess: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
+                    try {
+                        if (timerCheckAutoFold != null) {
+                            timerCheckAutoFold.Stop();
+                            timerCheckAutoFold.Elapsed -= TimerCheckAutoFold_Elapsed;
+                            timerCheckAutoFold.Dispose();
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error stopping timerCheckAutoFold: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
+                    try {
+                        if (timerCheckAutoUpdateWithSilence != null) {
+                            timerCheckAutoUpdateWithSilence.Stop();
+                            timerCheckAutoUpdateWithSilence.Elapsed -= TimerCheckAutoUpdateWithSilence_Elapsed;
+                            timerCheckAutoUpdateWithSilence.Dispose();
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error stopping timerCheckAutoUpdateWithSilence: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
+                    try {
+                        if (timerDisplayTime != null) {
+                            timerDisplayTime.Stop();
+                            timerDisplayTime.Elapsed -= TimerDisplayTime_Elapsed;
+                            timerDisplayTime.Dispose();
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error stopping timerDisplayTime: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
+                    try {
+                        if (timerDisplayDate != null) {
+                            timerDisplayDate.Stop();
+                            timerDisplayDate.Elapsed -= TimerDisplayDate_Elapsed;
+                            timerDisplayDate.Dispose();
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error stopping timerDisplayDate: " + ex.Message, LogHelper.LogType.Error);
+                    }
                     
                     LogHelper.WriteLogToFile("Ink Canvas closing: Disposing freeze frame");
                     DisposeFreezeFrame();
@@ -637,48 +847,91 @@ namespace Ink_Canvas {
                         LogHelper.WriteLogToFile("Error unsubscribing UserPreferenceChanged: " + ex.Message, LogHelper.LogType.Error);
                     }
                     
+                    try {
+                        SystemEvents.DisplaySettingsChanged -= SystemEventsOnDisplaySettingsChanged;
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error unsubscribing DisplaySettingsChanged: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
+                    LogHelper.WriteLogToFile("Ink Canvas closing: Unsubscribing InkCanvas and TimeMachine events");
+                    // 取消 InkCanvas 和 TimeMachine 事件订阅
+                    try {
+                        if (timeMachine != null) {
+                            timeMachine.OnRedoStateChanged -= TimeMachine_OnRedoStateChanged;
+                            timeMachine.OnUndoStateChanged -= TimeMachine_OnUndoStateChanged;
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error unsubscribing TimeMachine events: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
+                    try {
+                        if (inkCanvas != null && inkCanvas.Strokes != null) {
+                            inkCanvas.Strokes.StrokesChanged -= StrokesOnStrokesChanged;
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("Error unsubscribing InkCanvas.Strokes events: " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    
                     LogHelper.WriteLogToFile("Ink Canvas closing: Releasing PPT COM objects");
                     // 释放 PPT COM 对象，防止进程残留
                     try {
                         if (pptApplication != null) {
                             try {
+                                // 取消订阅所有 PPT 事件
                                 pptApplication.PresentationOpen -= PptApplication_PresentationOpen;
                                 pptApplication.PresentationClose -= PptApplication_PresentationClose;
                                 pptApplication.SlideShowBegin -= PptApplication_SlideShowBegin;
                                 pptApplication.SlideShowNextSlide -= PptApplication_SlideShowNextSlide;
                                 pptApplication.SlideShowEnd -= PptApplication_SlideShowEnd;
                             }
-                            catch { /* 忽略事件解绑错误 */ }
+                            catch (Exception ex) {
+                                LogHelper.WriteLogToFile("Error unsubscribing PPT events: " + ex.Message, LogHelper.LogType.Warning);
+                            }
                             
                             // 释放 COM 对象引用
                             try {
                                 System.Runtime.InteropServices.Marshal.ReleaseComObject(pptApplication);
+                                LogHelper.WriteLogToFile("PPT Application COM object released", LogHelper.LogType.Info);
                             }
-                            catch { /* 忽略 COM 释放错误 */ }
+                            catch (Exception ex) {
+                                LogHelper.WriteLogToFile("Error releasing pptApplication COM object: " + ex.Message, LogHelper.LogType.Error);
+                            }
                             pptApplication = null;
                         }
                         
                         if (presentation != null) {
                             try {
                                 System.Runtime.InteropServices.Marshal.ReleaseComObject(presentation);
+                                LogHelper.WriteLogToFile("Presentation COM object released", LogHelper.LogType.Info);
                             }
-                            catch { /* 忽略 COM 释放错误 */ }
+                            catch (Exception ex) {
+                                LogHelper.WriteLogToFile("Error releasing presentation COM object: " + ex.Message, LogHelper.LogType.Error);
+                            }
                             presentation = null;
                         }
                         
                         if (slides != null) {
                             try {
                                 System.Runtime.InteropServices.Marshal.ReleaseComObject(slides);
+                                LogHelper.WriteLogToFile("Slides COM object released", LogHelper.LogType.Info);
                             }
-                            catch { /* 忽略 COM 释放错误 */ }
+                            catch (Exception ex) {
+                                LogHelper.WriteLogToFile("Error releasing slides COM object: " + ex.Message, LogHelper.LogType.Error);
+                            }
                             slides = null;
                         }
                         
                         if (slide != null) {
                             try {
                                 System.Runtime.InteropServices.Marshal.ReleaseComObject(slide);
+                                LogHelper.WriteLogToFile("Slide COM object released", LogHelper.LogType.Info);
                             }
-                            catch { /* 忽略 COM 释放错误 */ }
+                            catch (Exception ex) {
+                                LogHelper.WriteLogToFile("Error releasing slide COM object: " + ex.Message, LogHelper.LogType.Error);
+                            }
                             slide = null;
                         }
                     }
@@ -739,8 +992,6 @@ namespace Ink_Canvas {
         }
 
         private void Window_Closed(object sender, EventArgs e) {
-            SystemEvents.DisplaySettingsChanged -= SystemEventsOnDisplaySettingsChanged;
-
             LogHelper.WriteLogToFile("Ink Canvas closed", LogHelper.LogType.Event);
         }
 
@@ -748,10 +999,10 @@ namespace Ink_Canvas {
             AvailableLatestVersion = await AutoUpdateHelper.CheckForUpdates();
 
             if (AvailableLatestVersion != null) {
-                var IsDownloadSuccessful = false;
-                IsDownloadSuccessful = await AutoUpdateHelper.DownloadSetupFileAndSaveStatus(AvailableLatestVersion);
+                var isDownloadSuccessful = false;
+                isDownloadSuccessful = await AutoUpdateHelper.DownloadSetupFileAndSaveStatus(AvailableLatestVersion);
 
-                if (IsDownloadSuccessful) {
+                if (isDownloadSuccessful) {
                     if (!Settings.Startup.IsAutoUpdateWithSilence) {
                         if (MessageBox.Show("InkCanvasForClass 新版本安装包已下载完成，是否立即更新？",
                                 "InkCanvasForClass New Version Available", MessageBoxButton.YesNo,

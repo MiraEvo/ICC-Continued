@@ -560,8 +560,27 @@ namespace Ink_Canvas {
         }
 
         public async Task<string> GetProcessPathByPidAsync(int processId) {
-            var result = await Task.Run(() => GetProcessPathByPid(processId));
-            return result;
+            try
+            {
+                var result = await Task.Run(() => {
+                    try
+                    {
+                        return GetProcessPathByPid(processId);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.WriteLogToFile($"Error getting process path for PID {processId}: {ex.Message}", LogHelper.LogType.Warning);
+                        return null;
+                    }
+                });
+                return result;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Failed to start async get process path: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                return null;
+            }
         }
 
         private static string GetAppFriendlyName(string filePath)
@@ -571,13 +590,26 @@ namespace Ink_Canvas {
         }
 
         public async Task<WindowInformation[]> GetAllWindowsAsync(HWND[] excludedHwnds) {
-            var windows = await Task.Run(() => GetAllWindows(excludedHwnds));
-            var _wins = new List<WindowInformation>(){};
-            foreach (var w in windows) {
-                _wins.Add(w);
-            }
-            foreach (var windowInformation in windows) {
-                if (windowInformation.Title.Length == 0) {
+            try
+            {
+                var windows = await Task.Run(() => {
+                    try
+                    {
+                        return GetAllWindows(excludedHwnds);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.WriteLogToFile($"Error getting all windows: {ex.Message}", LogHelper.LogType.Error);
+                        LogHelper.NewLog(ex);
+                        return new WindowInformation[0];
+                    }
+                });
+                var _wins = new List<WindowInformation>(){};
+                foreach (var w in windows) {
+                    _wins.Add(w);
+                }
+                foreach (var windowInformation in windows) {
+                    if (windowInformation.Title.Length == 0) {
                     GetWindowThreadProcessId(windowInformation.Handle, out uint Pid);
                     if (Pid != 0) {
                         var _path = Path.GetFullPath(await GetProcessPathByPidAsync((int)Pid));
@@ -601,6 +633,13 @@ namespace Ink_Canvas {
             }
             return _wins.ToArray();
         }
+        catch (Exception ex)
+        {
+            LogHelper.WriteLogToFile($"Failed to get all windows async: {ex.Message}", LogHelper.LogType.Error);
+            LogHelper.NewLog(ex);
+            return new WindowInformation[0];
+        }
+    }
 
         #endregion
 

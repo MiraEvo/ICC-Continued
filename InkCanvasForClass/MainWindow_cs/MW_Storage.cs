@@ -46,8 +46,22 @@ namespace Ink_Canvas {
         }
 
         public async Task<long> GetDirectorySizeAsync(System.IO.DirectoryInfo directoryInfo, bool recursive = true) {
-            var size = await Task.Run(()=> GetDirectorySize(directoryInfo, recursive));
-            return size;
+            try
+            {
+                var size = await Task.Run(()=> GetDirectorySize(directoryInfo, recursive));
+                return size;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                LogHelper.WriteLogToFile($"Access denied calculating directory size: {ex.Message}", LogHelper.LogType.Warning);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Error calculating directory size async: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                return 0;
+            }
         }
 
         private static string FormatBytes(long bytes) {
@@ -174,8 +188,27 @@ namespace Ink_Canvas {
         }
 
         private async Task<int> GetDirectoryFilesCount(string path) {
-            var count = await Task.Run(() => Directory.GetFiles(path, "*", SearchOption.AllDirectories).Length);
-            return count;
+            try
+            {
+                var count = await Task.Run(() => Directory.GetFiles(path, "*", SearchOption.AllDirectories).Length);
+                return count;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                LogHelper.WriteLogToFile($"Access denied counting files in directory: {ex.Message}", LogHelper.LogType.Warning);
+                return 0;
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                LogHelper.WriteLogToFile($"Directory not found when counting files: {ex.Message}", LogHelper.LogType.Warning);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Error counting directory files: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                return 0;
+            }
         }
 
         private void InitStorageFoldersStructure(string dirPath) {

@@ -28,7 +28,7 @@ namespace Ink_Canvas.Helpers
                     Version remote = new Version(remoteVersion);
                     if (remote > local)
                     {
-                        LogHelper.WriteLogToFile("AutoUpdate | New version Availble: " + remoteVersion);
+                        LogHelper.WriteLogToFile("AutoUpdate | New version Availble: " + remoteVersion, LogHelper.LogType.Info);
                         return remoteVersion;
                     }
                     else return null;
@@ -39,9 +39,16 @@ namespace Ink_Canvas.Helpers
                     return null;
                 }
             }
+            catch (FormatException ex)
+            {
+                LogHelper.WriteLogToFile($"AutoUpdate | Invalid version format: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                return null;
+            }
             catch (Exception ex)
             {
-                Console.WriteLine($"AutoUpdate | Error: {ex.Message}");
+                LogHelper.WriteLogToFile($"AutoUpdate | Unexpected error checking for updates: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
                 return null;
             }
         }
@@ -113,29 +120,46 @@ namespace Ink_Canvas.Helpers
 
         private static async Task DownloadFile(string fileUrl, string destinationPath)
         {
-            using (HttpClient client = new HttpClient())
+            try
             {
-                try
+                using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = await client.GetAsync(fileUrl);
-                    response.EnsureSuccessStatusCode();
-
-                    using (FileStream fileStream = File.Create(destinationPath))
+                    try
                     {
-                        await response.Content.CopyToAsync(fileStream);
-                        fileStream.Close();
+                        HttpResponseMessage response = await client.GetAsync(fileUrl);
+                        response.EnsureSuccessStatusCode();
+
+                        using (FileStream fileStream = File.Create(destinationPath))
+                        {
+                            await response.Content.CopyToAsync(fileStream);
+                            fileStream.Close();
+                        }
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        LogHelper.WriteLogToFile($"AutoUpdate | HTTP request error: {ex.Message}", LogHelper.LogType.Error);
+                        LogHelper.NewLog(ex);
+                        throw;
+                    }
+                    catch (IOException ex)
+                    {
+                        LogHelper.WriteLogToFile($"AutoUpdate | File I/O error: {ex.Message}", LogHelper.LogType.Error);
+                        LogHelper.NewLog(ex);
+                        throw;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.WriteLogToFile($"AutoUpdate | Unexpected error downloading file: {ex.Message}", LogHelper.LogType.Error);
+                        LogHelper.NewLog(ex);
+                        throw;
                     }
                 }
-                catch (HttpRequestException ex)
-                {
-                    Console.WriteLine($"AutoUpdate | HTTP request error: {ex.Message}");
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"AutoUpdate | Error: {ex.Message}");
-                    throw;
-                }
+            }
+            catch (ObjectDisposedException ex)
+            {
+                LogHelper.WriteLogToFile($"AutoUpdate | HttpClient disposed prematurely: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                throw;
             }
         }
 
@@ -208,7 +232,11 @@ namespace Ink_Canvas.Helpers
                     int exitCode = process.ExitCode;*/
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"AutoUpdate | Failed to execute command: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+            }
         }
 
         public static void DeleteUpdatesFolder()

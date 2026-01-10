@@ -49,13 +49,13 @@ namespace Ink_Canvas.ViewModels
 
         #region 构造函数
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="settingsService">设置服务</param>
         public ToolbarViewModel(ISettingsService settingsService)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        }
-
-        public ToolbarViewModel() : this(ServiceLocator.GetRequiredService<ISettingsService>())
-        {
         }
 
         #endregion

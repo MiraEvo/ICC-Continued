@@ -1,4 +1,5 @@
 ﻿using Ink_Canvas.Helpers;
+using Ink_Canvas.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -67,7 +68,7 @@ namespace Ink_Canvas {
         private bool isUselightThemeColor = false, isDesktopUselightThemeColor = false;
         private int penType = 0; // 0是签字笔，1是荧光笔
         private int lastDesktopInkColor = 1, lastBoardInkColor = 5;
-        private int highlighterColor = 102;
+        private int highlighterColor = Constants.HighlighterColorCode;
 
         // 新增状态变量 - 用于保持笔类型和笔触粗细
         private int lastPenType = 0;  // 保存最后使用的笔类型 (0=签字笔, 1=荧光笔)
@@ -138,9 +139,9 @@ namespace Ink_Canvas {
                         || bgC == BlackboardBackgroundColorEnum.BlueBlack
                         || bgC == BlackboardBackgroundColorEnum.GrayBlack
                         || bgC == BlackboardBackgroundColorEnum.RealBlack) {
-                        WaterMarkTime.Foreground = new SolidColorBrush(Color.FromRgb(234, 235, 237));
-                        WaterMarkDate.Foreground = new SolidColorBrush(Color.FromRgb(234, 235, 237));
-                        BlackBoardWaterMark.Foreground = new SolidColorBrush(Color.FromRgb(234, 235, 237));
+                        WaterMarkTime.Foreground = new SolidColorBrush(Constants.WatermarkLightColor);
+                        WaterMarkDate.Foreground = new SolidColorBrush(Constants.WatermarkLightColor);
+                        BlackBoardWaterMark.Foreground = new SolidColorBrush(Constants.WatermarkLightColor);
                         isUselightThemeColor = true;
                     } else {
                         WaterMarkTime.Foreground = new SolidColorBrush(Color.FromRgb(22, 22,22));
@@ -167,30 +168,30 @@ namespace Ink_Canvas {
                 }
                 else if (inkColor == 5) {
                     // White
-                    inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, 255, 255, 255);
+                    inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, Constants.AlphaOpaque, Constants.AlphaOpaque, Constants.AlphaOpaque);
                 }
                 else if (isUselightThemeColor) {
                     if (inkColor == 1)
                         // Red
-                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, 239, 68, 68);
+                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, Constants.InkColorRedLight.R, Constants.InkColorRedLight.G, Constants.InkColorRedLight.B);
                     else if (inkColor == 2)
                         // Green
-                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, 34, 197, 94);
+                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, Constants.InkColorGreenLight.R, Constants.InkColorGreenLight.G, Constants.InkColorGreenLight.B);
                     else if (inkColor == 3)
                         // Blue
-                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, 59, 130, 246);
+                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, Constants.InkColorBlueLight.R, Constants.InkColorBlueLight.G, Constants.InkColorBlueLight.B);
                     else if (inkColor == 4)
                         // Yellow
-                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, 250, 204, 21);
+                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, Constants.InkColorYellowLight.R, Constants.InkColorYellowLight.G, Constants.InkColorYellowLight.B);
                     else if (inkColor == 6)
                         // Pink
-                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, 236, 72, 153);
+                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, Constants.InkColorPinkLight.R, Constants.InkColorPinkLight.G, Constants.InkColorPinkLight.B);
                     else if (inkColor == 7)
                         // Teal (亮色)
-                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, 20, 184, 166);
+                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, Constants.InkColorTealLight.R, Constants.InkColorTealLight.G, Constants.InkColorTealLight.B);
                     else if (inkColor == 8)
                         // Orange (亮色)
-                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, 249, 115, 22);
+                        inkCanvas.DefaultDrawingAttributes.Color = Color.FromArgb((byte)alpha, Constants.InkColorOrangeLight.R, Constants.InkColorOrangeLight.G, Constants.InkColorOrangeLight.B);
                 }
                 else {
                     if (inkColor == 1)

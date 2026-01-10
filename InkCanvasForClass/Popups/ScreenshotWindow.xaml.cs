@@ -451,7 +451,11 @@ namespace Ink_Canvas.Popups
             if (_selectionOverlay != null) {
                 _selectionOverlay.SelectionCompleted -= OnSelectionCompleted;
                 _selectionOverlay.SelectionCancelled -= OnSelectionCancelled;
-                try { _selectionOverlay.Close(); } catch { }
+                try { 
+                    _selectionOverlay.Close(); 
+                } catch (Exception ex) {
+                    Helpers.LogHelper.WriteLogToFile($"Failed to close selection overlay: {ex.Message}", Helpers.LogHelper.LogType.Warning);
+                }
                 _selectionOverlay = null;
             }
             

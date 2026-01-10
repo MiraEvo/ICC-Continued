@@ -119,7 +119,7 @@ namespace Ink_Canvas.Services
             {
                 if (File.Exists(SettingsFilePath))
                 {
-                    string json = await Task.Run(() => File.ReadAllText(SettingsFilePath));
+                    string json = await File.ReadAllTextAsync(SettingsFilePath);
                     var loadedSettings = JsonConvert.DeserializeObject<Settings>(json);
                     
                     if (loadedSettings != null)
@@ -134,12 +134,29 @@ namespace Ink_Canvas.Services
                 {
                     Settings = new Settings();
                     IsLoaded = true;
+                    LogHelper.WriteLogToFile($"Settings file not found, using defaults: {SettingsFilePath}", LogHelper.LogType.Info);
                     return true;
                 }
             }
+            catch (JsonException ex)
+            {
+                LogHelper.WriteLogToFile($"Failed to parse settings JSON: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+            }
+            catch (IOException ex)
+            {
+                LogHelper.WriteLogToFile($"Failed to read settings file: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                LogHelper.WriteLogToFile($"Access denied reading settings file: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+            }
             catch (Exception ex)
             {
-                LogHelper.WriteLogToFile($"Failed to load settings async: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.WriteLogToFile($"Unexpected error loading settings async: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
             }
 
             Settings = new Settings();
@@ -195,14 +212,30 @@ namespace Ink_Canvas.Services
                 }
 
                 string json = JsonConvert.SerializeObject(Settings, Formatting.Indented);
-                await Task.Run(() => File.WriteAllText(SettingsFilePath, json));
+                await File.WriteAllTextAsync(SettingsFilePath, json);
                 
                 LogHelper.WriteLogToFile($"Settings saved successfully to {SettingsFilePath}", LogHelper.LogType.Info);
                 return true;
             }
+            catch (JsonException ex)
+            {
+                LogHelper.WriteLogToFile($"Failed to serialize settings to JSON: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+            }
+            catch (IOException ex)
+            {
+                LogHelper.WriteLogToFile($"Failed to write settings file: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                LogHelper.WriteLogToFile($"Access denied writing settings file: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+            }
             catch (Exception ex)
             {
-                LogHelper.WriteLogToFile($"Failed to save settings async: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.WriteLogToFile($"Unexpected error saving settings async: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
             }
 
             return false;

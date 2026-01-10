@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- 基础命令 -->
+    <RoutedUICommand x:Key="KeyExit" Text=" " />
+    <RoutedUICommand x:Key="HotKey_Command_Undo" Text=" " />
+    <RoutedUICommand x:Key="HotKey_Command_Redo" Text=" " />
+    <RoutedUICommand x:Key="HotKey_Command_Clear" Text=" " />
+    
+    <!-- 工具切换命令 -->
+    <RoutedUICommand x:Key="HotKey_ChangeToDrawTool" Text=" " />
+    <RoutedUICommand x:Key="HotKey_ChangeToQuitDrawTool" Text=" " />
+    <RoutedUICommand x:Key="HotKey_ChangeToSelect" Text=" " />
+    <RoutedUICommand x:Key="HotKey_ChangeToEraser" Text=" " />
+    <RoutedUICommand x:Key="HotKey_ChangeToBoard" Text=" " />
+    
+    <!-- 画笔切换命令 -->
+    <RoutedUICommand x:Key="HotKey_ChangeToPen1" Text=" " />
+    <RoutedUICommand x:Key="HotKey_ChangeToPen2" Text=" " />
+    <RoutedUICommand x:Key="HotKey_ChangeToPen3" Text=" " />
+    <RoutedUICommand x:Key="HotKey_ChangeToPen4" Text=" " />
+    <RoutedUICommand x:Key="HotKey_ChangeToPen5" Text=" " />
+    
+    <!-- 其他命令 -->
+    <RoutedUICommand x:Key="HotKey_Capture" Text=" " />
+    <RoutedUICommand x:Key="HotKey_Hide" Text=" " />
+    <RoutedUICommand x:Key="HotKey_DrawLine" Text=" " />
+    <RoutedUICommand x:Key="NothingWillHappened" Text=" " />
+    
+</ResourceDictionary>

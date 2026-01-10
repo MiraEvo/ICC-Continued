@@ -49,6 +49,9 @@ namespace Ink_Canvas.ViewModels
         /// <summary>
         /// 构造函数
         /// </summary>
+        /// <param name="settingsService">设置服务</param>
+        /// <param name="timeMachineService">时光机服务</param>
+        /// <param name="pageService">页面服务</param>
         public MainWindowViewModel(
             ISettingsService settingsService,
             ITimeMachineService timeMachineService,
@@ -62,16 +65,6 @@ namespace Ink_Canvas.ViewModels
             _timeMachineService.UndoStateChanged += OnUndoStateChanged;
             _timeMachineService.RedoStateChanged += OnRedoStateChanged;
             _pageService.PageChanged += OnPageChanged;
-        }
-
-        /// <summary>
-        /// 默认构造函数（用于设计时或从 ServiceLocator 获取服务）
-        /// </summary>
-        public MainWindowViewModel() : this(
-            ServiceLocator.GetRequiredService<ISettingsService>(),
-            ServiceLocator.GetRequiredService<ITimeMachineService>(),
-            ServiceLocator.GetRequiredService<IPageService>())
-        {
         }
 
         #endregion
@@ -253,6 +246,53 @@ namespace Ink_Canvas.ViewModels
         /// </summary>
         [ObservableProperty]
         private bool _isInPPTMode;
+
+        #endregion
+
+        #region 白板页面状态
+
+        /// <summary>
+        /// 当前白板页面索引（1-based）
+        /// </summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(WhiteboardPageInfo))]
+        [NotifyPropertyChangedFor(nameof(CanGoPreviousWhiteboardPage))]
+        [NotifyPropertyChangedFor(nameof(CanGoNextWhiteboardPage))]
+        private int _currentWhiteboardIndex = 1;
+
+        /// <summary>
+        /// 白板页面总数
+        /// </summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(WhiteboardPageInfo))]
+        [NotifyPropertyChangedFor(nameof(CanGoNextWhiteboardPage))]
+        [NotifyPropertyChangedFor(nameof(CanAddWhiteboardPage))]
+        private int _whiteboardTotalCount = 1;
+
+        /// <summary>
+        /// 白板页面信息显示文本
+        /// </summary>
+        public string WhiteboardPageInfo => $"{CurrentWhiteboardIndex}/{WhiteboardTotalCount}";
+
+        /// <summary>
+        /// 是否可以前往上一页白板
+        /// </summary>
+        public bool CanGoPreviousWhiteboardPage => CurrentWhiteboardIndex > 1;
+
+        /// <summary>
+        /// 是否可以前往下一页白板
+        /// </summary>
+        public bool CanGoNextWhiteboardPage => CurrentWhiteboardIndex < WhiteboardTotalCount;
+
+        /// <summary>
+        /// 是否可以添加新白板页
+        /// </summary>
+        public bool CanAddWhiteboardPage => WhiteboardTotalCount < 99;
+
+        /// <summary>
+        /// 下一页按钮是否与新建页按钮合并
+        /// </summary>
+        public bool IsNextPageButtonMerged => CurrentWhiteboardIndex == WhiteboardTotalCount;
 
         #endregion
 
@@ -581,6 +621,126 @@ namespace Ink_Canvas.ViewModels
 
         #endregion
 
+        #region 白板页面命令
+
+        /// <summary>
+        /// 白板上一页命令
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(CanGoPreviousWhiteboardPage))]
+        private void PreviousWhiteboardPage()
+        {
+            PreviousWhiteboardPageRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 白板下一页命令
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(CanGoNextWhiteboardPage))]
+        private void NextWhiteboardPage()
+        {
+            NextWhiteboardPageRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 添加新白板页命令
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(CanAddWhiteboardPage))]
+        private void AddWhiteboardPage()
+        {
+            AddWhiteboardPageRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 删除当前白板页命令
+        /// </summary>
+        [RelayCommand]
+        private void DeleteWhiteboardPage()
+        {
+            DeleteWhiteboardPageRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 显示白板页面列表命令
+        /// </summary>
+        [RelayCommand]
+        private void ShowWhiteboardPageList()
+        {
+            ShowWhiteboardPageListRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 白板上一页请求事件
+        /// </summary>
+        public event EventHandler PreviousWhiteboardPageRequested;
+
+        /// <summary>
+        /// 白板下一页请求事件
+        /// </summary>
+        public event EventHandler NextWhiteboardPageRequested;
+
+        /// <summary>
+        /// 添加新白板页请求事件
+        /// </summary>
+        public event EventHandler AddWhiteboardPageRequested;
+
+        /// <summary>
+        /// 删除当前白板页请求事件
+        /// </summary>
+        public event EventHandler DeleteWhiteboardPageRequested;
+
+        /// <summary>
+        /// 显示白板页面列表请求事件
+        /// </summary>
+        public event EventHandler ShowWhiteboardPageListRequested;
+
+        #endregion
+
+        #region 白板背景命令
+
+        /// <summary>
+        /// 设置白板背景颜色命令
+        /// </summary>
+        [RelayCommand]
+        private void SetBoardBackgroundColor(int colorIndex)
+        {
+            SetBoardBackgroundColorRequested?.Invoke(this, colorIndex);
+        }
+
+        /// <summary>
+        /// 设置白板背景图案命令
+        /// </summary>
+        [RelayCommand]
+        private void SetBoardBackgroundPattern(int patternIndex)
+        {
+            SetBoardBackgroundPatternRequested?.Invoke(this, patternIndex);
+        }
+
+        /// <summary>
+        /// 显示/隐藏白板背景设置面板命令
+        /// </summary>
+        [RelayCommand]
+        private void ToggleBoardBackgroundPanel()
+        {
+            ToggleBoardBackgroundPanelRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 设置白板背景颜色请求事件
+        /// </summary>
+        public event EventHandler<int> SetBoardBackgroundColorRequested;
+
+        /// <summary>
+        /// 设置白板背景图案请求事件
+        /// </summary>
+        public event EventHandler<int> SetBoardBackgroundPatternRequested;
+
+        /// <summary>
+        /// 显示/隐藏白板背景设置面板请求事件
+        /// </summary>
+        public event EventHandler ToggleBoardBackgroundPanelRequested;
+
+        #endregion
+
         #region 热键命令
 
         /// <summary>
@@ -766,6 +926,31 @@ namespace Ink_Canvas.ViewModels
         /// 绘制直线请求事件
         /// </summary>
         public event EventHandler DrawLineRequested;
+
+        #endregion
+
+        #region 公共方法
+
+        /// <summary>
+        /// 更新白板页面索引（由 View 调用）
+        /// </summary>
+        public void UpdateWhiteboardPageIndex(int currentIndex, int totalCount)
+        {
+            CurrentWhiteboardIndex = currentIndex;
+            WhiteboardTotalCount = totalCount;
+            
+            // 通知相关属性变化
+            OnPropertyChanged(nameof(WhiteboardPageInfo));
+            OnPropertyChanged(nameof(CanGoPreviousWhiteboardPage));
+            OnPropertyChanged(nameof(CanGoNextWhiteboardPage));
+            OnPropertyChanged(nameof(CanAddWhiteboardPage));
+            OnPropertyChanged(nameof(IsNextPageButtonMerged));
+            
+            // 通知命令状态变化
+            PreviousWhiteboardPageCommand.NotifyCanExecuteChanged();
+            NextWhiteboardPageCommand.NotifyCanExecuteChanged();
+            AddWhiteboardPageCommand.NotifyCanExecuteChanged();
+        }
 
         #endregion
 

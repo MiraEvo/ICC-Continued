@@ -1282,13 +1282,19 @@ namespace Ink_Canvas {
                     if (lastTempStroke != null) {
                         inkCanvas.Strokes.Remove(lastTempStroke);
                     }
-                } catch { }
+                } catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Failed to remove last temp stroke: {ex.Message}", LogHelper.LogType.Trace);
+                    // Non-critical error, continue
+                }
 
                 try {
                     if (lastTempStrokeCollection != null && lastTempStrokeCollection.Count > 0) {
                         inkCanvas.Strokes.Remove(lastTempStrokeCollection);
                     }
-                } catch { }
+                } catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Failed to remove last temp stroke collection: {ex.Message}", LogHelper.LogType.Trace);
+                    // Non-critical error, continue
+                }
 
                 // 添加新笔画
                 if (newStrokes.Count == 1) {

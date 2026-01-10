@@ -52,11 +52,19 @@ namespace Ink_Canvas.Helpers {
 
                 try {
                     SetDirectoryLastWriteUtc(dirPath, lastWriteDate);
-                } catch { }
+                } catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Failed to restore directory last write time: {ex.Message}", LogHelper.LogType.Trace);
+                    // Non-critical error, continue
+                }
 
                 return true;
-            } catch (UnauthorizedAccessException) { } catch (Exception) { }
-            return false;
+            } catch (UnauthorizedAccessException ex) {
+                LogHelper.WriteLogToFile($"Access denied checking directory writability: {ex.Message}", LogHelper.LogType.Trace);
+                return false;
+            } catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error checking directory writability: {ex.Message}", LogHelper.LogType.Warning);
+                return false;
+            }
         }
 
         public static async Task<bool> IsWritableAsync(string dirPath) {

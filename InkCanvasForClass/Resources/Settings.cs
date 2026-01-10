@@ -4,50 +4,133 @@ using Newtonsoft.Json;
 
 namespace Ink_Canvas
 {
+    /// <summary>
+    /// 应用程序设置根类
+    /// 包含所有配置分类的设置项
+    /// </summary>
     public class Settings
     {
+        /// <summary>
+        /// 高级设置
+        /// </summary>
         [JsonProperty("advanced")]
         public Advanced Advanced { get; set; } = new Advanced();
+
+        /// <summary>
+        /// 外观设置
+        /// </summary>
         [JsonProperty("appearance")]
         public Appearance Appearance { get; set; } = new Appearance();
+
+        /// <summary>
+        /// 自动化设置
+        /// </summary>
         [JsonProperty("automation")]
         public Automation Automation { get; set; } = new Automation();
+
+        /// <summary>
+        /// PowerPoint 行为设置
+        /// </summary>
         [JsonProperty("behavior")]
         public PowerPointSettings PowerPointSettings { get; set; } = new PowerPointSettings();
+
+        /// <summary>
+        /// 画布设置
+        /// </summary>
         [JsonProperty("canvas")]
         public Canvas Canvas { get; set; } = new Canvas();
+
+        /// <summary>
+        /// 手势设置
+        /// </summary>
         [JsonProperty("gesture")]
         public Gesture Gesture { get; set; } = new Gesture();
+
+        /// <summary>
+        /// 墨迹转形状设置
+        /// </summary>
         [JsonProperty("inkToShape")]
         public InkToShape InkToShape { get; set; } = new InkToShape();
+
+        /// <summary>
+        /// 启动设置
+        /// </summary>
         [JsonProperty("startup")]
         public Startup Startup { get; set; } = new Startup();
+
+        /// <summary>
+        /// 随机点名设置
+        /// </summary>
         [JsonProperty("randSettings")]
         public RandSettings RandSettings { get; set; } = new RandSettings();
+
+        /// <summary>
+        /// 截图设置
+        /// </summary>
         [JsonProperty("snapshot")]
         public Snapshot Snapshot { get; set; } = new Snapshot();
+
+        /// <summary>
+        /// 存储设置
+        /// </summary>
         [JsonProperty("storage")]
         public Storage Storage { get; set; } = new Storage();
     }
 
+    /// <summary>
+    /// 截图设置类
+    /// </summary>
     public class Snapshot {
+        /// <summary>
+        /// 是否使用 Magnification API 进行截图
+        /// </summary>
         [JsonProperty("usingMagnificationAPI")]
         public bool ScreenshotUsingMagnificationAPI { get; set; } = false;
+
+        /// <summary>
+        /// 截图后是否复制到剪贴板
+        /// </summary>
         [JsonProperty("copyScreenshotToClipboard")]
         public bool CopyScreenshotToClipboard { get; set; } = true;
+
+        /// <summary>
+        /// 截图时是否隐藏主窗口
+        /// </summary>
         [JsonProperty("hideMainWinWhenScreenshot")]
         public bool HideMainWinWhenScreenshot { get; set; } = true;
+
+        /// <summary>
+        /// 截图时是否附加墨迹
+        /// </summary>
         [JsonProperty("attachInkWhenScreenshot")]
         public bool AttachInkWhenScreenshot { get; set; } = true;
+
+        /// <summary>
+        /// 是否仅截取最大化窗口
+        /// </summary>
         [JsonProperty("onlySnapshotMaximizeWindow")]
         public bool OnlySnapshotMaximizeWindow { get; set; } = false;
+
+        /// <summary>
+        /// 截图文件名模式
+        /// </summary>
         [JsonProperty("screenshotFileName")]
         public string ScreenshotFileName { get; set; } = "Screenshot-[YYYY]-[MM]-[DD]-[HH]-[mm]-[ss].png";
     }
 
+    /// <summary>
+    /// 存储设置类
+    /// </summary>
     public class Storage {
+        /// <summary>
+        /// 存储位置标识（a- 表示自动选择）
+        /// </summary>
         [JsonProperty("storageLocation")] 
         public string StorageLocation { get; set; } = "a-";
+
+        /// <summary>
+        /// 用户自定义存储位置
+        /// </summary>
         [JsonProperty("userStorageLocation")] 
         public string UserStorageLocation { get; set; } = "";
     }

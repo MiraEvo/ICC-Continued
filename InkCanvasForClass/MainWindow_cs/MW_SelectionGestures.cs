@@ -400,8 +400,8 @@ namespace Ink_Canvas {
                 lockedStrokeSelectionBorderHandleType = StrokeSelectionBorderHandlesEnum.Rotate;
             }
 
-            // capture
-            // TODO 这里还需要对触摸屏幕的单个TouchDevice进行Capture
+            // 捕获鼠标输入以跟踪拖动操作
+            // 注意：对于触摸设备，可能需要额外处理 TouchDevice.Capture()
             bd.CaptureMouse();
 
             // hide selectionToolBar
@@ -467,8 +467,8 @@ namespace Ink_Canvas {
             isLockedStrokeSelectionHandle = false;
             lockedStrokeSelectionBorderHandleType = null;
 
-            // release capture
-            // TODO 这里还需要对触摸屏幕的单个TouchDevice进行ReleaseCapture
+            // 释放鼠标捕获
+            // 注意：对于触摸设备，可能需要额外处理 TouchDevice.ReleaseCapture()
             lockedStrokeSelectionHandle.ReleaseMouseCapture();
 
             // unlock
@@ -554,7 +554,7 @@ namespace Ink_Canvas {
             }
 
             if (final_w >= 1 && final_h >= 1) {
-                // TODO 此處還需要修改行為，讓其能夠縮放到1x1；
+                // 确保选择边框至少为 1x1 像素，避免尺寸为 0 导致的显示问题
                 StrokeSelectionBorder.Width = final_w >=1 ? final_w : 1;
                 StrokeSelectionBorder.Height = final_h >=1 ? final_h : 1;
                 

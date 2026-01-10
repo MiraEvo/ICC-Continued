@@ -94,13 +94,6 @@ namespace Ink_Canvas.ViewModels
         }
 
         /// <summary>
-        /// 默认构造函数（用于设计时或从 ServiceLocator 获取服务）
-        /// </summary>
-        public SettingsViewModel() : this(ServiceLocator.GetRequiredService<ISettingsService>())
-        {
-        }
-
-        /// <summary>
         /// 初始化子 ViewModel
         /// </summary>
         private void InitializeSubViewModels()

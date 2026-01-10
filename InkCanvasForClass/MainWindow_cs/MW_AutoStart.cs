@@ -21,9 +21,13 @@ namespace Ink_Canvas {
                 //设置快捷键(如果有必要的话.)
                 //shortcut.Hotkey = "CTRL+ALT+D";
                 shortcut.Save();
+                Helpers.LogHelper.WriteLogToFile($"Auto-start shortcut created successfully for {exeName}", Helpers.LogHelper.LogType.Info);
                 return true;
             }
-            catch (Exception) { }
+            catch (Exception ex) {
+                Helpers.LogHelper.WriteLogToFile($"Failed to create auto-start shortcut: {ex.Message}", Helpers.LogHelper.LogType.Error);
+                Helpers.LogHelper.NewLog(ex);
+            }
 
             return false;
         }
@@ -32,9 +36,13 @@ namespace Ink_Canvas {
             try {
                 System.IO.File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\" + exeName +
                                       ".lnk");
+                Helpers.LogHelper.WriteLogToFile($"Auto-start shortcut deleted successfully for {exeName}", Helpers.LogHelper.LogType.Info);
                 return true;
             }
-            catch (Exception) { }
+            catch (Exception ex) {
+                Helpers.LogHelper.WriteLogToFile($"Failed to delete auto-start shortcut: {ex.Message}", Helpers.LogHelper.LogType.Warning);
+                Helpers.LogHelper.NewLog(ex);
+            }
 
             return false;
         }

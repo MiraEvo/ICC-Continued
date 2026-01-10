@@ -205,3 +205,9 @@ custom-copyright-banner.png
 # 本地开发配置（如有）
 appsettings.Development.json
 appsettings.Local.json
+# Temporary files added by FileCleanupService
+# WPF temporary files
+*_wpftmp.csproj
+*.g.cs
+*.g.i.cs
+

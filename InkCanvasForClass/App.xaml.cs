@@ -89,31 +89,108 @@ namespace Ink_Canvas
 
         /// <summary>
         /// 配置依赖注入服务
+        /// 
+        /// 服务生命周期说明：
+        /// - Singleton: 应用程序生命周期内只创建一次，所有请求共享同一实例
+        /// - Transient: 每次请求都创建新实例（本应用暂未使用）
+        /// 
+        /// 服务依赖关系：
+        /// - SettingsService: 无依赖
+        /// - TimeMachineService: 无依赖
+        /// - PageService: 依赖 ITimeMachineService（可选）
+        /// - PPTService: 无依赖
+        /// - FileCleanupService: 无依赖
+        /// - CodeAnalyzer: 无依赖
+        /// - ResourceManagementChecker: 无依赖
+        /// - SettingsViewModel: 依赖 ISettingsService
+        /// - MainWindowViewModel: 依赖 ISettingsService, IPageService, ITimeMachineService
+        /// - ToolbarViewModel: 依赖 ISettingsService
+        /// 
+        /// 注意：以下服务需要在 MainWindow 初始化后手动注册，因为它们依赖于 UI 元素：
+        /// - IInkCanvasService: 依赖 IccInkCanvas 实例
+        /// - INotificationService: 依赖 MainWindow 实例
+        /// - IScreenshotService: 依赖 MainWindow 实例
         /// </summary>
         private void ConfigureServices()
         {
             var services = new ServiceCollection();
 
-            // 注册核心服务
-            services.AddSingleton<ISettingsService, SettingsService>();
-            services.AddSingleton<ITimeMachineService, TimeMachineService>();
-            services.AddSingleton<IPageService, PageService>();
-            // 注意: IInkCanvasService 需要在 MainWindow 初始化后注册，因为它依赖于 IccInkCanvas 实例
+            // ========================================
+            // 核心服务 (Singleton)
+            // ========================================
             
-            // 注册 ViewModel
+            // 设置服务 - 管理应用程序配置
+            services.AddSingleton<ISettingsService, SettingsService>();
+            
+            // 时光机服务 - 管理撤销/重做历史
+            services.AddSingleton<ITimeMachineService, TimeMachineService>();
+            
+            // 页面服务 - 管理画布页面
+            // 依赖: ITimeMachineService (通过构造函数注入，可选)
+            services.AddSingleton<IPageService>(sp =>
+            {
+                var timeMachineService = sp.GetService<ITimeMachineService>();
+                return new PageService(timeMachineService);
+            });
+            
+            // PPT 服务 - 管理 PowerPoint 集成
+            services.AddSingleton<IPPTService, PPTService>();
+            
+            // ========================================
+            // 工具服务 (Singleton)
+            // ========================================
+            
+            // 文件清理服务 - 清理临时文件和冗余资源
+            services.AddSingleton<IFileCleanupService, FileCleanupService>();
+            
+            // 代码分析器 - 静态代码分析
+            services.AddSingleton<ICodeAnalyzer, CodeAnalyzer>();
+            
+            // 资源管理检查器 - 检查资源泄漏
+            services.AddSingleton<IResourceManagementChecker, ResourceManagementChecker>();
+            
+            // ========================================
+            // ViewModels (Singleton)
+            // ========================================
+            
+            // 设置 ViewModel
+            // 依赖: ISettingsService
             services.AddSingleton<SettingsViewModel>();
+            
+            // 设置页面 ViewModel
+            // 依赖: ISettingsService, SettingsViewModel
+            services.AddSingleton<SettingsPageViewModel>(sp =>
+            {
+                var settingsService = sp.GetRequiredService<ISettingsService>();
+                var settingsViewModel = sp.GetRequiredService<SettingsViewModel>();
+                return new SettingsPageViewModel(settingsService, settingsViewModel);
+            });
+            
+            // 主窗口 ViewModel
+            // 依赖: ISettingsService, IPageService, ITimeMachineService
             services.AddSingleton<MainWindowViewModel>();
+            
+            // 工具栏 ViewModel
+            // 依赖: ISettingsService
             services.AddSingleton<ToolbarViewModel>();
 
+            // ========================================
             // 构建服务提供者
+            // ========================================
             Services = services.BuildServiceProvider();
             
-            // 设置全局服务定位器
+            // 设置全局服务定位器（仅用于无法使用构造函数注入的场景）
             ServiceLocator.ServiceProvider = Services;
             
-            // 预先加载设置服务
+            // ========================================
+            // 预加载关键服务
+            // ========================================
+            
+            // 预先加载设置服务，确保配置在应用启动时可用
             var settingsService = Services.GetRequiredService<ISettingsService>();
             settingsService.Load();
+            
+            LogHelper.WriteLogToFile("Dependency injection configured successfully", LogHelper.LogType.Info);
         }
 
         private Assembly OnAssemblyResolve(object sender, ResolveEventArgs args) {
@@ -227,7 +304,7 @@ namespace Ink_Canvas
                     try
                     {
                         ScrollViewerEx SenderScrollViewer = (ScrollViewerEx)sender;
-                        SenderScrollViewer.ScrollToVerticalOffset(SenderScrollViewer.VerticalOffset - e.Delta * 10 * System.Windows.Forms.SystemInformation.MouseWheelScrollLines / (double)120);
+                        SenderScrollViewer.ScrollToVerticalOffset(SenderScrollViewer.VerticalOffset - e.Delta * Constants.MouseWheelScrollMultiplier * System.Windows.Forms.SystemInformation.MouseWheelScrollLines / Constants.MouseWheelDeltaStandard);
                         e.Handled = true;
                     }
                     catch (Exception ex) {

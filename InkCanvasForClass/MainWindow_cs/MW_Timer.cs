@@ -225,12 +225,12 @@ namespace Ink_Canvas {
                 } else if (Settings.Automation.IsAutoFoldInMSWhiteboard && (windowProcessName == "MicrosoftWhiteboard" || 
                                                                             windowProcessName == "msedgewebview2")) {
                     if (!unfoldFloatingBarByUser && !isFloatingBarFolded) FoldFloatingBar_MouseUp(null, null);
-                    // OldZyBoard
-                } else if (Settings.Automation.IsAutoFoldInOldZyBoard && // 中原旧白板
+                // 中原旧版白板自动折叠
+                } else if (Settings.Automation.IsAutoFoldInOldZyBoard &&
                         (WinTabWindowsChecker.IsWindowExisted("WhiteBoard - DrawingWindow")
                          || WinTabWindowsChecker.IsWindowExisted("InstantAnnotationWindow"))) {
                     if (!unfoldFloatingBarByUser && !isFloatingBarFolded) FoldFloatingBar_MouseUp(null, null);
-                    // HiteLightBoard
+                // HiteLightBoard 自动折叠
                 } else if (Settings.Automation.IsAutoFoldInHiteLightBoard && windowProcessName == "HiteLightBoard" &&
                            ForegroundWindowInfo.WindowRect().Height >= SystemParameters.WorkArea.Height - 16 &&
                            ForegroundWindowInfo.WindowRect().Width >= SystemParameters.WorkArea.Width - 16) {

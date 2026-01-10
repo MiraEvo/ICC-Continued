@@ -122,10 +122,28 @@ namespace Ink_Canvas {
         }
 
         public async Task<bool> InitFreezeWindowAsync(HWND[] hwndsList) {
-            return await Task.Run(() => {
-                InitFreezeWindow(hwndsList);
-                return true;
-            });
+            try
+            {
+                return await Task.Run(() => {
+                    try
+                    {
+                        InitFreezeWindow(hwndsList);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Ink_Canvas.Helpers.LogHelper.WriteLogToFile($"Error initializing freeze window: {ex.Message}", Ink_Canvas.Helpers.LogHelper.LogType.Error);
+                        Ink_Canvas.Helpers.LogHelper.NewLog(ex);
+                        return false;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Ink_Canvas.Helpers.LogHelper.WriteLogToFile($"Failed to start async freeze window initialization: {ex.Message}", Ink_Canvas.Helpers.LogHelper.LogType.Error);
+                Ink_Canvas.Helpers.LogHelper.NewLog(ex);
+                return false;
+            }
         }
 
         public void DisposeFreezeFrame() {
@@ -172,9 +190,29 @@ namespace Ink_Canvas {
         }
 
         public async Task<Bitmap> GetFreezedFrameAsync() {
-            if (!isFreezeFrameLoaded) return null;
-            var result = await Task.Run(GetFreezedFrame);
-            return result;
+            try
+            {
+                if (!isFreezeFrameLoaded) return null;
+                var result = await Task.Run(() => {
+                    try
+                    {
+                        return GetFreezedFrame();
+                    }
+                    catch (Exception ex)
+                    {
+                        Ink_Canvas.Helpers.LogHelper.WriteLogToFile($"Error getting freezed frame: {ex.Message}", Ink_Canvas.Helpers.LogHelper.LogType.Error);
+                        Ink_Canvas.Helpers.LogHelper.NewLog(ex);
+                        return null;
+                    }
+                });
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Ink_Canvas.Helpers.LogHelper.WriteLogToFile($"Failed to start async get freezed frame: {ex.Message}", Ink_Canvas.Helpers.LogHelper.LogType.Error);
+                Ink_Canvas.Helpers.LogHelper.NewLog(ex);
+                return null;
+            }
         }
     }
 }

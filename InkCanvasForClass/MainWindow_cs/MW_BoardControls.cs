@@ -472,6 +472,14 @@ namespace Ink_Canvas {
             WhiteboardModeNextPageButtonEnabled = CurrentWhiteboardIndex < WhiteboardTotalCount;
             WhiteboardModeNewPageButtonEnabled = WhiteboardTotalCount < 99;
             WhiteboardModeNewPageButtonMerged = CurrentWhiteboardIndex == WhiteboardTotalCount;
+            
+            // 更新 ViewModel 中的白板页面状态
+            try {
+                ViewModel?.UpdateWhiteboardPageIndex(CurrentWhiteboardIndex, WhiteboardTotalCount);
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile("Failed to update ViewModel whiteboard page index: " + ex.Message, LogHelper.LogType.Error);
+            }
         }
     }
 }
