@@ -1,4 +1,6 @@
 using Ink_Canvas.Helpers;
+using Ink_Canvas.Models;
+using Ink_Canvas.Services.Events;
 using System;
 using System.Collections.Generic;
 using System.Windows.Ink;
@@ -6,7 +8,7 @@ using System.Windows.Ink;
 namespace Ink_Canvas.Services
 {
     /// <summary>
-    /// 页面信息
+    /// 页面信息（保留用于向后兼容）
     /// </summary>
     public class PageInfo
     {
@@ -45,39 +47,65 @@ namespace Ink_Canvas.Services
         /// </summary>
         public string ThumbnailData { get; set; }
 
+        /// <summary>
+        /// 背景颜色
+        /// </summary>
+        public Ink_Canvas.BlackboardBackgroundColorEnum BackgroundColor { get; set; }
+
+        /// <summary>
+        /// 背景图案
+        /// </summary>
+        public Ink_Canvas.BlackboardBackgroundPatternEnum BackgroundPattern { get; set; }
+
         public PageInfo()
         {
             Strokes = new StrokeCollection();
             CreatedAt = DateTime.Now;
             ModifiedAt = DateTime.Now;
+            BackgroundColor = Ink_Canvas.BlackboardBackgroundColorEnum.White;
+            BackgroundPattern = Ink_Canvas.BlackboardBackgroundPatternEnum.None;
         }
-    }
-
-    /// <summary>
-    /// 页面变化事件参数
-    /// </summary>
-    public class PageChangedEventArgs : EventArgs
-    {
-        /// <summary>
-        /// 旧页面索引
-        /// </summary>
-        public int OldIndex { get; }
 
         /// <summary>
-        /// 新页面索引
+        /// 从 PageState 创建 PageInfo
         /// </summary>
-        public int NewIndex { get; }
-
-        /// <summary>
-        /// 页面总数
-        /// </summary>
-        public int TotalPages { get; }
-
-        public PageChangedEventArgs(int oldIndex, int newIndex, int totalPages)
+        public static PageInfo FromPageState(PageState state)
         {
-            OldIndex = oldIndex;
-            NewIndex = newIndex;
-            TotalPages = totalPages;
+            if (state == null) return null;
+            
+            return new PageInfo
+            {
+                Index = state.Index,
+                Strokes = state.Strokes,
+                History = state.History,
+                CreatedAt = state.CreatedAt,
+                ModifiedAt = state.ModifiedAt,
+                IsBlackboardMode = state.IsBlackboardMode,
+                ThumbnailData = state.ThumbnailData != null ? Convert.ToBase64String(state.ThumbnailData) : null,
+                BackgroundColor = state.BackgroundColor,
+                BackgroundPattern = state.BackgroundPattern
+            };
+        }
+
+        /// <summary>
+        /// 转换为 PageState
+        /// </summary>
+        public PageState ToPageState()
+        {
+            return new PageState
+            {
+                Index = this.Index,
+                Strokes = this.Strokes,
+                History = this.History,
+                CreatedAt = this.CreatedAt,
+                ModifiedAt = this.ModifiedAt,
+                IsBlackboardMode = this.IsBlackboardMode,
+                ThumbnailData = !string.IsNullOrEmpty(this.ThumbnailData) 
+                    ? Convert.FromBase64String(this.ThumbnailData) 
+                    : null,
+                BackgroundColor = this.BackgroundColor,
+                BackgroundPattern = this.BackgroundPattern
+            };
         }
     }
 
@@ -89,24 +117,24 @@ namespace Ink_Canvas.Services
         #region 事件
 
         /// <summary>
-        /// 页面变化事件
+        /// 页面变化事件（使用新的事件参数类型）
         /// </summary>
         event EventHandler<PageChangedEventArgs> PageChanged;
 
         /// <summary>
-        /// 页面添加事件
+        /// 页面添加事件（使用新的事件参数类型）
         /// </summary>
-        event EventHandler<int> PageAdded;
+        event EventHandler<PageAddedEventArgs> PageAdded;
 
         /// <summary>
-        /// 页面删除事件
+        /// 页面删除事件（使用新的事件参数类型）
         /// </summary>
-        event EventHandler<int> PageDeleted;
+        event EventHandler<PageDeletedEventArgs> PageDeleted;
 
         /// <summary>
         /// 页面清除事件
         /// </summary>
-        event EventHandler PagesCleared;
+        event EventHandler<PagesClearedEventArgs> PagesCleared;
 
         #endregion
 
@@ -123,9 +151,19 @@ namespace Ink_Canvas.Services
         int PageCount { get; }
 
         /// <summary>
-        /// 获取当前页面信息
+        /// 获取当前页面状态（新增）
+        /// </summary>
+        PageState CurrentPageState { get; }
+
+        /// <summary>
+        /// 获取当前页面信息（保留用于向后兼容）
         /// </summary>
         PageInfo CurrentPage { get; }
+
+        /// <summary>
+        /// 获取所有页面状态集合（新增）
+        /// </summary>
+        IReadOnlyList<PageState> Pages { get; }
 
         /// <summary>
         /// 是否可以向前翻页
@@ -232,14 +270,21 @@ namespace Ink_Canvas.Services
         #region 页面数据
 
         /// <summary>
-        /// 获取页面信息
+        /// 获取页面信息（保留用于向后兼容）
         /// </summary>
         /// <param name="pageIndex">页面索引</param>
         /// <returns>页面信息</returns>
         PageInfo GetPage(int pageIndex);
 
         /// <summary>
-        /// 获取所有页面信息
+        /// 获取页面状态（新增）
+        /// </summary>
+        /// <param name="pageIndex">页面索引</param>
+        /// <returns>页面状态</returns>
+        PageState GetPageState(int pageIndex);
+
+        /// <summary>
+        /// 获取所有页面信息（保留用于向后兼容）
         /// </summary>
         /// <returns>页面信息列表</returns>
         IReadOnlyList<PageInfo> GetAllPages();
@@ -250,9 +295,22 @@ namespace Ink_Canvas.Services
         void SaveCurrentPageState();
 
         /// <summary>
+        /// 保存当前页面状态（带笔画参数）
+        /// </summary>
+        /// <param name="strokes">要保存的笔画集合</param>
+        void SaveCurrentPageState(StrokeCollection strokes);
+
+        /// <summary>
         /// 恢复当前页面状态
         /// </summary>
         void RestoreCurrentPageState();
+
+        /// <summary>
+        /// 加载指定页面的笔画（新增）
+        /// </summary>
+        /// <param name="pageIndex">页面索引</param>
+        /// <returns>笔画集合</returns>
+        StrokeCollection LoadPageStrokes(int pageIndex);
 
         /// <summary>
         /// 更新页面笔画
@@ -269,10 +327,31 @@ namespace Ink_Canvas.Services
         void UpdatePageHistory(int pageIndex, TimeMachineHistory[] history);
 
         /// <summary>
+        /// 更新页面背景颜色（新增）
+        /// </summary>
+        /// <param name="pageIndex">页面索引</param>
+        /// <param name="color">背景颜色</param>
+        void UpdatePageBackgroundColor(int pageIndex, Ink_Canvas.BlackboardBackgroundColorEnum color);
+
+        /// <summary>
+        /// 更新页面背景图案（新增）
+        /// </summary>
+        /// <param name="pageIndex">页面索引</param>
+        /// <param name="pattern">背景图案</param>
+        void UpdatePageBackgroundPattern(int pageIndex, Ink_Canvas.BlackboardBackgroundPatternEnum pattern);
+
+        /// <summary>
         /// 生成页面缩略图
         /// </summary>
         /// <param name="pageIndex">页面索引</param>
         void GenerateThumbnail(int pageIndex);
+
+        /// <summary>
+        /// 更新页面缩略图数据（新增）
+        /// </summary>
+        /// <param name="pageIndex">页面索引</param>
+        /// <param name="thumbnailData">缩略图数据</param>
+        void UpdatePageThumbnail(int pageIndex, byte[] thumbnailData);
 
         #endregion
 

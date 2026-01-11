@@ -1,4 +1,23 @@
-﻿using System.Diagnostics;
+﻿// ============================================================================
+// MW_Eraser.cs - 橡皮擦逻辑
+// ============================================================================
+// 
+// 功能说明:
+//   - 橡皮擦模式管理（面积擦、墨迹擦）
+//   - 橡皮擦大小设置
+//   - 增量墨迹命中测试
+//
+// 迁移状态:
+//   - EraserOverlayView UserControl 已创建
+//   - 橡皮擦核心逻辑仍在此文件中
+//
+// 相关文件:
+//   - Views/Eraser/EraserOverlayView.xaml
+//   - MW_Eraser.xaml (橡皮擦 UI 资源)
+//
+// ============================================================================
+
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;

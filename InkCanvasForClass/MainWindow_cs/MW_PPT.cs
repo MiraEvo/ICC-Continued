@@ -1,4 +1,27 @@
-﻿using Ink_Canvas.Helpers;
+﻿// ============================================================================
+// MW_PPT.cs - PowerPoint 集成逻辑
+// ============================================================================
+// 
+// 功能说明:
+//   - PowerPoint 演示文稿检测和监控
+//   - PPT 翻页控制
+//   - PPT 模式下的 UI 状态管理
+//   - PPT 墨迹保存和恢复
+//
+// 迁移状态 (渐进式迁移):
+//   - PPTService 已创建，提供 PPT 相关服务接口
+//   - PPTNavigationView UserControl 已创建
+//   - 此文件中的核心逻辑仍在使用
+//
+// 相关文件:
+//   - Services/PPTService.cs
+//   - Services/IPPTService.cs
+//   - Views/PPT/PPTNavigationView.xaml
+//   - MainWindow.xaml (PPT 导航按钮区域)
+//
+// ============================================================================
+
+using Ink_Canvas.Helpers;
 using Ink_Canvas.Dialogs;
 using Microsoft.Office.Interop.PowerPoint;
 using System;
@@ -18,6 +41,7 @@ using File = System.IO.File;
 using MessageBox = System.Windows.MessageBox;
 using iNKORE.UI.WPF.Modern;
 using Microsoft.Office.Core;
+
 using System.Collections.Concurrent;
 
 namespace Ink_Canvas {
@@ -443,6 +467,64 @@ namespace Ink_Canvas {
             else RightSidePanelForPPTNavigation.Visibility = Visibility.Collapsed;
         }
 
+        // COM错误处理：RPC_E_CALL_REJECTED 重试常量
+        private const int RPC_E_CALL_REJECTED = unchecked((int)0x80010001);
+        private const int COM_RETRY_COUNT = 3;
+        private const int COM_RETRY_DELAY_MS = 100;
+
+        /// <summary>
+        /// 带重试机制的COM操作执行器，用于处理RPC_E_CALL_REJECTED错误
+        /// </summary>
+        private T ExecuteComOperationWithRetry<T>(Func<T> operation, string operationName, T defaultValue = default) {
+            for (int attempt = 1; attempt <= COM_RETRY_COUNT; attempt++) {
+                try {
+                    return operation();
+                }
+                catch (COMException ex) when (ex.ErrorCode == RPC_E_CALL_REJECTED) {
+                    LogHelper.WriteLogToFile($"COM operation '{operationName}' rejected (attempt {attempt}/{COM_RETRY_COUNT}), retrying...", LogHelper.LogType.Warning);
+                    if (attempt < COM_RETRY_COUNT) {
+                        Thread.Sleep(COM_RETRY_DELAY_MS * attempt); // 递增延迟
+                    }
+                    else {
+                        LogHelper.WriteLogToFile($"COM operation '{operationName}' failed after {COM_RETRY_COUNT} attempts: {ex.Message}", LogHelper.LogType.Error);
+                        return defaultValue;
+                    }
+                }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"COM operation '{operationName}' failed: {ex.Message}", LogHelper.LogType.Error);
+                    return defaultValue;
+                }
+            }
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// 带重试机制的COM操作执行器（无返回值版本）
+        /// </summary>
+        private bool ExecuteComOperationWithRetry(Action operation, string operationName) {
+            for (int attempt = 1; attempt <= COM_RETRY_COUNT; attempt++) {
+                try {
+                    operation();
+                    return true;
+                }
+                catch (COMException ex) when (ex.ErrorCode == RPC_E_CALL_REJECTED) {
+                    LogHelper.WriteLogToFile($"COM operation '{operationName}' rejected (attempt {attempt}/{COM_RETRY_COUNT}), retrying...", LogHelper.LogType.Warning);
+                    if (attempt < COM_RETRY_COUNT) {
+                        Thread.Sleep(COM_RETRY_DELAY_MS * attempt);
+                    }
+                    else {
+                        LogHelper.WriteLogToFile($"COM operation '{operationName}' failed after {COM_RETRY_COUNT} attempts: {ex.Message}", LogHelper.LogType.Error);
+                        return false;
+                    }
+                }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"COM operation '{operationName}' failed: {ex.Message}", LogHelper.LogType.Error);
+                    return false;
+                }
+            }
+            return false;
+        }
+
         private async void PptApplication_SlideShowBegin(SlideShowWindow Wn) {
             if (Settings.Automation.IsAutoFoldInPPTSlideShow && !isFloatingBarFolded)
                 await FoldFloatingBar(new object());
@@ -452,35 +534,47 @@ namespace Ink_Canvas {
 
             LogHelper.WriteLogToFile("PowerPoint Application Slide Show Begin", LogHelper.LogType.Event);
 
+            // 等待COM对象准备就绪
+            await Task.Delay(50);
+
             await Application.Current.Dispatcher.InvokeAsync(() => {
-
-                //调整颜色
-                var screenRatio = SystemParameters.PrimaryScreenWidth / SystemParameters.PrimaryScreenHeight;
-                if (Math.Abs(screenRatio - 16.0 / 9) <= -0.01) {
-                    if (Wn.Presentation.PageSetup.SlideWidth / Wn.Presentation.PageSetup.SlideHeight < 1.65) {
-                        
+                try {
+                    // 使用重试机制获取Presentation对象
+                    var presentationObj = ExecuteComOperationWithRetry(() => Wn.Presentation, "GetPresentation");
+                    if (presentationObj == null) {
+                        LogHelper.WriteLogToFile("Failed to get Presentation object, aborting SlideShowBegin", LogHelper.LogType.Error);
+                        return;
                     }
-                } else if (screenRatio == -256 / 135) { }
 
-                lastDesktopInkColor = 1;
+                    //调整颜色
+                    var screenRatio = SystemParameters.PrimaryScreenWidth / SystemParameters.PrimaryScreenHeight;
+                    var slideWidth = ExecuteComOperationWithRetry(() => presentationObj.PageSetup.SlideWidth, "GetSlideWidth", 0f);
+                    var slideHeight = ExecuteComOperationWithRetry(() => presentationObj.PageSetup.SlideHeight, "GetSlideHeight", 1f);
+                    if (Math.Abs(screenRatio - 16.0 / 9) <= -0.01) {
+                        if (slideWidth / slideHeight < 1.65) {
+                            
+                        }
+                    } else if (screenRatio == -256 / 135) { }
 
-                slidescount = Wn.Presentation.Slides.Count;
-                previousSlideID = 0;
-                memoryStreams = new MemoryStream[slidescount + 2];
+                    lastDesktopInkColor = 1;
 
-                pptName = Wn.Presentation.Name;
-                LogHelper.NewLog("Name: " + Wn.Presentation.Name);
-                LogHelper.NewLog("Slides Count: " + slidescount.ToString());
+                    slidescount = ExecuteComOperationWithRetry(() => presentationObj.Slides.Count, "GetSlidesCount", 0);
+                    previousSlideID = 0;
+                    memoryStreams = new MemoryStream[slidescount + 2];
+
+                    pptName = ExecuteComOperationWithRetry(() => presentationObj.Name, "GetPresentationName", "Unknown");
+                    LogHelper.NewLog("Name: " + pptName);
+                    LogHelper.NewLog("Slides Count: " + slidescount.ToString());
 
                 //检查是否有已有墨迹，并加载
                 if (Settings.PowerPointSettings.IsAutoSaveStrokesInPowerPoint)
                     if (Directory.Exists(Settings.Automation.AutoSavedStrokesLocation +
-                                         @"\Auto Saved - Presentations\" + Wn.Presentation.Name + "_" +
-                                         Wn.Presentation.Slides.Count)) {
+                                         @"\Auto Saved - Presentations\" + pptName + "_" +
+                                         slidescount)) {
                         LogHelper.WriteLogToFile("Found saved strokes", LogHelper.LogType.Trace);
                         var files = new DirectoryInfo(Settings.Automation.AutoSavedStrokesLocation +
-                                                      @"\Auto Saved - Presentations\" + Wn.Presentation.Name + "_" +
-                                                      Wn.Presentation.Slides.Count).GetFiles();
+                                                      @"\Auto Saved - Presentations\" + pptName + "_" +
+                                                      slidescount).GetFiles();
                         var count = 0;
                         foreach (var file in files)
                             if (file.Name != "Position") {
@@ -559,8 +653,9 @@ namespace Ink_Canvas {
                     BtnColorRed_Click(null, null);
 
                 isEnteredSlideShowEndEvent = false;
-                PPTBtnPageNow.Text = $"{Wn.View.CurrentShowPosition}";
-                PPTBtnPageTotal.Text = $"/ {Wn.Presentation.Slides.Count}";
+                var currentPos = ExecuteComOperationWithRetry(() => Wn.View.CurrentShowPosition, "GetCurrentShowPosition", 1);
+                PPTBtnPageNow.Text = $"{currentPos}";
+                PPTBtnPageTotal.Text = $"/ {slidescount}";
                 LogHelper.NewLog("PowerPoint Slide Show Loading process complete");
 
                 if (!isFloatingBarFolded) {
@@ -571,6 +666,13 @@ namespace Ink_Canvas {
                             ViewboxFloatingBarMarginAnimation(60);
                         });
                     });
+                }
+                }
+                catch (COMException ex) {
+                    LogHelper.WriteLogToFile($"COM Exception in SlideShowBegin: {ex.Message} (ErrorCode: 0x{ex.ErrorCode:X8})", LogHelper.LogType.Error);
+                }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Exception in SlideShowBegin: {ex.Message}", LogHelper.LogType.Error);
                 }
             });
         }

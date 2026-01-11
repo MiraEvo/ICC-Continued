@@ -9,6 +9,7 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using Windows.UI.Input.Inking;
 using Windows.UI.Input.Inking.Analysis;
+using Ink_Canvas.Models.Settings;
 
 namespace Ink_Canvas.Helpers
 {
@@ -112,7 +113,7 @@ namespace Ink_Canvas.Helpers
         /// <param name="strokes">WPF 笔画集合</param>
         /// <param name="settings">识别设置（可选）</param>
         /// <returns>识别结果，如果识别失败则返回 default</returns>
-        public static ShapeRecognizeResult RecognizeShape(StrokeCollection strokes, InkToShape settings = null)
+        public static ShapeRecognizeResult RecognizeShape(StrokeCollection strokes, InkToShapeSettings settings = null)
         {
             if (strokes == null || strokes.Count == 0)
                 return default;
@@ -154,7 +155,7 @@ namespace Ink_Canvas.Helpers
         /// <param name="strokes">WPF 笔画集合</param>
         /// <param name="settings">识别设置（可选）</param>
         /// <returns>识别结果，如果识别失败则返回 default</returns>
-        public static async Task<ShapeRecognizeResult> RecognizeShapeAsync(StrokeCollection strokes, InkToShape settings = null)
+        public static async Task<ShapeRecognizeResult> RecognizeShapeAsync(StrokeCollection strokes, InkToShapeSettings settings = null)
         {
             if (strokes == null || strokes.Count == 0)
             {
@@ -163,7 +164,7 @@ namespace Ink_Canvas.Helpers
             }
             
             // 使用默认设置如果未提供
-            settings ??= new InkToShape();
+            settings ??= new InkToShapeSettings();
             
             InkAnalyzer analyzer = null;
             InkStrokeContainer strokeContainer = null;
@@ -561,7 +562,7 @@ namespace Ink_Canvas.Helpers
         /// <summary>
         /// 计算形状匹配分数（简化版本 - 提高识别率）
         /// </summary>
-        private static double CalculateShapeScore(InkAnalysisInkDrawing drawing, StrokeCollection originalStrokes, InkToShape settings)
+        private static double CalculateShapeScore(InkAnalysisInkDrawing drawing, StrokeCollection originalStrokes, InkToShapeSettings settings)
         {
             try
             {

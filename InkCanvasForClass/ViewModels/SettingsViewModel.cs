@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Ink_Canvas.Core;
 using Ink_Canvas.Services;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Ink_Canvas.ViewModels
@@ -19,6 +20,20 @@ namespace Ink_Canvas.ViewModels
         /// 获取内部设置对象（用于兼容现有代码）
         /// </summary>
         public Settings Settings => _settingsService.Settings;
+
+        #region 事件
+
+        /// <summary>
+        /// 重启应用请求事件
+        /// </summary>
+        public event EventHandler RestartRequested;
+
+        /// <summary>
+        /// 退出应用请求事件
+        /// </summary>
+        public event EventHandler ExitRequested;
+
+        #endregion
 
         #region 子 ViewModel
 
@@ -147,6 +162,26 @@ namespace Ink_Canvas.ViewModels
             _settingsService.Load();
             InitializeSubViewModels();
             OnPropertyChanged(string.Empty);
+        }
+
+        /// <summary>
+        /// 重启应用命令
+        /// </summary>
+        [RelayCommand]
+        private void Restart()
+        {
+            // 触发重启请求事件，由 View 处理实际的重启逻辑
+            RestartRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 退出应用命令
+        /// </summary>
+        [RelayCommand]
+        private void Exit()
+        {
+            // 触发退出请求事件，由 View 处理实际的退出逻辑
+            ExitRequested?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

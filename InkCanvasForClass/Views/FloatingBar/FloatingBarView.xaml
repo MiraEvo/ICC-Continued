@@ -1,0 +1,156 @@
+<UserControl x:Class="Ink_Canvas.Views.FloatingBar.FloatingBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+             xmlns:vm="clr-namespace:Ink_Canvas.ViewModels"
+             xmlns:behaviors="clr-namespace:Ink_Canvas.Behaviors"
+             mc:Ignorable="d" 
+             d:DesignHeight="58" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:FloatingBarViewModel}">
+    
+    <Viewbox Name="ViewboxFloatingBar" 
+             HorizontalAlignment="Left" 
+             Height="58" 
+             VerticalAlignment="Top"
+             RenderTransformOrigin="0.5,0.5"
+             Opacity="{Binding Opacity}">
+        <Viewbox.LayoutTransform>
+            <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}" />
+        </Viewbox.LayoutTransform>
+        
+        <ui:SimpleStackPanel Orientation="Horizontal" Name="_FloatingBar_SimpleStackPanel">
+            <!-- 移动控制按钮 -->
+            <Border x:Name="BorderFloatingBarMoveControls" 
+                    Width="36" Height="36" 
+                    CornerRadius="5"
+                    Background="#fafafa" 
+                    BorderThickness="1" 
+                    BorderBrush="#9952525b">
+                <ui:SimpleStackPanel Margin="0,2,0,2" 
+                                     Orientation="Horizontal"
+                                     HorizontalAlignment="Center">
+                    <Image Margin="0" 
+                           Name="FloatingbarHeadIconImg" 
+                           Source="/Resources/Icons-png/icc.png" />
+                </ui:SimpleStackPanel>
+            </Border>
+            
+            <!-- 主工具栏 -->
+            <Border Margin="2,0,0,0" 
+                    Padding="2" 
+                    Height="36"
+                    Name="BorderFloatingBarMainControls" 
+                    Background="#fafafa" 
+                    CornerRadius="5"
+                    BorderThickness="1"
+                    BorderBrush="#9952525b">
+                <ui:SimpleStackPanel Margin="2,0" 
+                                     Name="StackPanelFloatingBar" 
+                                     Orientation="Horizontal">
+                    
+                    <!-- 光标工具 -->
+                    <ui:SimpleStackPanel Name="Cursor_Icon"
+                                         behaviors:FloatingBarButton.Command="{Binding SwitchToCursorCommand}"
+                                         behaviors:FloatingBarButton.IsSelected="{Binding IsCursorMode}"
+                                         Background="Transparent" 
+                                         Orientation="Vertical"
+                                         HorizontalAlignment="Center" 
+                                         Width="28" 
+                                         Margin="0,-2">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" 
+                               Height="17" 
+                               Margin="0,3,0,0"
+                               x:Name="CursorToolbarIconImage">
+                            <Image.Source>
+                                <DrawingImage>
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
+                                            <GeometryDrawing x:Name="CursorIconGeometry" />
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
+                        <TextBlock x:Name="SelectionToolBarTextBlock" 
+                                   Text="鼠标" 
+                                   Foreground="Black"
+                                   FontSize="8" 
+                                   Margin="0,1,0,0" 
+                                   TextAlignment="Center" />
+                    </ui:SimpleStackPanel>
+                    
+                    <!-- 画笔工具 -->
+                    <ui:SimpleStackPanel Name="Pen_Icon"
+                                         behaviors:FloatingBarButton.Command="{Binding SwitchToPenCommand}"
+                                         behaviors:FloatingBarButton.IsSelected="{Binding IsPenMode}"
+                                         Background="Transparent" 
+                                         Orientation="Vertical"
+                                         HorizontalAlignment="Center" 
+                                         Width="28" 
+                                         Margin="0,-2">
+                        <Image x:Name="PenIcon"
+                               RenderOptions.BitmapScalingMode="HighQuality" 
+                               Height="17" 
+                               Margin="0,3,0,0">
+                            <Image.Source>
+                                <DrawingImage>
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
+                                            <GeometryDrawing x:Name="PenIconGeometry" 
+                                                             Brush="Black"
+                                                             Geometry="" />
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
+                        <TextBlock x:Name="PenToolbarTextBlock" 
+                                   Text="批注" 
+                                   Foreground="Black" 
+                                   FontSize="8"
+                                   Margin="0,1,0,0" 
+                                   TextAlignment="Center" />
+                    </ui:SimpleStackPanel>
+                    
+                    <!-- 清空工具 -->
+                    <ui:SimpleStackPanel Name="SymbolIconDelete"
+                                         behaviors:FloatingBarButton.Command="{Binding ClearCommand}"
+                                         behaviors:FloatingBarButton.IsDeleteButton="True"
+                                         Background="Transparent" 
+                                         Orientation="Vertical"
+                                         HorizontalAlignment="Center" 
+                                         Width="28" 
+                                         Margin="0,-2">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" 
+                               Height="17" 
+                               Margin="0,3,0,0">
+                            <Image.Source>
+                                <DrawingImage>
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
+                                            <GeometryDrawing x:Name="ClearIconGeometry" 
+                                                             Brush="#b91c1c"
+                                                             Geometry="F0 M24,24z M0,0z M10.1573,10.0421C10.7298,10.0421,11.1938,10.5062,11.1938,11.0787L11.1938,16.6067C11.1938,17.1792 10.7298,17.6433 10.1573,17.6433 9.58485,17.6433 9.12079,17.1792 9.12079,16.6067L9.12079,11.0787C9.12079,10.5062,9.58485,10.0421,10.1573,10.0421z M13.8427,10.0421C14.4151,10.0421,14.8792,10.5062,14.8792,11.0787L14.8792,16.6067C14.8792,17.1792 14.4151,17.6433 13.8427,17.6433 13.2702,17.6433 12.8062,17.1792 12.8062,16.6067L12.8062,11.0787C12.8062,10.5062,13.2702,10.0421,13.8427,10.0421z M3.70787,5.43539C3.13541,5.43539 2.67135,5.89946 2.67135,6.47191 2.67135,7.04436 3.13541,7.50843 3.70787,7.50843L4.51405,7.50843 4.51405,19.3708C4.51405,20.1686 4.9025,20.8796 5.39348,21.3706 5.88445,21.8615 6.59548,22.25 7.39326,22.25L16.6067,22.25C17.4045,22.25 18.1155,21.8615 18.6065,21.3706 19.0975,20.8796 19.486,20.1686 19.486,19.3708L19.486,7.50843 20.2921,7.50843C20.8646,7.50843 21.3287,7.04436 21.3287,6.47191 21.3287,5.89946 20.8646,5.43539 20.2921,5.43539L16.7219,5.43539 16.7219,4.62921C16.7219,3.83143 16.3335,3.12041 15.8425,2.62943 15.3515,2.13845 14.6405,1.75 13.8427,1.75L10.1573,1.75C9.35952,1.75 8.6485,2.13845 8.15752,2.62943 7.66654,3.12041 7.27809,3.83143 7.27809,4.62921L7.27809,5.43539 3.70787,5.43539z M6.58708,19.3708C6.58708,19.4944 6.6593,19.7047 6.85933,19.9047 7.05937,20.1047 7.26969,20.177 7.39326,20.177L16.6067,20.177C16.7303,20.177 16.9406,20.1047 17.1407,19.9047 17.3407,19.7047 17.4129,19.4944 17.4129,19.3708L17.4129,7.50843 6.58708,7.50843 6.58708,19.3708z M9.62338,4.09529C9.42334,4.29532,9.35112,4.50565,9.35112,4.62921L9.35112,5.43539 14.6489,5.43539 14.6489,4.62921C14.6489,4.50565 14.5767,4.29532 14.3766,4.09529 14.1766,3.89525 13.9663,3.82303 13.8427,3.82303L10.1573,3.82303C10.0337,3.82303,9.82341,3.89525,9.62338,4.09529z" />
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
+                        <TextBlock x:Name="TrashBinToolbarTextBlock" 
+                                   Text="清空" 
+                                   Foreground="#B91C1C"
+                                   FontWeight="Bold" 
+                                   FontSize="8" 
+                                   Margin="0,1,0,0" 
+                                   TextAlignment="Center" />
+                    </ui:SimpleStackPanel>
+                    
+                    <!-- 更多工具按钮可以在这里添加 -->
+                    
+                </ui:SimpleStackPanel>
+            </Border>
+        </ui:SimpleStackPanel>
+    </Viewbox>
+</UserControl>

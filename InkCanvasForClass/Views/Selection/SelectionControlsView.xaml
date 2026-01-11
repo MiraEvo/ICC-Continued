@@ -1,0 +1,177 @@
+<UserControl x:Class="Ink_Canvas.Views.Selection.SelectionControlsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+             mc:Ignorable="d" 
+             d:DesignHeight="60" d:DesignWidth="700">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="SelectionControlsResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <Border HorizontalAlignment="Left" VerticalAlignment="Top" 
+            Name="BorderStrokeSelectionControl"
+            Width="660" Height="48">
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center"
+                CornerRadius="6" Height="48"
+                Background="#f4f4f5"
+                BorderThickness="1" BorderBrush="#a1a1aa">
+            <ui:SimpleStackPanel Orientation="Horizontal" Height="44" Margin="2,0">
+                <!-- Selection Icon -->
+                <Border Padding="10,0" Margin="-3,-2,3,-2" CornerRadius="6,0,0,6" Background="#2563eb">
+                    <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                        <Image Width="24" Height="24" Source="{DynamicResource SelectionIcon}"/>
+                    </ui:SimpleStackPanel>
+                </Border>
+                
+                <!-- Clone Button -->
+                <Border Name="BorderStrokeSelectionClone" Background="Transparent" 
+                        MouseDown="BorderStrokeSelectionToolButton_MouseDown" 
+                        MouseLeave="BorderStrokeSelectionToolButton_MouseLeave"
+                        MouseUp="BorderStrokeSelectionClone_MouseUp">
+                    <Border Padding="7,0" Margin="3" CornerRadius="4">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{DynamicResource CloneIcon}"/>
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+
+                <!-- Clone to New Board Button -->
+                <Border Name="BorderStrokeSelectionCloneToNewBoard" Background="Transparent" 
+                        MouseDown="BorderStrokeSelectionToolButton_MouseDown" 
+                        MouseLeave="BorderStrokeSelectionToolButton_MouseLeave"
+                        MouseUp="BorderStrokeSelectionCloneToNewBoard_MouseUp">
+                    <Border Padding="9,0" Margin="3" CornerRadius="4">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="5" Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{DynamicResource CloneToNewBoardIcon}"/>
+                            <TextBlock Name="BorderStrokeSelectionCloneToNewBoardTextBlock" Text="克隆至新页" FontSize="14" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#18181b" />
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+                
+                <Line X1="0" X2="0" Y1="0" Y2="47" Height="47" Margin="2,-2" StrokeThickness="1" Stroke="#66a1a1aa" />
+                
+                <!-- Rotate Clockwise Button -->
+                <Border Name="BorderImageRotateClockwise" Background="Transparent" RenderTransformOrigin="0.5,0.5"
+                        MouseDown="BorderStrokeSelectionToolButton_MouseDown" 
+                        MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" 
+                        MouseUp="ImageRotateClockwise_MouseUp">
+                    <Border Padding="7,0" Margin="3" CornerRadius="4">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{DynamicResource RotateClockwiseIcon}"/>
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+                
+                <!-- Rotate 45 Button -->
+                <Border Name="BorderImageRotate45" Background="Transparent"
+                        MouseDown="BorderStrokeSelectionToolButton_MouseDown" 
+                        MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" 
+                        MouseUp="ImageRotate_MouseUp">
+                    <Border Padding="7,0" Margin="3" CornerRadius="4">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <Image Height="18" Source="{DynamicResource Rotate45Icon}"/>
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+                
+                <!-- Rotate 90 Button -->
+                <Border Name="BorderImageRotate90" Background="Transparent"
+                        MouseDown="BorderStrokeSelectionToolButton_MouseDown" 
+                        MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" 
+                        MouseUp="ImageRotate_MouseUp">
+                    <Border Padding="7,0" Margin="3" CornerRadius="4">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <Image Height="18" Source="{DynamicResource Rotate90Icon}"/>
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+                
+                <Line X1="0" X2="0" Y1="0" Y2="47" Height="47" Margin="2,-2" StrokeThickness="1" Stroke="#66a1a1aa" />
+
+                <!-- Flip Horizontal Button -->
+                <Border Name="BorderImageFlipHorizontal" Background="Transparent"
+                        MouseDown="BorderStrokeSelectionToolButton_MouseDown" 
+                        MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" 
+                        MouseUp="ImageFlip_MouseUp">
+                    <Border Padding="7,0" Margin="3" CornerRadius="4">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{DynamicResource FlipHorizontalIcon}"/>
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+                
+                <!-- Flip Vertical Button -->
+                <Border Name="BorderImageFlipVertical" Background="Transparent"
+                        MouseDown="BorderStrokeSelectionToolButton_MouseDown" 
+                        MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" 
+                        MouseUp="ImageFlip_MouseUp">
+                    <Border Padding="7,0" Margin="3" CornerRadius="4">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{DynamicResource FlipVerticalIcon}"/>
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+                
+                <Line X1="0" X2="0" Y1="0" Y2="47" Height="47" Margin="2,-2" StrokeThickness="1" Stroke="#66a1a1aa" />
+                
+                <!-- Lock Button -->
+                <Border Name="BorderStrokeSelectionLock" Background="Transparent"
+                        MouseDown="BorderStrokeSelectionToolButton_MouseDown" 
+                        MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" 
+                        MouseUp="BorderStrokeSelectionLock_MouseUp">
+                    <Border Padding="7,0" Margin="3" CornerRadius="4">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <Image Width="24" Height="24" Name="BorderStrokeSelectionLock_LockClose" 
+                                   Visibility="Collapsed" Source="{DynamicResource LockCloseIcon}"/>
+                            <Image Width="24" Height="24" Name="BorderStrokeSelectionLock_LockOpen" 
+                                   Source="{DynamicResource LockOpenIcon}"/>
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+                
+                <!-- Palette Button -->
+                <Border Name="BorderStrokePaletteButton" Background="Transparent"
+                        MouseDown="Border_MouseDown">
+                    <Border Padding="7,0" Margin="3" CornerRadius="4" Background="#1809090b">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{DynamicResource PaletteIcon}"/>
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+
+                <!-- Delete Button -->
+                <Border Name="BorderStrokeSelectionDelete" Background="Transparent"
+                        MouseDown="BorderStrokeSelectionToolButton_MouseDown" 
+                        MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" 
+                        MouseUp="BorderStrokeSelectionDelete_MouseUp">
+                    <Border Padding="7,0" Margin="3" CornerRadius="4">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{DynamicResource DeleteIcon}"/>
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+                
+                <Line X1="0" X2="0" Y1="0" Y2="47" Height="47" Margin="2,-2" StrokeThickness="1" Stroke="#66a1a1aa" />
+                
+                <!-- More Menu Button -->
+                <Border Name="BorderStrokeMoreMenuButton" Background="Transparent"
+                        MouseDown="BorderStrokeSelectionToolButton_MouseDown" 
+                        MouseLeave="BorderStrokeSelectionToolButton_MouseLeave"
+                        MouseUp="BorderStrokeMoreMenuButton_MouseUp">
+                    <Border Padding="7,0" Margin="3" CornerRadius="4">
+                        <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{DynamicResource MoreMenuIcon}"/>
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </Border>
+            </ui:SimpleStackPanel>
+        </Border>
+    </Border>
+</UserControl>

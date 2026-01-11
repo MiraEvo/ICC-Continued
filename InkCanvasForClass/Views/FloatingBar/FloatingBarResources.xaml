@@ -1,0 +1,103 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- 浮动工具栏样式 -->
+    
+    <!-- 工具按钮样式 -->
+    <Style x:Key="FloatingBarToolButtonStyle" TargetType="Border">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Margin" Value="2,0"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#10000000"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <!-- 选中工具按钮样式 -->
+    <Style x:Key="FloatingBarSelectedToolButtonStyle" TargetType="Border" BasedOn="{StaticResource FloatingBarToolButtonStyle}">
+        <Setter Property="Background" Value="#2563eb"/>
+    </Style>
+    
+    <!-- 工具栏容器样式 -->
+    <Style x:Key="FloatingBarContainerStyle" TargetType="Border">
+        <Setter Property="Background" Value="#fafafa"/>
+        <Setter Property="BorderBrush" Value="#9952525b"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="Black" 
+                                  Direction="270" 
+                                  ShadowDepth="2" 
+                                  BlurRadius="8" 
+                                  Opacity="0.2"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- 工具图标样式 -->
+    <Style x:Key="FloatingBarToolIconStyle" TargetType="Image">
+        <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
+        <Setter Property="Height" Value="17"/>
+        <Setter Property="Margin" Value="0,3,0,0"/>
+    </Style>
+    
+    <!-- 工具文本样式 -->
+    <Style x:Key="FloatingBarToolTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="8"/>
+        <Setter Property="Margin" Value="0,1,0,0"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="Black"/>
+    </Style>
+    
+    <!-- 删除按钮文本样式 -->
+    <Style x:Key="FloatingBarDeleteTextStyle" TargetType="TextBlock" BasedOn="{StaticResource FloatingBarToolTextStyle}">
+        <Setter Property="Foreground" Value="#B91C1C"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+    
+    <!-- 浮动工具栏动画 -->
+    <Storyboard x:Key="FloatingBarFadeInAnimation">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                         From="0" To="1" 
+                         Duration="0:0:0.2"/>
+    </Storyboard>
+    
+    <Storyboard x:Key="FloatingBarFadeOutAnimation">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                         From="1" To="0" 
+                         Duration="0:0:0.2"/>
+    </Storyboard>
+    
+    <!-- 工具按钮高亮动画 -->
+    <Storyboard x:Key="ToolButtonHighlightAnimation">
+        <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                        To="#2563eb" 
+                        Duration="0:0:0.15"/>
+    </Storyboard>
+    
+    <!-- 浮动工具栏头部图标样式 -->
+    <Style x:Key="FloatingBarHeadIconStyle" TargetType="Image">
+        <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
+        <Setter Property="Margin" Value="0"/>
+    </Style>
+    
+    <!-- 浮动工具栏移动控制按钮样式 -->
+    <Style x:Key="FloatingBarMoveControlStyle" TargetType="Border">
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="Background" Value="#fafafa"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#9952525b"/>
+        <Setter Property="Cursor" Value="SizeAll"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#f0f0f0"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+</ResourceDictionary>

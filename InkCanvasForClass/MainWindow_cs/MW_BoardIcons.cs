@@ -1,4 +1,25 @@
-﻿using Ink_Canvas.Helpers;
+﻿// ============================================================================
+// MW_BoardIcons.cs - 白板工具栏按钮交互
+// ============================================================================
+// 
+// 功能说明:
+//   - 白板模式下工具栏按钮的鼠标事件处理
+//   - 按钮按下/释放的视觉反馈
+//   - 工具切换（画笔、选择、橡皮、形状、撤销、重做）
+//
+// 迁移状态 (渐进式迁移):
+//   - BlackboardView UserControl 已创建
+//   - 此文件中的事件处理程序仍在使用
+//   - 与 MW_FloatingBarIcons.cs 中的工具切换逻辑共享
+//
+// 相关文件:
+//   - Views/Blackboard/BlackboardView.xaml
+//   - MW_FloatingBarIcons.cs (工具切换逻辑)
+//   - MainWindow.xaml (BlackboardCenterSide 区域)
+//
+// ============================================================================
+
+using Ink_Canvas.Helpers;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;

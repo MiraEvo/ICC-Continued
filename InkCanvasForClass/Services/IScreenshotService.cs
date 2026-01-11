@@ -15,6 +15,27 @@ namespace Ink_Canvas.Services
     public interface IScreenshotService
     {
         /// <summary>
+        /// 截图模式枚举
+        /// </summary>
+        enum ScreenshotMode
+        {
+            /// <summary>
+            /// 全屏截图
+            /// </summary>
+            FullScreen,
+            
+            /// <summary>
+            /// 选区截图
+            /// </summary>
+            Selection,
+            
+            /// <summary>
+            /// 窗口截图
+            /// </summary>
+            Window
+        }
+
+        /// <summary>
         /// 截图方法枚举
         /// </summary>
         enum SnapshotMethod
@@ -36,6 +57,70 @@ namespace Ink_Canvas.Services
         }
 
         /// <summary>
+        /// 截图结果类
+        /// </summary>
+        class ScreenshotResult
+        {
+            /// <summary>
+            /// 是否成功
+            /// </summary>
+            public bool Success { get; set; }
+            
+            /// <summary>
+            /// 截图位图（成功时）
+            /// </summary>
+            public Bitmap Bitmap { get; set; }
+            
+            /// <summary>
+            /// 错误消息（失败时）
+            /// </summary>
+            public string ErrorMessage { get; set; }
+            
+            /// <summary>
+            /// 异常信息（失败时）
+            /// </summary>
+            public Exception Exception { get; set; }
+            
+            /// <summary>
+            /// 保存的文件路径（如果已保存）
+            /// </summary>
+            public string SavedFilePath { get; set; }
+            
+            /// <summary>
+            /// 截图模式
+            /// </summary>
+            public ScreenshotMode Mode { get; set; }
+            
+            /// <summary>
+            /// 创建成功结果
+            /// </summary>
+            public static ScreenshotResult CreateSuccess(Bitmap bitmap, ScreenshotMode mode, string savedFilePath = null)
+            {
+                return new ScreenshotResult
+                {
+                    Success = true,
+                    Bitmap = bitmap,
+                    Mode = mode,
+                    SavedFilePath = savedFilePath
+                };
+            }
+            
+            /// <summary>
+            /// 创建失败结果
+            /// </summary>
+            public static ScreenshotResult CreateFailure(string errorMessage, Exception exception, ScreenshotMode mode)
+            {
+                return new ScreenshotResult
+                {
+                    Success = false,
+                    ErrorMessage = errorMessage,
+                    Exception = exception,
+                    Mode = mode
+                };
+            }
+        }
+
+        /// <summary>
         /// 截图配置类
         /// </summary>
         class SnapshotConfig
@@ -51,6 +136,20 @@ namespace Ink_Canvas.Services
             public StrokeCollection InkStrokes { get; set; } = null;
             public string SavedFilePath { get; set; } = null;
         }
+
+        /// <summary>
+        /// 通用截图方法（支持不同模式）
+        /// </summary>
+        /// <param name="mode">截图模式</param>
+        /// <param name="config">截图配置</param>
+        /// <param name="region">选区（仅在 Selection 模式下使用）</param>
+        /// <param name="windowHandle">窗口句柄（仅在 Window 模式下使用）</param>
+        /// <returns>截图结果</returns>
+        Task<ScreenshotResult> CaptureAsync(
+            ScreenshotMode mode,
+            SnapshotConfig config = null,
+            Rect? region = null,
+            IntPtr? windowHandle = null);
 
         /// <summary>
         /// 全屏截图

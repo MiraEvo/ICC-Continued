@@ -3,6 +3,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Ink;
@@ -33,13 +34,245 @@ namespace Ink_Canvas.Services
             _saveInkCanvasStrokes = saveInkCanvasStrokes ?? throw new ArgumentNullException(nameof(saveInkCanvasStrokes));
         }
 
+        #region 通用截图方法
+
+        /// <summary>
+        /// 通用截图方法（支持不同模式）
+        /// </summary>
+        public async Task<IScreenshotService.ScreenshotResult> CaptureAsync(
+            IScreenshotService.ScreenshotMode mode,
+            IScreenshotService.SnapshotConfig config = null,
+            Rect? region = null,
+            IntPtr? windowHandle = null)
+        {
+            // 使用默认配置如果未提供
+            config = config ?? new IScreenshotService.SnapshotConfig();
+
+            try
+            {
+                Bitmap bitmap = null;
+
+                switch (mode)
+                {
+                    case IScreenshotService.ScreenshotMode.FullScreen:
+                        bitmap = await CaptureFullScreenAsync(config);
+                        break;
+
+                    case IScreenshotService.ScreenshotMode.Selection:
+                        if (!region.HasValue)
+                        {
+                            return IScreenshotService.ScreenshotResult.CreateFailure(
+                                "选区截图模式需要提供 region 参数",
+                                new ArgumentNullException(nameof(region)),
+                                mode);
+                        }
+                        bitmap = await CaptureRegionWithConfigAsync(region.Value, config);
+                        break;
+
+                    case IScreenshotService.ScreenshotMode.Window:
+                        if (!windowHandle.HasValue)
+                        {
+                            return IScreenshotService.ScreenshotResult.CreateFailure(
+                                "窗口截图模式需要提供 windowHandle 参数",
+                                new ArgumentNullException(nameof(windowHandle)),
+                                mode);
+                        }
+                        bitmap = await CaptureWindowAsync(windowHandle.Value, config);
+                        break;
+
+                    default:
+                        return IScreenshotService.ScreenshotResult.CreateFailure(
+                            $"不支持的截图模式: {mode}",
+                            new ArgumentException($"Unsupported screenshot mode: {mode}"),
+                            mode);
+                }
+
+                if (bitmap == null)
+                {
+                    return IScreenshotService.ScreenshotResult.CreateFailure(
+                        "截图失败：返回的位图为空",
+                        new InvalidOperationException("Screenshot returned null bitmap"),
+                        mode);
+                }
+
+                return IScreenshotService.ScreenshotResult.CreateSuccess(bitmap, mode, config.SavedFilePath);
+            }
+            catch (ArgumentException ex)
+            {
+                LogHelper.WriteLogToFile($"Invalid arguments for {mode} screenshot: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                return IScreenshotService.ScreenshotResult.CreateFailure(
+                    $"参数错误: {ex.Message}",
+                    ex,
+                    mode);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Unexpected error in {mode} screenshot: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                return IScreenshotService.ScreenshotResult.CreateFailure(
+                    $"截图失败: {ex.Message}",
+                    ex,
+                    mode);
+            }
+        }
+
+        /// <summary>
+        /// 全屏截图实现
+        /// </summary>
+        private async Task<Bitmap> CaptureFullScreenAsync(IScreenshotService.SnapshotConfig config)
+        {
+            try
+            {
+                // 使用 Graphics API 进行全屏截图
+                var bitmap = await Task.Run(() =>
+                {
+                    Rectangle rc = System.Windows.Forms.SystemInformation.VirtualScreen;
+                    var bmp = new Bitmap(rc.Width, rc.Height, PixelFormat.Format32bppArgb);
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        g.CopyFromScreen(rc.X, rc.Y, 0, 0, rc.Size, CopyPixelOperation.SourceCopy);
+                    }
+                    return bmp;
+                });
+
+                if (bitmap.Width == 0 || bitmap.Height == 0)
+                {
+                    throw new Exception("全屏截图失败：截图尺寸为0");
+                }
+
+                // 如果启用了墨迹合成，将墨迹合成到截图上
+                if (config.AttachInk)
+                {
+                    try
+                    {
+                        var strokes = config.InkStrokes ?? _getInkStrokes();
+                        if (strokes != null && strokes.Count > 0)
+                        {
+                            var compositedBitmap = InkCompositor.CompositeInkOnBitmap(bitmap, strokes);
+                            bitmap.Dispose();
+                            bitmap = compositedBitmap;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.WriteLogToFile($"Failed to composite ink on fullscreen screenshot: {ex.Message}", LogHelper.LogType.Warning);
+                        LogHelper.NewLog(ex);
+                        // Continue without ink composition
+                    }
+                }
+
+                // 复制到剪贴板
+                if (config.IsCopyToClipboard)
+                {
+                    try
+                    {
+                        await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                        {
+                            Clipboard.SetImage(BitmapToImageSource(bitmap));
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.WriteLogToFile($"Failed to copy fullscreen screenshot to clipboard: {ex.Message}", LogHelper.LogType.Warning);
+                        LogHelper.NewLog(ex);
+                        // Continue without clipboard copy
+                    }
+                }
+
+                // 保存到本地
+                if (config.IsSaveToLocal)
+                {
+                    try
+                    {
+                        var fileName = GenerateFilename(config.SaveBitmapFileName, DateTime.Now, bitmap.Width, bitmap.Height);
+                        fileName = EnsureCorrectExtension(fileName, config.OutputMIMEType);
+                        var finalPath = GetValidSavePath(config, fileName, "FullScreenshots");
+                        await Task.Run(() => bitmap.Save(finalPath, GetImageFormat(config.OutputMIMEType)));
+                        config.SavedFilePath = finalPath;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.WriteLogToFile($"Failed to save fullscreen screenshot to file: {ex.Message}", LogHelper.LogType.Error);
+                        LogHelper.NewLog(ex);
+                        throw;
+                    }
+                }
+
+                return bitmap;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Error in CaptureFullScreenAsync: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 窗口截图实现
+        /// </summary>
+        private async Task<Bitmap> CaptureWindowAsync(IntPtr windowHandle, IScreenshotService.SnapshotConfig config)
+        {
+            try
+            {
+                if (windowHandle == IntPtr.Zero)
+                {
+                    throw new ArgumentException("无效的窗口句柄");
+                }
+
+                // 获取窗口矩形区域
+                var bitmap = await Task.Run(() =>
+                {
+                    RECT rect;
+                    if (!GetWindowRect(windowHandle, out rect))
+                    {
+                        throw new InvalidOperationException("无法获取窗口矩形区域");
+                    }
+
+                    int width = rect.right - rect.left;
+                    int height = rect.bottom - rect.top;
+
+                    if (width <= 0 || height <= 0)
+                    {
+                        throw new InvalidOperationException($"窗口尺寸无效: {width}x{height}");
+                    }
+
+                    // 使用 Graphics API 截取窗口区域
+                    var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        g.CopyFromScreen(rect.left, rect.top, 0, 0, new System.Drawing.Size(width, height), CopyPixelOperation.SourceCopy);
+                    }
+                    return bmp;
+                });
+
+                // 使用现有的 SaveWindowScreenshotAsync 方法处理墨迹合成、剪贴板和保存
+                return await SaveWindowScreenshotAsync(bitmap, config);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Error in CaptureWindowAsync: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                throw;
+            }
+        }
+
+        #endregion
+
         #region 全屏截图
 
         public async Task<Bitmap> FullscreenSnapshotAsync(IScreenshotService.SnapshotConfig config)
         {
-            // 注意：完整的实现需要从 MainWindow 的 MW_Screenshot.cs 中提取
-            // 这里提供一个简化的实现框架
-            throw new NotImplementedException("FullscreenSnapshotAsync needs to be implemented with Magnification API support");
+            // 使用新的 CaptureAsync 方法
+            var result = await CaptureAsync(IScreenshotService.ScreenshotMode.FullScreen, config);
+            
+            if (!result.Success)
+            {
+                throw new InvalidOperationException(result.ErrorMessage, result.Exception);
+            }
+            
+            return result.Bitmap;
         }
 
         #endregion
@@ -493,6 +726,9 @@ namespace Ink_Canvas.Services
 
             return fileName + expectedExtension;
         }
+
+        [DllImport("user32.dll")]
+        private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
         public async Task<IScreenshotService.WindowInformation[]> GetAllWindowsAsync(HWND[] excludedHwnds)
         {

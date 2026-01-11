@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using Ink_Canvas.Models.Settings;
 
 namespace Ink_Canvas.ViewModels
 {
@@ -8,10 +9,10 @@ namespace Ink_Canvas.ViewModels
     /// </summary>
     public partial class GestureSettingsViewModel : ObservableObject
     {
-        private readonly Gesture _gesture;
+        private readonly GestureSettings _gesture;
         private readonly Action _saveAction;
 
-        public GestureSettingsViewModel(Gesture gesture, Action saveAction)
+        public GestureSettingsViewModel(GestureSettings gesture, Action saveAction)
         {
             _gesture = gesture ?? throw new ArgumentNullException(nameof(gesture));
             _saveAction = saveAction;
@@ -98,10 +99,10 @@ namespace Ink_Canvas.ViewModels
     /// </summary>
     public partial class StartupSettingsViewModel : ObservableObject
     {
-        private readonly Startup _startup;
+        private readonly StartupSettings _startup;
         private readonly Action _saveAction;
 
-        public StartupSettingsViewModel(Startup startup, Action saveAction)
+        public StartupSettingsViewModel(StartupSettings startup, Action saveAction)
         {
             _startup = startup ?? throw new ArgumentNullException(nameof(startup));
             _saveAction = saveAction;
@@ -155,10 +156,10 @@ namespace Ink_Canvas.ViewModels
     /// </summary>
     public partial class AdvancedSettingsViewModel : ObservableObject
     {
-        private readonly Advanced _advanced;
+        private readonly AdvancedSettings _advanced;
         private readonly Action _saveAction;
 
-        public AdvancedSettingsViewModel(Advanced advanced, Action saveAction)
+        public AdvancedSettingsViewModel(AdvancedSettings advanced, Action saveAction)
         {
             _advanced = advanced ?? throw new ArgumentNullException(nameof(advanced));
             _saveAction = saveAction;
@@ -284,10 +285,10 @@ namespace Ink_Canvas.ViewModels
     /// </summary>
     public partial class SnapshotSettingsViewModel : ObservableObject
     {
-        private readonly Snapshot _snapshot;
+        private readonly SnapshotSettings _snapshot;
         private readonly Action _saveAction;
 
-        public SnapshotSettingsViewModel(Snapshot snapshot, Action saveAction)
+        public SnapshotSettingsViewModel(SnapshotSettings snapshot, Action saveAction)
         {
             _snapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
             _saveAction = saveAction;
@@ -335,10 +336,10 @@ namespace Ink_Canvas.ViewModels
     /// </summary>
     public partial class InkToShapeSettingsViewModel : ObservableObject
     {
-        private readonly InkToShape _inkToShape;
+        private readonly InkToShapeSettings _inkToShape;
         private readonly Action _saveAction;
 
-        public InkToShapeSettingsViewModel(InkToShape inkToShape, Action saveAction)
+        public InkToShapeSettingsViewModel(InkToShapeSettings inkToShape, Action saveAction)
         {
             _inkToShape = inkToShape ?? throw new ArgumentNullException(nameof(inkToShape));
             _saveAction = saveAction;
@@ -521,10 +522,10 @@ namespace Ink_Canvas.ViewModels
     /// </summary>
     public partial class AutomationSettingsViewModel : ObservableObject
     {
-        private readonly Automation _automation;
+        private readonly AutomationSettings _automation;
         private readonly Action _saveAction;
 
-        public AutomationSettingsViewModel(Automation automation, Action saveAction)
+        public AutomationSettingsViewModel(AutomationSettings automation, Action saveAction)
         {
             _automation = automation ?? throw new ArgumentNullException(nameof(automation));
             _saveAction = saveAction;

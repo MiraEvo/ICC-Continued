@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Ink_Canvas.Models.Settings;
+using Ink_Canvas.Services.Events;
 
 namespace Ink_Canvas.Services
 {
@@ -8,6 +10,8 @@ namespace Ink_Canvas.Services
     /// </summary>
     public interface ISettingsService
     {
+        #region 属性
+
         /// <summary>
         /// 获取当前设置对象
         /// </summary>
@@ -22,6 +26,69 @@ namespace Ink_Canvas.Services
         /// 设置文件路径
         /// </summary>
         string SettingsFilePath { get; }
+
+        #endregion
+
+        #region 分类访问属性
+
+        /// <summary>
+        /// 画布设置
+        /// </summary>
+        CanvasSettings Canvas { get; }
+
+        /// <summary>
+        /// 外观设置
+        /// </summary>
+        AppearanceSettings Appearance { get; }
+
+        /// <summary>
+        /// 手势设置
+        /// </summary>
+        GestureSettings Gesture { get; }
+
+        /// <summary>
+        /// PowerPoint 设置
+        /// </summary>
+        PowerPointSettings PowerPoint { get; }
+
+        /// <summary>
+        /// 自动化设置
+        /// </summary>
+        AutomationSettings Automation { get; }
+
+        /// <summary>
+        /// 高级设置
+        /// </summary>
+        AdvancedSettings Advanced { get; }
+
+        /// <summary>
+        /// 墨迹转形状设置
+        /// </summary>
+        InkToShapeSettings InkToShape { get; }
+
+        /// <summary>
+        /// 启动设置
+        /// </summary>
+        StartupSettings Startup { get; }
+
+        /// <summary>
+        /// 截图设置
+        /// </summary>
+        SnapshotSettings Snapshot { get; }
+
+        /// <summary>
+        /// 存储设置
+        /// </summary>
+        StorageSettings Storage { get; }
+
+        /// <summary>
+        /// 随机点名设置
+        /// </summary>
+        RandSettings RandSettings { get; }
+
+        #endregion
+
+        #region 方法
 
         /// <summary>
         /// 从文件加载设置
@@ -52,15 +119,38 @@ namespace Ink_Canvas.Services
         /// </summary>
         void ResetToDefaults();
 
+        #endregion
+
+        #region 事件
+
         /// <summary>
-        /// 设置变更事件
+        /// 设置加载完成事件
         /// </summary>
+        event EventHandler<SettingsLoadedEventArgs> SettingsLoaded;
+
+        /// <summary>
+        /// 设置保存完成事件
+        /// </summary>
+        event EventHandler<SettingsSavedEventArgs> SettingsSaved;
+
+        /// <summary>
+        /// 单个设置项变更事件
+        /// </summary>
+        event EventHandler<SettingChangedEventArgs> SettingChanged;
+
+        /// <summary>
+        /// 设置变更事件（向后兼容）
+        /// </summary>
+        [Obsolete("请使用 SettingChanged 事件代替")]
         event EventHandler<SettingsChangedEventArgs> SettingsChanged;
+
+        #endregion
     }
 
     /// <summary>
-    /// 设置变更事件参数
+    /// 设置变更事件参数（向后兼容）
     /// </summary>
+    [Obsolete("请使用 Ink_Canvas.Services.Events.SettingChangedEventArgs 代替")]
     public class SettingsChangedEventArgs : EventArgs
     {
         /// <summary>

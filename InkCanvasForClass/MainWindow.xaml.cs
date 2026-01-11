@@ -1,6 +1,8 @@
 using Ink_Canvas.Core;
 using Ink_Canvas.Helpers;
+using Ink_Canvas.Services;
 using Ink_Canvas.ViewModels;
+using Ink_Canvas.Views.Settings;
 using iNKORE.UI.WPF.Modern;
 using System;
 using System.Collections.ObjectModel;
@@ -31,6 +33,21 @@ using Button = System.Windows.Controls.Button;
 using TextBox = System.Windows.Controls.TextBox;
 
 namespace Ink_Canvas {
+    /// <summary>
+    /// MainWindow 主窗口类
+    /// 
+    /// 架构说明：
+    /// - 此类采用 MVVM 模式，通过 ViewModel 管理 UI 状态和命令
+    /// - 业务逻辑已迁移到服务层（Services）
+    /// - 事件处理程序作为 View 回调，委托给 ViewModel 或服务层
+    /// - 使用 partial class 将功能分散到多个文件中（MainWindow_cs 目录）
+    /// 
+    /// 迁移状态：
+    /// - ViewModel 初始化和事件订阅已完成
+    /// - 工具按钮命令已绑定到 ViewModel
+    /// - 设置面板导航已通过事件绑定
+    /// - 白板页面管理已通过 ViewModel 事件处理
+    /// </summary>
     public partial class MainWindow : Window {
 
         #region ViewModel Properties
@@ -51,6 +68,16 @@ namespace Ink_Canvas {
         public SettingsViewModel SettingsVM { get; private set; }
 
         /// <summary>
+        /// 浮动工具栏 ViewModel
+        /// </summary>
+        private FloatingBarViewModel _floatingBarViewModel;
+
+        /// <summary>
+        /// 热键服务
+        /// </summary>
+        private IHotkeyService _hotkeyService;
+
+        /// <summary>
         /// 初始化 ViewModels，从依赖注入容器中获取实例
         /// 
         /// 注意：MainWindow 在 XAML 中实例化，无法使用构造函数注入，
@@ -63,9 +90,13 @@ namespace Ink_Canvas {
                 ViewModel = ServiceLocator.GetRequiredService<MainWindowViewModel>();
                 ToolbarVM = ServiceLocator.GetRequiredService<ToolbarViewModel>();
                 SettingsVM = ServiceLocator.GetRequiredService<SettingsViewModel>();
+                _hotkeyService = ServiceLocator.GetRequiredService<IHotkeyService>();
                 
                 // 订阅 ViewModel 事件
                 SubscribeViewModelEvents();
+                
+                // 注册默认热键
+                RegisterDefaultHotkeys();
                 
                 LogHelper.WriteLogToFile("ViewModels initialized successfully", LogHelper.LogType.Info);
             }
@@ -73,6 +104,129 @@ namespace Ink_Canvas {
             {
                 LogHelper.WriteLogToFile("Failed to initialize ViewModels: " + ex.Message, LogHelper.LogType.Error);
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// 注册默认热键
+        /// </summary>
+        private void RegisterDefaultHotkeys()
+        {
+            try
+            {
+                // 注册撤销热键 (Ctrl+Z)
+                _hotkeyService.RegisterHotkey("Undo", new KeyGesture(Key.Z, ModifierKeys.Control), () =>
+                {
+                    if (ViewModel?.UndoCommand?.CanExecute(null) == true)
+                        ViewModel.UndoCommand.Execute(null);
+                });
+
+                // 注册重做热键 (Ctrl+Y)
+                _hotkeyService.RegisterHotkey("Redo", new KeyGesture(Key.Y, ModifierKeys.Control), () =>
+                {
+                    if (ViewModel?.RedoCommand?.CanExecute(null) == true)
+                        ViewModel.RedoCommand.Execute(null);
+                });
+
+                // 注册清空热键 (Ctrl+E)
+                _hotkeyService.RegisterHotkey("Clear", new KeyGesture(Key.E, ModifierKeys.Control), () =>
+                {
+                    if (ViewModel?.ClearCanvasCommand?.CanExecute(null) == true)
+                        ViewModel.ClearCanvasCommand.Execute(null);
+                });
+
+                // 注册切换到绘图工具热键 (Alt+D)
+                _hotkeyService.RegisterHotkey("DrawTool", new KeyGesture(Key.D, ModifierKeys.Alt), () =>
+                {
+                    if (ViewModel?.ChangeToDrawToolCommand?.CanExecute(null) == true)
+                    {
+                        ViewModel.ChangeToDrawToolCommand.Execute(null);
+                        PenIcon_Click(lastBorderMouseDownObject, null);
+                    }
+                });
+
+                // 注册退出绘图工具热键 (Alt+Q)
+                _hotkeyService.RegisterHotkey("QuitDrawTool", new KeyGesture(Key.Q, ModifierKeys.Alt), () =>
+                {
+                    if (currentMode != 0) ImageBlackboard_MouseUp(lastBorderMouseDownObject, null);
+                    if (ViewModel?.QuitDrawToolCommand?.CanExecute(null) == true)
+                    {
+                        ViewModel.QuitDrawToolCommand.Execute(null);
+                        CursorIcon_Click(lastBorderMouseDownObject, null);
+                    }
+                });
+
+                // 注册切换到选择工具热键 (Alt+S)
+                _hotkeyService.RegisterHotkey("SelectTool", new KeyGesture(Key.S, ModifierKeys.Alt), () =>
+                {
+                    if (StackPanelCanvasControls.Visibility == Visibility.Visible)
+                    {
+                        if (ViewModel?.ChangeToSelectCommand?.CanExecute(null) == true)
+                        {
+                            ViewModel.ChangeToSelectCommand.Execute(null);
+                            SymbolIconSelect_MouseUp(lastBorderMouseDownObject, null);
+                        }
+                    }
+                });
+
+                // 注册切换到橡皮擦热键 (Alt+E)
+                _hotkeyService.RegisterHotkey("EraserTool", new KeyGesture(Key.E, ModifierKeys.Alt), () =>
+                {
+                    if (StackPanelCanvasControls.Visibility == Visibility.Visible)
+                    {
+                        if (ViewModel?.ChangeToEraserCommand?.CanExecute(null) == true)
+                        {
+                            ViewModel.ChangeToEraserCommand.Execute(null);
+                            if (Eraser_Icon.Background != null)
+                                EraserIconByStrokes_Click(lastBorderMouseDownObject, null);
+                            else
+                                EraserIcon_Click(lastBorderMouseDownObject, null);
+                        }
+                    }
+                });
+
+                // 注册切换到画板热键 (Alt+B)
+                _hotkeyService.RegisterHotkey("BoardTool", new KeyGesture(Key.B, ModifierKeys.Alt), () =>
+                {
+                    if (ViewModel?.ChangeToBoardCommand?.CanExecute(null) == true)
+                    {
+                        ViewModel.ChangeToBoardCommand.Execute(null);
+                        ImageBlackboard_MouseUp(lastBorderMouseDownObject, null);
+                    }
+                });
+
+                // 注册截图热键 (Alt+C)
+                _hotkeyService.RegisterHotkey("Capture", new KeyGesture(Key.C, ModifierKeys.Alt), () =>
+                {
+                    if (ViewModel?.CaptureCommand?.CanExecute(null) == true)
+                        ViewModel.CaptureCommand.Execute(null);
+                });
+
+                // 注册绘制直线热键 (Alt+L)
+                _hotkeyService.RegisterHotkey("DrawLine", new KeyGesture(Key.L, ModifierKeys.Alt), () =>
+                {
+                    if (StackPanelCanvasControls.Visibility == Visibility.Visible)
+                    {
+                        if (ViewModel?.DrawLineCommand?.CanExecute(null) == true)
+                        {
+                            ViewModel.DrawLineCommand.Execute(null);
+                            BtnDrawLine_Click(lastMouseDownSender, null);
+                        }
+                    }
+                });
+
+                // 注册隐藏/显示热键 (Alt+V)
+                _hotkeyService.RegisterHotkey("ToggleHide", new KeyGesture(Key.V, ModifierKeys.Alt), () =>
+                {
+                    if (ViewModel?.ToggleHideCommand?.CanExecute(null) == true)
+                        ViewModel.ToggleHideCommand.Execute(null);
+                });
+
+                LogHelper.WriteLogToFile("Default hotkeys registered successfully", LogHelper.LogType.Info);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile("Failed to register default hotkeys: " + ex.Message, LogHelper.LogType.Error);
             }
         }
 
@@ -120,6 +274,114 @@ namespace Ink_Canvas {
             ViewModel.SetBoardBackgroundColorRequested += OnSetBoardBackgroundColorRequested;
             ViewModel.SetBoardBackgroundPatternRequested += OnSetBoardBackgroundPatternRequested;
             ViewModel.ToggleBoardBackgroundPanelRequested += OnToggleBoardBackgroundPanelRequested;
+            
+            // 设置面板事件订阅
+            SubscribeSettingsViewEvents();
+        }
+        
+        /// <summary>
+        /// 订阅 SettingsView 事件
+        /// </summary>
+        private void SubscribeSettingsViewEvents()
+        {
+            // SettingsView 的导航事件已在 XAML 中绑定到 SettingsView_NavigateToCategory
+            // 这里可以添加其他需要在代码中订阅的事件
+            
+            // 如果 SettingsViewControl 存在，设置其 ViewModel
+            if (SettingsViewControl != null && SettingsVM != null)
+            {
+                SettingsViewControl.ViewModel = SettingsVM;
+            }
+            
+            // 订阅 SettingsViewModel 的事件
+            if (SettingsVM != null)
+            {
+                SettingsVM.RestartRequested += OnSettingsRestartRequested;
+                SettingsVM.ExitRequested += OnSettingsExitRequested;
+            }
+        }
+        
+        /// <summary>
+        /// 处理设置面板重启请求
+        /// </summary>
+        private void OnSettingsRestartRequested(object sender, EventArgs e)
+        {
+            BtnRestart_Click(null, null);
+        }
+        
+        /// <summary>
+        /// 处理设置面板退出请求
+        /// </summary>
+        private void OnSettingsExitRequested(object sender, EventArgs e)
+        {
+            BtnExit_Click(null, null);
+        }
+        
+        /// <summary>
+        /// 处理 SettingsView 导航事件
+        /// </summary>
+        private void SettingsView_NavigateToCategory(object sender, Views.Settings.SettingsNavigationEventArgs e)
+        {
+            // 处理设置分类导航
+            // 当用户点击设置面板左侧导航按钮时触发
+            try
+            {
+                var categoryName = e.CategoryName;
+                LogHelper.WriteLogToFile($"Settings navigation to category: {categoryName}", LogHelper.LogType.Info);
+                
+                // 调用现有的设置导航逻辑
+                // 这里可以根据分类名称滚动到对应的设置组
+                ScrollToSettingsCategory(categoryName);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"SettingsView_NavigateToCategory failed: {ex.Message}", LogHelper.LogType.Error);
+            }
+        }
+        
+        /// <summary>
+        /// 滚动到指定的设置分类
+        /// </summary>
+        private void ScrollToSettingsCategory(string categoryName)
+        {
+            // 根据分类名称找到对应的 GroupBox 并滚动到该位置
+            // 这里复用现有的设置导航逻辑
+            try
+            {
+                FrameworkElement targetElement = categoryName switch
+                {
+                    "Startup" => SettingsStartupGroupBox,
+                    "Canvas" => SettingsCanvasGroupBox,
+                    "Gesture" => SettingsGestureGroupBox,
+                    "Appearance" => SettingsAppearanceGroupBox,
+                    "PowerPoint" => SettingsPPTGroupBox,
+                    "Advanced" => SettingsAdvancedGroupBox,
+                    "Automation" => SettingsAutomationGroupBox,
+                    "About" => SettingsAboutGroupBox,
+                    "Storage" => SettingsStorageGroupBox,
+                    "Snapshot" => SettingsSnapshotGroupBox,
+                    "ShapeDrawing" => SettingsShapeDrawingGroupBox,
+                    "InkRecognition" => SettingsInkRecognitionGroupBox,
+                    "RandWindow" => SettingsRandWindowGroupBox,
+                    "Donation" => SettingsDonationGroupBox,
+                    _ => null
+                };
+                
+                if (targetElement != null && SettingsPanelScrollViewer != null)
+                {
+                    // 获取目标元素相对于 ScrollViewer 的位置
+                    var transform = targetElement.TransformToAncestor(SettingsPanelScrollViewer);
+                    var position = transform.Transform(new System.Windows.Point(0, 0));
+                    
+                    // 滚动到目标位置
+                    SettingsPanelScrollViewer.ScrollToVerticalOffset(
+                        SettingsPanelScrollViewer.VerticalOffset + position.Y - 20);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"ScrollToSettingsCategory failed: {ex.Message}", LogHelper.LogType.Error);
+            }
         }
         
         /// <summary>
@@ -207,6 +469,18 @@ namespace Ink_Canvas {
         }
 
         #region ViewModel 事件处理
+        
+        // ============================================================
+        // View 回调方法
+        // ============================================================
+        // 这些方法作为 View 层的回调，响应 ViewModel 发出的请求事件。
+        // 它们负责调用原有的 UI 操作方法，实现 ViewModel 与 View 的解耦。
+        // 
+        // 设计原则：
+        // 1. 事件处理方法应保持简洁，只做委托调用
+        // 2. 复杂的业务逻辑应在 ViewModel 或服务层中处理
+        // 3. UI 操作（如动画、弹窗）保留在 View 层
+        // ============================================================
 
         /// <summary>
         /// 处理清空画布请求
@@ -481,6 +755,9 @@ namespace Ink_Canvas {
             
             // 设置 DataContext
             DataContext = ViewModel;
+            
+            // 初始化 FloatingBarView
+            InitializeFloatingBarView();
 
             BlackboardLeftSide.Visibility = Visibility.Collapsed;
             BlackboardCenterSide.Visibility = Visibility.Collapsed;
@@ -545,6 +822,30 @@ namespace Ink_Canvas {
             
             // 注意：CheckColorTheme和CheckPenTypeUIState已移至Window_Loaded中，
             // 在LoadSettings之后调用，以确保设置已加载
+        }
+
+        /// <summary>
+        /// 初始化 FloatingBarView
+        /// </summary>
+        private void InitializeFloatingBarView()
+        {
+            if (FloatingBarView != null)
+            {
+                // 设置 FloatingBarView 的 ViewModel
+                _floatingBarViewModel = ServiceLocator.GetService<FloatingBarViewModel>();
+                if (_floatingBarViewModel != null)
+                {
+                    FloatingBarView.ViewModel = _floatingBarViewModel;
+                    
+                    // 从设置中加载浮动工具栏的缩放和透明度
+                    var settingsService = ServiceLocator.GetService<ISettingsService>();
+                    if (settingsService != null)
+                    {
+                        _floatingBarViewModel.Scale = settingsService.Settings.Appearance.ViewboxFloatingBarScaleTransformValue;
+                        _floatingBarViewModel.Opacity = settingsService.Settings.Appearance.ViewboxFloatingBarOpacityValue;
+                    }
+                }
+            }
         }
 
         #endregion

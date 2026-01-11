@@ -1,3 +1,29 @@
+// ============================================================================
+// MW_FloatingBarIcons.cs - 浮动工具栏图标和交互逻辑
+// ============================================================================
+//
+// 功能说明:
+//   - 浮动工具栏的拖动实现
+//   - 工具按钮的点击事件处理（光标、画笔、橡皮、套索等）
+//   - 工具栏状态管理和按钮高亮
+//   - 子面板的显示/隐藏控制
+//   - 撤销/重做按钮逻辑
+//   - 白板模式切换
+//
+// 迁移状态 (渐进式迁移):
+//   - 工具按钮命令已通过 behaviors:FloatingBarButton.Command 绑定到 FloatingBarViewModel
+//   - FloatingBarView UserControl 已创建但暂时隐藏 (Visibility="Collapsed")
+//   - 此文件中的事件处理程序仍在使用，作为 ViewModel 命令的实际执行逻辑
+//   - 完全迁移后，此文件中的 UI 交互代码将移至 FloatingBarView.xaml.cs
+//
+// 相关文件:
+//   - Views/FloatingBar/FloatingBarView.xaml
+//   - Views/FloatingBar/FloatingBarView.xaml.cs
+//   - ViewModels/FloatingBarViewModel.cs
+//   - MainWindow.xaml (ViewboxFloatingBar 区域)
+//
+// ============================================================================
+
 using Ink_Canvas.Dialogs;
 using Ink_Canvas.Helpers;
 using Ink_Canvas.Popups;
@@ -30,7 +56,7 @@ using Image = System.Windows.Controls.Image;
 namespace Ink_Canvas {
     public partial class MainWindow : Window {
         #region 常用颜色画刷缓存
-        
+
         private static readonly SolidColorBrush CachedTransparentBrush = new SolidColorBrush(Colors.Transparent);
         private static readonly SolidColorBrush CachedZincGray100Brush = new SolidColorBrush(Color.FromRgb(244, 244, 245));
         private static readonly SolidColorBrush CachedZincGray400Brush = new SolidColorBrush(Color.FromRgb(161, 161, 170));
@@ -38,9 +64,9 @@ namespace Ink_Canvas {
         private static readonly SolidColorBrush CachedBlue600Brush = new SolidColorBrush(Color.FromRgb(37, 99, 235));
         private static readonly SolidColorBrush CachedGhostWhiteBrush = new SolidColorBrush(Colors.GhostWhite);
         private static readonly SolidColorBrush CachedInkReplayButtonPressedBrush = new SolidColorBrush(Color.FromArgb(34, 9, 9, 11));
-        
+
         #endregion
-        
+
         #region "手勢"按鈕
 
         /// <summary>
@@ -63,7 +89,7 @@ namespace Ink_Canvas {
         /// </summary>
         private void TwoFingerGestureBorder_MouseUp(object sender, RoutedEventArgs e) {
             HideCommonSubPanels();
-            
+
             if (TwoFingerGestureBorder.Visibility == Visibility.Visible) {
                 AnimationsHelper.HideWithSlideAndFade(TwoFingerGestureBorder);
                 AnimationsHelper.HideWithSlideAndFade(BoardTwoFingerGestureBorder);
@@ -329,7 +355,7 @@ namespace Ink_Canvas {
             AnimationsHelper.HideWithSlideAndFade(TwoFingerGestureBorder);
             AnimationsHelper.HideWithSlideAndFade(EraserSizePanel);
             AnimationsHelper.HideWithSlideAndFade(BoardTwoFingerGestureBorder);
-            if (ToggleSwitchDrawShapeBorderAutoHide.IsOn) {
+            if (IsDrawShapeBorderAutoHide) {
                 AnimationsHelper.HideWithSlideAndFade(BorderDrawShape);
                 AnimationsHelper.HideWithSlideAndFade(BoardBorderDrawShape);
             }
@@ -667,7 +693,7 @@ namespace Ink_Canvas {
                 CursorWithDelFloatingBarBtn,
             };
 
-            var final_items = new List<FrameworkElement>(); 
+            var final_items = new List<FrameworkElement>();
             foreach (var fe in FloatingBarItemsCalc) {
                 if (fe.Visibility != Visibility.Collapsed) final_items.Add(fe);
             }
@@ -694,7 +720,7 @@ namespace Ink_Canvas {
 
             FloatingbarFreezeBtnBGCanvas.Visibility = mode != ICCToolsEnum.CursorMode ? Visibility.Visible : Visibility.Collapsed;
             if (mode == ICCToolsEnum.CursorMode) IsAnnotationFreezeOn = false;
-            
+
             // 切换模式时关闭漫游模式
             if (isSingleFingerDragMode && mode != ICCToolsEnum.CursorMode) {
                 isSingleFingerDragMode = false;
@@ -707,7 +733,7 @@ namespace Ink_Canvas {
         #region 画面定格
 
         private bool _isAnnotationFreezeOn { get; set; } = false;
-        
+
         private bool IsAnnotationFreezeOn {
             get => _isAnnotationFreezeOn;
             set {
@@ -911,7 +937,7 @@ namespace Ink_Canvas {
                 StackPanelCanvasControls.Visibility = Visibility.Visible;
                 CheckEnableTwoFingerGestureBtnVisibility(true);
                 inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
-                
+
                 // 恢复颜色 - 根据当前模式恢复对应的颜色
                 // Requirements: 3.1, 3.2, 3.3
                 if (currentMode == 0) {
@@ -919,10 +945,10 @@ namespace Ink_Canvas {
                 } else {
                     inkColor = ValidateAndCorrectColorIndex(lastBoardInkColor);
                 }
-                
+
                 // 恢复笔类型 - Requirements: 2.5
                 penType = lastPenType;
-                
+
                 // 恢复笔触粗细 - Requirements: 1.3
                 if (penType == 0) {
                     // 签字笔 - 验证并修正笔触粗细
@@ -939,13 +965,13 @@ namespace Ink_Canvas {
                     drawingAttributes.StylusTip = StylusTip.Rectangle;
                     drawingAttributes.IsHighlighter = true;
                 }
-                
+
                 ColorSwitchCheck();
                 CheckPenTypeUIState();
-                
+
                 // 同步PenPaletteV2的选中颜色 - Requirements: 3.1, 3.5
                 PenPaletteV2.SelectedColor = InkColorToColorPaletteColor(inkColor);
-                
+
                 if (____isHideSubPanel) HideSubPanels("pen", true);
 
                 // update tool selection
@@ -992,7 +1018,7 @@ namespace Ink_Canvas {
                         var pt = transform.Transform(new Point(0, 0));
                         PenPaletteV2Popup.VerticalOffset = pt.Y;
                         PenPaletteV2Popup.HorizontalOffset = pt.X - 32;
-                        
+
                         // 同步当前颜色到PenPaletteV2 - Requirements: 3.1, 3.5
                         PenPaletteV2.SelectedColor = InkColorToColorPaletteColor(inkColor);
                     }
@@ -1001,7 +1027,7 @@ namespace Ink_Canvas {
                 else
                 {
                     inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
-                    
+
                     // 恢复颜色 - 根据当前模式恢复对应的颜色
                     // Requirements: 3.1, 3.2, 3.3
                     if (currentMode == 0) {
@@ -1009,10 +1035,10 @@ namespace Ink_Canvas {
                     } else {
                         inkColor = ValidateAndCorrectColorIndex(lastBoardInkColor);
                     }
-                    
+
                     // 恢复笔类型 - Requirements: 2.5
                     penType = lastPenType;
-                    
+
                     // 恢复笔触粗细 - Requirements: 1.3
                     if (penType == 0) {
                         // 签字笔 - 验证并修正笔触粗细
@@ -1029,7 +1055,7 @@ namespace Ink_Canvas {
                         drawingAttributes.StylusTip = StylusTip.Rectangle;
                         drawingAttributes.IsHighlighter = true;
                     }
-                    
+
                     ColorSwitchCheck();
                     CheckPenTypeUIState();
                     if (____isHideSubPanel) HideSubPanels("pen", true);
@@ -1225,7 +1251,7 @@ namespace Ink_Canvas {
             if (StackPanelCanvasControls.Visibility == Visibility.Visible) {
                 EnableTwoFingerGestureBorder.Visibility = fbivca[9] == '1' ? Visibility.Visible : Visibility.Collapsed;
             }
-            
+
             Eraser_Icon.Visibility = Visibility.Visible;
             EraserByStrokes_Icon.Visibility = Visibility.Visible;
 
@@ -1643,13 +1669,14 @@ namespace Ink_Canvas {
                 double screenWidth = screen.Bounds.Width / dpiScaleX, screenHeight = screen.Bounds.Height / dpiScaleY;
                 var toolbarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.FullPrimaryScreenHeight -
                                     SystemParameters.WindowCaptionHeight;
-                pos.X = (screenWidth - ViewboxFloatingBar.ActualWidth * ViewboxFloatingBarScaleTransform.ScaleX) / 2;
+                var scale = _floatingBarViewModel?.Scale ?? 1.0;
+                pos.X = (screenWidth - ViewboxFloatingBar.ActualWidth * scale) / 2;
 
                 if (PosXCaculatedWithTaskbarHeight == false)
-                    pos.Y = screenHeight - MarginFromEdge * ViewboxFloatingBarScaleTransform.ScaleY;
+                    pos.Y = screenHeight - MarginFromEdge * scale;
                 else if (PosXCaculatedWithTaskbarHeight == true)
-                    pos.Y = screenHeight - ViewboxFloatingBar.ActualHeight * ViewboxFloatingBarScaleTransform.ScaleY -
-                            toolbarHeight - ViewboxFloatingBarScaleTransform.ScaleY * 3;
+                    pos.Y = screenHeight - ViewboxFloatingBar.ActualHeight * scale -
+                            toolbarHeight - scale * 3;
 
                 if (MarginFromEdge != -60) {
                     if (BorderFloatingBarExitPPTBtn.Visibility == Visibility.Visible) {
@@ -1706,10 +1733,11 @@ namespace Ink_Canvas {
                 double screenWidth = screen.Bounds.Width / dpiScaleX, screenHeight = screen.Bounds.Height / dpiScaleY;
                 var toolbarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.FullPrimaryScreenHeight -
                                     SystemParameters.WindowCaptionHeight;
-                pos.X = (screenWidth - ViewboxFloatingBar.ActualWidth * ViewboxFloatingBarScaleTransform.ScaleX) / 2;
+                var scale = _floatingBarViewModel?.Scale ?? 1.0;
+                pos.X = (screenWidth - ViewboxFloatingBar.ActualWidth * scale) / 2;
 
-                pos.Y = screenHeight - ViewboxFloatingBar.ActualHeight * ViewboxFloatingBarScaleTransform.ScaleY -
-                        toolbarHeight - ViewboxFloatingBarScaleTransform.ScaleY * 3;
+                pos.Y = screenHeight - ViewboxFloatingBar.ActualHeight * scale -
+                        toolbarHeight - scale * 3;
 
                 if (pointDesktop.X != -1 || pointDesktop.Y != -1) pointDesktop = pos;
 
@@ -1749,9 +1777,10 @@ namespace Ink_Canvas {
                 double screenWidth = screen.Bounds.Width / dpiScaleX, screenHeight = screen.Bounds.Height / dpiScaleY;
                 var toolbarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.FullPrimaryScreenHeight -
                                     SystemParameters.WindowCaptionHeight;
-                pos.X = (screenWidth - ViewboxFloatingBar.ActualWidth * ViewboxFloatingBarScaleTransform.ScaleX) / 2;
+                var scale = _floatingBarViewModel?.Scale ?? 1.0;
+                pos.X = (screenWidth - ViewboxFloatingBar.ActualWidth * scale) / 2;
 
-                pos.Y = screenHeight - 55 * ViewboxFloatingBarScaleTransform.ScaleY;
+                pos.Y = screenHeight - 55 * scale;
 
                 if (pointPPT.X != -1 || pointPPT.Y != -1)
                 {
@@ -1827,7 +1856,7 @@ namespace Ink_Canvas {
                     SelectedMode = ICCToolsEnum.CursorMode;
                     ForceUpdateToolSelection(null);
                 }
-                    
+
             }
         }
 
@@ -1976,7 +2005,7 @@ namespace Ink_Canvas {
         private bool lastIsInMultiTouchMode = false;
 
         private void CancelSingleFingerDragMode() {
-            if (ToggleSwitchDrawShapeBorderAutoHide.IsOn) CollapseBorderDrawShape();
+            if (IsDrawShapeBorderAutoHide) CollapseBorderDrawShape();
 
             GridInkCanvasSelectionCover.Visibility = Visibility.Collapsed;
 
@@ -2034,10 +2063,10 @@ namespace Ink_Canvas {
                         if (bgC == BlackboardBackgroundColorEnum.BlackBoardGreen
                             || bgC == BlackboardBackgroundColorEnum.BlueBlack
                             || bgC == BlackboardBackgroundColorEnum.GrayBlack
-                            || bgC == BlackboardBackgroundColorEnum.RealBlack) 
+                            || bgC == BlackboardBackgroundColorEnum.RealBlack)
                             BtnColorWhite_Click(null, null);
                         else BtnColorBlack_Click(null, null);
-                        
+
                         Topmost = false;
                         break;
                 }

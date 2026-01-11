@@ -38,7 +38,7 @@ namespace Ink_Canvas.ShapeDrawing.Core {
                 { 8, ShapeDrawingType.DashedLine },     // 虚线
                 { 15, ShapeDrawingType.ParallelLine },  // 平行线（4条）
                 { 18, ShapeDrawingType.DottedLine },    // 点线
-                
+
                 // 基础几何形状
                 { 3, ShapeDrawingType.Rectangle },      // 矩形
                 { 4, ShapeDrawingType.Ellipse },        // 椭圆
@@ -47,21 +47,21 @@ namespace Ink_Canvas.ShapeDrawing.Core {
                 { 16, ShapeDrawingType.CenterEllipse }, // 中心椭圆
                 { 19, ShapeDrawingType.RectangleCenter }, // 中心矩形
                 { 23, ShapeDrawingType.CenterEllipseWithFocalPoint }, // 中心椭圆带焦点
-                
+
                 // 坐标轴类
                 { 11, ShapeDrawingType.Coordinate1 },   // 坐标轴1
                 { 12, ShapeDrawingType.Coordinate2 },   // 坐标轴2
                 { 13, ShapeDrawingType.Coordinate3 },   // 坐标轴3
                 { 14, ShapeDrawingType.Coordinate4 },   // 坐标轴4
                 { 17, ShapeDrawingType.Coordinate5 },   // 3D坐标轴
-                
+
                 // 曲线类
                 { 20, ShapeDrawingType.Parabola1 },     // 抛物线1（y=ax²）
                 { 21, ShapeDrawingType.Parabola2 },     // 抛物线2（x=ay²）
                 { 22, ShapeDrawingType.ParabolaWithFocalPoint }, // 带焦点抛物线
                 { 24, ShapeDrawingType.Hyperbola },     // 双曲线
                 { 25, ShapeDrawingType.HyperbolaWithFocalPoint }, // 带焦点双曲线
-                
+
                 // 3D形状类
                 { 6, ShapeDrawingType.Cylinder },       // 圆柱体
                 { 7, ShapeDrawingType.Cone },           // 圆锥体
@@ -116,6 +116,14 @@ namespace Ink_Canvas.ShapeDrawing.Core {
             Register<CylinderShapeDrawer>(ShapeDrawingType.Cylinder);
             Register<ConeShapeDrawer>(ShapeDrawingType.Cone);
             Register<CuboidShapeDrawer>(ShapeDrawingType.Cuboid);
+
+            // 坐标轴类
+            Register<Coordinate1ShapeDrawer>(ShapeDrawingType.Coordinate1);
+            Register<Coordinate2ShapeDrawer>(ShapeDrawingType.Coordinate2);
+            Register<Coordinate3ShapeDrawer>(ShapeDrawingType.Coordinate3);
+            Register<Coordinate4ShapeDrawer>(ShapeDrawingType.Coordinate4);
+            Register<Coordinate5ShapeDrawer>(ShapeDrawingType.Coordinate5);
+            Register<CoordinateGridShapeDrawer>(ShapeDrawingType.CoordinateGrid);
         }
 
         /// <summary>

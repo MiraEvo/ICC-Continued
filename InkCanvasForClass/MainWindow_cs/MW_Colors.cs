@@ -1,4 +1,19 @@
-﻿using Ink_Canvas.Helpers;
+﻿// ============================================================================
+// MW_Colors.cs - 颜色选择和画笔调色盘
+// ============================================================================
+// 
+// 功能说明:
+//   - 画笔颜色选择
+//   - 调色盘 UI 交互
+//   - 颜色主题切换（深色/浅色模式）
+//
+// 迁移状态:
+//   - 颜色选择逻辑与 FloatingBarViewModel 协同工作
+//   - 调色盘 UI 仍在 MainWindow.xaml 中
+//
+// ============================================================================
+
+using Ink_Canvas.Helpers;
 using Ink_Canvas.Core;
 using System;
 using System.Collections.Generic;
@@ -13,6 +28,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+
 using Ink_Canvas.Popups;
 
 namespace Ink_Canvas {

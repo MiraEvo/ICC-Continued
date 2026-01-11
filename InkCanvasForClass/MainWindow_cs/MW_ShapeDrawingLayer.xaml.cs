@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Ink_Canvas.Core;
+using Ink_Canvas.Services;
+using Ink_Canvas.ShapeDrawing.Core;
 
 namespace Ink_Canvas {
     public partial class ShapeDrawingLayer : UserControl {
@@ -33,11 +35,11 @@ namespace Ink_Canvas {
         // 网格辅助线设置
         private bool _isGridEnabled = false;
         private double _gridSize = Constants.GridDefaultSize; // 网格大小（像素）
-        
+
         // 顶点吸附设置
         private bool _isSnapEnabled = false;
         private double _snapDistance = Constants.SnapDefaultDistance; // 吸附距离（像素）
-        
+
         // 多指绘制设置
         private bool _isMultiTouchEnabled = false;
 
@@ -67,7 +69,7 @@ namespace Ink_Canvas {
                 tb.MouseUp += ToolButton_MouseUp;
                 tb.MouseLeave += ToolButton_MouseLeave;
             }
-            
+
             // 绑定工具按钮点击事件
             CursorButton.MouseUp += CursorButton_Click;
             UndoButton.MouseUp += UndoButton_Click;
@@ -133,6 +135,7 @@ namespace Ink_Canvas {
         }
 
         private MainWindow.ShapeDrawingType? _shapeType;
+        private readonly Ink_Canvas.Services.ShapeDrawingService _shapeDrawingService = Ink_Canvas.Services.ShapeDrawingService.Instance;
 
         public bool IsInShapeDrawingMode {
             get => _shapeType != null;
@@ -169,7 +172,7 @@ namespace Ink_Canvas {
 
         private void ToolButton_MouseUp(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            
+
             // 不在这里调用 MouseLeave，让具体的按钮事件处理
         }
 
@@ -185,13 +188,13 @@ namespace Ink_Canvas {
         private void FullscreenGrid_MouseDown(object sender, MouseButtonEventArgs e) {
             if (isFullscreenGridDown) return;
             points.Clear();
-            
+
             var point = e.GetPosition(null);
             // 应用吸附
             if (_isSnapEnabled) {
                 point = ApplySnapping(point);
             }
-            
+
             points.Add(point);
             isFullscreenGridDown = true;
             FullscreenGrid.CaptureMouse();
@@ -205,7 +208,12 @@ namespace Ink_Canvas {
             using (DrawingContext dc = DrawingVisualCanvas.DrawingVisual.RenderOpen()) {}
 
             if (points.Count >= 2)
-                MainWindow.inkCanvas.Strokes.Add(MainWindow.DrawShapeCore(points, (MainWindow.ShapeDrawingType)_shapeType,false,false));
+            {
+                // Convert MainWindow.ShapeDrawingType to ShapeDrawing.Core.ShapeDrawingType
+                var coreShapeType = (Ink_Canvas.ShapeDrawing.Core.ShapeDrawingType)_shapeType.Value;
+                var strokes = _shapeDrawingService.CreateShape(points[0], points[1], coreShapeType, MainWindow.inkCanvas.DefaultDrawingAttributes);
+                MainWindow.inkCanvas.Strokes.Add(strokes);
+            }
             points.Clear();
             AngleTooltip.Visibility = Visibility.Collapsed;
             LengthTooltip.Visibility = Visibility.Collapsed;
@@ -214,42 +222,45 @@ namespace Ink_Canvas {
         private void FullscreenGrid_MouseMove(object sender, MouseEventArgs e) {
             if (!isFullscreenGridDown) return;
             if (_shapeType == null) return;
-            
+
             var point = e.GetPosition(null);
             // 应用吸附
             if (_isSnapEnabled) {
                 point = ApplySnapping(point);
             }
-            
-            if (points.Count >= 2) 
-                points[1] = point; 
-            else 
+
+            if (points.Count >= 2)
+                points[1] = point;
+            else
                 points.Add(point);
-            
+
             using (DrawingContext dc = DrawingVisualCanvas.DrawingVisual.RenderOpen()) {
                 // 绘制网格辅助线
                 if (_isGridEnabled) {
                     DrawGrid(dc);
                 }
-                
+
                 if (points.Count >= 2) {
-                    MainWindow.DrawShapeCore(points, (MainWindow.ShapeDrawingType)_shapeType, true, true).Draw(dc);
-                    
+                    // Use the new shape drawing service for preview
+                    var coreShapeType = (Ink_Canvas.ShapeDrawing.Core.ShapeDrawingType)_shapeType.Value;
+                    var previewStrokes = _shapeDrawingService.CreateShape(points[0], points[1], coreShapeType, MainWindow.inkCanvas.DefaultDrawingAttributes);
+                    previewStrokes.Draw(dc);
+
                     // 预计算差值，避免重复访问 points 集合
                     double dx = points[1].X - points[0].X;
                     double dy = points[1].Y - points[0].Y;
-                    
+
                     // 只对线条类型显示角度和长度提示
                     if (_shapeType == MainWindow.ShapeDrawingType.Line ||
                         _shapeType == MainWindow.ShapeDrawingType.DashedLine ||
                         _shapeType == MainWindow.ShapeDrawingType.DottedLine ||
                         _shapeType == MainWindow.ShapeDrawingType.ArrowOneSide ||
                         _shapeType == MainWindow.ShapeDrawingType.ArrowTwoSide) {
-                        
+
                         var angle = ShapeDrawingHelper.CaculateRotateAngleByGivenTwoPoints(points[0], points[1]);
                         if (AngleTooltip.Visibility == Visibility.Collapsed) AngleTooltip.Visibility = Visibility.Visible;
                         AngleText.Text = $"{angle}°";
-                        
+
                         if (LengthTooltip.Visibility == Visibility.Collapsed) LengthTooltip.Visibility = Visibility.Visible;
                         // 使用乘法代替 Math.Pow，性能更好
                         double length = Math.Sqrt(dx * dx + dy * dy);
@@ -273,14 +284,14 @@ namespace Ink_Canvas {
         /// </summary>
         private void GridLineButton_Click(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            
+
             _isGridEnabled = !_isGridEnabled;
-            
+
             // 更新按钮状态
             UpdateToolButtonState(GridLineButton, _isGridEnabled);
-            
+
             ToolButton_MouseLeave(sender, null);
-            
+
             // 刷新显示
             if (_isGridEnabled && !isFullscreenGridDown) {
                 using (DrawingContext dc = DrawingVisualCanvas.DrawingVisual.RenderOpen()) {
@@ -299,15 +310,15 @@ namespace Ink_Canvas {
         private void DrawGrid(DrawingContext dc) {
             var pen = new Pen(new SolidColorBrush(Constants.GridLineColor), 1);
             pen.Freeze();
-            
+
             double width = ActualWidth;
             double height = ActualHeight;
-            
+
             // 绘制垂直线
             for (double x = 0; x < width; x += _gridSize) {
                 dc.DrawLine(pen, new Point(x, 0), new Point(x, height));
             }
-            
+
             // 绘制水平线
             for (double y = 0; y < height; y += _gridSize) {
                 dc.DrawLine(pen, new Point(0, y), new Point(width, y));
@@ -323,12 +334,12 @@ namespace Ink_Canvas {
         /// </summary>
         private void SnapButton_Click(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            
+
             _isSnapEnabled = !_isSnapEnabled;
-            
+
             // 更新按钮状态
             UpdateToolButtonState(SnapButton, _isSnapEnabled);
-            
+
             ToolButton_MouseLeave(sender, null);
         }
 
@@ -337,29 +348,29 @@ namespace Ink_Canvas {
         /// </summary>
         private Point ApplySnapping(Point point) {
             if (!_isSnapEnabled) return point;
-            
+
             // 吸附到网格点
             if (_isGridEnabled) {
                 double snappedX = Math.Round(point.X / _gridSize) * _gridSize;
                 double snappedY = Math.Round(point.Y / _gridSize) * _gridSize;
                 return new Point(snappedX, snappedY);
             }
-            
+
             // 吸附到现有笔画的端点
             if (MainWindow?.inkCanvas?.Strokes != null) {
                 Point? nearestPoint = FindNearestStrokePoint(point);
                 if (nearestPoint.HasValue) {
                     double distance = Math.Sqrt(
-                        Math.Pow(point.X - nearestPoint.Value.X, 2) + 
+                        Math.Pow(point.X - nearestPoint.Value.X, 2) +
                         Math.Pow(point.Y - nearestPoint.Value.Y, 2)
                     );
-                    
+
                     if (distance <= _snapDistance) {
                         return nearestPoint.Value;
                     }
                 }
             }
-            
+
             return point;
         }
 
@@ -369,36 +380,36 @@ namespace Ink_Canvas {
         private Point? FindNearestStrokePoint(Point point) {
             Point? nearestPoint = null;
             double minDistance = double.MaxValue;
-            
+
             foreach (var stroke in MainWindow.inkCanvas.Strokes) {
                 var points = stroke.StylusPoints;
                 if (points.Count == 0) continue;
-                
+
                 // 检查起点
                 var startPoint = new Point(points[0].X, points[0].Y);
                 double startDistance = Math.Sqrt(
-                    Math.Pow(point.X - startPoint.X, 2) + 
+                    Math.Pow(point.X - startPoint.X, 2) +
                     Math.Pow(point.Y - startPoint.Y, 2)
                 );
-                
+
                 if (startDistance < minDistance) {
                     minDistance = startDistance;
                     nearestPoint = startPoint;
                 }
-                
+
                 // 检查终点
                 var endPoint = new Point(points[points.Count - 1].X, points[points.Count - 1].Y);
                 double endDistance = Math.Sqrt(
-                    Math.Pow(point.X - endPoint.X, 2) + 
+                    Math.Pow(point.X - endPoint.X, 2) +
                     Math.Pow(point.Y - endPoint.Y, 2)
                 );
-                
+
                 if (endDistance < minDistance) {
                     minDistance = endDistance;
                     nearestPoint = endPoint;
                 }
             }
-            
+
             return minDistance <= _snapDistance ? nearestPoint : null;
         }
 
@@ -411,14 +422,14 @@ namespace Ink_Canvas {
         /// </summary>
         private void MultiPointButton_Click(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            
+
             _isMultiTouchEnabled = !_isMultiTouchEnabled;
-            
+
             // 更新按钮状态
             UpdateToolButtonState(MultiPointButton, _isMultiTouchEnabled);
-            
+
             ToolButton_MouseLeave(sender, null);
-            
+
             // 启用或禁用多点触控
             if (MainWindow?.inkCanvas != null) {
                 MainWindow.inkCanvas.IsManipulationEnabled = _isMultiTouchEnabled;
@@ -458,9 +469,9 @@ namespace Ink_Canvas {
         /// </summary>
         private void CursorButton_Click(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            
+
             ToolButton_MouseLeave(sender, null);
-            
+
             // 退出绘制模式
             EndShapeDrawing();
         }
@@ -470,9 +481,9 @@ namespace Ink_Canvas {
         /// </summary>
         private void UndoButton_Click(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            
+
             ToolButton_MouseLeave(sender, null);
-            
+
             // 调用 MainWindow 的撤销方法
             if (MainWindow != null) {
                 MainWindow.BtnUndo_Click(null, null);
@@ -484,9 +495,9 @@ namespace Ink_Canvas {
         /// </summary>
         private void RedoButton_Click(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            
+
             ToolButton_MouseLeave(sender, null);
-            
+
             // 调用 MainWindow 的重做方法
             if (MainWindow != null) {
                 MainWindow.BtnRedo_Click(null, null);
@@ -498,9 +509,9 @@ namespace Ink_Canvas {
         /// </summary>
         private void ClearButton_Click(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            
+
             ToolButton_MouseLeave(sender, null);
-            
+
             // 调用 MainWindow 的清空方法
             if (MainWindow != null) {
                 MainWindow.BtnClear_Click(null, null);
@@ -512,9 +523,9 @@ namespace Ink_Canvas {
         /// </summary>
         private void InfoButton_Click(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            
+
             ToolButton_MouseLeave(sender, null);
-            
+
             // 显示帮助信息
             ShowHelpInfo();
         }
@@ -524,9 +535,9 @@ namespace Ink_Canvas {
         /// </summary>
         private void MoreButton_Click(object sender, MouseButtonEventArgs e) {
             if (ToolButtonMouseDownBorder == null || ToolButtonMouseDownBorder != sender) return;
-            
+
             ToolButton_MouseLeave(sender, null);
-            
+
             // 显示更多选项菜单
             ShowMoreOptions();
         }
@@ -566,12 +577,12 @@ namespace Ink_Canvas {
         private void ShowMoreOptions() {
             // 创建上下文菜单
             var contextMenu = new System.Windows.Controls.ContextMenu();
-            
+
             // 网格大小设置
             var gridSizeItem = new System.Windows.Controls.MenuItem {
                 Header = "网格大小"
             };
-            
+
             foreach (var size in new[] { 10, 20, 30, 40, 50 }) {
                 var sizeItem = new System.Windows.Controls.MenuItem {
                     Header = $"{size} 像素",
@@ -591,12 +602,12 @@ namespace Ink_Canvas {
                 gridSizeItem.Items.Add(sizeItem);
             }
             contextMenu.Items.Add(gridSizeItem);
-            
+
             // 吸附距离设置
             var snapDistanceItem = new System.Windows.Controls.MenuItem {
                 Header = "吸附距离"
             };
-            
+
             foreach (var distance in new[] { 10, 15, 20, 25, 30 }) {
                 var distItem = new System.Windows.Controls.MenuItem {
                     Header = $"{distance} 像素",
@@ -610,10 +621,10 @@ namespace Ink_Canvas {
                 snapDistanceItem.Items.Add(distItem);
             }
             contextMenu.Items.Add(snapDistanceItem);
-            
+
             // 分隔符
             contextMenu.Items.Add(new System.Windows.Controls.Separator());
-            
+
             // 重置所有设置
             var resetItem = new System.Windows.Controls.MenuItem {
                 Header = "重置所有设置"
@@ -624,19 +635,19 @@ namespace Ink_Canvas {
                 _isGridEnabled = false;
                 _isSnapEnabled = false;
                 _isMultiTouchEnabled = false;
-                
+
                 // 更新按钮状态
                 UpdateToolButtonState(GridLineButton, false);
                 UpdateToolButtonState(SnapButton, false);
                 UpdateToolButtonState(MultiPointButton, false);
-                
+
                 // 清空绘制
                 using (DrawingContext dc = DrawingVisualCanvas.DrawingVisual.RenderOpen()) {
                     // 清空
                 }
             };
             contextMenu.Items.Add(resetItem);
-            
+
             // 显示菜单
             contextMenu.PlacementTarget = MoreButton;
             contextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;

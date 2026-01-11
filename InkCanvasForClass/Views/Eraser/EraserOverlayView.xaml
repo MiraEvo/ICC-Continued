@@ -1,0 +1,31 @@
+<UserControl x:Class="Ink_Canvas.Views.Eraser.EraserOverlayView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:helpers="clr-namespace:Ink_Canvas.Helpers"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="EraserOverlayResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <Grid Background="Transparent" Name="GridEraserOverlay" 
+          Visibility="{Binding EraserOverlayVisibility, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+          IsHitTestVisible="True">
+        <!-- Transparent overlay for capturing mouse events -->
+        <Border Name="EraserOverlayBorder" 
+                Loaded="EraserOverlay_Loaded" 
+                Background="Transparent" 
+                ForceCursor="True" 
+                Cursor="Arrow" />
+        
+        <!-- Drawing visual canvas for eraser cursor visualization -->
+        <helpers:DrawingVisualCanvas IsHitTestVisible="False" 
+                                     x:Name="EraserOverlay_DrawingVisual" />
+    </Grid>
+</UserControl>

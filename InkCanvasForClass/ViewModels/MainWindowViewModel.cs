@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ink_Canvas.Core;
 using Ink_Canvas.Services;
+using Ink_Canvas.Services.Events;
 using System;
 using System.Windows;
 
@@ -61,11 +62,49 @@ namespace Ink_Canvas.ViewModels
             _timeMachineService = timeMachineService ?? throw new ArgumentNullException(nameof(timeMachineService));
             _pageService = pageService ?? throw new ArgumentNullException(nameof(pageService));
 
+            // 创建子 ViewModel
+            BlackboardViewModel = new BlackboardViewModel(pageService, settingsService);
+
             // 订阅服务事件
             _timeMachineService.UndoStateChanged += OnUndoStateChanged;
             _timeMachineService.RedoStateChanged += OnRedoStateChanged;
             _pageService.PageChanged += OnPageChanged;
+            
+            // 订阅 BlackboardViewModel 事件
+            BlackboardViewModel.PageNavigationRequested += OnBlackboardPageNavigationRequested;
+            BlackboardViewModel.BackgroundChanged += OnBlackboardBackgroundChanged;
         }
+
+        #endregion
+
+        #region 子 ViewModel
+
+        /// <summary>
+        /// 白板 ViewModel
+        /// </summary>
+        public BlackboardViewModel BlackboardViewModel { get; }
+
+        private void OnBlackboardPageNavigationRequested(object sender, PageNavigationEventArgs e)
+        {
+            // 转发页面导航事件到 View
+            BlackboardPageNavigationRequested?.Invoke(this, e);
+        }
+
+        private void OnBlackboardBackgroundChanged(object sender, BackgroundChangedEventArgs e)
+        {
+            // 转发背景变更事件到 View
+            BlackboardBackgroundChangedRequested?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// 白板页面导航请求事件
+        /// </summary>
+        public event EventHandler<PageNavigationEventArgs> BlackboardPageNavigationRequested;
+
+        /// <summary>
+        /// 白板背景变更请求事件
+        /// </summary>
+        public event EventHandler<BackgroundChangedEventArgs> BlackboardBackgroundChangedRequested;
 
         #endregion
 
@@ -964,6 +1003,15 @@ namespace Ink_Canvas.ViewModels
             _timeMachineService.UndoStateChanged -= OnUndoStateChanged;
             _timeMachineService.RedoStateChanged -= OnRedoStateChanged;
             _pageService.PageChanged -= OnPageChanged;
+            
+            // 清理 BlackboardViewModel 事件订阅
+            if (BlackboardViewModel != null)
+            {
+                BlackboardViewModel.PageNavigationRequested -= OnBlackboardPageNavigationRequested;
+                BlackboardViewModel.BackgroundChanged -= OnBlackboardBackgroundChanged;
+                BlackboardViewModel.Cleanup();
+            }
+            
             base.Cleanup();
         }
 

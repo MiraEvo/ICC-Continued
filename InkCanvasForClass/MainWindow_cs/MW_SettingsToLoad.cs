@@ -1,5 +1,6 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using Ink_Canvas.Helpers;
+using Ink_Canvas.Models.Settings;
 using Ink_Canvas.Popups;
 using Newtonsoft.Json;
 using Ookii.Dialogs.Wpf;
@@ -294,10 +295,14 @@ namespace Ink_Canvas {
                 if (Settings.Appearance.ViewboxFloatingBarScaleTransformValue != 0) // 浮动工具栏 UI 缩放 85%
                 {
                     double val = Settings.Appearance.ViewboxFloatingBarScaleTransformValue;
-                    ViewboxFloatingBarScaleTransform.ScaleX =
-                        (val > 0.5 && val < 1.25) ? val : val <= 0.5 ? 0.5 : val >= 1.25 ? 1.25 : 1;
-                    ViewboxFloatingBarScaleTransform.ScaleY =
-                        (val > 0.5 && val < 1.25) ? val : val <= 0.5 ? 0.5 : val >= 1.25 ? 1.25 : 1;
+                    var scale = (val > 0.5 && val < 1.25) ? val : val <= 0.5 ? 0.5 : val >= 1.25 ? 1.25 : 1;
+                    
+                    // 更新 FloatingBarViewModel 的缩放
+                    if (_floatingBarViewModel != null)
+                    {
+                        _floatingBarViewModel.UpdateScale(scale);
+                    }
+                    
                     ViewboxFloatingBarScaleTransformValueSlider.Value = val;
                 }
 

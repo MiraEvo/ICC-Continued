@@ -1,4 +1,30 @@
-﻿using Ink_Canvas.Helpers;
+﻿// ============================================================================
+// MW_BoardControls.cs - 白板模式控制逻辑
+// ============================================================================
+// 
+// 功能说明:
+//   - 白板页面管理（添加、删除、切换页面）
+//   - 白板背景颜色和图案设置
+//   - 墨迹存储和恢复（strokeCollections, TimeMachineHistories）
+//   - 页面索引显示更新
+//
+// 迁移状态 (渐进式迁移):
+//   - BlackboardView UserControl 已创建
+//   - BlackboardViewModel 已实现页面导航命令
+//   - PageService 已实现页面状态管理
+//   - 此文件中的核心逻辑仍在使用，与 ViewModel 协同工作
+//   - UpdateIndexInfoDisplay() 已更新为同时更新 ViewModel 状态
+//
+// 相关文件:
+//   - Views/Blackboard/BlackboardView.xaml
+//   - Views/Blackboard/BlackboardView.xaml.cs
+//   - ViewModels/BlackboardViewModel.cs
+//   - Services/PageService.cs
+//   - MainWindow.xaml (BlackboardLeftSide, BlackboardCenterSide, BlackboardRightSide 区域)
+//
+// ============================================================================
+
+using Ink_Canvas.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

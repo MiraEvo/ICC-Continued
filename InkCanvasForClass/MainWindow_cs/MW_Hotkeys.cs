@@ -1,4 +1,25 @@
-﻿using System;
+﻿// ============================================================================
+// MW_Hotkeys.cs - 热键和键盘事件处理
+// ============================================================================
+// 
+// 功能说明:
+//   - 键盘快捷键处理（方向键、Page Up/Down、Ctrl+Z/Y 等）
+//   - 鼠标滚轮事件处理（PPT 翻页）
+//   - 热键到 ViewModel 命令的委托
+//
+// 迁移状态 (渐进式迁移):
+//   - HotkeyService 已创建，提供热键注册和事件
+//   - 此文件中的事件处理程序委托到 ViewModel 命令
+//   - 完全迁移后，热键处理将完全由 HotkeyService 管理
+//
+// 相关文件:
+//   - Services/HotkeyService.cs
+//   - Services/IHotkeyService.cs
+//   - ViewModels/MainWindowViewModel.cs
+//
+// ============================================================================
+
+using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;

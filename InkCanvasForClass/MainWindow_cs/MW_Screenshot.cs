@@ -1,4 +1,25 @@
-﻿using System;
+﻿// ============================================================================
+// MW_Screenshot.cs - 截图功能
+// ============================================================================
+// 
+// 功能说明:
+//   - 屏幕截图捕获
+//   - 截图保存（自动保存、手动保存）
+//   - 截图格式和质量设置
+//   - PPT 截图保存
+//
+// 迁移状态 (渐进式迁移):
+//   - ScreenshotService 已创建，提供截图服务接口
+//   - 支持多种截图模式（全屏、选区、窗口）
+//   - 此文件中的核心截图逻辑仍在使用
+//
+// 相关文件:
+//   - Services/ScreenshotService.cs
+//   - Services/IScreenshotService.cs
+//
+// ============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -18,6 +39,7 @@ using Vanara.PInvoke;
 using Encoder = System.Drawing.Imaging.Encoder;
 using OperatingSystem = OSVersionExtension.OperatingSystem;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
+
 using System.Management;
 using System.Reflection;
 using System.Windows.Shapes;

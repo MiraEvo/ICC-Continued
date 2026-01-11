@@ -99,6 +99,7 @@ namespace Ink_Canvas
         /// - TimeMachineService: 无依赖
         /// - PageService: 依赖 ITimeMachineService（可选）
         /// - PPTService: 无依赖
+        /// - HotkeyService: 无依赖
         /// - FileCleanupService: 无依赖
         /// - CodeAnalyzer: 无依赖
         /// - ResourceManagementChecker: 无依赖
@@ -136,6 +137,12 @@ namespace Ink_Canvas
             // PPT 服务 - 管理 PowerPoint 集成
             services.AddSingleton<IPPTService, PPTService>();
             
+            // 热键服务 - 管理应用程序热键
+            services.AddSingleton<IHotkeyService, HotkeyService>();
+            
+            // 形状绘制服务 - 管理形状绘制功能
+            services.AddSingleton<IShapeDrawingService, ShapeDrawingService>();
+            
             // ========================================
             // 工具服务 (Singleton)
             // ========================================
@@ -166,6 +173,10 @@ namespace Ink_Canvas
             // 工具栏 ViewModel
             // 依赖: ISettingsService
             services.AddSingleton<ToolbarViewModel>();
+            
+            // 浮动工具栏 ViewModel
+            // 依赖: ISettingsService, ITimeMachineService
+            services.AddSingleton<FloatingBarViewModel>();
 
             // ========================================
             // 构建服务提供者

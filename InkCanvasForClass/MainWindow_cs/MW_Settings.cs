@@ -1,4 +1,29 @@
-﻿using Ink_Canvas.Helpers;
+﻿// ============================================================================
+// MW_Settings.cs - 设置面板 UI 事件处理
+// ============================================================================
+// 
+// 功能说明:
+//   - 设置面板中各种 ToggleSwitch、ComboBox、Slider 等控件的事件处理
+//   - 设置变更后调用 SaveSettingsToFile() 保存
+//   - 设置分类: Behavior, Startup, Appearance, Canvas, Gesture, PowerPoint, Automation, Advanced
+//
+// 迁移状态 (渐进式迁移):
+//   - SettingsView UserControl 已创建但暂时隐藏 (Visibility="Collapsed")
+//   - 设置数据模型已迁移到 Models/Settings/ 目录
+//   - SettingsService 已实现设置的加载/保存和变更通知
+//   - 此文件中的事件处理程序仍在使用，处理 BorderSettings 中的控件事件
+//   - 完全迁移后，此文件中的代码将移至 SettingsView.xaml.cs 或通过数据绑定处理
+//
+// 相关文件:
+//   - Views/Settings/SettingsView.xaml
+//   - Views/Settings/SettingsView.xaml.cs
+//   - Services/SettingsService.cs
+//   - Models/Settings/*.cs
+//   - MainWindow.xaml (BorderSettings 区域)
+//
+// ============================================================================
+
+using Ink_Canvas.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
@@ -209,10 +234,14 @@ namespace Ink_Canvas {
                 ViewboxFloatingBarScaleTransformValueSlider.Value;
             SaveSettingsToFile();
             var val = ViewboxFloatingBarScaleTransformValueSlider.Value;
-            ViewboxFloatingBarScaleTransform.ScaleX =
-                val > 0.5 && val < 1.25 ? val : val <= 0.5 ? 0.5 : val >= 1.25 ? 1.25 : 1;
-            ViewboxFloatingBarScaleTransform.ScaleY =
-                val > 0.5 && val < 1.25 ? val : val <= 0.5 ? 0.5 : val >= 1.25 ? 1.25 : 1;
+            
+            // 更新 FloatingBarViewModel 的缩放
+            if (_floatingBarViewModel != null)
+            {
+                var scale = val > 0.5 && val < 1.25 ? val : val <= 0.5 ? 0.5 : val >= 1.25 ? 1.25 : 1;
+                _floatingBarViewModel.UpdateScale(scale);
+            }
+            
             // auto align
             if (BorderFloatingBarExitPPTBtn.Visibility == Visibility.Visible)
                 ViewboxFloatingBarMarginAnimation(60);

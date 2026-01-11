@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using Ink_Canvas.Models.Settings;
 
 namespace Ink_Canvas.ViewModels
 {
@@ -8,10 +9,10 @@ namespace Ink_Canvas.ViewModels
     /// </summary>
     public partial class AppearanceSettingsViewModel : ObservableObject
     {
-        private readonly Appearance _appearance;
+        private readonly AppearanceSettings _appearance;
         private readonly Action _saveAction;
 
-        public AppearanceSettingsViewModel(Appearance appearance, Action saveAction)
+        public AppearanceSettingsViewModel(AppearanceSettings appearance, Action saveAction)
         {
             _appearance = appearance ?? throw new ArgumentNullException(nameof(appearance));
             _saveAction = saveAction;

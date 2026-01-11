@@ -1,4 +1,23 @@
-﻿using Ink_Canvas.Helpers;
+﻿// ============================================================================
+// MW_Notification.cs - 通知显示
+// ============================================================================
+// 
+// 功能说明:
+//   - 显示应用内通知消息
+//   - 静态方法 ShowNewMessage 供全局调用
+//
+// 迁移状态 (渐进式迁移):
+//   - NotificationService 已创建，提供通知队列管理
+//   - 此文件中的简单通知逻辑仍在使用
+//
+// 相关文件:
+//   - Services/NotificationService.cs
+//   - Services/INotificationService.cs
+//   - MW_Toast.xaml.cs (Toast 通知 UI)
+//
+// ============================================================================
+
+using Ink_Canvas.Helpers;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
