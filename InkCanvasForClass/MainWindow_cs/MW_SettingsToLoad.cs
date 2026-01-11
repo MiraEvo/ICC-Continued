@@ -1,7 +1,9 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
+using Ink_Canvas.Core;
 using Ink_Canvas.Helpers;
 using Ink_Canvas.Models.Settings;
 using Ink_Canvas.Popups;
+using Ink_Canvas.Services;
 using Newtonsoft.Json;
 using Ookii.Dialogs.Wpf;
 using OSVersionExtension;
@@ -34,7 +36,7 @@ namespace Ink_Canvas {
             if (string.IsNullOrEmpty(storageLocation)) {
                 return Path.Combine(programDir, "Data");
             }
-            
+
             if (storageLocation == "c-") {
                 // 自定义存储位置，由 UserStorageLocation 决定，不在此处处理
                 return null;
@@ -61,7 +63,7 @@ namespace Ink_Canvas {
                 // 自动选择，默认使用安装目录
                 return Path.Combine(programDir, "Data");
             }
-            
+
             // 默认使用安装目录
             return Path.Combine(programDir, "Data");
         }
@@ -100,12 +102,12 @@ namespace Ink_Canvas {
                         string oldDefaultPath1 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Ink Canvas");
                         string oldDefaultPath2 = Path.Combine(programDir, "InkCanvasForClass");
                         string newDefaultPath = Path.Combine(programDir, "Data");
-                        
+
                         bool needSave = false;
-                        
+
                         // 检查并迁移旧的默认路径
                         string currentPath = Settings.Automation.AutoSavedStrokesLocation?.TrimEnd('\\') ?? "";
-                        
+
                         // 只迁移旧的默认路径（Ink Canvas 或 InkCanvasForClass）
                         if (currentPath.Equals(oldDefaultPath2, StringComparison.OrdinalIgnoreCase) ||
                             currentPath.Equals(oldDefaultPath1, StringComparison.OrdinalIgnoreCase)) {
@@ -124,7 +126,7 @@ namespace Ink_Canvas {
                                 LogHelper.WriteLogToFile($"Synced AutoSavedStrokesLocation from '{currentPath}' to '{expectedPath}' based on StorageLocation '{Settings.Storage.StorageLocation}'", LogHelper.LogType.Info);
                             }
                         }
-                        
+
                         if (needSave) {
                             SaveSettingsToFile();
                         }
@@ -296,13 +298,13 @@ namespace Ink_Canvas {
                 {
                     double val = Settings.Appearance.ViewboxFloatingBarScaleTransformValue;
                     var scale = (val > 0.5 && val < 1.25) ? val : val <= 0.5 ? 0.5 : val >= 1.25 ? 1.25 : 1;
-                    
+
                     // 更新 FloatingBarViewModel 的缩放
                     if (_floatingBarViewModel != null)
                     {
                         _floatingBarViewModel.UpdateScale(scale);
                     }
-                    
+
                     ViewboxFloatingBarScaleTransformValueSlider.Value = val;
                 }
 
@@ -454,8 +456,8 @@ namespace Ink_Canvas {
             #region PowerPointSettings
 
             if (Settings.PowerPointSettings != null) {
-                
-                
+
+
                 if (Settings.PowerPointSettings.PowerPointSupport) {
                     ToggleSwitchSupportPowerPoint.IsOn = true;
                     timerCheckPPT.Start();
@@ -633,7 +635,7 @@ namespace Ink_Canvas {
 
                 InkWidthSlider.Value = Settings.Canvas.InkWidth;
                 HighlighterWidthSlider.Value = Settings.Canvas.HighlighterWidth;
-                
+
                 // 恢复笔设置
                 lastPenType = Settings.Canvas.LastPenType;
                 penType = lastPenType;
@@ -642,11 +644,11 @@ namespace Ink_Canvas {
                 highlighterColor = Settings.Canvas.LastHighlighterColor;
                 lastPenWidth = Settings.Canvas.InkWidth;
                 lastHighlighterWidth = Settings.Canvas.HighlighterWidth;
-                
+
                 // 同步ColorPalette的笔模式和笔粗细
                 PenPaletteV2.PenModeSelected = penType == 1 ? ColorPalette.PenMode.HighlighterMode : ColorPalette.PenMode.PenMode;
                 PenPaletteV2.SelectedPenWidth = penType == 1 ? Settings.Canvas.HighlighterWidth : Settings.Canvas.InkWidth;
-                
+
                 // 根据笔类型设置绘图属性
                 if (penType == 1) {
                     // 荧光笔模式
@@ -846,7 +848,7 @@ namespace Ink_Canvas {
             } else {
                 Settings.InkToShape = new InkToShape();
             }
-            
+
             // 初始化调色盘的压感模拟状态
             // InkStyle: -1 = 不模拟, 0 = 点集笔锋, 1 = 速度笔锋
             switch (Settings.Canvas.InkStyle) {
@@ -995,6 +997,18 @@ namespace Ink_Canvas {
                 ViewboxFloatingBarMarginAnimation(60);
             } else {
                 ViewboxFloatingBarMarginAnimation(100, true);
+            }
+
+            // 同步设置到 SettingsService，确保两套设置系统保持一致
+            try {
+                var settingsService = ServiceLocator.GetService<ISettingsService>();
+                if (settingsService != null) {
+                    settingsService.SyncFrom(Settings);
+                    LogHelper.WriteLogToFile("Settings synced to SettingsService", LogHelper.LogType.Info);
+                }
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Failed to sync settings to SettingsService: {ex.Message}", LogHelper.LogType.Warning);
             }
         }
     }

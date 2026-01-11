@@ -15,6 +15,7 @@ using System.Diagnostics;
 using Lierda.WPFHelper;
 using System.Windows.Shell;
 using Newtonsoft.Json.Linq;
+using Sentry;
 
 namespace Ink_Canvas
 {
@@ -34,22 +35,84 @@ namespace Ink_Canvas
         public IServiceProvider Services { get; private set; }
 
         public App() {
+            // 尽早初始化 Sentry，以便捕获所有异常
+            InitializeSentry();
+
             AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Startup += App_Startup;
             Exit += App_Exit;
             DispatcherUnhandledException += App_DispatcherUnhandledException;
-            
+
             // 初始化依赖注入
             ConfigureServices();
         }
-        
+
+        /// <summary>
+        /// 初始化 Sentry SDK
+        /// </summary>
+        private void InitializeSentry()
+        {
+            SentrySdk.Init(options =>
+            {
+                options.Dsn = "https://b86a792323dcbb06a78bd4e28e521630@o4510690045001728.ingest.us.sentry.io/4510690051620864";
+
+                // 设置发布版本，便于追踪
+                options.Release = $"InkCanvasForClass@{Assembly.GetExecutingAssembly().GetName().Version}";
+
+                // 设置环境
+#if DEBUG
+                options.Environment = "development";
+#else
+                options.Environment = "production";
+#endif
+
+                // 启用调试模式（仅在开发时使用）
+#if DEBUG
+                options.Debug = true;
+#endif
+
+                // 设置采样率（1.0 = 100% 的事件都会被发送）
+                options.TracesSampleRate = 1.0;
+
+                // 自动捕获未处理异常
+                options.AutoSessionTracking = true;
+
+                // 附加堆栈跟踪到所有消息
+                options.AttachStacktrace = true;
+            });
+
+            LogHelper.WriteLogToFile("Sentry SDK initialized successfully", LogHelper.LogType.Info);
+        }
+
+        /// <summary>
+        /// 处理 AppDomain 未处理异常（非 UI 线程异常）
+        /// </summary>
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exception = e.ExceptionObject as Exception;
+            if (exception != null)
+            {
+                // 发送异常到 Sentry
+                SentrySdk.CaptureException(exception);
+
+                LogHelper.NewLog($"[AppDomain UnhandledException] {exception}");
+
+                // 如果是终止性异常，确保 Sentry 有时间发送
+                if (e.IsTerminating)
+                {
+                    SentrySdk.Flush(TimeSpan.FromSeconds(2));
+                }
+            }
+        }
+
         /// <summary>
         /// 应用程序退出事件处理 - 释放所有资源防止进程残留
         /// </summary>
         private void App_Exit(object sender, ExitEventArgs e) {
             try {
                 LogHelper.WriteLogToFile("Application Exit: Starting cleanup", LogHelper.LogType.Event);
-                
+
                 // 释放 mutex
                 if (mutex != null) {
                     try {
@@ -62,7 +125,7 @@ namespace Ink_Canvas
                         LogHelper.WriteLogToFile("Application Exit: Error releasing mutex - " + ex.Message, LogHelper.LogType.Error);
                     }
                 }
-                
+
                 // 释放托盘图标
                 if (_taskbar != null) {
                     try {
@@ -74,13 +137,23 @@ namespace Ink_Canvas
                         LogHelper.WriteLogToFile("Application Exit: Error disposing TaskbarIcon - " + ex.Message, LogHelper.LogType.Error);
                     }
                 }
-                
+
                 LogHelper.WriteLogToFile("Application Exit: Cleanup completed, forcing exit", LogHelper.LogType.Event);
             }
             catch (Exception ex) {
                 LogHelper.WriteLogToFile("Application Exit: Error during cleanup - " + ex.Message, LogHelper.LogType.Error);
             }
             finally {
+                // 关闭 Sentry，确保所有待发送的事件都能发送出去
+                try {
+                    SentrySdk.Flush(TimeSpan.FromSeconds(2));
+                    SentrySdk.Close();
+                    LogHelper.WriteLogToFile("Application Exit: Sentry closed", LogHelper.LogType.Info);
+                }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile("Application Exit: Error closing Sentry - " + ex.Message, LogHelper.LogType.Error);
+                }
+
                 // 强制终止进程，确保不会残留
                 // 使用 Environment.Exit 确保所有线程（包括前台线程）都被终止
                 Environment.Exit(0);
@@ -89,24 +162,21 @@ namespace Ink_Canvas
 
         /// <summary>
         /// 配置依赖注入服务
-        /// 
+        ///
         /// 服务生命周期说明：
         /// - Singleton: 应用程序生命周期内只创建一次，所有请求共享同一实例
         /// - Transient: 每次请求都创建新实例（本应用暂未使用）
-        /// 
+        ///
         /// 服务依赖关系：
         /// - SettingsService: 无依赖
         /// - TimeMachineService: 无依赖
         /// - PageService: 依赖 ITimeMachineService（可选）
         /// - PPTService: 无依赖
         /// - HotkeyService: 无依赖
-        /// - FileCleanupService: 无依赖
-        /// - CodeAnalyzer: 无依赖
-        /// - ResourceManagementChecker: 无依赖
         /// - SettingsViewModel: 依赖 ISettingsService
         /// - MainWindowViewModel: 依赖 ISettingsService, IPageService, ITimeMachineService
         /// - ToolbarViewModel: 依赖 ISettingsService
-        /// 
+        ///
         /// 注意：以下服务需要在 MainWindow 初始化后手动注册，因为它们依赖于 UI 元素：
         /// - IInkCanvasService: 依赖 IccInkCanvas 实例
         /// - INotificationService: 依赖 MainWindow 实例
@@ -119,13 +189,13 @@ namespace Ink_Canvas
             // ========================================
             // 核心服务 (Singleton)
             // ========================================
-            
+
             // 设置服务 - 管理应用程序配置
             services.AddSingleton<ISettingsService, SettingsService>();
-            
+
             // 时光机服务 - 管理撤销/重做历史
             services.AddSingleton<ITimeMachineService, TimeMachineService>();
-            
+
             // 页面服务 - 管理画布页面
             // 依赖: ITimeMachineService (通过构造函数注入，可选)
             services.AddSingleton<IPageService>(sp =>
@@ -133,47 +203,34 @@ namespace Ink_Canvas
                 var timeMachineService = sp.GetService<ITimeMachineService>();
                 return new PageService(timeMachineService);
             });
-            
+
             // PPT 服务 - 管理 PowerPoint 集成
             services.AddSingleton<IPPTService, PPTService>();
-            
+
             // 热键服务 - 管理应用程序热键
             services.AddSingleton<IHotkeyService, HotkeyService>();
-            
+
             // 形状绘制服务 - 管理形状绘制功能
             services.AddSingleton<IShapeDrawingService, ShapeDrawingService>();
-            
-            // ========================================
-            // 工具服务 (Singleton)
-            // ========================================
-            
-            // 文件清理服务 - 清理临时文件和冗余资源
-            services.AddSingleton<IFileCleanupService, FileCleanupService>();
-            
-            // 代码分析器 - 静态代码分析
-            services.AddSingleton<ICodeAnalyzer, CodeAnalyzer>();
-            
-            // 资源管理检查器 - 检查资源泄漏
-            services.AddSingleton<IResourceManagementChecker, ResourceManagementChecker>();
-            
+
             // ========================================
             // ViewModels (Singleton)
             // ========================================
-            
+
             // 设置 ViewModel
             // 依赖: ISettingsService
             services.AddSingleton<SettingsViewModel>();
-            
+
             // SettingsPageViewModel 已移除，MainWindow 直接使用 SettingsViewModel
-            
+
             // 主窗口 ViewModel
             // 依赖: ISettingsService, IPageService, ITimeMachineService
             services.AddSingleton<MainWindowViewModel>();
-            
+
             // 工具栏 ViewModel
             // 依赖: ISettingsService
             services.AddSingleton<ToolbarViewModel>();
-            
+
             // 浮动工具栏 ViewModel
             // 依赖: ISettingsService, ITimeMachineService
             services.AddSingleton<FloatingBarViewModel>();
@@ -182,18 +239,14 @@ namespace Ink_Canvas
             // 构建服务提供者
             // ========================================
             Services = services.BuildServiceProvider();
-            
+
             // 设置全局服务定位器（仅用于无法使用构造函数注入的场景）
             ServiceLocator.ServiceProvider = Services;
-            
-            // ========================================
-            // 预加载关键服务
-            // ========================================
-            
-            // 预先加载设置服务，确保配置在应用启动时可用
-            var settingsService = Services.GetRequiredService<ISettingsService>();
-            settingsService.Load();
-            
+
+            // 注意: 不在此处预加载设置服务
+            // 设置加载已在 MainWindow.LoadSettings() 中处理
+            // 这样可以确保 App.RootPath 在 App_Startup 中被正确设置后再加载设置
+
             LogHelper.WriteLogToFile("Dependency injection configured successfully", LogHelper.LogType.Info);
         }
 
@@ -205,6 +258,9 @@ namespace Ink_Canvas
 
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
+            // 发送异常到 Sentry
+            SentrySdk.CaptureException(e.Exception);
+
             Ink_Canvas.MainWindow.ShowNewMessage("抱歉，出现未预期的异常，可能导致 InkCanvasForClass 运行不稳定。\n建议保存墨迹后重启应用。");
             LogHelper.NewLog(e.Exception.ToString());
             e.Handled = true;

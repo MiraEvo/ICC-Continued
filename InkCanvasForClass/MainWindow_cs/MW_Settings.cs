@@ -1,7 +1,7 @@
 ﻿// ============================================================================
 // MW_Settings.cs - 设置面板 UI 事件处理
 // ============================================================================
-// 
+//
 // 功能说明:
 //   - 设置面板中各种 ToggleSwitch、ComboBox、Slider 等控件的事件处理
 //   - 设置变更后调用 SaveSettingsToFile() 保存
@@ -234,14 +234,14 @@ namespace Ink_Canvas {
                 ViewboxFloatingBarScaleTransformValueSlider.Value;
             SaveSettingsToFile();
             var val = ViewboxFloatingBarScaleTransformValueSlider.Value;
-            
+
             // 更新 FloatingBarViewModel 的缩放
             if (_floatingBarViewModel != null)
             {
                 var scale = val > 0.5 && val < 1.25 ? val : val <= 0.5 ? 0.5 : val >= 1.25 ? 1.25 : 1;
                 _floatingBarViewModel.UpdateScale(scale);
             }
-            
+
             // auto align
             if (BorderFloatingBarExitPPTBtn.Visibility == Visibility.Visible)
                 ViewboxFloatingBarMarginAnimation(60);
@@ -759,7 +759,7 @@ namespace Ink_Canvas {
                 PPTBtnPreviewLS.Visibility = Visibility.Collapsed;
                 PPTBtnPreviewRS.Visibility = Visibility.Collapsed;
             }
-            
+
             PPTBtnPreviewRSTransform.Y = -(Settings.PowerPointSettings.PPTRSButtonPosition * 0.5);
             PPTBtnPreviewLSTransform.Y = -(Settings.PowerPointSettings.PPTLSButtonPosition * 0.5);
         }
@@ -1680,7 +1680,7 @@ namespace Ink_Canvas {
 
             Settings.Storage.StorageLocation = "fr";
             Settings.Storage.UserStorageLocation = "";
-            
+
             // 同步设置 AutoSavedStrokesLocation 为安装目录下的 Data 文件夹
             var runfolder = AppDomain.CurrentDomain.BaseDirectory;
             Settings.Automation.AutoSavedStrokesLocation =
@@ -2062,7 +2062,7 @@ namespace Ink_Canvas {
                 SettingsRandWindowGroupBox,
                 SettingsAboutGroupBox
             };
-            
+
             jumpToBorders = new Border[] {
                 SettingsStartupJumpToGroupBoxButton,
                 SettingsCanvasJumpToGroupBoxButton,
@@ -2081,7 +2081,7 @@ namespace Ink_Canvas {
 
         public void UpdateSettingsIndexSidebarDisplayStatus() {
 
-            if (Math.Truncate(SettingsAboutGroupBox.MinHeight) != Math.Truncate(SettingsPanelScrollViewer.ActualHeight)) 
+            if (Math.Truncate(SettingsAboutGroupBox.MinHeight) != Math.Truncate(SettingsPanelScrollViewer.ActualHeight))
                 SettingsAboutGroupBox.MinHeight = SettingsPanelScrollViewer.ActualHeight;
 
             if (settingsPaneGroupBoxes.Length == 0 || jumpToBorders.Length == 0) InitSettingsPaneControls();
@@ -2130,6 +2130,13 @@ namespace Ink_Canvas {
         public void SettingsJumpToGroupBox_MouseDown(object sender, MouseButtonEventArgs e) {
             if (settingsPaneGroupBoxes.Length == 0 || jumpToBorders.Length == 0) InitSettingsPaneControls();
             var index = SettingsJumpToGroupBoxButtonsPanel.Children.IndexOf((Border)sender);
+
+            // 边界检查：确保索引有效
+            if (index < 0 || index >= settingsPaneGroupBoxes.Length) {
+                LogHelper.WriteLogToFile($"SettingsJumpToGroupBox_MouseDown: Invalid index {index}, settingsPaneGroupBoxes.Length = {settingsPaneGroupBoxes.Length}", LogHelper.LogType.Error);
+                return;
+            }
+
             var transform = settingsPaneGroupBoxes[index].TransformToVisual(SettingsPanelScrollViewer);
             var position = transform.Transform(new Point(0, 0));
             SettingsPaneScrollViewer_ScrollToAnimated(SettingsPanelScrollViewer.VerticalOffset + position.Y - 10,
@@ -2183,12 +2190,32 @@ namespace Ink_Canvas {
         #endregion
 
         public static void SaveSettingsToFile() {
-            var text = JsonConvert.SerializeObject(Settings, Formatting.Indented);
             try {
-                File.WriteAllText(App.RootPath + settingsFileName, text);
+                // 确保设置目录存在
+                string settingsPath = App.RootPath + settingsFileName;
+                string directory = System.IO.Path.GetDirectoryName(settingsPath);
+                if (!string.IsNullOrEmpty(directory) && !System.IO.Directory.Exists(directory)) {
+                    System.IO.Directory.CreateDirectory(directory);
+                    LogHelper.WriteLogToFile($"Created settings directory: {directory}", LogHelper.LogType.Info);
+                }
+
+                // 序列化设置对象
+                var text = JsonConvert.SerializeObject(Settings, Formatting.Indented);
+
+                // 写入文件
+                File.WriteAllText(settingsPath, text);
+            }
+            catch (JsonSerializationException ex) {
+                LogHelper.WriteLogToFile($"Error serializing settings to JSON: {ex.Message}", LogHelper.LogType.Error);
+            }
+            catch (UnauthorizedAccessException ex) {
+                LogHelper.WriteLogToFile($"Access denied when saving settings file: {ex.Message}", LogHelper.LogType.Error);
+            }
+            catch (IOException ex) {
+                LogHelper.WriteLogToFile($"IO error when saving settings file: {ex.Message}", LogHelper.LogType.Error);
             }
             catch (Exception ex) {
-                LogHelper.WriteLogToFile("Error saving settings to file: " + ex.Message, LogHelper.LogType.Error);
+                LogHelper.WriteLogToFile($"Error saving settings to file: {ex.Message}\n{ex.StackTrace}", LogHelper.LogType.Error);
             }
         }
 

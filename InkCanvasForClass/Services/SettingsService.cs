@@ -171,7 +171,7 @@ namespace Ink_Canvas.Services
                 {
                     string json = File.ReadAllText(SettingsFilePath);
                     var loadedSettings = JsonConvert.DeserializeObject<Settings>(json);
-                    
+
                     if (loadedSettings != null)
                     {
                         Settings = loadedSettings;
@@ -229,7 +229,7 @@ namespace Ink_Canvas.Services
                 {
                     string json = await File.ReadAllTextAsync(SettingsFilePath);
                     var loadedSettings = JsonConvert.DeserializeObject<Settings>(json);
-                    
+
                     if (loadedSettings != null)
                     {
                         Settings = loadedSettings;
@@ -295,7 +295,7 @@ namespace Ink_Canvas.Services
 
                 string json = JsonConvert.SerializeObject(Settings, Formatting.Indented);
                 File.WriteAllText(SettingsFilePath, json);
-                
+
                 LogHelper.WriteLogToFile($"Settings saved successfully to {SettingsFilePath}", LogHelper.LogType.Info);
                 OnSettingsSaved(SettingsFilePath, true);
                 return true;
@@ -330,7 +330,7 @@ namespace Ink_Canvas.Services
 
                 string json = JsonConvert.SerializeObject(Settings, Formatting.Indented);
                 await File.WriteAllTextAsync(SettingsFilePath, json);
-                
+
                 LogHelper.WriteLogToFile($"Settings saved successfully to {SettingsFilePath}", LogHelper.LogType.Info);
                 OnSettingsSaved(SettingsFilePath, true);
                 return true;
@@ -373,6 +373,37 @@ namespace Ink_Canvas.Services
             OnSettingsLoaded(SettingsFilePath, false, true);
         }
 
+        /// <summary>
+        /// 从外部设置对象同步设置
+        /// 用于与 MainWindow.Settings 保持同步
+        /// </summary>
+        /// <param name="externalSettings">外部设置对象</param>
+        public void SyncFrom(Settings externalSettings)
+        {
+            if (externalSettings == null)
+            {
+                LogHelper.WriteLogToFile("SyncFrom called with null settings, ignored", LogHelper.LogType.Warning);
+                return;
+            }
+
+            lock (_lock)
+            {
+                var oldSettings = _settings;
+                if (oldSettings != null)
+                {
+                    UnsubscribeFromSettingsChanges(oldSettings);
+                }
+                _settings = externalSettings;
+                if (_settings != null)
+                {
+                    SubscribeToSettingsChanges(_settings);
+                }
+                IsLoaded = true;
+            }
+
+            LogHelper.WriteLogToFile("Settings synced from external source", LogHelper.LogType.Info);
+        }
+
         #region 事件触发方法
 
         /// <summary>
@@ -397,7 +428,7 @@ namespace Ink_Canvas.Services
         protected virtual void OnSettingChanged(string categoryName, string propertyName, object oldValue, object newValue)
         {
             SettingChanged?.Invoke(this, new SettingChangedEventArgs(categoryName, propertyName, oldValue, newValue));
-            
+
             // 同时触发向后兼容的事件
 #pragma warning disable CS0618 // 类型或成员已过时
             SettingsChanged?.Invoke(this, new SettingsChangedEventArgs(categoryName, propertyName, oldValue, newValue));
@@ -418,34 +449,34 @@ namespace Ink_Canvas.Services
             // 订阅各分类的 ExtendedPropertyChanged 事件以获取旧值和新值
             if (settings.Canvas != null)
                 settings.Canvas.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("Canvas", e);
-            
+
             if (settings.Appearance != null)
                 settings.Appearance.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("Appearance", e);
-            
+
             if (settings.Gesture != null)
                 settings.Gesture.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("Gesture", e);
-            
+
             if (settings.PowerPointSettings != null)
                 settings.PowerPointSettings.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("PowerPoint", e);
-            
+
             if (settings.Automation != null)
                 settings.Automation.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("Automation", e);
-            
+
             if (settings.Advanced != null)
                 settings.Advanced.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("Advanced", e);
-            
+
             if (settings.InkToShape != null)
                 settings.InkToShape.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("InkToShape", e);
-            
+
             if (settings.Startup != null)
                 settings.Startup.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("Startup", e);
-            
+
             if (settings.Snapshot != null)
                 settings.Snapshot.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("Snapshot", e);
-            
+
             if (settings.Storage != null)
                 settings.Storage.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("Storage", e);
-            
+
             if (settings.RandSettings != null)
                 settings.RandSettings.ExtendedPropertyChanged += (s, e) => HandleExtendedPropertyChanged("RandSettings", e);
         }

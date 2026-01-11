@@ -61,6 +61,7 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135">
       <Aliases>XamlBehaviors</Aliases>
     </PackageReference>
+    <PackageReference Include="Sentry" Version="6.0.0" />
 
     <!-- 显式添加以修复 CVE-2021-26701 漏洞 -->
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.1" />

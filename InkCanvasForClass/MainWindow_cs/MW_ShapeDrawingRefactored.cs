@@ -1,16 +1,17 @@
+using Ink_Canvas.Services;
 using Ink_Canvas.ShapeDrawing.Core;
 // 使用别名避免与 MainWindow.ShapeDrawingType 冲突
 using NewShapeType = Ink_Canvas.ShapeDrawing.Core.ShapeDrawingType;
 
 namespace Ink_Canvas {
     public partial class MainWindow {
-        
+
         #region 重构后的形状绘制系统
 
         /// <summary>
         /// 形状绘制服务实例（在 MW_ShapeDrawing.cs 的 TryDrawShapeWithRefactoredSystem 中使用）
         /// </summary>
-        private readonly ShapeDrawingService _shapeDrawingService = ShapeDrawingService.Instance;
+        private readonly Ink_Canvas.Services.ShapeDrawingService _shapeDrawingService = Ink_Canvas.Services.ShapeDrawingService.Instance;
 
         /// <summary>
         /// 当前形状绘制模式（使用枚举替代魔法数字）
@@ -25,7 +26,7 @@ namespace Ink_Canvas {
             _currentShapeType = shapeType;
             // 同时更新旧系统的魔法数字以保持兼容
             drawingShapeMode = (int)shapeType;
-            
+
             forceEraser = true;
             inkCanvas.EditingMode = System.Windows.Controls.InkCanvasEditingMode.None;
             inkCanvas.IsManipulationEnabled = true;

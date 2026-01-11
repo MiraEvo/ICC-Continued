@@ -689,10 +689,10 @@ namespace Ink_Canvas {
                 _currentCommitType = CommitReason.ShapeDrawing;
 
                 // 使用策略模式绘制形状
-                var newStrokes = _shapeDrawingService.DrawShape(
-                    shapeType.Value,
+                StrokeCollection newStrokes = _shapeDrawingService.CreateShape(
                     iniP,
                     endP,
+                    shapeType.Value,
                     inkCanvas.DefaultDrawingAttributes
                 );
 

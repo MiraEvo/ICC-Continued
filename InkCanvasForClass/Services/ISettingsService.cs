@@ -119,6 +119,13 @@ namespace Ink_Canvas.Services
         /// </summary>
         void ResetToDefaults();
 
+        /// <summary>
+        /// 从外部设置对象同步设置
+        /// 用于与 MainWindow.Settings 保持同步
+        /// </summary>
+        /// <param name="externalSettings">外部设置对象</param>
+        void SyncFrom(Settings externalSettings);
+
         #endregion
 
         #region 事件
