@@ -278,7 +278,7 @@ namespace Ink_Canvas {
         }
 
         private void GridInkCanvasSelectionCover_MouseUp(object sender, MouseButtonEventArgs e) {
-            
+
 
             CancelCurrentStrokesSelection();
         }
@@ -312,7 +312,7 @@ namespace Ink_Canvas {
                     rectangleSelection_LassoPoints.Clear();
                     rectangleSelection_LassoPoints.Add(pt);
                 }
-                
+
             }
         }
 
@@ -432,7 +432,7 @@ namespace Ink_Canvas {
         private void StrokeSelectionBorderHandle_MouseUp(object sender, MouseButtonEventArgs e) {
             if (isStrokeSelectionBorderLocked) return;
             if (!isLockedStrokeSelectionHandle || isLockedStrokeSelectionMove || isLockedStrokeSelectionRotate) return;
-            
+
             // 检查 lockedStrokeSelectionBorderHandleType 是否为 null，避免空引用异常
             if (!lockedStrokeSelectionBorderHandleType.HasValue) {
                 // 清理状态并返回
@@ -477,7 +477,7 @@ namespace Ink_Canvas {
         private void StrokeSelectionBorderHandle_MouseMove(object sender, MouseEventArgs e) {
             if (isStrokeSelectionBorderLocked) return;
             if (!isLockedStrokeSelectionHandle || isLockedStrokeSelectionMove || isLockedStrokeSelectionRotate) return;
-            
+
             // 检查 lockedStrokeSelectionBorderHandleType 是否为 null，避免空引用异常
             if (!lockedStrokeSelectionBorderHandleType.HasValue) return;
 
@@ -524,9 +524,9 @@ namespace Ink_Canvas {
                       (isReverseWidth ? 1 : -1)
                     : 0), 0);
             var t = Math.Round(
-                ((Rect)originalSelectionBounds).Top + 
+                ((Rect)originalSelectionBounds).Top +
                 ((int)lockedStrokeSelectionBorderHandleType == 0 || (int)lockedStrokeSelectionBorderHandleType == 1 || (int)lockedStrokeSelectionBorderHandleType == 6
-                    ? new Rect(((Point)resizingFirstPoint), ((Point)rlp)).Height * 
+                    ? new Rect(((Point)resizingFirstPoint), ((Point)rlp)).Height *
                       (isReverseHeight ? 1 : -1)
                     : 0), 0);
             var w = (int)lockedStrokeSelectionBorderHandleType != 6 && (int)lockedStrokeSelectionBorderHandleType != 7 ? Math.Round(((Rect)originalSelectionBounds).Width + new Rect(((Point)resizingFirstPoint),
@@ -549,7 +549,7 @@ namespace Ink_Canvas {
                 // 确保选择边框至少为 1x1 像素，避免尺寸为 0 导致的显示问题
                 StrokeSelectionBorder.Width = final_w >=1 ? final_w : 1;
                 StrokeSelectionBorder.Height = final_h >=1 ? final_h : 1;
-                
+
                 System.Windows.Controls.Canvas.SetLeft(StrokeSelectionBorder, l);
                 System.Windows.Controls.Canvas.SetTop(StrokeSelectionBorder, t);
 
@@ -607,7 +607,7 @@ namespace Ink_Canvas {
                 // transform strokes
                 var matrix = new Matrix();
                 matrix.Translate(((Point)movingLastPoint).X-((Point)movingFirstPoint).X, ((Point)movingLastPoint).Y - ((Point)movingFirstPoint).Y);
-                
+
                 isProgramChangeStrokesSelection = true;
                 var ori = inkCanvas.GetSelectedStrokes();
                 inkCanvas.Select(new StrokeCollection());
@@ -616,10 +616,10 @@ namespace Ink_Canvas {
                 isProgramChangeStrokesSelection = false;
 
                 clonedStrokes.Transform(matrix,false);
-                
+
                 // add to inkcanvas
                 inkCanvas.Strokes.Add(clonedStrokes);
-                
+
                 InkSelectionStrokesOverlay.DrawStrokes(inkCanvas.GetSelectedStrokes(), new Matrix());
                 InkSelectionStrokesBackgroundInkCanvas.Strokes.Add(clonedStrokes);
 
@@ -647,7 +647,7 @@ namespace Ink_Canvas {
                 StrokeSelectionMoveToast.Visibility = Visibility.Collapsed;
             }
 
-            
+
         }
 
         private void StrokeSelectionBorder_MouseDown(object sender, MouseButtonEventArgs e) {
@@ -687,7 +687,7 @@ namespace Ink_Canvas {
             var offY = ((Point)movingLastPoint).Y - ((Point)movingFirstPoint).Y;
 
             if (isStrokeSelectionCloneOn) {
-                
+
                 var matrix = new Matrix();
                 matrix.Translate(((Point)movingLastPoint).X-((Point)movingFirstPoint).X, ((Point)movingLastPoint).Y - ((Point)movingFirstPoint).Y);
 
@@ -866,7 +866,7 @@ namespace Ink_Canvas {
                 dc.DrawLine(guidelinePen1, (Point)StrokesRotateSelectionBoundsCenterPoint, new Point(((Point)StrokesRotateSelectionBoundsCenterPoint).X,0));
                 dc.DrawLine(guidelinePen3, (Point)StrokesRotateSelectionBoundsCenterPoint, new Point(((Point)StrokesRotateSelectionBoundsCenterPoint).X,Main_Grid.ActualHeight));
                 dc.DrawLine(guidelinePen2, (Point)StrokesRotateSelectionBoundsCenterPoint, (Point)rotatingLastPoint);
-                
+
                 var QuadrantOneLongest = Math.Max(
                     Main_Grid.ActualWidth - ((Point)StrokesRotateSelectionBoundsCenterPoint).X,
                     ((Point)StrokesRotateSelectionBoundsCenterPoint).Y);
@@ -925,7 +925,7 @@ namespace Ink_Canvas {
 
             // update rotate toast
             ((TextBlock)StrokeSelectionRotateToast.Child).Text =
-                (guidelineSnapAngle != 0 ? guidelineSnapAngle : rotateAngle) == 360 
+                (guidelineSnapAngle != 0 ? guidelineSnapAngle : rotateAngle) == 360
                 ? "360° = 0°" : $"{(guidelineSnapAngle != 0 ? guidelineSnapAngle : rotateAngle)}°";
 
 
@@ -1235,7 +1235,7 @@ namespace Ink_Canvas {
                     stk.AddPropertyData(IsLockGuid, "Locked");
                 }
             }
-            
+
             UpdateSelectionToolBarLockIcon(!isAllStrokesLocked);
             UpdateSelectionToolbarOtherIconLockedStatus(!isAllStrokesLocked);
             UpdateSelectionBorderHandlesLockStatus(!isAllStrokesLocked);
@@ -1351,25 +1351,25 @@ namespace Ink_Canvas {
                 if (!isLoaded) return;
                 Settings.Canvas.ApplyScaleToStylusTip = SelectionV2.ApplyScaleToStylusTip;
                 ToggleSwitchApplyScaleToStylusTip.IsOn = SelectionV2.ApplyScaleToStylusTip;
-                SaveSettingsToFile();
+                SaveSettings();
             };
             SelectionV2.OnlyHitTestFullyContainedStrokesChanged += (sender, args) => {
                 if (!isLoaded) return;
                 Settings.Canvas.OnlyHitTestFullyContainedStrokes = SelectionV2.OnlyHitTestFullyContainedStrokes;
                 ToggleSwitchOnlyHitTestFullyContainedStrokes.IsOn = SelectionV2.OnlyHitTestFullyContainedStrokes;
-                SaveSettingsToFile();
+                SaveSettings();
             };
             SelectionV2.AllowClickToSelectLockedStrokeChanged += (sender, args) => {
                 if (!isLoaded) return;
                 Settings.Canvas.AllowClickToSelectLockedStroke = SelectionV2.AllowClickToSelectLockedStroke;
                 ToggleSwitchAllowClickToSelectLockedStroke.IsOn = SelectionV2.AllowClickToSelectLockedStroke;
-                SaveSettingsToFile();
+                SaveSettings();
             };
             SelectionV2.SelectionModeChanged += (sender, args) => {
                 if (!isLoaded) return;
                 Settings.Canvas.SelectionMethod = (int)args.NowMode;
                 ComboBoxSelectionMethod.SelectedIndex = (int)args.NowMode;
-                SaveSettingsToFile();
+                SaveSettings();
             };
             SelectionV2.SelectionPopupShouldCloseEvent += (sender, args) => {
                 SelectionPopupV2.IsOpen = false;

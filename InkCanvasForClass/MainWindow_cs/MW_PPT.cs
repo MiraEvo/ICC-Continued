@@ -1,7 +1,7 @@
 ﻿// ============================================================================
 // MW_PPT.cs - PowerPoint 集成逻辑
 // ============================================================================
-// 
+//
 // 功能说明:
 //   - PowerPoint 演示文稿检测和监控
 //   - PPT 翻页控制
@@ -63,7 +63,7 @@ namespace Ink_Canvas {
 
         // PPT联动优化：使用线程池代替每次new Thread
         private static readonly object _pptOperationLock = new object();
-        
+
         // PPT联动优化：异步墨迹保存队列
         private readonly ConcurrentQueue<(int slideId, MemoryStream stream)> _strokeSaveQueue = new ConcurrentQueue<(int, MemoryStream)>();
 
@@ -139,10 +139,10 @@ namespace Ink_Canvas {
             if (!isLoaded) return;
 
             Settings.PowerPointSettings.IsSupportWPS = ToggleSwitchSupportWPS.IsOn;
-            SaveSettingsToFile();
+            SaveSettings();
         }
 
-        private static bool isWPSSupportOn => Settings.PowerPointSettings.IsSupportWPS;
+        private bool isWPSSupportOn => Settings.PowerPointSettings.IsSupportWPS;
 
         public static bool IsShowingRestoreHiddenSlidesWindow = false;
         private static bool IsShowingAutoplaySlidesWindow = false;
@@ -552,7 +552,7 @@ namespace Ink_Canvas {
                     var slideHeight = ExecuteComOperationWithRetry(() => presentationObj.PageSetup.SlideHeight, "GetSlideHeight", 1f);
                     if (Math.Abs(screenRatio - 16.0 / 9) <= -0.01) {
                         if (slideWidth / slideHeight < 1.65) {
-                            
+
                         }
                     } else if (screenRatio == -256 / 135) { }
 
@@ -689,7 +689,7 @@ namespace Ink_Canvas {
             }
 
             isEnteredSlideShowEndEvent = true;
-            
+
             // 优化：异步保存墨迹文件，不阻塞UI
             if (Settings.PowerPointSettings.IsAutoSaveStrokesInPowerPoint) {
                 var rootPath = Settings.Automation.AutoSavedStrokesLocation;
@@ -698,7 +698,7 @@ namespace Ink_Canvas {
                 var slidesCount = Pres.Slides.Count;
                 var currentPos = currentShowPosition;
                 var prevSlideId = previousSlideID;
-                
+
                 // 先在UI线程保存当前墨迹到内存
                 MemoryStream[] streamsToSave = null;
                 Application.Current.Dispatcher.Invoke(() => {
@@ -798,7 +798,7 @@ namespace Ink_Canvas {
             LogHelper.WriteLogToFile($"PowerPoint Next Slide (Slide {Wn.View.CurrentShowPosition})",
                 LogHelper.LogType.Event);
             if (Wn.View.CurrentShowPosition == previousSlideID) return;
-            
+
             // 优化：异步保存墨迹，不阻塞UI
             var prevSlideId = previousSlideID;
             Application.Current.Dispatcher.Invoke(() => {
@@ -1031,7 +1031,7 @@ namespace Ink_Canvas {
                     LogHelper.WriteLogToFile("Exception in MW_PPT.cs (previously ignored): " + ex.Message, LogHelper.LogType.Error);
                 }
             });
-            
+
             // 优化：使用线程池代替new Thread
             ThreadPool.QueueUserWorkItem(_ => {
                 try {

@@ -152,35 +152,55 @@ namespace Ink_Canvas {
             var integratedFolders = new List<string>() {
                 "fw", "fr", "fu", "fd" // fw - folder wendang ; fd - folder desktop ; fu - folder user ; fr - folder running
             };
-            
-            // 处理默认的自动选择标识 "a-"，将其设置为 "fr"（icc安装目录）
-            if (Settings.Storage.StorageLocation == "a-") {
+
+            // 确保 StorageLocation 不为空或无效
+            var storageLocation = Settings.Storage.StorageLocation;
+            if (string.IsNullOrEmpty(storageLocation) || storageLocation.Length < 2) {
+                // 无效值，使用默认的安装目录
                 Settings.Storage.StorageLocation = "fr";
-                SaveSettingsToFile();
+                storageLocation = "fr";
+                SaveSettings();
+                LogHelper.WriteLogToFile($"StorageLocation was empty or invalid, reset to 'fr'", LogHelper.LogType.Warning);
             }
-            
-            if (Settings.Storage.StorageLocation.Substring(0, 1) == "d") {
+
+            // 处理默认的自动选择标识 "a-"，将其设置为 "fr"（icc安装目录）
+            if (storageLocation == "a-") {
+                Settings.Storage.StorageLocation = "fr";
+                storageLocation = "fr";
+                SaveSettings();
+            }
+
+            var firstChar = storageLocation.Substring(0, 1);
+            if (firstChar == "d") {
                 if (fixedDrives.Count == 0) {
-                    Settings.Storage.StorageLocation = "fw";
-                    SaveSettingsToFile();
-                    ComboBoxStoragePath.SelectedIndex = 0;
-                } else if (fixedDrives.Contains(Settings.Storage.StorageLocation)) {
-                    ComboBoxStoragePath.SelectedIndex = fixedDrives.IndexOf(Settings.Storage.StorageLocation);
+                    Settings.Storage.StorageLocation = "fr"; // 改为使用安装目录，而不是文档文件夹
+                    SaveSettings();
+                    // 重新计算索引
+                    ComboBoxStoragePath.SelectedIndex = fixedDrives.Count + integratedFolders.IndexOf("fr");
+                } else if (fixedDrives.Contains(storageLocation)) {
+                    ComboBoxStoragePath.SelectedIndex = fixedDrives.IndexOf(storageLocation);
                 } else {
                     ComboBoxStoragePath.SelectedIndex = 0;
                     Settings.Storage.StorageLocation = fixedDrives[0];
-                    SaveSettingsToFile();
+                    SaveSettings();
                 }
-            } else if (Settings.Storage.StorageLocation.Substring(0, 1) == "f") {
-                if (integratedFolders.Contains(Settings.Storage.StorageLocation)) {
-                    ComboBoxStoragePath.SelectedIndex = fixedDrives.Count + integratedFolders.IndexOf(Settings.Storage.StorageLocation);
+            } else if (firstChar == "f") {
+                if (integratedFolders.Contains(storageLocation)) {
+                    ComboBoxStoragePath.SelectedIndex = fixedDrives.Count + integratedFolders.IndexOf(storageLocation);
                 } else {
-                    ComboBoxStoragePath.SelectedIndex = fixedDrives.Count;
-                    Settings.Storage.StorageLocation = "fw";
-                    SaveSettingsToFile();
+                    // 无效的 f 开头的值，使用安装目录
+                    ComboBoxStoragePath.SelectedIndex = fixedDrives.Count + integratedFolders.IndexOf("fr");
+                    Settings.Storage.StorageLocation = "fr";
+                    SaveSettings();
                 }
-            } else if (Settings.Storage.StorageLocation.Substring(0, 1) == "c") {
+            } else if (firstChar == "c") {
                 ComboBoxStoragePath.SelectedIndex = storageLocationItems.Count - 1;
+            } else {
+                // 未知的存储位置类型，使用安装目录
+                Settings.Storage.StorageLocation = "fr";
+                ComboBoxStoragePath.SelectedIndex = fixedDrives.Count + integratedFolders.IndexOf("fr");
+                SaveSettings();
+                LogHelper.WriteLogToFile($"Unknown StorageLocation type '{firstChar}', reset to 'fr'", LogHelper.LogType.Warning);
             }
 
             if (isLoaded) CustomStorageLocationGroup.Visibility = Settings.Storage.StorageLocation == "c-" ? Visibility.Visible : Visibility.Collapsed;
@@ -224,7 +244,7 @@ namespace Ink_Canvas {
         private string GetStoragePathFromStorageLocation() {
             string path;
             var storageLocation = Settings.Storage.StorageLocation;
-            
+
             if (storageLocation == "c-") {
                 // 自定义存储位置
                 if (!string.IsNullOrEmpty(Settings.Storage.UserStorageLocation)) {
@@ -259,10 +279,10 @@ namespace Ink_Canvas {
                 var runfolder = AppDomain.CurrentDomain.BaseDirectory;
                 path = (runfolder.EndsWith("\\") ? runfolder.Substring(0, runfolder.Length - 1) : runfolder) + "\\Data";
             }
-            
+
             return path;
         }
-        
+
         /// <summary>
         /// 同步 AutoSavedStrokesLocation 与 StorageLocation
         /// 确保它们始终保持一致
@@ -271,18 +291,18 @@ namespace Ink_Canvas {
             var expectedPath = GetStoragePathFromStorageLocation();
             var currentPath = Settings.Automation.AutoSavedStrokesLocation?.TrimEnd('\\') ?? "";
             var expectedPathNormalized = expectedPath.TrimEnd('\\');
-            
+
             // 如果当前路径与期望路径不同，则更新
             if (!string.Equals(currentPath, expectedPathNormalized, StringComparison.OrdinalIgnoreCase)) {
                 LogHelper.WriteLogToFile($"Syncing AutoSavedStrokesLocation: '{currentPath}' -> '{expectedPathNormalized}'", LogHelper.LogType.Info);
                 Settings.Automation.AutoSavedStrokesLocation = expectedPathNormalized;
-                SaveSettingsToFile();
+                SaveSettings();
             }
-            
+
             // 确保文件夹结构存在
             EnsureStorageFoldersExist(expectedPathNormalized);
         }
-        
+
         /// <summary>
         /// 确保存储文件夹结构存在
         /// </summary>
@@ -305,7 +325,7 @@ namespace Ink_Canvas {
                 LogHelper.WriteLogToFile($"Error creating storage folders: {ex.Message}", LogHelper.LogType.Error);
             }
         }
-        
+
         private void InitStorageFoldersStructure(string dirPath) {
             string path;
             if (storageLocationItems.Count > 0 && ComboBoxStoragePath.SelectedIndex >= 0 &&
@@ -325,7 +345,7 @@ namespace Ink_Canvas {
                     } else {
                         path = GetStoragePathFromStorageLocation();
                         Settings.Storage.StorageLocation = "fr";
-                        SaveSettingsToFile();
+                        SaveSettings();
                         UpdateStorageLocations();
                         UpdateUserStorageSelection();
                     }
@@ -338,13 +358,13 @@ namespace Ink_Canvas {
                     path = dirPath;
                 }
             }
-            
+
             // 确保文件夹结构存在
             EnsureStorageFoldersExist(path);
-            
+
             // 更新 AutoSavedStrokesLocation 到选中的存储位置
             Settings.Automation.AutoSavedStrokesLocation = path;
-            SaveSettingsToFile();
+            SaveSettings();
         }
 
         private bool isAnalyzingStorageInfo = false;
@@ -506,11 +526,11 @@ namespace Ink_Canvas {
             UpdateUserStorageSelection();
             isChangingUserStorageSelectionProgramically = false;
             HandleUserCustomStorageLocation();
-            
+
             // 确保 AutoSavedStrokesLocation 与 StorageLocation 同步
             // 只有在 AutoSavedStrokesLocation 为空或与当前选择不匹配时才更新
             SyncAutoSavedStrokesLocationWithStorageLocation();
-            
+
             StartAnalyzeStorage();
             var sb = new Border[] {
                 StorageJumpToFolderBtn1, StorageJumpToFolderBtn2, StorageJumpToFolderBtn3, StorageJumpToFolderBtn4,
@@ -538,7 +558,7 @@ namespace Ink_Canvas {
                 CustomStorageLocation.Text = "";
 
                 CustomStorageLocation.Text = new DirectoryInfo(path).FullName;
-                
+
                 // 加载动画
                 ((Image)CustomStorageNonRemovableDriveTip.Children[0]).Source =
                     CustomStorageLocationCheckPanel.FindResource("LoadingIcon") as DrawingImage;
@@ -611,7 +631,7 @@ namespace Ink_Canvas {
                 if (ds.Any() && result) {
                     Settings.Storage.StorageLocation = storageLocationItems[ComboBoxStoragePath.SelectedIndex].SelectItem;
                     Settings.Storage.UserStorageLocation = new DirectoryInfo(path).FullName;
-                    SaveSettingsToFile();
+                    SaveSettings();
                     InitStorageFoldersStructure(null);
                     StartAnalyzeStorage();
                 }
@@ -639,7 +659,7 @@ namespace Ink_Canvas {
                 if (isLoaded) CustomStorageLocationGroup.Visibility = ((StorageLocationItem)ComboBoxStoragePath.SelectedItem).SelectItem == "c-" ? Visibility.Visible : Visibility.Collapsed;
                 if (isLoaded) CustomStorageLocation.Text = Settings.Storage.UserStorageLocation;
                 Settings.Storage.StorageLocation = storageLocationItems[ComboBoxStoragePath.SelectedIndex].SelectItem;
-                SaveSettingsToFile();
+                SaveSettings();
                 InitStorageFoldersStructure(storageLocationItems[ComboBoxStoragePath.SelectedIndex].Path);
                 StartAnalyzeStorage();
             }

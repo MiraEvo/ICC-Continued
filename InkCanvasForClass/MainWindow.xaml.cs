@@ -35,13 +35,13 @@ using TextBox = System.Windows.Controls.TextBox;
 namespace Ink_Canvas {
     /// <summary>
     /// MainWindow 主窗口类
-    /// 
+    ///
     /// 架构说明：
     /// - 此类采用 MVVM 模式，通过 ViewModel 管理 UI 状态和命令
     /// - 业务逻辑已迁移到服务层（Services）
     /// - 事件处理程序作为 View 回调，委托给 ViewModel 或服务层
     /// - 使用 partial class 将功能分散到多个文件中（MainWindow_cs 目录）
-    /// 
+    ///
     /// 迁移状态：
     /// - ViewModel 初始化和事件订阅已完成
     /// - 工具按钮命令已绑定到 ViewModel
@@ -79,7 +79,7 @@ namespace Ink_Canvas {
 
         /// <summary>
         /// 初始化 ViewModels，从依赖注入容器中获取实例
-        /// 
+        ///
         /// 注意：MainWindow 在 XAML 中实例化，无法使用构造函数注入，
         /// 因此使用 ServiceLocator 是合理的。这是 ServiceLocator 的合法使用场景之一。
         /// </summary>
@@ -91,13 +91,21 @@ namespace Ink_Canvas {
                 ToolbarVM = ServiceLocator.GetRequiredService<ToolbarViewModel>();
                 SettingsVM = ServiceLocator.GetRequiredService<SettingsViewModel>();
                 _hotkeyService = ServiceLocator.GetRequiredService<IHotkeyService>();
-                
+
+                // 统一设置系统：MainWindow.Settings 通过 getter 从 SettingsService 获取设置
+                // 如果 SettingsService 还没有加载设置，先加载
+                var settingsService = ServiceLocator.GetRequiredService<ISettingsService>();
+                if (settingsService != null && !settingsService.IsLoaded)
+                {
+                    settingsService.Load();
+                }
+
                 // 订阅 ViewModel 事件
                 SubscribeViewModelEvents();
-                
+
                 // 注册默认热键
                 RegisterDefaultHotkeys();
-                
+
                 LogHelper.WriteLogToFile("ViewModels initialized successfully", LogHelper.LogType.Info);
             }
             catch (Exception ex)
@@ -237,48 +245,48 @@ namespace Ink_Canvas {
         {
             // 清空画布请求
             ViewModel.ClearCanvasRequested += OnClearCanvasRequested;
-            
+
             // 截图请求
             ViewModel.CaptureRequested += OnCaptureRequested;
-            
+
             // 隐藏/显示请求
             ViewModel.ToggleHideRequested += OnToggleHideRequested;
-            
+
             // 退出应用请求
             ViewModel.ExitAppRequested += OnExitAppRequested;
-            
+
             // 画笔切换请求
             ViewModel.ChangeToPenRequested += OnChangeToPenRequested;
-            
+
             // 绘制直线请求
             ViewModel.DrawLineRequested += OnDrawLineRequested;
-            
+
             // 隐藏子面板请求
             ViewModel.HideSubPanelsRequested += OnHideSubPanelsRequested;
-            
+
             // 工具按钮点击事件 - 每次点击都会触发，用于处理弹窗切换
             ViewModel.ToolButtonClicked += OnToolButtonClicked;
-            
+
             // 撤销/重做请求 - 由 View 执行实际操作
             ViewModel.UndoRequested += OnUndoRequested;
             ViewModel.RedoRequested += OnRedoRequested;
-            
+
             // 白板页面导航请求
             ViewModel.PreviousWhiteboardPageRequested += OnPreviousWhiteboardPageRequested;
             ViewModel.NextWhiteboardPageRequested += OnNextWhiteboardPageRequested;
             ViewModel.AddWhiteboardPageRequested += OnAddWhiteboardPageRequested;
             ViewModel.DeleteWhiteboardPageRequested += OnDeleteWhiteboardPageRequested;
             ViewModel.ShowWhiteboardPageListRequested += OnShowWhiteboardPageListRequested;
-            
+
             // 白板背景设置请求
             ViewModel.SetBoardBackgroundColorRequested += OnSetBoardBackgroundColorRequested;
             ViewModel.SetBoardBackgroundPatternRequested += OnSetBoardBackgroundPatternRequested;
             ViewModel.ToggleBoardBackgroundPanelRequested += OnToggleBoardBackgroundPanelRequested;
-            
+
             // 设置面板事件订阅
             SubscribeSettingsViewEvents();
         }
-        
+
         /// <summary>
         /// 订阅 SettingsView 事件
         /// </summary>
@@ -286,13 +294,13 @@ namespace Ink_Canvas {
         {
             // SettingsView 的导航事件已在 XAML 中绑定到 SettingsView_NavigateToCategory
             // 这里可以添加其他需要在代码中订阅的事件
-            
+
             // 如果 SettingsViewControl 存在，设置其 ViewModel
             if (SettingsViewControl != null && SettingsVM != null)
             {
                 SettingsViewControl.ViewModel = SettingsVM;
             }
-            
+
             // 订阅 SettingsViewModel 的事件
             if (SettingsVM != null)
             {
@@ -300,7 +308,7 @@ namespace Ink_Canvas {
                 SettingsVM.ExitRequested += OnSettingsExitRequested;
             }
         }
-        
+
         /// <summary>
         /// 处理设置面板重启请求
         /// </summary>
@@ -308,7 +316,7 @@ namespace Ink_Canvas {
         {
             BtnRestart_Click(null, null);
         }
-        
+
         /// <summary>
         /// 处理设置面板退出请求
         /// </summary>
@@ -316,7 +324,7 @@ namespace Ink_Canvas {
         {
             BtnExit_Click(null, null);
         }
-        
+
         /// <summary>
         /// 处理 SettingsView 导航事件
         /// </summary>
@@ -328,7 +336,7 @@ namespace Ink_Canvas {
             {
                 var categoryName = e.CategoryName;
                 LogHelper.WriteLogToFile($"Settings navigation to category: {categoryName}", LogHelper.LogType.Info);
-                
+
                 // 调用现有的设置导航逻辑
                 // 这里可以根据分类名称滚动到对应的设置组
                 ScrollToSettingsCategory(categoryName);
@@ -338,7 +346,7 @@ namespace Ink_Canvas {
                 LogHelper.WriteLogToFile($"SettingsView_NavigateToCategory failed: {ex.Message}", LogHelper.LogType.Error);
             }
         }
-        
+
         /// <summary>
         /// 滚动到指定的设置分类
         /// </summary>
@@ -366,13 +374,13 @@ namespace Ink_Canvas {
                     "Donation" => SettingsDonationGroupBox,
                     _ => null
                 };
-                
+
                 if (targetElement != null && SettingsPanelScrollViewer != null)
                 {
                     // 获取目标元素相对于 ScrollViewer 的位置
                     var transform = targetElement.TransformToAncestor(SettingsPanelScrollViewer);
                     var position = transform.Transform(new System.Windows.Point(0, 0));
-                    
+
                     // 滚动到目标位置
                     SettingsPanelScrollViewer.ScrollToVerticalOffset(
                         SettingsPanelScrollViewer.VerticalOffset + position.Y - 20);
@@ -383,7 +391,7 @@ namespace Ink_Canvas {
                 LogHelper.WriteLogToFile($"ScrollToSettingsCategory failed: {ex.Message}", LogHelper.LogType.Error);
             }
         }
-        
+
         /// <summary>
         /// 处理工具按钮点击 - 每次点击都会调用对应的 Click 方法
         /// 这样可以正确处理弹窗的显示/隐藏逻辑
@@ -413,7 +421,7 @@ namespace Ink_Canvas {
                     break;
             }
         }
-        
+
         /// <summary>
         /// 处理隐藏子面板请求
         /// </summary>
@@ -421,7 +429,7 @@ namespace Ink_Canvas {
         {
             HideSubPanels();
         }
-        
+
         /// <summary>
         /// 处理撤销请求 - 调用原有的撤销方法
         /// </summary>
@@ -429,7 +437,7 @@ namespace Ink_Canvas {
         {
             BtnUndo_Click(null, null);
         }
-        
+
         /// <summary>
         /// 处理重做请求 - 调用原有的重做方法
         /// </summary>
@@ -455,7 +463,7 @@ namespace Ink_Canvas {
                 ViewModel.ToolButtonClicked -= OnToolButtonClicked;
                 ViewModel.UndoRequested -= OnUndoRequested;
                 ViewModel.RedoRequested -= OnRedoRequested;
-                
+
                 // 取消订阅白板相关事件
                 ViewModel.PreviousWhiteboardPageRequested -= OnPreviousWhiteboardPageRequested;
                 ViewModel.NextWhiteboardPageRequested -= OnNextWhiteboardPageRequested;
@@ -469,13 +477,13 @@ namespace Ink_Canvas {
         }
 
         #region ViewModel 事件处理
-        
+
         // ============================================================
         // View 回调方法
         // ============================================================
         // 这些方法作为 View 层的回调，响应 ViewModel 发出的请求事件。
         // 它们负责调用原有的 UI 操作方法，实现 ViewModel 与 View 的解耦。
-        // 
+        //
         // 设计原则：
         // 1. 事件处理方法应保持简洁，只做委托调用
         // 2. 复杂的业务逻辑应在 ViewModel 或服务层中处理
@@ -747,15 +755,15 @@ namespace Ink_Canvas {
                 处于画板模式内：Topmost == false / currentMode != 0
                 处于 PPT 放映内：BtnPPTSlideShowEnd.Visibility
             */
-            
+
             // 初始化 ViewModel
             InitializeViewModels();
-            
+
             InitializeComponent();
-            
+
             // 设置 DataContext
             DataContext = ViewModel;
-            
+
             // 初始化 FloatingBarView
             InitializeFloatingBarView();
 
@@ -774,7 +782,7 @@ namespace Ink_Canvas {
             GridInkCanvasSelectionCover.Visibility = Visibility.Collapsed;
 
             ViewboxFloatingBar.Margin = new Thickness((SystemParameters.WorkArea.Width - Constants.FloatingBarWidth) / 2,
-                SystemParameters.WorkArea.Height - Constants.FloatingBarBottomMarginPPT, 
+                SystemParameters.WorkArea.Height - Constants.FloatingBarBottomMarginPPT,
                 Constants.FloatingBarHiddenHorizontalOffset, Constants.FloatingBarHiddenVerticalOffset);
             ViewboxFloatingBarMarginAnimation(Constants.FloatingBarBottomMarginNormal, true);
 
@@ -819,7 +827,7 @@ namespace Ink_Canvas {
             catch (Exception ex) {
                 LogHelper.WriteLogToFile(ex.ToString(), LogHelper.LogType.Error);
             }
-            
+
             // 注意：CheckColorTheme和CheckPenTypeUIState已移至Window_Loaded中，
             // 在LoadSettings之后调用，以确保设置已加载
         }
@@ -836,7 +844,7 @@ namespace Ink_Canvas {
                 if (_floatingBarViewModel != null)
                 {
                     FloatingBarView.ViewModel = _floatingBarViewModel;
-                    
+
                     // 从设置中加载浮动工具栏的缩放和透明度
                     var settingsService = ServiceLocator.GetService<ISettingsService>();
                     if (settingsService != null)
@@ -909,8 +917,8 @@ namespace Ink_Canvas {
 
         #region Definitions and Loading
 
-        public static Settings Settings = new Settings();
-        public static string settingsFileName = "Settings.json";
+        // 使用 SettingsService 管理的 Settings 实例
+        public Settings Settings => ServiceLocator.GetService<ISettingsService>()?.Settings ?? new Settings();
         public bool isLoaded = false;
 
         [DllImport("user32.dll")]
@@ -941,11 +949,11 @@ namespace Ink_Canvas {
             loadPenCanvas();
             //加载设置
             LoadSettings(true);
-            
+
             // 在设置加载后更新UI状态
             CheckColorTheme(true);
             CheckPenTypeUIState();
-            
+
             // HasNewUpdateWindow hasNewUpdateWindow = new HasNewUpdateWindow();
             // 注意：旧版 IA 库不支持 64 位，但新的 Windows.UI.Input.Inking.Analysis API 支持 x64
             // 因此移除了 64 位进程检查
@@ -1065,7 +1073,7 @@ namespace Ink_Canvas {
                     LogHelper.WriteLogToFile("Ink Canvas closing: Stopping background tasks");
                     // 停止墨迹回放线程
                     isStopInkReplay = true;
-                    
+
                     LogHelper.WriteLogToFile("Ink Canvas closing: Stopping timers");
                     // 停止所有定时器，防止进程残留
                     try {
@@ -1078,7 +1086,7 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error stopping timerCheckPPT: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     try {
                         if (timerKillProcess != null) {
                             timerKillProcess.Stop();
@@ -1089,7 +1097,7 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error stopping timerKillProcess: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     try {
                         if (timerCheckAutoFold != null) {
                             timerCheckAutoFold.Stop();
@@ -1100,7 +1108,7 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error stopping timerCheckAutoFold: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     try {
                         if (timerCheckAutoUpdateWithSilence != null) {
                             timerCheckAutoUpdateWithSilence.Stop();
@@ -1111,7 +1119,7 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error stopping timerCheckAutoUpdateWithSilence: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     try {
                         if (timerDisplayTime != null) {
                             timerDisplayTime.Stop();
@@ -1122,7 +1130,7 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error stopping timerDisplayTime: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     try {
                         if (timerDisplayDate != null) {
                             timerDisplayDate.Stop();
@@ -1133,10 +1141,10 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error stopping timerDisplayDate: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     LogHelper.WriteLogToFile("Ink Canvas closing: Disposing freeze frame");
                     DisposeFreezeFrame();
-                    
+
                     LogHelper.WriteLogToFile("Ink Canvas closing: Unsubscribing system events");
                     // 取消系统事件订阅，防止进程残留
                     try {
@@ -1145,14 +1153,14 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error unsubscribing UserPreferenceChanged: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     try {
                         SystemEvents.DisplaySettingsChanged -= SystemEventsOnDisplaySettingsChanged;
                     }
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error unsubscribing DisplaySettingsChanged: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     LogHelper.WriteLogToFile("Ink Canvas closing: Unsubscribing InkCanvas and TimeMachine events");
                     // 取消 InkCanvas 和 TimeMachine 事件订阅
                     try {
@@ -1164,7 +1172,7 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error unsubscribing TimeMachine events: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     try {
                         if (inkCanvas != null && inkCanvas.Strokes != null) {
                             inkCanvas.Strokes.StrokesChanged -= StrokesOnStrokesChanged;
@@ -1173,7 +1181,7 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error unsubscribing InkCanvas.Strokes events: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     LogHelper.WriteLogToFile("Ink Canvas closing: Releasing PPT COM objects");
                     // 释放 PPT COM 对象，防止进程残留
                     try {
@@ -1189,7 +1197,7 @@ namespace Ink_Canvas {
                             catch (Exception ex) {
                                 LogHelper.WriteLogToFile("Error unsubscribing PPT events: " + ex.Message, LogHelper.LogType.Warning);
                             }
-                            
+
                             // 释放 COM 对象引用
                             try {
                                 System.Runtime.InteropServices.Marshal.ReleaseComObject(pptApplication);
@@ -1200,7 +1208,7 @@ namespace Ink_Canvas {
                             }
                             pptApplication = null;
                         }
-                        
+
                         if (presentation != null) {
                             try {
                                 System.Runtime.InteropServices.Marshal.ReleaseComObject(presentation);
@@ -1211,7 +1219,7 @@ namespace Ink_Canvas {
                             }
                             presentation = null;
                         }
-                        
+
                         if (slides != null) {
                             try {
                                 System.Runtime.InteropServices.Marshal.ReleaseComObject(slides);
@@ -1222,7 +1230,7 @@ namespace Ink_Canvas {
                             }
                             slides = null;
                         }
-                        
+
                         if (slide != null) {
                             try {
                                 System.Runtime.InteropServices.Marshal.ReleaseComObject(slide);
@@ -1237,7 +1245,7 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error releasing PPT COM objects: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     LogHelper.WriteLogToFile("Ink Canvas closing: Unsubscribing ViewModel events");
                     // 取消 ViewModel 事件订阅
                     try {
@@ -1246,7 +1254,7 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error unsubscribing ViewModel events: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     LogHelper.WriteLogToFile("Ink Canvas closing: Disposing TaskbarIcon");
                     // 释放托盘图标，防止进程残留
                     try {
@@ -1258,20 +1266,20 @@ namespace Ink_Canvas {
                     catch (Exception ex) {
                         LogHelper.WriteLogToFile("Error disposing TaskbarIcon: " + ex.Message, LogHelper.LogType.Error);
                     }
-                    
+
                     LogHelper.WriteLogToFile("Ink Canvas closing: Finished cleanup");
                 }
                 catch (Exception ex) {
                     LogHelper.WriteLogToFile("Error during window closing: " + ex.Message, LogHelper.LogType.Error);
                 }
-                
+
                 // 强制进行垃圾回收，确保 COM 对象被释放
                 try {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
                 }
                 catch { /* 忽略 GC 错误 */ }
-                
+
                 Application.Current.Shutdown();
             }
         }

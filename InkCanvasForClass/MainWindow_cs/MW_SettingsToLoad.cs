@@ -92,11 +92,17 @@ namespace Ink_Canvas {
         private void LoadSettings(bool isStartup = false) {
             AppVersionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             try {
-                if (File.Exists(App.RootPath + settingsFileName)) {
-                    try {
-                        string text = File.ReadAllText(App.RootPath + settingsFileName);
-                        Settings = JsonConvert.DeserializeObject<Settings>(text);
+                // 使用 SettingsService 加载设置
+                var settingsService = ServiceLocator.GetService<ISettingsService>();
+                if (settingsService != null)
+                {
+                    // 加载设置
+                    bool loaded = settingsService.Load();
 
+                    // 注意：Settings 属性现在直接访问 settingsService.Settings，所以不需要手动赋值
+
+                    if (loaded)
+                    {
                         // Migration: 确保 AutoSavedStrokesLocation 和 StorageLocation 同步
                         string programDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\');
                         string oldDefaultPath1 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Ink Canvas");
@@ -107,6 +113,22 @@ namespace Ink_Canvas {
 
                         // 检查并迁移旧的默认路径
                         string currentPath = Settings.Automation.AutoSavedStrokesLocation?.TrimEnd('\\') ?? "";
+                        string storageLocation = Settings.Storage.StorageLocation ?? "fr";
+
+                        // 处理默认的自动选择标识 "a-"，将其设置为 "fr"（icc安装目录）
+                        if (storageLocation == "a-") {
+                            storageLocation = "fr";
+                            Settings.Storage.StorageLocation = "fr";
+                            needSave = true;
+                        }
+
+                        // 获取 StorageLocation 对应的预期路径
+                        string expectedPath = GetExpectedPathFromStorageLocation(storageLocation, programDir);
+
+                        // 如果是自定义存储位置，使用 UserStorageLocation
+                        if (storageLocation == "c-" && !string.IsNullOrEmpty(Settings.Storage.UserStorageLocation)) {
+                            expectedPath = Settings.Storage.UserStorageLocation.TrimEnd('\\');
+                        }
 
                         // 只迁移旧的默认路径（Ink Canvas 或 InkCanvasForClass）
                         if (currentPath.Equals(oldDefaultPath2, StringComparison.OrdinalIgnoreCase) ||
@@ -116,27 +138,29 @@ namespace Ink_Canvas {
                             needSave = true;
                             LogHelper.WriteLogToFile($"Migrated old default path from '{currentPath}' to '{newDefaultPath}'", LogHelper.LogType.Info);
                         }
-                        // 确保 AutoSavedStrokesLocation 与 StorageLocation 同步
-                        else {
-                            string expectedPath = GetExpectedPathFromStorageLocation(Settings.Storage.StorageLocation, programDir);
-                            if (!string.IsNullOrEmpty(expectedPath) &&
+                        // 强制同步 AutoSavedStrokesLocation 与 StorageLocation
+                        // 始终以 StorageLocation 为准
+                        else if (!string.IsNullOrEmpty(expectedPath) &&
                                 !string.Equals(currentPath, expectedPath.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase)) {
-                                Settings.Automation.AutoSavedStrokesLocation = expectedPath;
-                                needSave = true;
-                                LogHelper.WriteLogToFile($"Synced AutoSavedStrokesLocation from '{currentPath}' to '{expectedPath}' based on StorageLocation '{Settings.Storage.StorageLocation}'", LogHelper.LogType.Info);
-                            }
+                            Settings.Automation.AutoSavedStrokesLocation = expectedPath;
+                            needSave = true;
+                            LogHelper.WriteLogToFile($"Synced AutoSavedStrokesLocation from '{currentPath}' to '{expectedPath}' based on StorageLocation '{storageLocation}'", LogHelper.LogType.Info);
                         }
 
                         if (needSave) {
-                            SaveSettingsToFile();
+                            SaveSettings();
                         }
                     }
-                    catch (Exception ex) {
-                        LogHelper.WriteLogToFile("Exception in MW_SettingsToLoad.cs: " + ex.Message, LogHelper.LogType.Error);
+                    else
+                    {
+                        // 如果加载失败或文件不存在，重置为默认值
+                        BtnResetToSuggestion_Click(null, null);
+                        DisplayWelcomePopup();
                     }
-                } else {
-                    BtnResetToSuggestion_Click(null, null);
-                    DisplayWelcomePopup();
+                }
+                else
+                {
+                    LogHelper.WriteLogToFile("SettingsService not found in LoadSettings", LogHelper.LogType.Error);
                 }
             }
             catch (Exception ex) {
@@ -430,7 +454,7 @@ namespace Ink_Canvas {
                 if (Settings.Appearance.FloatingBarIconsVisibility.Length != 10) {
                     Settings.Appearance.FloatingBarIconsVisibility =
                         Settings.Appearance.FloatingBarIconsVisibility.PadRight(10, '1');
-                    SaveSettingsToFile();
+                    SaveSettings();
                 }
 
                 var floatingBarIconsVisibilityValue = Settings.Appearance.FloatingBarIconsVisibility;
@@ -496,7 +520,7 @@ namespace Ink_Canvas {
                     CheckboxEnableRBPPTButton.IsChecked = true;
                     CheckboxEnableLSPPTButton.IsChecked = true;
                     CheckboxEnableRSPPTButton.IsChecked = true;
-                    SaveSettingsToFile();
+                    SaveSettings();
                 }
 
                 var sops = Settings.PowerPointSettings.PPTSButtonsOption.ToString();
@@ -514,7 +538,7 @@ namespace Ink_Canvas {
                     CheckboxSPPTDisplayPage.IsChecked = true;
                     CheckboxSPPTHalfOpacity.IsChecked = true;
                     CheckboxSPPTBlackBackground.IsChecked = false;
-                    SaveSettingsToFile();
+                    SaveSettings();
                 }
 
                 var bops = Settings.PowerPointSettings.PPTBButtonsOption.ToString();
@@ -532,7 +556,7 @@ namespace Ink_Canvas {
                     CheckboxBPPTDisplayPage.IsChecked = false;
                     CheckboxBPPTHalfOpacity.IsChecked = true;
                     CheckboxBPPTBlackBackground.IsChecked = false;
-                    SaveSettingsToFile();
+                    SaveSettings();
                 }
 
                 PPTButtonLeftPositionValueSlider.Value = Settings.PowerPointSettings.PPTLSButtonPosition;
@@ -553,6 +577,9 @@ namespace Ink_Canvas {
 
                 ToggleSwitchAutoSaveScreenShotInPowerPoint.IsOn =
                     Settings.PowerPointSettings.IsAutoSaveScreenShotInPowerPoint;
+
+                // 加载 PPT 联动增强设置
+                ToggleSwitchEnablePPTEnhancedSupport.IsOn = Settings.PowerPointSettings.IsEnablePPTEnhancedSupport;
             } else {
                 Settings.PowerPointSettings = new PowerPointSettings();
             }
@@ -999,17 +1026,6 @@ namespace Ink_Canvas {
                 ViewboxFloatingBarMarginAnimation(100, true);
             }
 
-            // 同步设置到 SettingsService，确保两套设置系统保持一致
-            try {
-                var settingsService = ServiceLocator.GetService<ISettingsService>();
-                if (settingsService != null) {
-                    settingsService.SyncFrom(Settings);
-                    LogHelper.WriteLogToFile("Settings synced to SettingsService", LogHelper.LogType.Info);
-                }
-            }
-            catch (Exception ex) {
-                LogHelper.WriteLogToFile($"Failed to sync settings to SettingsService: {ex.Message}", LogHelper.LogType.Warning);
-            }
         }
     }
 }

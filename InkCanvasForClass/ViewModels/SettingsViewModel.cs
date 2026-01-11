@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ink_Canvas.Core;
 using Ink_Canvas.Services;
+using Ink_Canvas.Services.Events;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -100,12 +101,12 @@ namespace Ink_Canvas.ViewModels
         public SettingsViewModel(ISettingsService settingsService)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-            
+
             // 初始化子 ViewModel
             InitializeSubViewModels();
-            
+
             // 订阅设置变更事件
-            _settingsService.SettingsChanged += OnSettingsChanged;
+            _settingsService.SettingChanged += OnSettingChanged;
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace Ink_Canvas.ViewModels
         /// <summary>
         /// 设置变更事件处理
         /// </summary>
-        private void OnSettingsChanged(object sender, SettingsChangedEventArgs e)
+        private void OnSettingChanged(object sender, SettingChangedEventArgs e)
         {
             // 通知 UI 设置已更改
             OnPropertyChanged(nameof(Settings));
@@ -189,7 +190,7 @@ namespace Ink_Canvas.ViewModels
         /// </summary>
         public override void Cleanup()
         {
-            _settingsService.SettingsChanged -= OnSettingsChanged;
+            _settingsService.SettingChanged -= OnSettingChanged;
             base.Cleanup();
         }
     }

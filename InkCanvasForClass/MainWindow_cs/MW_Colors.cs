@@ -1,7 +1,7 @@
 ﻿// ============================================================================
 // MW_Colors.cs - 颜色选择和画笔调色盘
 // ============================================================================
-// 
+//
 // 功能说明:
 //   - 画笔颜色选择
 //   - 调色盘 UI 交互
@@ -468,7 +468,7 @@ namespace Ink_Canvas {
                 highlighterColor = inkColor;
                 // 保存荧光笔颜色到设置
                 Settings.Canvas.LastHighlighterColor = highlighterColor;
-                SaveSettingsToFile();
+                SaveSettings();
             }
             else {
                 if (currentMode == 0) {
@@ -479,7 +479,7 @@ namespace Ink_Canvas {
                     lastBoardInkColor = inkColor;
                     Settings.Canvas.LastBoardInkColor = lastBoardInkColor;
                 }
-                SaveSettingsToFile();
+                SaveSettings();
             }
         }
 
@@ -619,15 +619,15 @@ namespace Ink_Canvas {
             // 保存笔类型状态
             lastPenType = 0;
             penType = 0;
-            
+
             // 保存当前签字笔粗细（如果当前是签字笔模式）
             if (drawingAttributes.StylusTip == StylusTip.Ellipse && !drawingAttributes.IsHighlighter) {
                 lastPenWidth = drawingAttributes.Width;
             }
-            
+
             CheckPenTypeUIState();
             CheckColorTheme();
-            
+
             // 恢复之前保存的签字笔粗细，如果没有则使用设置中的默认值
             // 使用验证方法确保粗细值有效 - Requirements: 1.2
             double penWidth = lastPenWidth > 0 ? lastPenWidth : Settings.Canvas.InkWidth;
@@ -636,25 +636,25 @@ namespace Ink_Canvas {
             drawingAttributes.Height = penWidth;
             drawingAttributes.StylusTip = StylusTip.Ellipse;
             drawingAttributes.IsHighlighter = false;
-            
+
             // 保存笔类型到设置
             Settings.Canvas.LastPenType = lastPenType;
-            SaveSettingsToFile();
+            SaveSettings();
         }
 
         private void SwitchToHighlighterPen(object sender, MouseButtonEventArgs e) {
             // 保存笔类型状态
             lastPenType = 1;
             penType = 1;
-            
+
             // 保存当前荧光笔粗细（如果当前是荧光笔模式）
             if (drawingAttributes.StylusTip == StylusTip.Rectangle && drawingAttributes.IsHighlighter) {
                 lastHighlighterWidth = drawingAttributes.Height;
             }
-            
+
             CheckPenTypeUIState();
             CheckColorTheme();
-            
+
             // 恢复之前保存的荧光笔粗细，如果没有则使用设置中的默认值
             // 使用验证方法确保粗细值有效 - Requirements: 1.2
             double highlighterWidth = lastHighlighterWidth > 0 ? lastHighlighterWidth : Settings.Canvas.HighlighterWidth;
@@ -663,10 +663,10 @@ namespace Ink_Canvas {
             drawingAttributes.Height = highlighterWidth;
             drawingAttributes.StylusTip = StylusTip.Rectangle;
             drawingAttributes.IsHighlighter = true;
-            
+
             // 保存笔类型到设置
             Settings.Canvas.LastPenType = lastPenType;
-            SaveSettingsToFile();
+            SaveSettings();
         }
 
         private void BtnColorBlack_Click(object sender, RoutedEventArgs e) {
@@ -802,7 +802,7 @@ namespace Ink_Canvas {
             CheckPenTypeUIState();
             ColorSwitchCheck();
         }
-       
+
         private Color StringToColor(string colorStr) {
             var argb = new byte[4];
             for (var i = 0; i < 4; i++) {
@@ -838,7 +838,7 @@ namespace Ink_Canvas {
             if (e.TriggerMode == ColorPalette.TriggerMode.TriggeredByCode) return;
             drawingAttributes.Color = PenPaletteV2.GetColor(e.NowColor, false, null);
             inkCanvas.DefaultDrawingAttributes.Color = drawingAttributes.Color;
-            
+
             // 更新inkColor变量并保存到lastDesktopInkColor或lastBoardInkColor
             // Requirements: 3.1, 3.5
             int colorIndex = ColorPaletteColorToInkColor(e.NowColor);
@@ -847,7 +847,7 @@ namespace Ink_Canvas {
                 CheckLastColor(colorIndex);
             }
         }
-        
+
         /// <summary>
         /// 将ColorPaletteColor枚举转换为inkColor索引
         /// </summary>
@@ -871,7 +871,7 @@ namespace Ink_Canvas {
                 default: return -1; // 自定义颜色
             }
         }
-        
+
         /// <summary>
         /// 将inkColor索引转换为ColorPaletteColor枚举
         /// Requirements: 3.1, 3.5
@@ -898,7 +898,7 @@ namespace Ink_Canvas {
 
         private void PenpaletteV2_CustomColorChanged(object sender, ColorPalette.CustomColorChangedEventArgs e) {
             if (e.TriggerMode == ColorPalette.TriggerMode.TriggeredByCode) return;
-            if (PenPaletteV2.SelectedColor == ColorPalette.ColorPaletteColor.ColorCustom) 
+            if (PenPaletteV2.SelectedColor == ColorPalette.ColorPaletteColor.ColorCustom)
                 drawingAttributes.Color = e.NowColor??new Color();
         }
 
@@ -909,10 +909,10 @@ namespace Ink_Canvas {
         private void PenpaletteV2_PenModeChanged(object sender, ColorPalette.PenModeChangedEventArgs e) {
             // 更新penType变量
             penType = e.NowMode == ColorPalette.PenMode.HighlighterMode ? 1 : 0;
-            
+
             // 保存lastPenType以便在切换模式后恢复
             lastPenType = penType;
-            
+
             // 根据笔类型设置绘图属性，使用验证方法确保粗细值有效 - Requirements: 1.2
             if (e.NowMode == ColorPalette.PenMode.HighlighterMode) {
                 // 荧光笔模式：使用保存的荧光笔粗细
@@ -929,25 +929,25 @@ namespace Ink_Canvas {
                 drawingAttributes.StylusTip = StylusTip.Ellipse;
                 drawingAttributes.IsHighlighter = false;
             }
-            
+
             // 调用CheckPenTypeUIState()更新UI状态
             CheckPenTypeUIState();
-            
+
             // 保存笔类型到设置
             Settings.Canvas.LastPenType = lastPenType;
-            SaveSettingsToFile();
+            SaveSettings();
         }
 
         private void PenpaletteV2_InkRecognitionChanged(object sender, ColorPalette.InkRecognitionChangedEventArgs e) {
             if (e.TriggerMode == ColorPalette.TriggerMode.TriggeredByCode) return;
             Settings.InkToShape.IsInkToShapeEnabled = e.NowStatus;
             ToggleSwitchEnableInkToShape.IsOn = e.NowStatus;
-            SaveSettingsToFile();
+            SaveSettings();
         }
 
         private void PenpaletteV2_PressureSimulationChanged(object sender, ColorPalette.PressureSimulationChangedEventArgs e) {
             if (e.TriggerMode == ColorPalette.TriggerMode.TriggeredByCode) return;
-            
+
             // 将调色盘的压感模拟模式映射到Settings.Canvas.InkStyle
             // PressureSimulation.None = 不模拟 (InkStyle = -1)
             // PressureSimulation.PointSimulate = 点集笔锋 (InkStyle = 0)
@@ -963,13 +963,13 @@ namespace Ink_Canvas {
                     Settings.Canvas.InkStyle = 1;
                     break;
             }
-            
-            SaveSettingsToFile();
+
+            SaveSettings();
         }
 
         private void PenpaletteV2_PenWidthChanged(object sender, ColorPalette.PenWidthChangedEventArgs e) {
             if (e.TriggerMode == ColorPalette.TriggerMode.TriggeredByCode) return;
-            
+
             // 根据当前笔类型更新drawingAttributes和保存粗细值
             // 使用验证方法确保粗细值有效 - Requirements: 1.2
             if (penType == 0) {
@@ -987,13 +987,13 @@ namespace Ink_Canvas {
                 lastHighlighterWidth = validatedWidth;
                 Settings.Canvas.HighlighterWidth = validatedWidth;
             }
-            
+
             // 应用到inkCanvas
             inkCanvas.DefaultDrawingAttributes.Width = drawingAttributes.Width;
             inkCanvas.DefaultDrawingAttributes.Height = drawingAttributes.Height;
-            
+
             // 保存设置
-            SaveSettingsToFile();
+            SaveSettings();
         }
 
         #endregion
