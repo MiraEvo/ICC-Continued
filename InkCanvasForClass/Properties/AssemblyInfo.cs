@@ -8,12 +8,12 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("InkCanvasForClass")]
+[assembly: AssemblyTitle("InkCanvasForClass-Continued")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("HARKOTEK Studio")]
-[assembly: AssemblyProduct("InkCanvasForClass")]
-[assembly: AssemblyCopyright("© Copyright HARKOTEK Studio 2024-now")]
+[assembly: AssemblyCompany("MiraEvo Studio")]
+[assembly: AssemblyProduct("InkCanvasForClass-Continued")]
+[assembly: AssemblyCopyright("© Copyright MiraEvo Studio 2026-now")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -22,11 +22,11 @@
 
     <!-- 程序集信息 -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Title>InkCanvasForClass</Title>
-    <Product>InkCanvasForClass</Product>
-    <Version>5.0.4</Version>
-    <Authors>Dubi906w</Authors>
-    <Copyright>© Copyright HARKOTEK Studio 2024-now</Copyright>
+    <Title>InkCanvasForClass-Continued</Title>
+    <Product>InkCanvasForClass-Continued</Product>
+    <Version>0.0.1</Version>
+    <Authors>MF.</Authors>
+    <Copyright>© Copyright MiraEvo Studio 2026-now</Copyright>
     <PackageProjectUrl>https://icc.bliemhax.com</PackageProjectUrl>
     <FileVersion>bundled</FileVersion>
 

@@ -432,6 +432,12 @@ namespace Ink_Canvas {
         #endregion
 
         private void inkCanvas_TouchMove(object sender, TouchEventArgs e) {
+            // 先处理手掌橡皮移动
+            if (isPalmErasing) {
+                Main_Grid_TouchMove_PalmEraser(sender, e);
+                return;
+            }
+
             if (isSingleFingerDragMode) return;
             if (drawingShapeMode != 0) {
                 if (isLastTouchEraser) return;
@@ -747,6 +753,10 @@ namespace Ink_Canvas {
         private Point CuboidFrontRectEndP = new Point();
 
         private void Main_Grid_TouchUp(object sender, TouchEventArgs e) {
+            // 先处理手掌橡皮抬起
+            if (isPalmErasing) {
+                Main_Grid_TouchUp_PalmEraser(sender, e);
+            }
 
             inkCanvas.ReleaseAllTouchCaptures();
             ViewboxFloatingBar.IsHitTestVisible = true;

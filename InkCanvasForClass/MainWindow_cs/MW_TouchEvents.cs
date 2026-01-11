@@ -13,6 +13,55 @@ using Point = System.Windows.Point;
 
 namespace Ink_Canvas {
     public partial class MainWindow : Window {
+        #region Palm Eraser State
+
+        /// <summary>
+        /// 是否处于手掌橡皮模式（自动检测触发）
+        /// </summary>
+        private bool isPalmErasing = false;
+
+        /// <summary>
+        /// 手掌橡皮触发前的编辑模式（用于恢复）
+        /// </summary>
+        private InkCanvasEditingMode editModeBeforePalmEraser = InkCanvasEditingMode.Ink;
+
+        /// <summary>
+        /// 当前手掌触摸设备的ID
+        /// </summary>
+        private int palmTouchDeviceId = -1;
+
+        /// <summary>
+        /// 手掌触摸的初始位置
+        /// </summary>
+        private Point palmTouchStartPoint = new Point();
+
+        /// <summary>
+        /// 手掌橡皮的增量命中测试器
+        /// </summary>
+        private IncrementalStrokeHitTester palmHitTester = null;
+
+        /// <summary>
+        /// 手掌橡皮的缩放矩阵
+        /// </summary>
+        private Matrix palmScaleMatrix = new Matrix();
+
+        /// <summary>
+        /// 手掌橡皮的宽度
+        /// </summary>
+        private double palmEraserWidth = 64;
+
+        /// <summary>
+        /// 连续检测到的大触摸点数量（用于稳定性判断）
+        /// </summary>
+        private int largeTouchDetectionCount = 0;
+
+        /// <summary>
+        /// 需要连续检测到大触摸点的次数才触发手掌橡皮
+        /// </summary>
+        private const int PALM_DETECTION_THRESHOLD = 2;
+
+        #endregion
+
         #region Multi-Touch
 
         private bool isInMultiTouchMode = false;
@@ -148,7 +197,7 @@ namespace Ink_Canvas {
                 try {
                     if (GetTouchDownPointsList(e.StylusDevice.Id) != InkCanvasEditingMode.None) return;
                     try {
-                        if (e.StylusDevice.StylusButtons.Count > 1 && 
+                        if (e.StylusDevice.StylusButtons.Count > 1 &&
                             e.StylusDevice.StylusButtons[1].StylusButtonState == StylusButtonState.Down) return;
                     }
                     catch (Exception ex) {
@@ -243,42 +292,282 @@ namespace Ink_Canvas {
             if (drawingShapeMode == 9 && isFirstTouchCuboid == false) MouseTouchMove(iniP);
             inkCanvas.Opacity = 1;
 
+            // 手势橡皮擦检测
             if (!Settings.Gesture.DisableGestureEraser) {
-                double boundsWidth = GetTouchBoundWidth(e);
-                if ((Settings.Advanced.TouchMultiplier != 0 || !Settings.Advanced.IsSpecialScreen)
-                    && (boundsWidth > BoundsWidth)) {
-                    isLastTouchEraser = true;
-                    if (drawingShapeMode == 0 && forceEraser) return;
-                    double EraserThresholdValue = Settings.Startup.IsEnableNibMode
-                        ? Settings.Advanced.NibModeBoundsWidthThresholdValue
-                        : Settings.Advanced.FingerModeBoundsWidthThresholdValue;
-                    if (boundsWidth > BoundsWidth * EraserThresholdValue) {
-                        boundsWidth *= (Settings.Startup.IsEnableNibMode
-                            ? Settings.Advanced.NibModeBoundsWidthEraserSize
-                            : Settings.Advanced.FingerModeBoundsWidthEraserSize);
-                        if (Settings.Advanced.IsSpecialScreen) boundsWidth *= Settings.Advanced.TouchMultiplier;
-                        eraserWidth = boundsWidth;
-                        isEraserCircleShape = Settings.Canvas.EraserShapeType == 0;
-                        isUsingStrokesEraser = false;
-                        inkCanvas.EditingMode = InkCanvasEditingMode.EraseByPoint;
-                    } else {
+                // 检查特殊屏幕条件
+                bool shouldCheckPalmEraser = Settings.Advanced.TouchMultiplier != 0 || !Settings.Advanced.IsSpecialScreen;
+
+                if (shouldCheckPalmEraser) {
+                    // 使用优化的手掌检测方法
+                    if (IsPalmTouch(e, out double palmWidth)) {
+                        // 手掌橡皮模式（面积擦）- 使用自定义可视化
+                        isLastTouchEraser = true;
+                        if (drawingShapeMode == 0 && forceEraser) return;
+
+                        // 启动手掌橡皮模式
+                        StartPalmEraser(e, palmWidth);
+                        return;
+                    }
+
+                    // 检查是否为墨迹擦（介于笔和手掌之间的触摸）
+                    if (IsStrokeEraserTouch(e)) {
+                        isLastTouchEraser = true;
+                        if (drawingShapeMode == 0 && forceEraser) return;
+
+                        // 墨迹擦模式
                         isUsingStrokesEraser = true;
                         inkCanvas.EditingMode = InkCanvasEditingMode.EraseByStroke;
+                        return;
                     }
-                } else {
-                    isLastTouchEraser = false;
-                    inkCanvas.EraserShape =
-                        forcePointEraser ? new EllipseStylusShape(50, 50) : new EllipseStylusShape(5, 5);
-                    if (forceEraser) return;
-                    inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
                 }
+
+                // 普通触摸（笔或手指写字）
+                isLastTouchEraser = false;
+                largeTouchDetectionCount = 0; // 重置大触摸点计数
+                inkCanvas.EraserShape =
+                    forcePointEraser ? new EllipseStylusShape(50, 50) : new EllipseStylusShape(5, 5);
+                if (forceEraser) return;
+                inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
             }
         }
 
+        /// <summary>
+        /// 启动手掌橡皮模式
+        /// </summary>
+        private void StartPalmEraser(TouchEventArgs e, double width) {
+            if (isPalmErasing) return; // 已经在手掌橡皮模式中
+
+            isPalmErasing = true;
+            palmTouchDeviceId = e.TouchDevice.Id;
+            palmEraserWidth = Math.Max(width, 40); // 最小宽度40
+            isEraserCircleShape = Settings.Canvas.EraserShapeType == 0;
+            isUsingStrokesEraser = false;
+
+            // 保存当前编辑模式
+            editModeBeforePalmEraser = inkCanvas.EditingMode;
+
+            // 设置为无编辑模式，我们自己处理擦除
+            inkCanvas.EditingMode = InkCanvasEditingMode.None;
+
+            // 显示橡皮擦覆盖层
+            GridEraserOverlay.Visibility = Visibility.Visible;
+
+            // 初始化增量命中测试器
+            var eraserHeight = palmEraserWidth * 56 / 38; // 保持板擦的宽高比
+            palmHitTester = inkCanvas.Strokes.GetIncrementalStrokeHitTester(
+                new RectangleStylusShape(palmEraserWidth, eraserHeight));
+            palmHitTester.StrokeHit += PalmEraser_StrokeHit;
+
+            // 设置缩放矩阵用于绘制橡皮擦
+            var scaleX = palmEraserWidth / 38;
+            var scaleY = eraserHeight / 56;
+            palmScaleMatrix = new Matrix();
+            palmScaleMatrix.ScaleAt(scaleX, scaleY, 0, 0);
+
+            // 启用位图缓存以提高性能
+            EraserOverlay_DrawingVisual.CacheMode = new BitmapCache();
+
+            // 绘制初始橡皮擦形状
+            var touchPoint = e.GetTouchPoint(Main_Grid).Position;
+            DrawPalmEraserFeedback(touchPoint);
+            palmHitTester.AddPoint(touchPoint);
+
+            palmTouchStartPoint = touchPoint;
+
+            LogHelper.WriteLogToFile($"Palm eraser started, width: {palmEraserWidth}", LogHelper.LogType.Trace);
+        }
+
+        /// <summary>
+        /// 处理手掌橡皮的触摸移动
+        /// </summary>
+        private void Main_Grid_TouchMove_PalmEraser(object sender, TouchEventArgs e) {
+            if (!isPalmErasing) return;
+            if (e.TouchDevice.Id != palmTouchDeviceId) return;
+
+            var touchPoint = e.GetTouchPoint(Main_Grid).Position;
+
+            // 绘制橡皮擦反馈
+            DrawPalmEraserFeedback(touchPoint);
+
+            // 添加点到命中测试器进行擦除
+            palmHitTester?.AddPoint(touchPoint);
+        }
+
+        /// <summary>
+        /// 处理手掌橡皮的触摸抬起
+        /// </summary>
+        private void Main_Grid_TouchUp_PalmEraser(object sender, TouchEventArgs e) {
+            if (!isPalmErasing) return;
+            if (e.TouchDevice.Id != palmTouchDeviceId) return;
+
+            EndPalmEraser();
+        }
+
+        /// <summary>
+        /// 结束手掌橡皮模式
+        /// </summary>
+        private void EndPalmEraser() {
+            if (!isPalmErasing) return;
+
+            isPalmErasing = false;
+            palmTouchDeviceId = -1;
+
+            // 重置手掌橡皮相关标志
+            isLastTouchEraser = false;
+            largeTouchDetectionCount = 0;
+
+            // 隐藏橡皮擦覆盖层
+            GridEraserOverlay.Visibility = Visibility.Collapsed;
+
+            // 清除橡皮擦反馈图形
+            var ct = EraserOverlay_DrawingVisual.DrawingVisual.RenderOpen();
+            ct.DrawRectangle(new SolidColorBrush(Colors.Transparent), null, new Rect(0, 0, ActualWidth, ActualHeight));
+            ct.Close();
+
+            // 结束命中测试
+            if (palmHitTester != null) {
+                palmHitTester.StrokeHit -= PalmEraser_StrokeHit;
+                palmHitTester.EndHitTesting();
+                palmHitTester = null;
+            }
+
+            // 提交擦除历史
+            if (ReplacedStroke != null || AddedStroke != null) {
+                timeMachine.CommitStrokeEraseHistory(ReplacedStroke, AddedStroke);
+                AddedStroke = null;
+                ReplacedStroke = null;
+            }
+
+            // 恢复编辑模式为书写模式
+            if (!forceEraser) {
+                inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
+            }
+
+            LogHelper.WriteLogToFile("Palm eraser ended", LogHelper.LogType.Trace);
+        }
+
+        /// <summary>
+        /// 绘制手掌橡皮反馈图形
+        /// </summary>
+        private void DrawPalmEraserFeedback(Point position) {
+            var ct = EraserOverlay_DrawingVisual.DrawingVisual.RenderOpen();
+            var mt = palmScaleMatrix;
+            var eraserHeight = palmEraserWidth * 56 / 38;
+            mt.Translate(position.X - palmEraserWidth / 2, position.Y - eraserHeight / 2);
+            ct.PushTransform(new MatrixTransform(mt));
+            // 根据形状类型选择绘制圆形或矩形橡皮擦
+            ct.DrawDrawing(FindResource(isEraserCircleShape ? "EraserCircleDrawingGroup" : "EraserDrawingGroup") as DrawingGroup);
+            ct.Pop();
+            ct.Close();
+        }
+
+        /// <summary>
+        /// 手掌橡皮的笔画命中事件处理
+        /// </summary>
+        private void PalmEraser_StrokeHit(object sender, StrokeHitEventArgs args) {
+            StrokeCollection eraseResult = args.GetPointEraseResults();
+            StrokeCollection strokesToReplace = new StrokeCollection { args.HitStroke };
+
+            // 过滤掉锁定的笔画
+            var filtered2Replace = strokesToReplace.Where(stroke => !stroke.ContainsPropertyData(IsLockGuid)).ToArray();
+            if (filtered2Replace.Length == 0) return;
+
+            var filteredResult = eraseResult.Where(stroke => !stroke.ContainsPropertyData(IsLockGuid)).ToArray();
+
+            if (filteredResult.Length > 0) {
+                inkCanvas.Strokes.Replace(new StrokeCollection(filtered2Replace), new StrokeCollection(filteredResult));
+            } else {
+                inkCanvas.Strokes.Remove(new StrokeCollection(filtered2Replace));
+            }
+        }
+
+        /// <summary>
+        /// 获取触摸边界的有效宽度（用于手掌检测）
+        /// </summary>
         public double GetTouchBoundWidth(TouchEventArgs e) {
-            var args = e.GetTouchPoint(null).Bounds;
-            if (!Settings.Advanced.IsQuadIR) return args.Width;
-            else return Math.Sqrt(args.Width * args.Height);
+            var bounds = e.GetTouchPoint(null).Bounds;
+
+            // 对于四点红外屏，使用面积的平方根
+            if (Settings.Advanced.IsQuadIR) {
+                return Math.Sqrt(bounds.Width * bounds.Height);
+            }
+
+            return bounds.Width;
+        }
+
+        /// <summary>
+        /// 判断触摸是否可能是手掌
+        /// </summary>
+        /// <param name="e">触摸事件参数</param>
+        /// <param name="detectedWidth">检测到的有效宽度</param>
+        /// <returns>是否判定为手掌触摸</returns>
+        private bool IsPalmTouch(TouchEventArgs e, out double detectedWidth) {
+            var bounds = e.GetTouchPoint(null).Bounds;
+            detectedWidth = GetTouchBoundWidth(e);
+
+            // 基础条件：触摸宽度必须大于基准值
+            if (detectedWidth <= BoundsWidth) {
+                largeTouchDetectionCount = 0; // 重置计数
+                return false;
+            }
+
+            double eraserThresholdValue = Settings.Startup.IsEnableNibMode
+                ? Settings.Advanced.NibModeBoundsWidthThresholdValue
+                : Settings.Advanced.FingerModeBoundsWidthThresholdValue;
+
+            // 进一步判断：触摸宽度超过阈值
+            if (detectedWidth > BoundsWidth * eraserThresholdValue) {
+                // 额外判断：检查触摸面积
+                // 手掌触摸通常面积较大，而笔尖触摸面积较小
+                double area = bounds.Width * bounds.Height;
+                double minPalmArea = BoundsWidth * BoundsWidth * eraserThresholdValue;
+
+                if (area >= minPalmArea) {
+                    // 增加大触摸点计数
+                    largeTouchDetectionCount++;
+
+                    // 如果连续检测次数达到阈值，或者面积非常大（肯定是手掌），则判定为手掌
+                    // 面积非常大定义为：阈值的2倍
+                    bool isHugeArea = area >= minPalmArea * 2;
+
+                    if (largeTouchDetectionCount >= PALM_DETECTION_THRESHOLD || isHugeArea) {
+                        // 计算有效的橡皮擦宽度
+                        detectedWidth *= (Settings.Startup.IsEnableNibMode
+                            ? Settings.Advanced.NibModeBoundsWidthEraserSize
+                            : Settings.Advanced.FingerModeBoundsWidthEraserSize);
+
+                        if (Settings.Advanced.IsSpecialScreen) {
+                            detectedWidth *= Settings.Advanced.TouchMultiplier;
+                        }
+
+                        return true;
+                    }
+                }
+            } else {
+                largeTouchDetectionCount = 0; // 重置计数
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 判断触摸是否可能是墨迹擦（介于笔和手掌之间的触摸）
+        /// </summary>
+        private bool IsStrokeEraserTouch(TouchEventArgs e) {
+            var bounds = e.GetTouchPoint(null).Bounds;
+            double width = GetTouchBoundWidth(e);
+
+            // 触摸宽度在基准值和手掌阈值之间
+            if (width <= BoundsWidth) {
+                return false;
+            }
+
+            double eraserThresholdValue = Settings.Startup.IsEnableNibMode
+                ? Settings.Advanced.NibModeBoundsWidthThresholdValue
+                : Settings.Advanced.FingerModeBoundsWidthThresholdValue;
+
+            // 在基准宽度和阈值之间的触摸认为是墨迹擦
+            return width <= BoundsWidth * eraserThresholdValue;
         }
 
         private HashSet<int> dec = new HashSet<int>();
@@ -339,7 +628,7 @@ namespace Ink_Canvas {
         }
 
         private Matrix _cachedManipulationMatrix = Matrix.Identity;
-        
+
         private void Main_Grid_ManipulationDelta(object sender, ManipulationDeltaEventArgs e) {
             if (isInMultiTouchMode || !Settings.Gesture.IsEnableTwoFingerGesture) return;
             if ((dec.Count >= 2 && (Settings.PowerPointSettings.IsEnableTwoFingerGestureInPresentationMode ||
@@ -372,7 +661,7 @@ namespace Ink_Canvas {
                 var enableTwoFingerZoom = Settings.Gesture.IsEnableTwoFingerZoom;
                 var scaleX = md.Scale.X;
                 var scaleY = md.Scale.Y;
-                
+
                 if (strokeCount != 0) {
                     foreach (var stroke in strokes) {
                         stroke.Transform(_cachedManipulationMatrix, false);
