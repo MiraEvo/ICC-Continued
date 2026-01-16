@@ -238,10 +238,18 @@ namespace Ink_Canvas {
             var val = ViewboxFloatingBarScaleTransformValueSlider.Value;
 
             // 更新 FloatingBarViewModel 的缩放
+            var scale = val > 0.5 && val < 1.25 ? val : val <= 0.5 ? 0.5 : val >= 1.25 ? 1.25 : 1;
             if (_floatingBarViewModel != null)
             {
-                var scale = val > 0.5 && val < 1.25 ? val : val <= 0.5 ? 0.5 : val >= 1.25 ? 1.25 : 1;
                 _floatingBarViewModel.UpdateScale(scale);
+            }
+
+            // 同时更新 ViewboxFloatingBar 的缩放
+            var st = ViewboxFloatingBar.LayoutTransform as ScaleTransform;
+            if (st != null)
+            {
+                st.ScaleX = scale;
+                st.ScaleY = scale;
             }
 
             // auto align
