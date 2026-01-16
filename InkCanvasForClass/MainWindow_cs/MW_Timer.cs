@@ -222,7 +222,7 @@ namespace Ink_Canvas {
                            ForegroundWindowInfo.WindowRect().Width >= SystemParameters.WorkArea.Width - 16) {
                     if (!unfoldFloatingBarByUser && !isFloatingBarFolded) FoldFloatingBar_MouseUp(null, null);
                     // MSWhiteboard
-                } else if (Settings.Automation.IsAutoFoldInMSWhiteboard && (windowProcessName == "MicrosoftWhiteboard" || 
+                } else if (Settings.Automation.IsAutoFoldInMSWhiteboard && (windowProcessName == "MicrosoftWhiteboard" ||
                                                                             windowProcessName == "msedgewebview2")) {
                     if (!unfoldFloatingBarByUser && !isFloatingBarFolded) FoldFloatingBar_MouseUp(null, null);
                 // 中原旧版白板自动折叠
@@ -270,7 +270,12 @@ namespace Ink_Canvas {
                     if (!Settings.Automation.IsAutoFoldInPPTSlideShow && isFloatingBarFolded && !foldFloatingBarByUser)
                         UnFoldFloatingBar_MouseUp(new object(), null);
                 } else {
-                    if (isFloatingBarFolded && !foldFloatingBarByUser) UnFoldFloatingBar_MouseUp(new object(), null);
+                    if (isFloatingBarFolded && !foldFloatingBarByUser)
+                    {
+                        pointDesktop = new Point(-1, -1);
+                        pointPPT = new Point(-1, -1);
+                        UnFoldFloatingBar_MouseUp(new object(), null);
+                    }
                     unfoldFloatingBarByUser = false;
                 }
             }

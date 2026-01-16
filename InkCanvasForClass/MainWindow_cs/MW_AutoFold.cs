@@ -51,6 +51,9 @@ namespace Ink_Canvas {
 
             if (isShouldRejectAction) return;
 
+            pointDesktop = new Point(-1, -1);
+            pointPPT = new Point(-1, -1);
+
             // FloatingBarIcons_MouseUp_New(sender);
             if (sender == null)
                 foldFloatingBarByUser = false;
