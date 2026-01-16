@@ -19,7 +19,7 @@ namespace Ink_Canvas.Models.Settings
         private bool _enableShapeSmoothing = false;
         private int _resamplePointCount = 48;
         private bool _enableAdaptiveResampling = true;
-        private double _geometryValidationStrength = 0.3;
+        private double _geometryValidationStrength = 0.1; // 降低默认验证强度
 
         /// <summary>
         /// 是否启用墨迹转形状
