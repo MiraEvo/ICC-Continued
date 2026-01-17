@@ -178,7 +178,7 @@ namespace Ink_Canvas {
             if (BorderStrokeSelectionToolButtonMouseDown != (Border)sender) return;
 
             MatrixStrokes((m, cent) => {
-                m.RotateAt((((Border)sender).Name=="BorderImageRotate45"?45:90) * (StrokesRotateClockwise == 0 ? 1 : -1), cent.X, cent.Y);
+                m.RotateAt((((Border)sender).Name=="BorderImageRotate45"?45.0:90.0) * (StrokesRotateClockwise == 0 ? 1.0 : -1.0), cent.X, cent.Y);
                 return m;
             });
 

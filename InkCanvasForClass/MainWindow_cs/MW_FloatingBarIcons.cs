@@ -29,6 +29,7 @@ using Ink_Canvas.Helpers;
 using Ink_Canvas.Popups;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -1265,8 +1266,7 @@ namespace Ink_Canvas {
                 Fold_Icon
             };
             var barHeight = Settings.Appearance.FloatingBarButtonLabelVisibility ? 36 : 28;
-            foreach (var iconElement in IconsArray) {
-                var elem = (SimpleStackPanel)iconElement;
+            foreach (SimpleStackPanel elem in IconsArray.Cast<SimpleStackPanel>()) {
                 if (elem.Children[0] is Image) {
                     ((Image)elem.Children[0]).Margin = new Thickness(0, Settings.Appearance.FloatingBarButtonLabelVisibility ? 3 : 5, 0, 0);
                     ((Image)elem.Children[0]).Height = Settings.Appearance.FloatingBarButtonLabelVisibility ? 17 : 15;

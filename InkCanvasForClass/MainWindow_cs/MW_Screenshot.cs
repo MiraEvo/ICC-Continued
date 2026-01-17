@@ -425,7 +425,7 @@ namespace Ink_Canvas {
             return icn;
         }
 
-        public class WindowInformation {
+        public class WindowInformation : IDisposable {
             public string Title { get; set; }
             public Bitmap WindowBitmap { get; set; }
             public Icon AppIcon { get; set; }
@@ -441,6 +441,27 @@ namespace Ink_Canvas {
             public int WindowDPI { get; set; }
             public int SystemDPI { get; set; }
             public double DPIScale { get; set; }
+
+            private bool _disposed = false;
+
+            public void Dispose() {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing) {
+                if (!_disposed) {
+                    if (disposing) {
+                        WindowBitmap?.Dispose();
+                        AppIcon?.Dispose();
+                    }
+                    _disposed = true;
+                }
+            }
+
+            ~WindowInformation() {
+                Dispose(false);
+            }
         }
 
         public struct WINDOWPLACEMENT {
@@ -568,9 +589,6 @@ namespace Ink_Canvas {
                         // 釋放HDC
                         memoryGraphics.ReleaseHdc(hdc);
 
-                        // 嘗試調用GC回收叻色
-                        System.GC.Collect();
-                        System.GC.WaitForPendingFinalizers();
                         return true;
                     }),
                     IntPtr.Zero)) return new WindowInformation[] { };

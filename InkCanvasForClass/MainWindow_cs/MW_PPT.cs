@@ -455,9 +455,9 @@ namespace Ink_Canvas {
             }
 
             var lsp = Settings.PowerPointSettings.PPTLSButtonPosition;
-            LeftSidePanelForPPTNavigation.Margin = new Thickness(0, 0, 0, lsp*2);
+            LeftSidePanelForPPTNavigation.Margin = new Thickness(0, 0, 0, (double)lsp * 2);
             var rsp = Settings.PowerPointSettings.PPTRSButtonPosition;
-            RightSidePanelForPPTNavigation.Margin = new Thickness(0, 0, 0, rsp*2);
+            RightSidePanelForPPTNavigation.Margin = new Thickness(0, 0, 0, (double)rsp * 2);
 
             var dopt = Settings.PowerPointSettings.PPTButtonsDisplayOption.ToString();
             char[] doptc = dopt.ToCharArray();
@@ -559,7 +559,7 @@ namespace Ink_Canvas {
                         if (slideWidth / slideHeight < 1.65) {
 
                         }
-                    } else if (screenRatio == -256 / 135) { }
+                    } else if (screenRatio == -256.0 / 135.0) { }
 
                     lastDesktopInkColor = 1;
 

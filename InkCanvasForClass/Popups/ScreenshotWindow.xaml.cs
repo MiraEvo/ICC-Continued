@@ -352,18 +352,27 @@ namespace Ink_Canvas.Popups
                     var bitmapHeight = windowInformation.WindowBitmap.Height;
                     var w = windowInformation.WindowBitmap.Width * (226D / bitmapHeight);
                     var allonecolor = await AllOneColorAsync(windowInformation.WindowBitmap);
+                    
+                    // Clone the bitmap region we need before disposing
+                    var clonedBitmap = windowInformation.WindowBitmap.Clone(windowInformation.ContentRect, windowInformation.WindowBitmap.PixelFormat);
+                    var clonedIcon = windowInformation.AppIcon?.Clone() as Icon;
+                    
                     _winInfos.Add(new WinInfo() {
                         Title = windowInformation.Title,
-                        Snapshot = BitmapToImageSource(windowInformation.WindowBitmap.Clone(windowInformation.ContentRect,windowInformation.WindowBitmap.PixelFormat)),
+                        Snapshot = BitmapToImageSource(clonedBitmap),
                         Handle = windowInformation.hwnd,
                         OriginBitmap = windowInformation.WindowBitmap,
-                        Icon = windowInformation.AppIcon == null ? new BitmapImage(new Uri("pack://application:,,,/Resources/Icons-png/classic-icons/program-icon.png")) : IconToImageSource(windowInformation.AppIcon),
+                        Icon = clonedIcon == null ? new BitmapImage(new Uri("pack://application:,,,/Resources/Icons-png/classic-icons/program-icon.png")) : IconToImageSource(clonedIcon),
                         Width = w,
                         TextBlockWidth = w - 48 - 8,
                         IsAllOneColor = allonecolor,
                         IsDisplayFailedBorder = allonecolor,
                         IsHidden = settings.Snapshot.OnlySnapshotMaximizeWindow,
                     });
+                    
+                    // Dispose the WindowInformation object to free resources
+                    windowInformation.Dispose();
+                    
                     if (Array.IndexOf(wins, windowInformation)>= wins.Length - 1) _ = Dispatcher.InvokeAsync(() => {
                         WindowScreenshotWindowsGrid.Effect = null;
                         WindowsSnapshotLoadingOverlay.Visibility = Visibility.Collapsed;});

@@ -596,7 +596,7 @@ namespace Ink_Canvas {
                 // 额外判断：检查触摸面积
                 // 手掌触摸通常面积较大，而笔尖触摸面积较小
                 double area = bounds.Width * bounds.Height;
-                double minPalmArea = BoundsWidth * BoundsWidth * eraserThresholdValue;
+                double minPalmArea = (double)BoundsWidth * BoundsWidth * eraserThresholdValue;
 
                 if (area >= minPalmArea) {
                     // 增加大触摸点计数
