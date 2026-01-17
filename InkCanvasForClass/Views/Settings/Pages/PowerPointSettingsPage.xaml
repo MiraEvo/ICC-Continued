@@ -5,120 +5,426 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
              xmlns:local="clr-namespace:Ink_Canvas.Views.Settings.Pages"
+             xmlns:converters="clr-namespace:Ink_Canvas.Converter"
              mc:Ignorable="d"
-             d:DesignHeight="800" d:DesignWidth="600"
+             d:DesignHeight="2000" d:DesignWidth="600"
              Background="Transparent"
              Foreground="#FAFAFA"
              ui:ThemeManager.RequestedTheme="Dark">
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <!-- 颜色定义 -->
-            <Color x:Key="CardBackgroundColor">#2D2D30</Color>
-            <Color x:Key="AccentColor">#60A5FA</Color>
-            <Color x:Key="PrimaryTextColor">#FAFAFA</Color>
-            <Color x:Key="SecondaryTextColor">#A1A1AA</Color>
-            <Color x:Key="BorderColor">#3F3F46</Color>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="SettingsPageStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
 
-            <!-- 画刷定义 -->
-            <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
-            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
-            <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}"/>
-            <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}"/>
-            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
-
-            <!-- 页面标题样式 -->
-            <Style x:Key="PageTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="28"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-                <Setter Property="Margin" Value="0,0,0,24"/>
+            <!-- Admin Tag Style -->
+            <Style x:Key="AdminTagStyle" TargetType="Border" BasedOn="{StaticResource NewFeatureTagStyle}">
+                <Setter Property="Background" Value="#33F59E0B"/>
+                <Setter Property="BorderBrush" Value="#F59E0B"/>
+            </Style>
+            <Style x:Key="AdminTagTextStyle" TargetType="TextBlock" BasedOn="{StaticResource NewFeatureTagTextStyle}">
+                <Setter Property="Foreground" Value="#F59E0B"/>
             </Style>
 
-            <!-- 设置卡片容器样式 -->
-            <Style x:Key="SettingsCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="CornerRadius" Value="8"/>
-                <Setter Property="Padding" Value="16"/>
-                <Setter Property="Margin" Value="0,0,0,8"/>
+            <!-- Experimental Tag Style -->
+            <Style x:Key="ExperimentalTagStyle" TargetType="Border" BasedOn="{StaticResource NewFeatureTagStyle}">
+                <Setter Property="Background" Value="#33EF4444"/>
+                <Setter Property="BorderBrush" Value="#EF4444"/>
+            </Style>
+            <Style x:Key="ExperimentalTagTextStyle" TargetType="TextBlock" BasedOn="{StaticResource NewFeatureTagTextStyle}">
+                <Setter Property="Foreground" Value="#EF4444"/>
             </Style>
 
-            <!-- 设置项标题样式 -->
-            <Style x:Key="SettingsTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-
-            <!-- 设置项描述样式 -->
-            <Style x:Key="SettingsDescriptionStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
-                <Setter Property="TextWrapping" Value="Wrap"/>
-                <Setter Property="Margin" Value="0,4,0,0"/>
-            </Style>
-
-            <!-- 设置分组标题样式 -->
-            <Style x:Key="SettingsGroupTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="13"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Margin" Value="0,20,0,12"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-            </Style>
-
-            <!-- 图标样式 -->
-            <Style x:Key="SettingsIconStyle" TargetType="ui:FontIcon">
-                <Setter Property="FontSize" Value="20"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-                <Setter Property="Margin" Value="0,0,16,0"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
+            <converters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel>
-        <TextBlock Text="PPT" Style="{StaticResource PageTitleStyle}"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
+        <StackPanel Margin="0,0,12,24">
+            <TextBlock Text="PPT" Style="{StaticResource PageTitleStyle}"/>
 
-        <!-- 演示文稿设置 -->
-        <TextBlock Text="演示文稿设置" Style="{StaticResource SettingsGroupTitleStyle}"/>
+            <TextBlock Text="此部分的设置项将会在幻灯片播放时使用，优先级高于其他设置项"
+                       Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,16"/>
 
-        <!-- 自动进入PPT模式 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE8A1;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="自动进入PPT模式" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="检测到PPT演示时自动切换到演示模式" Style="{StaticResource SettingsDescriptionStyle}"/>
+            <!-- PowerPoint Support -->
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Source="/InkCanvasForClass;component/Resources/Icons-png/ppt_icon.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Microsoft PowerPoint 支持" Style="{StaticResource SettingsTitleStyle}"/>
+                    </StackPanel>
+                    <ui:ToggleSwitch Grid.Column="2" VerticalAlignment="Center"
+                                     IsOn="{Binding PowerPoint.PowerPointSupport, Mode=TwoWay}"/>
+                </Grid>
+            </Border>
+
+            <!-- WPS Support -->
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Source="/InkCanvasForClass;component/Resources/Icons-png/wps_icon.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="WPS 支持" Style="{StaticResource SettingsTitleStyle}"/>
+                    </StackPanel>
+                    <ui:ToggleSwitch Grid.Column="2" VerticalAlignment="Center"
+                                     IsOn="{Binding PowerPoint.IsSupportWPS, Mode=TwoWay}"/>
+                </Grid>
+            </Border>
+
+            <!-- WPS Warning -->
+            <Border Background="#33F59E0B" BorderBrush="#F59E0B" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,8"
+                    Visibility="{Binding PowerPoint.IsSupportWPS, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ui:FontIcon Glyph="&#xE7BA;" Foreground="#F59E0B" FontSize="20" VerticalAlignment="Top" Margin="0,2,16,0"/>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="不建议使用WPS" FontWeight="Bold" Foreground="#F59E0B" FontSize="14" Margin="0,0,0,4"/>
+                        <TextBlock Text="由于WPS像素级抄袭Office，并且抄的一坨狗屎，开启后会导致退出WPS时卡顿，请谨慎开启！"
+                                   TextWrapping="Wrap" Foreground="#FAFAFA"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <TextBlock Text="# 可支持 WPS，但目前无法同时支持 MSOffice 和 WPS。若要启用WPS支持，请确保 WPS 是否在“配置工具”中开启了“WPS Office 兼容第三方系统和软件”选项，否则将无法识别到WPS！"
+                       Style="{StaticResource SettingsDescriptionStyle}" Margin="0,0,0,16"/>
+
+            <!-- PPT Enhanced Support -->
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="PPT 联动增强" Style="{StaticResource SettingsTitleStyle}"/>
+                            <Border Style="{StaticResource ExperimentalTagStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:FontIcon Glyph="&#xE7C1;" FontSize="10" Foreground="#EF4444" Margin="0,0,4,0"/>
+                                    <TextBlock Text="实验性选项" Style="{StaticResource ExperimentalTagTextStyle}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <ui:ToggleSwitch Grid.Column="1" VerticalAlignment="Center"
+                                         IsOn="{Binding PowerPoint.IsEnablePPTEnhancedSupport, Mode=TwoWay}"/>
+                    </Grid>
+                    <TextBlock Text="# 基于智绘教 Inkeys 的 PPT 演示助手 3 技术方案，提供增强的 COM 兼容性。适用于 COM 注册损坏或混装 Office 和 WPS 的环境。"
+                               Style="{StaticResource SettingsDescriptionStyle}"/>
+
+                    <!-- Enhanced Support Details -->
+                    <Border Background="#1A1A1A" CornerRadius="6" Padding="12" Margin="0,12,0,0"
+                            Visibility="{Binding PowerPoint.IsEnablePPTEnhancedSupport, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock Text="功能特性：" FontWeight="Bold" Margin="0,0,0,8"/>
+                            <TextBlock Text="• 识别 COM 注册损坏的 PowerPoint 和 WPS" Margin="0,0,0,4" Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <TextBlock Text="• 动态切换，优先绑定最上层的放映窗口" Margin="0,0,0,4" Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <TextBlock Text="• 兼容至 Microsoft PowerPoint 2007 和 Kingsoft WPS 2013" Margin="0,0,0,4" Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <TextBlock Text="• 轮询和事件注册双模式，应对 COM 损坏严重的情况" Margin="0,0,0,4" Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <TextBlock Text="• 支持在 WPS 未勾选「兼容第三方系统和软件」时连接" Margin="0,0,0,4" Foreground="{StaticResource SecondaryTextBrush}"/>
+
+                            <Border Background="#2D2D30" CornerRadius="4" Padding="8" Margin="0,8,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ui:FontIcon Glyph="&#xE946;" Foreground="{StaticResource AccentBrush}" Margin="0,0,8,0" VerticalAlignment="Top"/>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="技术参考" FontWeight="Bold" Margin="0,0,0,4"/>
+                                        <TextBlock Text="本功能参考了智绘教 Inkeys 的 PPT 演示助手 3 实现方案。" TextWrapping="Wrap" Foreground="{StaticResource SecondaryTextBrush}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-                <ui:ToggleSwitch Grid.Column="2" VerticalAlignment="Center"
-                                 IsOn="{Binding PowerPoint.PowerPointSupport, Mode=TwoWay}"/>
-            </Grid>
-        </Border>
+            </Border>
 
-        <!-- 显示PPT导航按钮 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE76B;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="显示PPT导航按钮" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="在PPT模式下显示上一页/下一页按钮" Style="{StaticResource SettingsDescriptionStyle}"/>
+            <!-- Registry Hacks -->
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="PPT放映时不显示自带工具栏" Style="{StaticResource SettingsTitleStyle}"/>
+                            <Border Style="{StaticResource AdminTagStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:FontIcon Glyph="&#xE7EF;" FontSize="10" Foreground="#F59E0B" Margin="0,0,4,0"/>
+                                    <TextBlock Text="管理员" Style="{StaticResource AdminTagTextStyle}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <ui:ToggleSwitch Grid.Column="1" VerticalAlignment="Center"
+                                         IsOn="{Binding PowerPoint.RegistryShowSlideShowToolbar, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="PPT放映结束时是否显示黑色背景页面" Style="{StaticResource SettingsTitleStyle}"/>
+                            <Border Style="{StaticResource AdminTagStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:FontIcon Glyph="&#xE7EF;" FontSize="10" Foreground="#F59E0B" Margin="0,0,4,0"/>
+                                    <TextBlock Text="管理员" Style="{StaticResource AdminTagTextStyle}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <ui:ToggleSwitch Grid.Column="1" VerticalAlignment="Center"
+                                         IsOn="{Binding PowerPoint.RegistryShowBlackScreenLastSlideShow, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="PPT强制禁用两侧工具栏按钮" Style="{StaticResource SettingsTitleStyle}"/>
+                            <Border Style="{StaticResource AdminTagStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:FontIcon Glyph="&#xE7EF;" FontSize="10" Foreground="#F59E0B" Margin="0,0,4,0"/>
+                                    <TextBlock Text="管理员" Style="{StaticResource AdminTagTextStyle}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <ui:ToggleSwitch Grid.Column="1" VerticalAlignment="Center"
+                                         IsOn="{Binding PowerPoint.RegistryDisableSideToolbar, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <TextBlock Text="# 以上功能会修改注册表，需要管理员权限运行。操作前请先备份注册表。选项仅最新Office 365，其他版本未经测试。"
+                               Style="{StaticResource SettingsDescriptionStyle}"/>
                 </StackPanel>
-                <ui:ToggleSwitch Grid.Column="2" VerticalAlignment="Center"
-                                 IsOn="{Binding PowerPoint.IsShowPPTNavButton, Mode=TwoWay}"/>
-            </Grid>
-        </Border>
-    </StackPanel>
+            </Border>
+
+            <!-- PPT Page Turn Buttons -->
+            <TextBlock Text="PPT翻页按钮" Style="{StaticResource SettingsGroupTitleStyle}"/>
+
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Preview -->
+                    <Border Grid.Column="0" Height="200" CornerRadius="6" ClipToBounds="True" VerticalAlignment="Top">
+                        <Grid>
+                            <Image Source="/InkCanvasForClass;component/Resources/PresentationExample/ChineseCalligraphy.jpg" Stretch="UniformToFill"/>
+                            <!-- Fallback background if image missing -->
+                            <Border Background="#333" Panel.ZIndex="-1"/>
+
+                            <!-- Overlay Buttons Preview -->
+                            <!-- Left Bottom -->
+                            <Image Source="/InkCanvasForClass;component/Resources/PresentationExample/bottombar-white.png"
+                                   Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,20"
+                                   Visibility="{Binding PowerPoint.ShowPPTButtonLeftBottom, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Opacity="{Binding PowerPoint.BottomButtonHalfOpacity, Converter={StaticResource BooleanToOpacityConverter}}"/>
+
+                            <!-- Right Bottom -->
+                            <Image Source="/InkCanvasForClass;component/Resources/PresentationExample/bottombar-white.png"
+                                   Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,20,20"
+                                   Visibility="{Binding PowerPoint.ShowPPTButtonRightBottom, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Opacity="{Binding PowerPoint.BottomButtonHalfOpacity, Converter={StaticResource BooleanToOpacityConverter}}"/>
+
+                            <!-- Left Side -->
+                            <Image Source="/InkCanvasForClass;component/Resources/PresentationExample/sidebar-white.png"
+                                   Height="100" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"
+                                   Visibility="{Binding PowerPoint.ShowPPTButtonLeftSide, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Opacity="{Binding PowerPoint.SideButtonHalfOpacity, Converter={StaticResource BooleanToOpacityConverter}}">
+                                <Image.RenderTransform>
+                                    <TranslateTransform Y="{Binding PowerPoint.PPTLSButtonPosition}"/>
+                                </Image.RenderTransform>
+                            </Image>
+
+                            <!-- Right Side -->
+                            <Image Source="/InkCanvasForClass;component/Resources/PresentationExample/sidebar-white.png"
+                                   Height="100" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"
+                                   Visibility="{Binding PowerPoint.ShowPPTButtonRightSide, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Opacity="{Binding PowerPoint.SideButtonHalfOpacity, Converter={StaticResource BooleanToOpacityConverter}}">
+                                <Image.RenderTransform>
+                                    <TranslateTransform Y="{Binding PowerPoint.PPTRSButtonPosition}"/>
+                                </Image.RenderTransform>
+                            </Image>
+                        </Grid>
+                    </Border>
+
+                    <!-- Settings -->
+                    <StackPanel Grid.Column="2">
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="在 PPT 模式下显示翻页按钮" Style="{StaticResource SettingsTitleStyle}"/>
+                            <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.ShowPPTButton, Mode=TwoWay}"/>
+                        </Grid>
+
+                        <UniformGrid Columns="2" Margin="0,0,0,16">
+                            <CheckBox Content="左下" IsChecked="{Binding PowerPoint.ShowPPTButtonLeftBottom, Mode=TwoWay}" Margin="0,0,8,8"/>
+                            <CheckBox Content="右下" IsChecked="{Binding PowerPoint.ShowPPTButtonRightBottom, Mode=TwoWay}" Margin="0,0,8,8"/>
+                            <CheckBox Content="左侧" IsChecked="{Binding PowerPoint.ShowPPTButtonLeftSide, Mode=TwoWay}" Margin="0,0,8,8"/>
+                            <CheckBox Content="右侧" IsChecked="{Binding PowerPoint.ShowPPTButtonRightSide, Mode=TwoWay}" Margin="0,0,8,8"/>
+                        </UniformGrid>
+
+                        <!-- Sliders -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="左侧偏移" VerticalAlignment="Center"/>
+                            <Slider Grid.Column="1" Minimum="-500" Maximum="500" Value="{Binding PowerPoint.PPTLSButtonPosition, Mode=TwoWay}" Margin="12,0"/>
+                            <TextBlock Grid.Column="2" Text="{Binding PowerPoint.PPTLSButtonPosition}" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="右侧偏移" VerticalAlignment="Center"/>
+                            <Slider Grid.Column="1" Minimum="-500" Maximum="500" Value="{Binding PowerPoint.PPTRSButtonPosition, Mode=TwoWay}" Margin="12,0"/>
+                            <TextBlock Grid.Column="2" Text="{Binding PowerPoint.PPTRSButtonPosition}" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <TextBlock Text="# 调大往上偏移，调小往下偏移，修改为0不偏移，居中放置" Style="{StaticResource SettingsDescriptionStyle}" Margin="0,0,0,16"/>
+
+                        <!-- Side Options -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="两侧" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+                            <ui:SimpleStackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+                                <CheckBox Content="显示页码" IsChecked="{Binding PowerPoint.SideButtonShowPage, Mode=TwoWay}"/>
+                                <CheckBox Content="半透明" IsChecked="{Binding PowerPoint.SideButtonHalfOpacity, Mode=TwoWay}"/>
+                                <CheckBox Content="黑色背景" IsChecked="{Binding PowerPoint.SideButtonBlackBackground, Mode=TwoWay}"/>
+                            </ui:SimpleStackPanel>
+                        </Grid>
+
+                        <!-- Bottom Options -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="左下右下" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+                            <ui:SimpleStackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+                                <CheckBox Content="显示页码" IsChecked="{Binding PowerPoint.BottomButtonShowPage, Mode=TwoWay}"/>
+                                <CheckBox Content="半透明" IsChecked="{Binding PowerPoint.BottomButtonHalfOpacity, Mode=TwoWay}"/>
+                                <CheckBox Content="黑色背景" IsChecked="{Binding PowerPoint.BottomButtonBlackBackground, Mode=TwoWay}"/>
+                            </ui:SimpleStackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Other Settings -->
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <ui:SimpleStackPanel Spacing="0">
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="PPT 页码按钮可点击" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.EnablePPTButtonPageClickable, Mode=TwoWay}"/>
+                    </Grid>
+                    <TextBlock Text="# 开启该选项后，点击页码按钮可以唤起PowerPoint自带的网络缩略图视图。WPS不支持该功能，开启也没用。"
+                               Style="{StaticResource SettingsDescriptionStyle}" Margin="0,-10,0,16"/>
+
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="进入 PPT 放映时自动进入批注模式" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.IsAutoEnterAnnotationMode, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="允许幻灯片模式下的双指手势" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.IsEnableTwoFingerGestureInPresentationMode, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="自动幻灯片截屏" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.IsAutoSaveScreenShotInPowerPoint, Mode=TwoWay}"/>
+                    </Grid>
+                    <TextBlock Text="# 开启 自动幻灯片截屏 后将会幻灯片有墨迹翻页自动截屏"
+                               Style="{StaticResource SettingsDescriptionStyle}" Margin="0,-10,0,16"/>
+
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="自动保存幻灯片墨迹" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.IsAutoSaveStrokesInPowerPoint, Mode=TwoWay}"/>
+                    </Grid>
+                    <TextBlock Text="# 开启 自动保存幻灯片墨迹 后将在结束幻灯片放映时自动将保存已有墨迹，并在下次打开时自动加载（文件名和幻灯片页数都要相同）"
+                               Style="{StaticResource SettingsDescriptionStyle}" Margin="0,-10,0,16"/>
+
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="记忆并提示上次播放位置" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.IsRememberLastPlaybackPosition, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="提示隐藏幻灯片" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.IsNotifyHiddenPage, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="提示是否已启用自动播放" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.IsNotifyAutoPlayPresentation, Mode=TwoWay}"/>
+                    </Grid>
+                </ui:SimpleStackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

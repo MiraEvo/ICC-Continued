@@ -28,6 +28,39 @@ namespace Ink_Canvas.Models.Settings
         private bool _isEnablePPTEnhancedSupport = false;
         private bool _registryShowSlideShowToolbar = false;
         private bool _registryShowBlackScreenLastSlideShow = false;
+        private bool _registryDisableSideToolbar = false;
+        private bool _isAutoEnterAnnotationMode = true;
+        private bool _isRememberLastPlaybackPosition = false;
+
+        /// <summary>
+        /// 注册表：强制禁用两侧工具栏按钮
+        /// </summary>
+        [JsonProperty("registryDisableSideToolbar")]
+        public bool RegistryDisableSideToolbar
+        {
+            get => _registryDisableSideToolbar;
+            set => SetProperty(ref _registryDisableSideToolbar, value);
+        }
+
+        /// <summary>
+        /// 进入 PPT 放映时自动进入批注模式
+        /// </summary>
+        [JsonProperty("isAutoEnterAnnotationMode")]
+        public bool IsAutoEnterAnnotationMode
+        {
+            get => _isAutoEnterAnnotationMode;
+            set => SetProperty(ref _isAutoEnterAnnotationMode, value);
+        }
+
+        /// <summary>
+        /// 记忆并提示上次播放位置
+        /// </summary>
+        [JsonProperty("isRememberLastPlaybackPosition")]
+        public bool IsRememberLastPlaybackPosition
+        {
+            get => _isRememberLastPlaybackPosition;
+            set => SetProperty(ref _isRememberLastPlaybackPosition, value);
+        }
 
         /// <summary>
         /// 是否显示 PPT 按钮

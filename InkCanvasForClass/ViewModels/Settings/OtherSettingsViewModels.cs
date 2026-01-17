@@ -551,6 +551,117 @@ namespace Ink_Canvas.ViewModels
             get => _ppt.RegistryShowBlackScreenLastSlideShow;
             set { if (SetProperty(_ppt.RegistryShowBlackScreenLastSlideShow, value, _ppt, (p, v) => p.RegistryShowBlackScreenLastSlideShow = v)) _saveAction?.Invoke(); }
         }
+
+        public bool RegistryDisableSideToolbar
+        {
+            get => _ppt.RegistryDisableSideToolbar;
+            set { if (SetProperty(_ppt.RegistryDisableSideToolbar, value, _ppt, (p, v) => p.RegistryDisableSideToolbar = v)) _saveAction?.Invoke(); }
+        }
+
+        public bool IsAutoEnterAnnotationMode
+        {
+            get => _ppt.IsAutoEnterAnnotationMode;
+            set { if (SetProperty(_ppt.IsAutoEnterAnnotationMode, value, _ppt, (p, v) => p.IsAutoEnterAnnotationMode = v)) _saveAction?.Invoke(); }
+        }
+
+        public bool IsRememberLastPlaybackPosition
+        {
+            get => _ppt.IsRememberLastPlaybackPosition;
+            set { if (SetProperty(_ppt.IsRememberLastPlaybackPosition, value, _ppt, (p, v) => p.IsRememberLastPlaybackPosition = v)) _saveAction?.Invoke(); }
+        }
+
+        // Helper methods for bitmask options
+
+        private void UpdateOption(int optionValue, int index, bool value, Action<int> setter)
+        {
+            var str = optionValue.ToString();
+            // Ensure string is long enough (pad with '1's if needed, though default values should prevent this)
+            if (str.Length <= index) str = str.PadRight(index + 1, '1');
+
+            char[] c = str.ToCharArray();
+            c[index] = value ? '2' : '1';
+            int newValue = int.Parse(new string(c));
+
+            if (optionValue != newValue)
+            {
+                setter(newValue);
+                _saveAction?.Invoke();
+                OnPropertyChanged(string.Empty); // Refresh all properties as they might depend on this
+            }
+        }
+
+        private bool GetOption(int optionValue, int index)
+        {
+            var str = optionValue.ToString();
+            if (str.Length <= index) return false;
+            return str[index] == '2';
+        }
+
+        // PPTButtonsDisplayOption Helpers (LeftBottom, RightBottom, LeftSide, RightSide)
+
+        public bool ShowPPTButtonLeftBottom
+        {
+            get => GetOption(PPTButtonsDisplayOption, 0);
+            set => UpdateOption(_ppt.PPTButtonsDisplayOption, 0, value, v => PPTButtonsDisplayOption = v);
+        }
+
+        public bool ShowPPTButtonRightBottom
+        {
+            get => GetOption(PPTButtonsDisplayOption, 1);
+            set => UpdateOption(_ppt.PPTButtonsDisplayOption, 1, value, v => PPTButtonsDisplayOption = v);
+        }
+
+        public bool ShowPPTButtonLeftSide
+        {
+            get => GetOption(PPTButtonsDisplayOption, 2);
+            set => UpdateOption(_ppt.PPTButtonsDisplayOption, 2, value, v => PPTButtonsDisplayOption = v);
+        }
+
+        public bool ShowPPTButtonRightSide
+        {
+            get => GetOption(PPTButtonsDisplayOption, 3);
+            set => UpdateOption(_ppt.PPTButtonsDisplayOption, 3, value, v => PPTButtonsDisplayOption = v);
+        }
+
+        // PPTSButtonsOption Helpers (Side Buttons: ShowPage, HalfOpacity, BlackBackground)
+
+        public bool SideButtonShowPage
+        {
+            get => GetOption(PPTSButtonsOption, 0);
+            set => UpdateOption(_ppt.PPTSButtonsOption, 0, value, v => PPTSButtonsOption = v);
+        }
+
+        public bool SideButtonHalfOpacity
+        {
+            get => GetOption(PPTSButtonsOption, 1);
+            set => UpdateOption(_ppt.PPTSButtonsOption, 1, value, v => PPTSButtonsOption = v);
+        }
+
+        public bool SideButtonBlackBackground
+        {
+            get => GetOption(PPTSButtonsOption, 2);
+            set => UpdateOption(_ppt.PPTSButtonsOption, 2, value, v => PPTSButtonsOption = v);
+        }
+
+        // PPTBButtonsOption Helpers (Bottom Buttons: ShowPage, HalfOpacity, BlackBackground)
+
+        public bool BottomButtonShowPage
+        {
+            get => GetOption(PPTBButtonsOption, 0);
+            set => UpdateOption(_ppt.PPTBButtonsOption, 0, value, v => PPTBButtonsOption = v);
+        }
+
+        public bool BottomButtonHalfOpacity
+        {
+            get => GetOption(PPTBButtonsOption, 1);
+            set => UpdateOption(_ppt.PPTBButtonsOption, 1, value, v => PPTBButtonsOption = v);
+        }
+
+        public bool BottomButtonBlackBackground
+        {
+            get => GetOption(PPTBButtonsOption, 2);
+            set => UpdateOption(_ppt.PPTBButtonsOption, 2, value, v => PPTBButtonsOption = v);
+        }
     }
 
     /// <summary>
