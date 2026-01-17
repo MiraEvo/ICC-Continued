@@ -1874,13 +1874,16 @@ namespace Ink_Canvas.Services
                 {
                     LogHelper.WriteLogToFile($"SafeInvokeDynamicMethod：COM 服务器繁忙 '{methodName}'，建议重试", LogHelper.LogType.Warning);
                 }
-                
+                return false;
+            }
             catch (InvalidOperationException ex)
             {
                 LogHelper.WriteLogToFile($"SafeInvokeDynamicMethod：调用方法 '{methodName}' 时发生无效操作：{ex.Message}", LogHelper.LogType.Error);
                 LogHelper.NewLog(ex);
                 return false;
             }
+        }
+
         /// <summary>
         /// 检查 COM 异常是否为瞬时错误（可重试）
         /// </summary>
