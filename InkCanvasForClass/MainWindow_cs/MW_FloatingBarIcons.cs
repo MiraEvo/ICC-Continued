@@ -1478,7 +1478,7 @@ namespace Ink_Canvas {
                                         InkCanvasForInkReplay.Strokes.Remove(s);
                                     }
                                     catch (Exception ex) {
-                                        LogHelper.WriteLogToFile("Exception in MW_FloatingBarIcons.cs: " + ex.Message, LogHelper.LogType.Error);
+                                        LogHelper.WriteLogToFile("Exception in MW_FloatingBarIcons.cs (Ink replay dispatcher): " + ex, LogHelper.LogType.Error);
                                     }
 
                                     stylusPoints.Add(stylusPoint);
@@ -1508,7 +1508,7 @@ namespace Ink_Canvas {
                                         InkCanvasForInkReplay.Strokes.Remove(s);
                                     }
                                     catch (Exception ex) {
-                                        LogHelper.WriteLogToFile("Exception in MW_FloatingBarIcons.cs: " + ex.Message, LogHelper.LogType.Error);
+                                        LogHelper.WriteLogToFile("Exception in MW_FloatingBarIcons.cs (Ink replay dispatcher): " + ex, LogHelper.LogType.Error);
                                     }
 
                                     stylusPoints.Add(stylusPoint);
