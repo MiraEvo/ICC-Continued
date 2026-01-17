@@ -213,11 +213,13 @@ namespace Ink_Canvas {
                     StrokeVisualList.Remove(e.StylusDevice.Id);
                     VisualCanvasList.Remove(e.StylusDevice.Id);
                     TouchDownPointsList.Remove(e.StylusDevice.Id);
+                    StrokeVisualLastRedrawTick.Remove(e.StylusDevice.Id);
                     if (StrokeVisualList.Count == 0 || VisualCanvasList.Count == 0 || TouchDownPointsList.Count == 0) {
                         inkCanvas.Children.Clear();
                         StrokeVisualList.Clear();
                         VisualCanvasList.Clear();
                         TouchDownPointsList.Clear();
+                        StrokeVisualLastRedrawTick.Clear();
                     }
                 }
                 catch (Exception ex) {
@@ -251,7 +253,15 @@ namespace Ink_Canvas {
                     var stylusPointCollection = e.GetStylusPoints(inkCanvas);
                     foreach (var stylusPoint in stylusPointCollection)
                         strokeVisual.Add(new StylusPoint(stylusPoint.X, stylusPoint.Y, stylusPoint.PressureFactor));
-                    strokeVisual.Redraw();
+
+                    if (stylusPointCollection.Count > 0) {
+                        var tick = Environment.TickCount;
+                        if (!StrokeVisualLastRedrawTick.TryGetValue(e.StylusDevice.Id, out var lastTick)
+                            || tick - lastTick >= StrokeVisualRedrawIntervalMs) {
+                            strokeVisual.Redraw();
+                            StrokeVisualLastRedrawTick[e.StylusDevice.Id] = tick;
+                        }
+                    }
                 }
                 catch (Exception ex) {
                     LogHelper.WriteLogToFile("Error in MainWindow_StylusMove: " + ex.Message, LogHelper.LogType.Error);
@@ -264,6 +274,7 @@ namespace Ink_Canvas {
 
             var strokeVisual = new StrokeVisual(inkCanvas.DefaultDrawingAttributes.Clone());
             StrokeVisualList[id] = strokeVisual;
+            StrokeVisualLastRedrawTick[id] = 0;
             var visualCanvas = new VisualCanvas(strokeVisual);
             VisualCanvasList[id] = visualCanvas;
             inkCanvas.Children.Add(visualCanvas);
@@ -286,6 +297,9 @@ namespace Ink_Canvas {
 
         private Dictionary<int, StrokeVisual> StrokeVisualList { get; } = new Dictionary<int, StrokeVisual>();
         private Dictionary<int, VisualCanvas> VisualCanvasList { get; } = new Dictionary<int, VisualCanvas>();
+        private Dictionary<int, int> StrokeVisualLastRedrawTick { get; } = new Dictionary<int, int>();
+
+        private const int StrokeVisualRedrawIntervalMs = 8;
 
         #endregion
 

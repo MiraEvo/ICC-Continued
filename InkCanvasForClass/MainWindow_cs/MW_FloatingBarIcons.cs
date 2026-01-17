@@ -65,6 +65,10 @@ namespace Ink_Canvas {
         private static readonly SolidColorBrush CachedGhostWhiteBrush = new SolidColorBrush(Colors.GhostWhite);
         private static readonly SolidColorBrush CachedInkReplayButtonPressedBrush = new SolidColorBrush(Color.FromArgb(34, 9, 9, 11));
 
+        private int _lastUndoTick;
+        private int _lastRedoTick;
+        private const int UndoRedoMinIntervalMs = 120;
+
         #endregion
 
         #region "手勢"按鈕
@@ -347,7 +351,9 @@ namespace Ink_Canvas {
 
             if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
                 ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
-            if (sender == SymbolIconUndo && lastBorderMouseDownObject != SymbolIconUndo) return;
+            if (sender == SymbolIconUndo && lastBorderMouseDownObject != SymbolIconUndo) {
+                if (e?.StylusDevice?.TabletDevice.Type != TabletDeviceType.Touch) return;
+            }
 
             if (!SymbolIconUndo.IsEnabled) return;
             BtnUndo_Click(null, null);
@@ -359,7 +365,9 @@ namespace Ink_Canvas {
 
             if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
                 ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
-            if (sender == SymbolIconRedo && lastBorderMouseDownObject != SymbolIconRedo) return;
+            if (sender == SymbolIconRedo && lastBorderMouseDownObject != SymbolIconRedo) {
+                if (e?.StylusDevice?.TabletDevice.Type != TabletDeviceType.Touch) return;
+            }
 
             if (!SymbolIconRedo.IsEnabled) return;
             BtnRedo_Click(null, null);
@@ -1835,6 +1843,10 @@ namespace Ink_Canvas {
         }
 
         public void BtnUndo_Click(object sender, RoutedEventArgs e) {
+            var tick = Environment.TickCount;
+            if (tick - _lastUndoTick < UndoRedoMinIntervalMs) return;
+            _lastUndoTick = tick;
+
             if (inkCanvas.GetSelectedStrokes().Count != 0) {
                 GridInkCanvasSelectionCover.Visibility = Visibility.Collapsed;
                 inkCanvas.Select(new StrokeCollection());
@@ -1847,6 +1859,10 @@ namespace Ink_Canvas {
         }
 
         public void BtnRedo_Click(object sender, RoutedEventArgs e) {
+            var tick = Environment.TickCount;
+            if (tick - _lastRedoTick < UndoRedoMinIntervalMs) return;
+            _lastRedoTick = tick;
+
             if (inkCanvas.GetSelectedStrokes().Count != 0) {
                 GridInkCanvasSelectionCover.Visibility = Visibility.Collapsed;
                 inkCanvas.Select(new StrokeCollection());
