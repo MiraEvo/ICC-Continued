@@ -25,6 +25,7 @@ namespace Ink_Canvas.Models.Settings
         private bool _isAutoFoldInAdmoxWhiteboard = false;
         private bool _isAutoFoldInAdmoxBooth = false;
         private bool _isAutoFoldInQPoint = false;
+        private bool _isAutoFoldInYiYunWhiteboard = false;
         private bool _isAutoFoldInYiYunVisualPresenter = false;
         private bool _isAutoFoldInMaxHubWhiteboard = false;
         private bool _isAutoFoldInPPTSlideShow = false;
@@ -63,6 +64,7 @@ namespace Ink_Canvas.Models.Settings
             || IsAutoFoldInAdmoxWhiteboard
             || IsAutoFoldInAdmoxBooth
             || IsAutoFoldInQPoint
+            || IsAutoFoldInYiYunWhiteboard
             || IsAutoFoldInYiYunVisualPresenter
             || IsAutoFoldInMaxHubWhiteboard;
 
@@ -176,6 +178,13 @@ namespace Ink_Canvas.Models.Settings
         {
             get => _isAutoFoldInQPoint;
             set => SetProperty(ref _isAutoFoldInQPoint, value);
+        }
+
+        [JsonProperty("isAutoFoldInYiYunWhiteboard")]
+        public bool IsAutoFoldInYiYunWhiteboard
+        {
+            get => _isAutoFoldInYiYunWhiteboard;
+            set => SetProperty(ref _isAutoFoldInYiYunWhiteboard, value);
         }
 
         [JsonProperty("isAutoFoldInYiYunVisualPresenter")]

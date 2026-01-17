@@ -6,178 +6,307 @@
              xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
              xmlns:local="clr-namespace:Ink_Canvas.Views.Settings.Pages"
              mc:Ignorable="d"
-             d:DesignHeight="800" d:DesignWidth="600"
+             d:DesignHeight="1500" d:DesignWidth="600"
              Background="Transparent"
              Foreground="#FAFAFA"
              ui:ThemeManager.RequestedTheme="Dark">
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <!-- 颜色定义 -->
-            <Color x:Key="CardBackgroundColor">#2D2D30</Color>
-            <Color x:Key="AccentColor">#60A5FA</Color>
-            <Color x:Key="PrimaryTextColor">#FAFAFA</Color>
-            <Color x:Key="SecondaryTextColor">#A1A1AA</Color>
-            <Color x:Key="BorderColor">#3F3F46</Color>
-
-            <!-- 画刷定义 -->
-            <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
-            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
-            <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}"/>
-            <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}"/>
-            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
-
-            <!-- 页面标题样式 -->
-            <Style x:Key="PageTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="28"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-                <Setter Property="Margin" Value="0,0,0,24"/>
-            </Style>
-
-            <!-- 设置卡片容器样式 -->
-            <Style x:Key="SettingsCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="CornerRadius" Value="8"/>
-                <Setter Property="Padding" Value="16"/>
-                <Setter Property="Margin" Value="0,0,0,8"/>
-            </Style>
-
-            <!-- 设置项标题样式 -->
-            <Style x:Key="SettingsTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-
-            <!-- 设置项描述样式 -->
-            <Style x:Key="SettingsDescriptionStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
-                <Setter Property="TextWrapping" Value="Wrap"/>
-                <Setter Property="Margin" Value="0,4,0,0"/>
-            </Style>
-
-            <!-- 设置分组标题样式 -->
-            <Style x:Key="SettingsGroupTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="13"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Margin" Value="0,20,0,12"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-            </Style>
-
-            <!-- 图标样式 -->
-            <Style x:Key="SettingsIconStyle" TargetType="ui:FontIcon">
-                <Setter Property="FontSize" Value="20"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-                <Setter Property="Margin" Value="0,0,16,0"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-
-            <!-- 值显示样式 -->
-            <Style x:Key="SettingsValueStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="HorizontalAlignment" Value="Right"/>
-            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="SettingsPageStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel>
-        <TextBlock Text="自动化" Style="{StaticResource PageTitleStyle}"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
+        <StackPanel Margin="0,0,12,24">
+            <TextBlock Text="自动化" Style="{StaticResource PageTitleStyle}"/>
 
-        <!-- 自动化功能 -->
-        <TextBlock Text="自动化功能" Style="{StaticResource SettingsGroupTitleStyle}"/>
+            <!-- Auto Fold -->
+            <TextBlock Text="自动收纳" Style="{StaticResource SettingsGroupTitleStyle}"/>
 
-        <!-- 自动折叠 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE744;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="自动折叠" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="闲置一段时间后自动折叠工具栏" Style="{StaticResource SettingsDescriptionStyle}"/>
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <UniformGrid Columns="4" Margin="0,0,0,16">
+                        <!-- Seewo Whiteboard 5 -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="希沃白板5" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Seewo Camera -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiCamera.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="希沃展台" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiCamera, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Seewo Whiteboard 3 -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote3.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="希沃白板3" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote3, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Seewo Lite -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteLightBoard.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="希沃轻白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote3C, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Seewo Lite 5C -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote5C.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="希沃轻白板5C" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote5C, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Seewo Pinco -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/SeewoPinco.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="希沃品课" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInSeewoPincoTeacher, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Hite Whiteboard -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteBoard.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="鸿合白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInHiteTouchPro, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Hite Camera -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteCamera.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="鸿合展台" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInHiteCamera, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Hite Lite -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteLightBoard.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="鸿合轻量白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInHiteLightBoard, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- WxBoard -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/WenXiang.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="文香白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInWxBoardMain, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- MS Whiteboard -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/Whiteboard.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="微软白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInMSWhiteboard, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Admox Whiteboard -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/AdmoxWhiteboard.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="安道白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInAdmoxWhiteboard, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Admox Booth -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/AdmoxBooth.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="安道展台" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInAdmoxBooth, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- YiYun Whiteboard -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/YiYunWhiteboard.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="艺云白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInYiYunWhiteboard, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- YiYun Visual Presenter -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/YiYunVisualPresenter.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="艺云展台" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInYiYunVisualPresenter, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- MaxHub Whiteboard -->
+                        <StackPanel Margin="0,0,0,16">
+                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/MaxHubWhiteboard.png" Width="48" Height="48" Margin="0,0,0,8"/>
+                            <TextBlock Text="MaxHub白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInMaxHubWhiteboard, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="自动收纳忽略桌面EN5批注窗口" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="2" IsOn="{Binding Automation.IsAutoFoldInEasiNoteIgnoreDesktopAnno, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="/InkCanvasForClass;component/Resources/Icons-png/penUpright.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="进入“中原旧白板”时自动收纳" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="2" IsOn="{Binding Automation.IsAutoFoldInOldZyBoard, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="/InkCanvasForClass;component/Resources/Icons-png/Powerpoint.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="播放PPT时自动收纳" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="2" IsOn="{Binding Automation.IsAutoFoldInPPTSlideShow, Mode=TwoWay}"/>
+                    </Grid>
                 </StackPanel>
-                <ui:ToggleSwitch Grid.Column="2" VerticalAlignment="Center"
-                                 IsOn="{Binding Automation.IsAutoFold, Mode=TwoWay}"/>
-            </Grid>
-        </Border>
+            </Border>
 
-        <!-- 自动折叠时间 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE916;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="自动折叠时间" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="闲置多少秒后自动折叠" Style="{StaticResource SettingsDescriptionStyle}"/>
-                </StackPanel>
-                <Slider Grid.Column="2" VerticalAlignment="Center"
-                        Minimum="5" Maximum="60"
-                        Value="{Binding Automation.AutoFoldTime, Mode=TwoWay}"
-                        TickFrequency="1" IsSnapToTickEnabled="True"
-                        SmallChange="1" LargeChange="5"/>
-                <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right"
-                           Text="{Binding Automation.AutoFoldTime, StringFormat={}{0:F0}s}"
-                           Style="{StaticResource SettingsValueStyle}"/>
-            </Grid>
-        </Border>
+            <!-- Auto Kill -->
+            <TextBlock Text="自动查杀" Style="{StaticResource SettingsGroupTitleStyle}"/>
 
-        <!-- 自动保存 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE74E;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="自动保存" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="定期自动保存墨迹" Style="{StaticResource SettingsDescriptionStyle}"/>
-                </StackPanel>
-                <ui:ToggleSwitch Grid.Column="2" VerticalAlignment="Center"
-                                 IsOn="{Binding Automation.IsAutoSave, Mode=TwoWay}"/>
-            </Grid>
-        </Border>
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="/InkCanvasForClass;component/Resources/Icons-png/PPTTools.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="自动查杀希沃“PPT小工具”" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="2" IsOn="{Binding Automation.IsAutoKillPptService, Mode=TwoWay}"/>
+                    </Grid>
+                    <TextBlock Text="# 请注意，查杀 PPT 小工具会导致希沃课堂授课助手无法使用，直接进入希沃课堂授课助手安装目录删除 Office.dll 文件即可进入 PPT 放映时不会启动希沃的 PPT 工具栏。"
+                               Style="{StaticResource SettingsDescriptionStyle}" Margin="0,-8,0,16"/>
 
-        <!-- 自动保存间隔 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE916;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="自动保存间隔" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="每隔多少分钟自动保存一次" Style="{StaticResource SettingsDescriptionStyle}"/>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="自动查杀 希沃白板5" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="2" IsOn="{Binding Automation.IsAutoKillEasiNote, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteAnnotation.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="自动查杀 鸿合屏幕书写" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="2" IsOn="{Binding Automation.IsAutoKillHiteAnnotation, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="/InkCanvasForClass;component/Resources/Icons-png/VComYouJiao.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="自动查杀 优教授课端" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="2" IsOn="{Binding Automation.IsAutoKillVComYouJiao, Mode=TwoWay}"/>
+                    </Grid>
                 </StackPanel>
-                <Slider Grid.Column="2" VerticalAlignment="Center"
-                        Minimum="1" Maximum="60"
-                        Value="{Binding Automation.AutoSaveInterval, Mode=TwoWay}"
-                        TickFrequency="1" IsSnapToTickEnabled="True"
-                        SmallChange="1" LargeChange="5"/>
-                <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right"
-                           Text="{Binding Automation.AutoSaveInterval, StringFormat={}{0:F0}min}"
-                           Style="{StaticResource SettingsValueStyle}"/>
-            </Grid>
-        </Border>
-    </StackPanel>
+            </Border>
+
+            <!-- Similar Software Kill -->
+            <TextBlock Text="同类软件查杀" Style="{StaticResource SettingsGroupTitleStyle}"/>
+
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="/InkCanvasForClass;component/Resources/Icons-png/InkCanvas.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="自动查杀 Ink Canvas" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="2" IsOn="{Binding Automation.IsAutoKillInkCanvas, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="/InkCanvasForClass;component/Resources/Icons-png/ica.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="自动查杀ICA（新版旧版通杀）" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="2" IsOn="{Binding Automation.IsAutoKillICA, Mode=TwoWay}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Annotation Popup Intercept -->
+            <TextBlock Text="批注弹窗拦截" Style="{StaticResource SettingsGroupTitleStyle}"/>
+
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <TextBlock Text="# 该功能可以自动隐藏其他白板软件在最小化时显示的桌面批注弹窗，并且可以使用icc无缝替代这些弹窗。希沃系列的浮窗拦截后可显示“返回到希沃软件”按钮。"
+                               Style="{StaticResource SettingsDescriptionStyle}" Margin="0,0,0,16"/>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="清屏时自动截图" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding Automation.IsAutoSaveStrokesAtClear, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="截图分日期文件夹保存" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding Automation.IsSaveScreenshotsInDateFolders, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="截图时自动保存墨迹" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding Automation.IsAutoSaveStrokesAtScreenshot, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="自动截图最小墨迹量" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="0" Maximum="10" Value="{Binding Automation.MinimumAutomationStrokeNumber, Mode=TwoWay}" Margin="12,0"/>
+                        <TextBlock Grid.Column="2" Text="{Binding Automation.MinimumAutomationStrokeNumber, StringFormat='{}{0} 条'}" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

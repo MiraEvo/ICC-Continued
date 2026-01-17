@@ -829,5 +829,29 @@ namespace Ink_Canvas.ViewModels
             get => _automation.LimitAutoSaveAmount;
             set { if (SetProperty(_automation.LimitAutoSaveAmount, value, _automation, (a, v) => a.LimitAutoSaveAmount = v)) _saveAction?.Invoke(); }
         }
+
+        public bool IsAutoFoldInQPoint
+        {
+            get => _automation.IsAutoFoldInQPoint;
+            set { if (SetProperty(_automation.IsAutoFoldInQPoint, value, _automation, (a, v) => a.IsAutoFoldInQPoint = v)) { _saveAction?.Invoke(); OnPropertyChanged(nameof(IsEnableAutoFold)); } }
+        }
+
+        public bool IsAutoFoldInYiYunWhiteboard
+        {
+            get => _automation.IsAutoFoldInYiYunWhiteboard;
+            set { if (SetProperty(_automation.IsAutoFoldInYiYunWhiteboard, value, _automation, (a, v) => a.IsAutoFoldInYiYunWhiteboard = v)) { _saveAction?.Invoke(); OnPropertyChanged(nameof(IsEnableAutoFold)); } }
+        }
+
+        public bool IsAutoFoldInYiYunVisualPresenter
+        {
+            get => _automation.IsAutoFoldInYiYunVisualPresenter;
+            set { if (SetProperty(_automation.IsAutoFoldInYiYunVisualPresenter, value, _automation, (a, v) => a.IsAutoFoldInYiYunVisualPresenter = v)) { _saveAction?.Invoke(); OnPropertyChanged(nameof(IsEnableAutoFold)); } }
+        }
+
+        public bool IsAutoFoldInMaxHubWhiteboard
+        {
+            get => _automation.IsAutoFoldInMaxHubWhiteboard;
+            set { if (SetProperty(_automation.IsAutoFoldInMaxHubWhiteboard, value, _automation, (a, v) => a.IsAutoFoldInMaxHubWhiteboard = v)) { _saveAction?.Invoke(); OnPropertyChanged(nameof(IsEnableAutoFold)); } }
+        }
     }
 }
