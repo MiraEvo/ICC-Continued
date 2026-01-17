@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-             xmlns:local="clr-namespace:Ink_Canvas.Views.Settings.Pages"
+             xmlns:wc="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="600"
              Background="Transparent"
@@ -13,130 +13,132 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <!-- 颜色定义 -->
-            <Color x:Key="CardBackgroundColor">#2D2D30</Color>
-            <Color x:Key="AccentColor">#60A5FA</Color>
-            <Color x:Key="PrimaryTextColor">#FAFAFA</Color>
-            <Color x:Key="SecondaryTextColor">#A1A1AA</Color>
-            <Color x:Key="BorderColor">#3F3F46</Color>
-
-            <!-- 画刷定义 -->
-            <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
-            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
-            <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}"/>
-            <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}"/>
-            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
-
-            <!-- 页面标题样式 -->
-            <Style x:Key="PageTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="28"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-                <Setter Property="Margin" Value="0,0,0,24"/>
-            </Style>
-
-            <!-- 设置卡片容器样式 -->
-            <Style x:Key="SettingsCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="CornerRadius" Value="8"/>
-                <Setter Property="Padding" Value="16"/>
-                <Setter Property="Margin" Value="0,0,0,8"/>
-            </Style>
-
-            <!-- 设置项标题样式 -->
-            <Style x:Key="SettingsTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-
-            <!-- 设置项描述样式 -->
-            <Style x:Key="SettingsDescriptionStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
-                <Setter Property="TextWrapping" Value="Wrap"/>
-                <Setter Property="Margin" Value="0,4,0,0"/>
-            </Style>
-
-            <!-- 设置分组标题样式 -->
-            <Style x:Key="SettingsGroupTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="13"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Margin" Value="0,20,0,12"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-            </Style>
-
-            <!-- 图标样式 -->
-            <Style x:Key="SettingsIconStyle" TargetType="ui:FontIcon">
-                <Setter Property="FontSize" Value="20"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-                <Setter Property="Margin" Value="0,0,16,0"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="SettingsPageStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <wc:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel>
-        <TextBlock Text="截图" Style="{StaticResource PageTitleStyle}"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
+        <StackPanel Margin="0,0,12,24">
+            <TextBlock Text="截图" Style="{StaticResource PageTitleStyle}"/>
 
-        <!-- 截图设置 -->
-        <TextBlock Text="截图设置" Style="{StaticResource SettingsGroupTitleStyle}"/>
+            <!-- Magnification API Screenshot -->
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="使用MagnificationAPI截图" Style="{StaticResource SettingsTitleStyle}"/>
+                            <Border Style="{StaticResource ExperimentalTagStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:FontIcon Glyph="&#xE7C1;" FontSize="10" Foreground="#EF4444" Margin="0,0,4,0"/>
+                                    <TextBlock Text="实验性选项" Style="{StaticResource ExperimentalTagTextStyle}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding Snapshot.ScreenshotUsingMagnificationAPI, Mode=TwoWay}"/>
+                    </Grid>
+                    <TextBlock Text="# 使用 Magnification API 和弃用的函数 MagSetImageScalingCallback 实现过滤ICC窗口截图。"
+                               Style="{StaticResource SettingsDescriptionStyle}" Margin="0,-8,0,16"/>
 
-        <!-- 截图后自动保存 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE74E;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="截图后自动保存" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="截图后自动保存到指定文件夹" Style="{StaticResource SettingsDescriptionStyle}"/>
+                    <!-- Warning Box -->
+                    <Border Background="#33F59E0B" BorderBrush="#F59E0B" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,8"
+                            Visibility="{Binding Snapshot.ScreenshotUsingMagnificationAPI, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ui:FontIcon Glyph="&#xE7BA;" Foreground="#F59E0B" FontSize="20" VerticalAlignment="Top" Margin="0,2,16,0"/>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="该功能为高度实验性选项" FontWeight="Bold" Foreground="#F59E0B" FontSize="14" Margin="0,0,0,4"/>
+                                <TextBlock Text="该功能使用的 MagSetImageScalingCallback 函数在 Win7 及更高版本中已弃用，经测试，只有 Win8、Win8.1、Win10 系统可以使用该功能，Win11已经失效。该功能极度不稳定，可能会导致截屏时黑屏或系统崩溃，请按需开启。"
+                                           TextWrapping="Wrap" Foreground="#FAFAFA"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
                 </StackPanel>
-                <ui:ToggleSwitch Grid.Column="2" VerticalAlignment="Center"
-                                 IsOn="{Binding Snapshot.AttachInkWhenScreenshot, Mode=TwoWay}"/>
-            </Grid>
-        </Border>
+            </Border>
 
-        <!-- 截图后复制到剪贴板 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE8C8;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="截图后复制到剪贴板" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="截图后自动复制图片到剪贴板" Style="{StaticResource SettingsDescriptionStyle}"/>
-                </StackPanel>
-                <ui:ToggleSwitch Grid.Column="2" VerticalAlignment="Center"
-                                 IsOn="{Binding Snapshot.CopyScreenshotToClipboard, Mode=TwoWay}"/>
-            </Grid>
-        </Border>
+            <!-- Other Settings -->
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <ui:SimpleStackPanel Spacing="0">
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="截图后以 .png 格式复制到剪贴板" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding Snapshot.CopyScreenshotToClipboard, Mode=TwoWay}"/>
+                    </Grid>
 
-        <!-- 截图时隐藏窗口 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE76C;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="截图时隐藏窗口" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="开始截图时自动隐藏主窗口" Style="{StaticResource SettingsDescriptionStyle}"/>
-                </StackPanel>
-                <ui:ToggleSwitch Grid.Column="2" VerticalAlignment="Center"
-                                 IsOn="{Binding Snapshot.HideMainWinWhenScreenshot, Mode=TwoWay}"/>
-            </Grid>
-        </Border>
-    </StackPanel>
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="截图时隐藏ICC主窗口" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding Snapshot.HideMainWinWhenScreenshot, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="截图时附加墨迹到截图文件上" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding Snapshot.AttachInkWhenScreenshot, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="窗口截图只截取最大化窗口" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding Snapshot.OnlySnapshotMaximizeWindow, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <Grid Margin="0,12,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="截图文件文件名" Style="{StaticResource SettingsTitleStyle}" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                        <TextBox Grid.Column="1" Text="{Binding Snapshot.ScreenshotFileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+                        <Button Grid.Column="2" Content="重置" Margin="16,0,0,0" VerticalAlignment="Center"/>
+                    </Grid>
+                    <TextBlock Text="# 模板语法请参考下面可用的语法：" Style="{StaticResource SettingsDescriptionStyle}" Margin="0,0,0,8"/>
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="[YYYY] - 日期年份" Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <TextBlock Text="[HH] - 日期小时" Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <TextBlock Text="[width] - 图片宽度" Foreground="{StaticResource SecondaryTextBrush}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="[MM] - 日期月份" Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <TextBlock Text="[mm] - 日期分钟数" Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <TextBlock Text="[height] - 图片高度" Foreground="{StaticResource SecondaryTextBrush}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="[DD] - 日期号数" Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <TextBlock Text="[ss] - 日期秒数" Foreground="{StaticResource SecondaryTextBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </ui:SimpleStackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
