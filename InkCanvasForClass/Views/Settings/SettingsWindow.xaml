@@ -248,6 +248,29 @@
 
             <!-- 底部导航项 -->
             <ui:NavigationView.FooterMenuItems>
+                <!-- 重启应用 - Fluent: Restart (重启) -->
+                <ui:NavigationViewItem Content="重启" Tag="Restart" x:Name="RestartItem">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon Glyph="&#xE777;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"/>
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
+                <!-- 重置设置 - Fluent: Refresh (重置) -->
+                <ui:NavigationViewItem Content="重置" Tag="Reset" x:Name="ResetItem">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon Glyph="&#xE72C;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"/>
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
+                <!-- 退出应用 - Fluent: Power (电源) -->
+                <ui:NavigationViewItem Content="退出" Tag="Exit" x:Name="ExitItem">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon Glyph="&#xE7E8;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"/>
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
+                <ui:NavigationViewItemSeparator/>
+
                 <ui:NavigationViewItem Content="关于" Tag="About">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon Glyph="&#xE946;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"/>

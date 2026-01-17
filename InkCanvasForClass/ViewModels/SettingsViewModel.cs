@@ -194,7 +194,7 @@ namespace Ink_Canvas.ViewModels
         /// 重置设置命令
         /// </summary>
         [RelayCommand]
-        private void ResetSettings()
+        public void ResetSettings()
         {
             _settingsService.ResetToDefaults();
             InitializeSubViewModels();

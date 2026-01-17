@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using Ink_Canvas.ViewModels;
@@ -51,6 +52,27 @@ namespace Ink_Canvas.Views.Settings
             }
         }
 
+        private async System.Threading.Tasks.Task<bool> ShowResetConfirmationDialog()
+        {
+            // 创建确认对话框
+            var dialog = new ContentDialog
+            {
+                Title = "重置设置确认",
+                Content = "您确定要重置所有设置到默认值吗？\n\n此操作将清除所有自定义配置，包括：\n• 外观设置\n• 手势设置\n• 书写设置\n• PowerPoint设置\n• 存储设置\n• 其他所有配置\n\n此操作不可撤销！",
+                PrimaryButtonText = "确认重置",
+                SecondaryButtonText = "取消",
+                DefaultButton = ContentDialogButton.Secondary
+            };
+
+            // 设置对话框样式
+            dialog.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(26, 26, 26));
+            dialog.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(250, 250, 250));
+
+            // 显示对话框并等待结果
+            var result = await dialog.ShowAsync();
+            return result == ContentDialogResult.Primary;
+        }
+
         /// <summary>
         /// 导航选择变更事件处理
         /// </summary>
@@ -59,8 +81,71 @@ namespace Ink_Canvas.Views.Settings
             if (args.SelectedItem is NavigationViewItem selectedItem)
             {
                 var tag = selectedItem.Tag?.ToString();
-                NavigateToPage(tag);
+                
+                // 处理特殊操作
+                switch (tag)
+                {
+                    case "Restart":
+                        HandleRestart();
+                        // 重置选择到之前的项
+                        NavView.SelectedItem = NavView.MenuItems.Count > 0 ? NavView.MenuItems[0] : null;
+                        break;
+                    case "Reset":
+                        _ = HandleResetAsync();
+                        // 重置选择到之前的项
+                        NavView.SelectedItem = NavView.MenuItems.Count > 0 ? NavView.MenuItems[0] : null;
+                        break;
+                    case "Exit":
+                        HandleExit();
+                        break;
+                    default:
+                        NavigateToPage(tag);
+                        break;
+                }
             }
+        }
+
+        private void HandleRestart()
+        {
+            try
+            {
+                // 重启应用
+                Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+                Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"重启失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async System.Threading.Tasks.Task HandleResetAsync()
+        {
+            // 显示确认对话框
+            var result = await ShowResetConfirmationDialog();
+            if (result == true)
+            {
+                try
+                {
+                    // 重置设置
+                    if (ViewModel != null)
+                    {
+                        ViewModel.ResetSettings();
+                    }
+                    
+                    System.Windows.MessageBox.Show("设置已重置为默认值", "重置完成", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"重置失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void HandleExit()
+        {
+            // 退出应用
+            Application.Current.Shutdown();
         }
 
         /// <summary>
