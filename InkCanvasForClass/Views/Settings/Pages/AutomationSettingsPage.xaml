@@ -28,119 +28,172 @@
 
             <Border Style="{StaticResource SettingsCardStyle}">
                 <StackPanel>
-                    <UniformGrid Columns="4" Margin="0,0,0,16">
-                        <!-- Seewo Whiteboard 5 -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="希沃白板5" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                    <!-- Responsive Container -->
+                    <Viewbox StretchDirection="Both" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,0,0,20">
+                        <StackPanel MaxWidth="800">
+                            <!-- Seewo Applications Group -->
+                            <StackPanel Margin="0,0,0,20">
+                                <TextBlock Text="希沃系列" Style="{StaticResource SmallGroupTitleStyle}"/>
+                                <UniformGrid Columns="5" HorizontalAlignment="Center" Margin="0,0,0,12">
+                                    <!-- Seewo Whiteboard 5 -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="希沃白板5" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- Seewo Camera -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiCamera.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="希沃展台" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiCamera, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- Seewo Camera -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiCamera.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="希沃展台" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiCamera, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- Seewo Whiteboard 3 -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote3.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="希沃白板3" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote3, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- Seewo Whiteboard 3 -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote3.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="希沃白板3" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote3, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- Seewo Lite -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteLightBoard.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="希沃轻白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote3C, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- Seewo Lite -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteLightBoard.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="希沃轻白板" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote3C, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- Seewo Lite 5C -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote5C.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="希沃轻白板5C" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote5C, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- Seewo Lite 5C -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/EasiNote5C.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="希沃轻白板5C" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInEasiNote5C, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- Seewo Pinco -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/SeewoPinco.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="希沃品课" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInSeewoPincoTeacher, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- Seewo Pinco -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/SeewoPinco.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="希沃品课" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInSeewoPincoTeacher, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </UniformGrid>
+                            </StackPanel>
 
-                        <!-- Hite Whiteboard -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteBoard.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="鸿合白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInHiteTouchPro, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                            <!-- Hite Applications -->
+                            <StackPanel Margin="0,0,0,20">
+                                <TextBlock Text="鸿合系列" Style="{StaticResource SmallGroupTitleStyle}"/>
+                                <UniformGrid Columns="5" HorizontalAlignment="Center" Margin="0,0,0,12">
+                                    <!-- Hite Whiteboard -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteBoard.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="鸿合白板" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInHiteTouchPro, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- Hite Camera -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteCamera.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="鸿合展台" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInHiteCamera, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- Hite Camera -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteCamera.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="鸿合展台" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInHiteCamera, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- Hite Lite -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteLightBoard.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="鸿合轻量白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInHiteLightBoard, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- Hite Lite -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/HiteLightBoard.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="鸿合轻量白板" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInHiteLightBoard, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </UniformGrid>
+                            </StackPanel>
 
-                        <!-- WxBoard -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/WenXiang.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="文香白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInWxBoardMain, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                            <!-- Other Brands Applications -->
+                            <StackPanel Margin="0,0,0,20">
+                                <TextBlock Text="其他品牌" Style="{StaticResource SmallGroupTitleStyle}"/>
+                                <UniformGrid Columns="5" HorizontalAlignment="Center" Margin="0,0,0,12">
+                                    <!-- WxBoard -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/WenXiang.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="文香白板" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInWxBoardMain, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- MS Whiteboard -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/Whiteboard.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="微软白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInMSWhiteboard, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- MS Whiteboard -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/Whiteboard.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="微软白板" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInMSWhiteboard, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- Admox Whiteboard -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/AdmoxWhiteboard.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="安道白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInAdmoxWhiteboard, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- Admox Whiteboard -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/AdmoxWhiteboard.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="安道白板" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInAdmoxWhiteboard, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- Admox Booth -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/AdmoxBooth.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="安道展台" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInAdmoxBooth, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- Admox Booth -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/AdmoxBooth.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="安道展台" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInAdmoxBooth, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- YiYun Whiteboard -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/YiYunWhiteboard.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="艺云白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInYiYunWhiteboard, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- YiYun Whiteboard -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/YiYunWhiteboard.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="艺云白板" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInYiYunWhiteboard, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- YiYun Visual Presenter -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/YiYunVisualPresenter.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="艺云展台" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInYiYunVisualPresenter, Mode=TwoWay}" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                    <!-- YiYun Visual Presenter -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/YiYunVisualPresenter.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="艺云展台" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInYiYunVisualPresenter, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                        <!-- MaxHub Whiteboard -->
-                        <StackPanel Margin="0,0,0,16">
-                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/MaxHubWhiteboard.png" Width="48" Height="48" Margin="0,0,0,8"/>
-                            <TextBlock Text="MaxHub白板" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInMaxHubWhiteboard, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                                    <!-- MaxHub Whiteboard -->
+                                    <Border Style="{StaticResource AppCardStyle}">
+                                        <StackPanel>
+                                            <Image Source="/InkCanvasForClass;component/Resources/Icons-png/MaxHubWhiteboard.png" Style="{StaticResource AppIconStyle}"/>
+                                            <TextBlock Text="MaxHub白板" Style="{StaticResource AppNameStyle}"/>
+                                            <ui:ToggleSwitch IsOn="{Binding Automation.IsAutoFoldInMaxHubWhiteboard, Mode=TwoWay}" Style="{StaticResource AppToggleStyle}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </UniformGrid>
+                            </StackPanel>
                         </StackPanel>
-                    </UniformGrid>
+                    </Viewbox>
 
                     <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
@@ -294,15 +347,19 @@
                         <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding Automation.IsAutoSaveStrokesAtScreenshot, Mode=TwoWay}"/>
                     </Grid>
 
-                    <Grid>
+                    <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="自动截图最小墨迹量" VerticalAlignment="Center"/>
-                        <Slider Grid.Column="1" Minimum="0" Maximum="10" Value="{Binding Automation.MinimumAutomationStrokeNumber, Mode=TwoWay}" Margin="12,0"/>
-                        <TextBlock Grid.Column="2" Text="{Binding Automation.MinimumAutomationStrokeNumber, StringFormat='{}{0} 条'}" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="0" Text="自动截图最小墨迹量" Style="{StaticResource SettingsTitleStyle}" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="0" Maximum="50" Value="{Binding Automation.MinimumAutomationStrokeNumber, Mode=TwoWay}" 
+                                Width="120" Margin="12,0" VerticalAlignment="Center" 
+                                TickFrequency="1" IsSnapToTickEnabled="True" 
+                                Style="{DynamicResource ModernSliderStyle}"/>
+                        <TextBlock Grid.Column="2" Text="{Binding Automation.MinimumAutomationStrokeNumber, StringFormat='{}{0} 条'}" 
+                                   Style="{StaticResource SettingsValueStyle}" Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </Grid>
                 </StackPanel>
             </Border>

@@ -119,7 +119,10 @@
 
                     <TextBlock Text="{Binding Storage.CurrentStoragePath, StringFormat='当前位置：{0}'}" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,4"/>
                     <TextBlock Text="{Binding Storage.UsedSpace, Converter={StaticResource FileSizeConverter}, StringFormat='磁盘使用情况：已用 {0}'}" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,4"/>
-                    <TextBlock Text="{Binding Storage.ICCDataSpace, Converter={StaticResource FileSizeConverter}, StringFormat='目录占用情况：已用 {0}，共 5 个文件'}" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,16"/>
+                    <TextBlock Text="{Binding Storage.ICCDataSpace, Converter={StaticResource FileSizeConverter}}" 
+                               Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,16"/>
+                    <TextBlock Text="{Binding Storage.TotalFileCount, StringFormat='共 {0} 个文件'}" 
+                               Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,16"/>
 
                     <!-- ICC Data Breakdown Bar -->
                     <Grid Height="16" Margin="0,0,0,16">
@@ -173,9 +176,13 @@
                             <ui:FontIcon Glyph="&#xE7C3;" FontSize="24" Margin="0,0,16,0"/>
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="自动保存的墨迹" FontWeight="Bold" FontSize="16"/>
-                                <TextBlock Text="0% 、 0 B" Foreground="{StaticResource SecondaryTextBrush}"/>
+                                <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
+                                    <Run Text="{Binding Storage.AutoSavedInkPercentage, StringFormat='{}{0:F1}%、'}"/>
+                                    <Run Text="{Binding Storage.AutoSavedInkSize, Converter={StaticResource FileSizeConverter}}"/>
+                                </TextBlock>
                             </StackPanel>
-                            <Button Grid.Column="2" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0" FontSize="20"/>
+                            <Button Grid.Column="2" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0" FontSize="20"
+                                    Command="{Binding Storage.OpenFolderCommand}" CommandParameter="autoSavedInk"/>
                         </Grid>
 
                         <!-- Board Image Ref -->
@@ -188,9 +195,13 @@
                             <ui:FontIcon Glyph="&#xEB9F;" FontSize="24" Margin="0,0,16,0"/>
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="板书的图片引用" FontWeight="Bold" FontSize="16"/>
-                                <TextBlock Text="0% 、 0 B" Foreground="{StaticResource SecondaryTextBrush}"/>
+                                <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
+                                    <Run Text="{Binding Storage.BoardImageRefPercentage, StringFormat='{}{0:F1}%、'}"/>
+                                    <Run Text="{Binding Storage.BoardImageRefSize, Converter={StaticResource FileSizeConverter}}"/>
+                                </TextBlock>
                             </StackPanel>
-                            <Button Grid.Column="2" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0" FontSize="20"/>
+                            <Button Grid.Column="2" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0" FontSize="20"
+                                    Command="{Binding Storage.OpenFolderCommand}" CommandParameter="boardImageRef"/>
                         </Grid>
 
                         <!-- Exported Board -->
@@ -203,9 +214,13 @@
                             <ui:FontIcon Glyph="&#xE7C3;" FontSize="24" Margin="0,0,16,0"/>
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="导出的板书文件" FontWeight="Bold" FontSize="16"/>
-                                <TextBlock Text="0% 、 0 B" Foreground="{StaticResource SecondaryTextBrush}"/>
+                                <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
+                                    <Run Text="{Binding Storage.ExportedBoardPercentage, StringFormat='{}{0:F1}%、'}"/>
+                                    <Run Text="{Binding Storage.ExportedBoardSize, Converter={StaticResource FileSizeConverter}}"/>
+                                </TextBlock>
                             </StackPanel>
-                            <Button Grid.Column="2" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0" FontSize="20"/>
+                            <Button Grid.Column="2" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0" FontSize="20"
+                                    Command="{Binding Storage.OpenFolderCommand}" CommandParameter="exportedBoard"/>
                         </Grid>
 
                         <!-- Cache -->
@@ -218,9 +233,13 @@
                             <ui:FontIcon Glyph="&#xE8B7;" FontSize="24" Margin="0,0,16,0"/>
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="缓存文件" FontWeight="Bold" FontSize="16"/>
-                                <TextBlock Text="0% 、 0 B" Foreground="{StaticResource SecondaryTextBrush}"/>
+                                <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
+                                    <Run Text="{Binding Storage.CachePercentage, StringFormat='{}{0:F1}%、'}"/>
+                                    <Run Text="{Binding Storage.CacheSize, Converter={StaticResource FileSizeConverter}}"/>
+                                </TextBlock>
                             </StackPanel>
-                            <Button Grid.Column="2" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0" FontSize="20"/>
+                            <Button Grid.Column="2" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0" FontSize="20"
+                                    Command="{Binding Storage.OpenFolderCommand}" CommandParameter="cache"/>
                         </Grid>
 
                         <!-- Auto Saved Screenshot -->
@@ -233,9 +252,13 @@
                             <ui:FontIcon Glyph="&#xEB9F;" FontSize="24" Margin="0,0,16,0"/>
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="自动保存的截图文件" FontWeight="Bold" FontSize="16"/>
-                                <TextBlock Text="0% 、 0 B" Foreground="{StaticResource SecondaryTextBrush}"/>
+                                <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
+                                    <Run Text="{Binding Storage.AutoSavedScreenshotPercentage, StringFormat='{}{0:F1}%、'}"/>
+                                    <Run Text="{Binding Storage.AutoSavedScreenshotSize, Converter={StaticResource FileSizeConverter}}"/>
+                                </TextBlock>
                             </StackPanel>
-                            <Button Grid.Column="2" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0" FontSize="20"/>
+                            <Button Grid.Column="2" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0" FontSize="20"
+                                    Command="{Binding Storage.OpenFolderCommand}" CommandParameter="autoSavedScreenshot"/>
                         </Grid>
                     </ui:SimpleStackPanel>
 
