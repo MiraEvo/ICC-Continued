@@ -15,6 +15,48 @@ namespace Ink_Canvas.ViewModels.Settings
             _saveAction = saveAction;
         }
 
+        public bool EnableMachineLearning
+        {
+            get => _settings.EnableMachineLearning;
+            set
+            {
+                if (_settings.EnableMachineLearning != value)
+                {
+                    _settings.EnableMachineLearning = value;
+                    OnPropertyChanged();
+                    _saveAction?.Invoke();
+                }
+            }
+        }
+
+        public bool DisplaySwitchRandomPickListBtn
+        {
+            get => _settings.DisplaySwitchRandomPickListBtn;
+            set
+            {
+                if (_settings.DisplaySwitchRandomPickListBtn != value)
+                {
+                    _settings.DisplaySwitchRandomPickListBtn = value;
+                    OnPropertyChanged();
+                    _saveAction?.Invoke();
+                }
+            }
+        }
+
+        public bool DisplayPickHistory
+        {
+            get => _settings.DisplayPickHistory;
+            set
+            {
+                if (_settings.DisplayPickHistory != value)
+                {
+                    _settings.DisplayPickHistory = value;
+                    OnPropertyChanged();
+                    _saveAction?.Invoke();
+                }
+            }
+        }
+
         public bool DisplayRandWindowNamesInputBtn
         {
             get => _settings.DisplayRandWindowNamesInputBtn;

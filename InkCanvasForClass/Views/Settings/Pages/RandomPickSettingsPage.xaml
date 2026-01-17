@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+             xmlns:local="clr-namespace:Ink_Canvas.Views.Settings.Pages"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="600"
              Background="Transparent"
@@ -18,73 +19,73 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel>
-        <TextBlock Text="随机点名" Style="{StaticResource PageTitleStyle}"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
+        <StackPanel Margin="0,0,12,24">
+            <TextBlock Text="随机点名" Style="{StaticResource PageTitleStyle}"/>
 
-        <!-- 基础设置 -->
-        <TextBlock Text="基础设置" Style="{StaticResource SettingsGroupTitleStyle}"/>
+            <TextBlock Text="# 随机点名名单存放在 ICC 存储位置下的 LuckyRandom 目录下。支持多名单加载和切换，文件格式为txt，文件名必须以 .luckyrand.list.txt 结尾，否则不会识别！"
+                       Style="{StaticResource SettingsDescriptionStyle}" Margin="0,0,0,16"/>
 
-         <!-- 显示名称输入按钮 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE8FA;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="显示名称输入按钮" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="在随机点名窗口显示输入学生姓名的按钮" Style="{StaticResource SettingsDescriptionStyle}"/>
+            <!-- Settings -->
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <!-- Enable Machine Learning -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="为 ICC 启用机器学习以提升渲染性能" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding RandomPick.EnableMachineLearning, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <!-- Show Switch List Button -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="显示切换随机点名名单的按钮" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding RandomPick.DisplaySwitchRandomPickListBtn, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <!-- Show Pick History -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="显示点名历史记录" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding RandomPick.DisplayPickHistory, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <!-- Window Close Delay -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="单次抽人窗口关闭延迟" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="0.5" Maximum="10.0" Value="{Binding RandomPick.RandWindowOnceCloseLatency, Mode=TwoWay}" Margin="12,0"/>
+                        <TextBlock Grid.Column="2" Text="{Binding RandomPick.RandWindowOnceCloseLatency, StringFormat='{}{0:F1}s'}" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Max Students -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="单次随机点名人数上限" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="1" Maximum="50" Value="{Binding RandomPick.RandWindowOnceMaxStudents, Mode=TwoWay}" Margin="12,0"/>
+                        <TextBlock Grid.Column="2" Text="{Binding RandomPick.RandWindowOnceMaxStudents, StringFormat='{}{0}人'}" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+
                 </StackPanel>
-                <ui:ToggleSwitch Grid.Column="2" VerticalAlignment="Center"
-                                 IsOn="{Binding RandomPick.DisplayRandWindowNamesInputBtn, Mode=TwoWay}"/>
-            </Grid>
-        </Border>
+            </Border>
 
-        <!-- 窗口关闭延迟 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE916;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="窗口自动关闭延迟" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="点名窗口显示结果后的停留时间 (秒)" Style="{StaticResource SettingsDescriptionStyle}"/>
-                </StackPanel>
-                <Slider Grid.Column="2" VerticalAlignment="Center"
-                        Minimum="1" Maximum="10"
-                        Value="{Binding RandomPick.RandWindowOnceCloseLatency, Mode=TwoWay}"
-                        TickFrequency="0.5" IsSnapToTickEnabled="True"
-                        SmallChange="0.5" LargeChange="1"/>
-                <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right"
-                           Text="{Binding RandomPick.RandWindowOnceCloseLatency, StringFormat={}{0:F1}s}"
-                           Style="{StaticResource SettingsValueStyle}"/>
-            </Grid>
-        </Border>
-
-        <!-- 单次最大学生数 -->
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="120"/>
-                </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE716;" Style="{StaticResource SettingsIconStyle}"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="单次显示最大人数" Style="{StaticResource SettingsTitleStyle}"/>
-                    <TextBlock Text="一次随机点名显示的最大学生数量" Style="{StaticResource SettingsDescriptionStyle}"/>
-                </StackPanel>
-                <ui:NumberBox Grid.Column="2" VerticalAlignment="Center"
-                              Value="{Binding RandomPick.RandWindowOnceMaxStudents, Mode=TwoWay}"
-                              Minimum="1" Maximum="100" SpinButtonPlacementMode="Inline"/>
-            </Grid>
-        </Border>
-
-    </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

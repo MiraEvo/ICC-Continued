@@ -6,209 +6,145 @@
              xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
              xmlns:local="clr-namespace:Ink_Canvas.Views.Settings.Pages"
              mc:Ignorable="d"
-             d:DesignHeight="800" d:DesignWidth="600"
+             d:DesignHeight="1200" d:DesignWidth="600"
              Background="Transparent"
              Foreground="#FAFAFA"
              ui:ThemeManager.RequestedTheme="Dark">
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <!-- 颜色定义 -->
-            <Color x:Key="CardBackgroundColor">#2D2D30</Color>
-            <Color x:Key="AccentColor">#60A5FA</Color>
-            <Color x:Key="PrimaryTextColor">#FAFAFA</Color>
-            <Color x:Key="SecondaryTextColor">#A1A1AA</Color>
-            <Color x:Key="BorderColor">#3F3F46</Color>
-            <Color x:Key="DividerColor">#27272A</Color>
-
-            <!-- 画刷定义 -->
-            <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
-            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
-            <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}"/>
-            <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}"/>
-            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
-            <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource DividerColor}"/>
-
-            <!-- 页面标题样式 -->
-            <Style x:Key="PageTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="28"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-                <Setter Property="Margin" Value="0,0,0,24"/>
-            </Style>
-
-            <!-- 设置卡片容器样式 -->
-            <Style x:Key="SettingsCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="CornerRadius" Value="8"/>
-                <Setter Property="Padding" Value="16"/>
-                <Setter Property="Margin" Value="0,0,0,8"/>
-            </Style>
-
-            <!-- 设置项标题样式 -->
-            <Style x:Key="SettingsTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-
-            <!-- 设置项描述样式 -->
-            <Style x:Key="SettingsDescriptionStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
-                <Setter Property="TextWrapping" Value="Wrap"/>
-                <Setter Property="Margin" Value="0,4,0,0"/>
-            </Style>
-
-            <!-- 设置分组标题样式 -->
-            <Style x:Key="SettingsGroupTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="13"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Margin" Value="0,20,0,12"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-            </Style>
-
-            <!-- 图标样式 -->
-            <Style x:Key="SettingsIconStyle" TargetType="ui:FontIcon">
-                <Setter Property="FontSize" Value="20"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-                <Setter Property="Margin" Value="0,0,16,0"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-
-            <!-- 标签样式 -->
-            <Style x:Key="SettingsTagStyle" TargetType="Border">
-                <Setter Property="Background" Value="#33FFFFFF"/>
-                <Setter Property="CornerRadius" Value="4"/>
-                <Setter Property="Padding" Value="8,4"/>
-                <Setter Property="Margin" Value="0,0,8,8"/>
-            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="SettingsPageStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel>
-        <TextBlock Text="关于" Style="{StaticResource PageTitleStyle}"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
+        <StackPanel Margin="0,0,12,24">
+            <TextBlock Text="关于" Style="{StaticResource PageTitleStyle}"/>
 
-        <!-- 关于 Ink Canvas for Class -->
-        <TextBlock Text="应用信息" Style="{StaticResource SettingsGroupTitleStyle}"/>
+            <!-- Version Info -->
+            <StackPanel Margin="0,0,0,24">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="Release Version: " FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="6.0.0" FontSize="20" FontWeight="Bold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Bundle Version: " FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="6.0.0.0" FontSize="20" FontWeight="Bold"/>
+                </StackPanel>
+            </StackPanel>
 
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <StackPanel>
-                <Grid Margin="0,0,0,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Border CornerRadius="12" Width="72" Height="72" Margin="0,0,20,0" Background="#2563EB">
-                        <Image Source="/InkCanvasForClass;component/icc.png" Width="56" Height="56"
-                               RenderOptions.BitmapScalingMode="HighQuality"
-                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Ink Canvas for Class" FontSize="24" FontWeight="Bold"
-                                   Foreground="{StaticResource PrimaryTextBrush}"/>
-                        <TextBlock Text="专为课堂教学设计的电子白板软件" FontSize="14"
-                                   Foreground="{StaticResource SecondaryTextBrush}" Margin="0,4,0,0"/>
+            <TextBlock Text="# 使用和分发本软件前，请您应当且务必知晓相关开源协议，且您应当知晓本软件基于 https://github.com/WXRIW/Ink-Canvas 修改而成。"
+                       Style="{StaticResource SettingsDescriptionStyle}" Margin="0,0,0,8"/>
+            <TextBlock Text="# 别再基于ICC改了！ICA本身就是依托构思，经过Dubi906w的屎上雕花变得更是依托大芬。有能力建议自己重写更好的。"
+                       Style="{StaticResource SettingsDescriptionStyle}" Margin="0,0,0,16"/>
+
+            <!-- License Box -->
+            <Border Background="#2D2D30" BorderBrush="#3F3F46" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,24">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                        <ui:FontIcon Glyph="&#xE8A9;" FontSize="24" Margin="0,0,12,0"/>
+                        <StackPanel>
+                            <TextBlock Text="本软件和ICA, Ink Canvas均基于许可证开源" FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="GNU General Public License v3.0" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
                     </StackPanel>
-                </Grid>
+                    <TextBlock Text="本强许可协议的许可条件是，在相同许可协议下，提供许可作品的完整源代码和修改，包括使用许可作品的大型作品。版权和许可声明必须保留。贡献者明确授予专利权。"
+                               TextWrapping="Wrap" Foreground="{StaticResource SecondaryTextBrush}" TextAlignment="Center"/>
+                </StackPanel>
+            </Border>
 
-                <Border Background="{StaticResource DividerBrush}" Height="1" Margin="0,0,0,16"/>
+            <!-- Developers -->
+            <TextBlock Text="开发者：" FontSize="20" FontWeight="Bold" Margin="0,0,0,16"/>
+            <UniformGrid Columns="3" Margin="0,0,0,24">
+                <!-- Dubi906w -->
+                <StackPanel HorizontalAlignment="Center">
+                    <Ellipse Width="80" Height="80" Margin="0,0,0,8">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="/InkCanvasForClass;component/Resources/DeveloperAvatars/dubi906w.jpg"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <TextBlock Text="Dubi906w" FontSize="18" FontWeight="Bold" Foreground="#FBBF24" HorizontalAlignment="Center"/>
+                    <TextBlock Text="InkCanvasForClass" FontSize="14" Foreground="#FAFAFA" HorizontalAlignment="Center"/>
+                </StackPanel>
 
-                <Grid Margin="0,0,0,12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="版本" Style="{StaticResource SettingsTitleStyle}"
-                               Foreground="{StaticResource SecondaryTextBrush}"/>
-                    <TextBlock Grid.Column="1" Text="v2.0.0" Style="{StaticResource SettingsTitleStyle}"
-                               Foreground="{StaticResource AccentBrush}"/>
-                </Grid>
+                <!-- ChangSakura -->
+                <StackPanel HorizontalAlignment="Center">
+                    <Grid Width="80" Height="80" Margin="0,0,0,8">
+                        <Ellipse Width="80" Height="80">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="/InkCanvasForClass;component/Resources/DeveloperAvatars/ChangSakura.png"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Image Source="/InkCanvasForClass;component/Resources/Icons-png/check-box-background.png" Width="24" Height="24"
+                               VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,-4,-4" Visibility="Collapsed"/>
+                        <!-- Assuming the sprout icon is an overlay or part of the image. I'll skip overlay for now or use a generic one if needed. -->
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="ChangSakura" FontSize="18" FontWeight="Bold" Foreground="#FBBF24"/>
+                        <!-- Sprout icon if possible -->
+                    </StackPanel>
+                    <TextBlock Text="Ink Canvas Artistry" FontSize="14" Foreground="#FAFAFA" HorizontalAlignment="Center"/>
+                </StackPanel>
 
-                <Grid Margin="0,0,0,12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="开源协议" Style="{StaticResource SettingsTitleStyle}"
-                               Foreground="{StaticResource SecondaryTextBrush}"/>
-                    <TextBlock Grid.Column="1" Text="MIT License" Style="{StaticResource SettingsTitleStyle}"/>
-                </Grid>
+                <!-- WXRIW -->
+                <StackPanel HorizontalAlignment="Center">
+                    <Ellipse Width="80" Height="80" Margin="0,0,0,8">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="/InkCanvasForClass;component/Resources/DeveloperAvatars/WXRIW.png"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <TextBlock Text="WXRIW" FontSize="18" FontWeight="Bold" Foreground="#FBBF24" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Ink Canvas" FontSize="14" Foreground="#FAFAFA" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </UniformGrid>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="版权所有" Style="{StaticResource SettingsTitleStyle}"
-                               Foreground="{StaticResource SecondaryTextBrush}"/>
-                    <TextBlock Grid.Column="1" Text="© 2023-2026 Ink Canvas Team" Style="{StaticResource SettingsTitleStyle}"/>
-                </Grid>
+            <!-- Links -->
+            <StackPanel Margin="0,0,0,24">
+                <TextBlock>
+                    <Run Text="icc! Gitea源: " FontWeight="Bold"/>
+                    <Hyperlink NavigateUri="https://gitea.kriastans.cn/kriastans/InkCanvasForClass" Foreground="#60A5FA">
+                        gitea:kriastans/InkCanvasForClass
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock Margin="0,4,0,0">
+                    <Run Text="icc! GitHub源: " FontWeight="Bold"/>
+                    <Hyperlink NavigateUri="https://github.com/InkCanvas/InkCanvasForClass" Foreground="#60A5FA">
+                        InkCanvas/InkCanvasForClass
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock Margin="0,4,0,0">
+                    <Run Text="ICA 仓库源: " FontWeight="Bold"/>
+                    <Hyperlink NavigateUri="https://github.com/InkCanvas/Ink-Canvas-Artistry" Foreground="#60A5FA">
+                        InkCanvas/Ink-Canvas-Artistry
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock Margin="0,4,0,0">
+                    <Run Text="Ink Canvas 仓库源: " FontWeight="Bold"/>
+                    <Hyperlink NavigateUri="https://github.com/WXRIW/Ink-Canvas" Foreground="#60A5FA">
+                        WXRIW/Ink-Canvas
+                    </Hyperlink>
+                </TextBlock>
             </StackPanel>
-        </Border>
 
-        <!-- 贡献者 -->
-        <TextBlock Text="贡献者" Style="{StaticResource SettingsGroupTitleStyle}"/>
+            <!-- Contributors -->
+            <TextBlock Text="感谢下列贡献者和支持者：" FontSize="16" FontWeight="Bold" Margin="0,0,0,8"/>
+            <TextBlock Text="# 排名不分先后" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,16"/>
 
-        <Border Style="{StaticResource SettingsCardStyle}">
+            <Image Source="/InkCanvasForClass;component/Resources/contributors.png" Stretch="Uniform" HorizontalAlignment="Left" Margin="0,0,0,24"/>
+
+            <!-- Copyright -->
             <StackPanel>
-                <TextBlock Text="感谢所有为此项目做出贡献的开发者" Style="{StaticResource SettingsDescriptionStyle}" Margin="0,0,0,16"/>
-
-                <ItemsControl>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <!-- 贡献者标签 -->
-                    <Border Style="{StaticResource SettingsTagStyle}">
-                        <TextBlock Text="SakuraStar" Foreground="{StaticResource PrimaryTextBrush}"/>
-                    </Border>
-                    <Border Style="{StaticResource SettingsTagStyle}">
-                        <TextBlock Text="iNKORE" Foreground="{StaticResource PrimaryTextBrush}"/>
-                    </Border>
-                    <Border Style="{StaticResource SettingsTagStyle}">
-                        <TextBlock Text="WXRIW" Foreground="{StaticResource PrimaryTextBrush}"/>
-                    </Border>
-                    <Border Style="{StaticResource SettingsTagStyle}">
-                        <TextBlock Text="dubi906w" Foreground="{StaticResource PrimaryTextBrush}"/>
-                    </Border>
-                </ItemsControl>
+                <TextBlock Text="© 2024 Dubi906w(Kriastans) 版权所有" FontWeight="Bold" Margin="0,0,0,4"/>
+                <TextBlock Text="© 2022-2024 HARKOTEK Studio 提供技术支持" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,4"/>
+                <TextBlock Text="感谢 HARKOTEK Studio 的成员 “幻想熵K2ro_” 提供技术支持" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,4"/>
+                <TextBlock Text="ICC的部分元素素材设计参考来源于：© iNKORE! 名下产品 Inkways，已经过授权使用，最终解释权归 Yoojun Zhou 所有"
+                           Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+                <TextBlock Text="osu! 相关素材：© ppy powered 2007-2024" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,4"/>
+                <TextBlock Text="We love Open-Source forever!" FontWeight="Bold" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,8,0,0"/>
             </StackPanel>
-        </Border>
 
-        <!-- 链接 -->
-        <TextBlock Text="链接" Style="{StaticResource SettingsGroupTitleStyle}"/>
-
-        <Border Style="{StaticResource SettingsCardStyle}">
-            <StackPanel>
-                <Grid Margin="0,0,0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <ui:FontIcon Glyph="&#xE774;" Style="{StaticResource SettingsIconStyle}"/>
-                    <TextBlock Grid.Column="1" Text="GitHub 仓库" Style="{StaticResource SettingsTitleStyle}"/>
-                    <ui:FontIcon Grid.Column="2" Glyph="&#xE8A7;" FontSize="14"
-                                 Foreground="{StaticResource SecondaryTextBrush}"/>
-                </Grid>
-                <Border Background="{StaticResource DividerBrush}" Height="1" Margin="36,4,0,12"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <ui:FontIcon Glyph="&#xE8A4;" Style="{StaticResource SettingsIconStyle}"/>
-                    <TextBlock Grid.Column="1" Text="报告问题" Style="{StaticResource SettingsTitleStyle}"/>
-                    <ui:FontIcon Grid.Column="2" Glyph="&#xE8A7;" FontSize="14"
-                                 Foreground="{StaticResource SecondaryTextBrush}"/>
-                </Grid>
-            </StackPanel>
-        </Border>
-    </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
