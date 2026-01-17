@@ -192,42 +192,6 @@ namespace Ink_Canvas
                         new Uri("pack://application:,,,/Resources/Icons-png/icc-transparent-dark-small.png"));
                 FloatingbarHeadIconImg.Margin = new Thickness(1.2);
             }
-            else if (selectedIndex == 2)
-            {
-                FloatingbarHeadIconImg.Source =
-                    new BitmapImage(new Uri("pack://application:,,,/Resources/Icons-png/kuandoujiyanhuaji.png"));
-                FloatingbarHeadIconImg.Margin = new Thickness(2, 2, 2, 1.5);
-            }
-            else if (selectedIndex == 3)
-            {
-                FloatingbarHeadIconImg.Source =
-                    new BitmapImage(new Uri("pack://application:,,,/Resources/Icons-png/kuanshounvhuaji.png"));
-                FloatingbarHeadIconImg.Margin = new Thickness(2, 2, 2, 1.5);
-            }
-            else if (selectedIndex == 4)
-            {
-                FloatingbarHeadIconImg.Source =
-                    new BitmapImage(new Uri("pack://application:,,,/Resources/Icons-png/kuanciya.png"));
-                FloatingbarHeadIconImg.Margin = new Thickness(2, 2, 2, 1.5);
-            }
-            else if (selectedIndex == 5)
-            {
-                FloatingbarHeadIconImg.Source =
-                    new BitmapImage(new Uri("pack://application:,,,/Resources/Icons-png/kuanneikuhuaji.png"));
-                FloatingbarHeadIconImg.Margin = new Thickness(2, 2, 2, 1.5);
-            }
-            else if (selectedIndex == 6)
-            {
-                FloatingbarHeadIconImg.Source =
-                    new BitmapImage(new Uri("pack://application:,,,/Resources/Icons-png/kuandogeyuanliangwo.png"));
-                FloatingbarHeadIconImg.Margin = new Thickness(2, 2, 2, 1.5);
-            }
-            else if (selectedIndex == 7)
-            {
-                FloatingbarHeadIconImg.Source =
-                    new BitmapImage(new Uri("pack://application:,,,/Resources/Icons-png/tiebahuaji.png"));
-                FloatingbarHeadIconImg.Margin = new Thickness(2, 2, 2, 1);
-            }
         }
 
         /// <summary>

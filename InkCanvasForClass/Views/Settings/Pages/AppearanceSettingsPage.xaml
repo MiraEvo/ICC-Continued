@@ -127,12 +127,6 @@
                           SelectedIndex="{Binding Appearance.FloatingBarImg, Mode=TwoWay}">
                     <ComboBoxItem Content="&quot;icc!&quot;默认蓝色"/>
                     <ComboBoxItem Content="&quot;icc!&quot;黑色透明版"/>
-                    <ComboBoxItem Content="酷安斗鸡眼滑稽"/>
-                    <ComboBoxItem Content="酷安受虐滑稽"/>
-                    <ComboBoxItem Content="酷安呲牙笑"/>
-                    <ComboBoxItem Content="酷安头戴内裤滑稽"/>
-                    <ComboBoxItem Content="酷安绿帽Doge"/>
-                    <ComboBoxItem Content="贴吧滑稽"/>
                 </ComboBox>
             </Grid>
         </Border>
