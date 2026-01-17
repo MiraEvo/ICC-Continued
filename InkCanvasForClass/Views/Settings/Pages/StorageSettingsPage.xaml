@@ -177,7 +177,7 @@
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="自动保存的墨迹" FontWeight="Bold" FontSize="16"/>
                                 <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
-                                    <Run Text="{Binding Storage.AutoSavedInkPercentage, StringFormat='{}{0:F1}%、'}"/>
+                                    <Run Text="{Binding Storage.AutoSavedInkPercentage, StringFormat='{}{0:F1}%、', Mode=OneWay}"/>
                                     <Run Text="{Binding Storage.AutoSavedInkSize, Converter={StaticResource FileSizeConverter}}"/>
                                 </TextBlock>
                             </StackPanel>
@@ -196,7 +196,7 @@
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="板书的图片引用" FontWeight="Bold" FontSize="16"/>
                                 <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
-                                    <Run Text="{Binding Storage.BoardImageRefPercentage, StringFormat='{}{0:F1}%、'}"/>
+                                    <Run Text="{Binding Storage.BoardImageRefPercentage, StringFormat='{}{0:F1}%、', Mode=OneWay}"/>
                                     <Run Text="{Binding Storage.BoardImageRefSize, Converter={StaticResource FileSizeConverter}}"/>
                                 </TextBlock>
                             </StackPanel>
@@ -215,7 +215,7 @@
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="导出的板书文件" FontWeight="Bold" FontSize="16"/>
                                 <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
-                                    <Run Text="{Binding Storage.ExportedBoardPercentage, StringFormat='{}{0:F1}%、'}"/>
+                                    <Run Text="{Binding Storage.ExportedBoardPercentage, StringFormat='{}{0:F1}%、', Mode=OneWay}"/>
                                     <Run Text="{Binding Storage.ExportedBoardSize, Converter={StaticResource FileSizeConverter}}"/>
                                 </TextBlock>
                             </StackPanel>
@@ -234,7 +234,7 @@
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="缓存文件" FontWeight="Bold" FontSize="16"/>
                                 <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
-                                    <Run Text="{Binding Storage.CachePercentage, StringFormat='{}{0:F1}%、'}"/>
+                                    <Run Text="{Binding Storage.CachePercentage, StringFormat='{}{0:F1}%、', Mode=OneWay}"/>
                                     <Run Text="{Binding Storage.CacheSize, Converter={StaticResource FileSizeConverter}}"/>
                                 </TextBlock>
                             </StackPanel>
@@ -253,7 +253,7 @@
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="自动保存的截图文件" FontWeight="Bold" FontSize="16"/>
                                 <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
-                                    <Run Text="{Binding Storage.AutoSavedScreenshotPercentage, StringFormat='{}{0:F1}%、'}"/>
+                                    <Run Text="{Binding Storage.AutoSavedScreenshotPercentage, StringFormat='{}{0:F1}%、', Mode=OneWay}"/>
                                     <Run Text="{Binding Storage.AutoSavedScreenshotSize, Converter={StaticResource FileSizeConverter}}"/>
                                 </TextBlock>
                             </StackPanel>
