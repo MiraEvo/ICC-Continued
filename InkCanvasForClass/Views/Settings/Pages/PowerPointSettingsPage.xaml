@@ -19,6 +19,8 @@
             </ResourceDictionary.MergedDictionaries>
 
             <converters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter"/>
+            <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+            <converters:BooleanToBackgroundConverter x:Key="BooleanToBackgroundConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -201,127 +203,76 @@
             <TextBlock Text="PPT翻页按钮" Style="{StaticResource SettingsGroupTitleStyle}"/>
 
             <Border Style="{StaticResource SettingsCardStyle}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="24"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="在 PPT 模式下显示翻页按钮" Style="{StaticResource SettingsTitleStyle}"/>
+                        <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.ShowPPTButton, Mode=TwoWay}"/>
+                    </Grid>
 
-                    <!-- Preview -->
-                    <Border Grid.Column="0" Height="200" CornerRadius="6" ClipToBounds="True" VerticalAlignment="Top">
-                        <Grid>
-                            <Image Source="/InkCanvasForClass;component/Resources/PresentationExample/ChineseCalligraphy.jpg" Stretch="UniformToFill"/>
-                            <!-- Fallback background if image missing -->
-                            <Border Background="#333" Panel.ZIndex="-1"/>
+                    <UniformGrid Columns="2" Margin="0,0,0,16">
+                        <CheckBox Content="左下" IsChecked="{Binding PowerPoint.ShowPPTButtonLeftBottom, Mode=TwoWay}" Margin="0,0,8,8"/>
+                        <CheckBox Content="右下" IsChecked="{Binding PowerPoint.ShowPPTButtonRightBottom, Mode=TwoWay}" Margin="0,0,8,8"/>
+                        <CheckBox Content="左侧" IsChecked="{Binding PowerPoint.ShowPPTButtonLeftSide, Mode=TwoWay}" Margin="0,0,8,8"/>
+                        <CheckBox Content="右侧" IsChecked="{Binding PowerPoint.ShowPPTButtonRightSide, Mode=TwoWay}" Margin="0,0,8,8"/>
+                    </UniformGrid>
 
-                            <!-- Overlay Buttons Preview -->
-                            <!-- Left Bottom -->
-                            <Image Source="/InkCanvasForClass;component/Resources/PresentationExample/bottombar-white.png"
-                                   Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,20"
-                                   Visibility="{Binding PowerPoint.ShowPPTButtonLeftBottom, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                   Opacity="{Binding PowerPoint.BottomButtonHalfOpacity, Converter={StaticResource BooleanToOpacityConverter}}"/>
+                    <!-- Sliders -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="左侧偏移" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="-500" Maximum="500" Value="{Binding PowerPoint.PPTLSButtonPosition, Mode=TwoWay}" Margin="12,0"/>
+                        <TextBlock Grid.Column="2" Text="{Binding PowerPoint.PPTLSButtonPosition}" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
 
-                            <!-- Right Bottom -->
-                            <Image Source="/InkCanvasForClass;component/Resources/PresentationExample/bottombar-white.png"
-                                   Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,20,20"
-                                   Visibility="{Binding PowerPoint.ShowPPTButtonRightBottom, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                   Opacity="{Binding PowerPoint.BottomButtonHalfOpacity, Converter={StaticResource BooleanToOpacityConverter}}"/>
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="右侧偏移" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="-500" Maximum="500" Value="{Binding PowerPoint.PPTRSButtonPosition, Mode=TwoWay}" Margin="12,0"/>
+                        <TextBlock Grid.Column="2" Text="{Binding PowerPoint.PPTRSButtonPosition}" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
 
-                            <!-- Left Side -->
-                            <Image Source="/InkCanvasForClass;component/Resources/PresentationExample/sidebar-white.png"
-                                   Height="100" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"
-                                   Visibility="{Binding PowerPoint.ShowPPTButtonLeftSide, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                   Opacity="{Binding PowerPoint.SideButtonHalfOpacity, Converter={StaticResource BooleanToOpacityConverter}}">
-                                <Image.RenderTransform>
-                                    <TranslateTransform Y="{Binding PowerPoint.PPTLSButtonPosition}"/>
-                                </Image.RenderTransform>
-                            </Image>
+                    <TextBlock Text="# 调大往上偏移，调小往下偏移，修改为0不偏移，居中放置" Style="{StaticResource SettingsDescriptionStyle}" Margin="0,0,0,16"/>
 
-                            <!-- Right Side -->
-                            <Image Source="/InkCanvasForClass;component/Resources/PresentationExample/sidebar-white.png"
-                                   Height="100" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"
-                                   Visibility="{Binding PowerPoint.ShowPPTButtonRightSide, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                   Opacity="{Binding PowerPoint.SideButtonHalfOpacity, Converter={StaticResource BooleanToOpacityConverter}}">
-                                <Image.RenderTransform>
-                                    <TranslateTransform Y="{Binding PowerPoint.PPTRSButtonPosition}"/>
-                                </Image.RenderTransform>
-                            </Image>
-                        </Grid>
-                    </Border>
+                    <!-- Side Options -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="两侧" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+                        <ui:SimpleStackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+                            <CheckBox Content="显示页码" IsChecked="{Binding PowerPoint.SideButtonShowPage, Mode=TwoWay}"/>
+                            <CheckBox Content="半透明" IsChecked="{Binding PowerPoint.SideButtonHalfOpacity, Mode=TwoWay}"/>
+                            <CheckBox Content="黑色背景" IsChecked="{Binding PowerPoint.SideButtonBlackBackground, Mode=TwoWay}"/>
+                        </ui:SimpleStackPanel>
+                    </Grid>
 
-                    <!-- Settings -->
-                    <StackPanel Grid.Column="2">
-                        <Grid Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="在 PPT 模式下显示翻页按钮" Style="{StaticResource SettingsTitleStyle}"/>
-                            <ui:ToggleSwitch Grid.Column="1" IsOn="{Binding PowerPoint.ShowPPTButton, Mode=TwoWay}"/>
-                        </Grid>
-
-                        <UniformGrid Columns="2" Margin="0,0,0,16">
-                            <CheckBox Content="左下" IsChecked="{Binding PowerPoint.ShowPPTButtonLeftBottom, Mode=TwoWay}" Margin="0,0,8,8"/>
-                            <CheckBox Content="右下" IsChecked="{Binding PowerPoint.ShowPPTButtonRightBottom, Mode=TwoWay}" Margin="0,0,8,8"/>
-                            <CheckBox Content="左侧" IsChecked="{Binding PowerPoint.ShowPPTButtonLeftSide, Mode=TwoWay}" Margin="0,0,8,8"/>
-                            <CheckBox Content="右侧" IsChecked="{Binding PowerPoint.ShowPPTButtonRightSide, Mode=TwoWay}" Margin="0,0,8,8"/>
-                        </UniformGrid>
-
-                        <!-- Sliders -->
-                        <Grid Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="左侧偏移" VerticalAlignment="Center"/>
-                            <Slider Grid.Column="1" Minimum="-500" Maximum="500" Value="{Binding PowerPoint.PPTLSButtonPosition, Mode=TwoWay}" Margin="12,0"/>
-                            <TextBlock Grid.Column="2" Text="{Binding PowerPoint.PPTLSButtonPosition}" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
-                        </Grid>
-
-                        <Grid Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="右侧偏移" VerticalAlignment="Center"/>
-                            <Slider Grid.Column="1" Minimum="-500" Maximum="500" Value="{Binding PowerPoint.PPTRSButtonPosition, Mode=TwoWay}" Margin="12,0"/>
-                            <TextBlock Grid.Column="2" Text="{Binding PowerPoint.PPTRSButtonPosition}" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
-                        </Grid>
-
-                        <TextBlock Text="# 调大往上偏移，调小往下偏移，修改为0不偏移，居中放置" Style="{StaticResource SettingsDescriptionStyle}" Margin="0,0,0,16"/>
-
-                        <!-- Side Options -->
-                        <Grid Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="两侧" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
-                            <ui:SimpleStackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
-                                <CheckBox Content="显示页码" IsChecked="{Binding PowerPoint.SideButtonShowPage, Mode=TwoWay}"/>
-                                <CheckBox Content="半透明" IsChecked="{Binding PowerPoint.SideButtonHalfOpacity, Mode=TwoWay}"/>
-                                <CheckBox Content="黑色背景" IsChecked="{Binding PowerPoint.SideButtonBlackBackground, Mode=TwoWay}"/>
-                            </ui:SimpleStackPanel>
-                        </Grid>
-
-                        <!-- Bottom Options -->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="左下右下" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
-                            <ui:SimpleStackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
-                                <CheckBox Content="显示页码" IsChecked="{Binding PowerPoint.BottomButtonShowPage, Mode=TwoWay}"/>
-                                <CheckBox Content="半透明" IsChecked="{Binding PowerPoint.BottomButtonHalfOpacity, Mode=TwoWay}"/>
-                                <CheckBox Content="黑色背景" IsChecked="{Binding PowerPoint.BottomButtonBlackBackground, Mode=TwoWay}"/>
-                            </ui:SimpleStackPanel>
-                        </Grid>
-                    </StackPanel>
-                </Grid>
+                    <!-- Bottom Options -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="左下右下" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+                        <ui:SimpleStackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+                            <CheckBox Content="显示页码" IsChecked="{Binding PowerPoint.BottomButtonShowPage, Mode=TwoWay}"/>
+                            <CheckBox Content="半透明" IsChecked="{Binding PowerPoint.BottomButtonHalfOpacity, Mode=TwoWay}"/>
+                            <CheckBox Content="黑色背景" IsChecked="{Binding PowerPoint.BottomButtonBlackBackground, Mode=TwoWay}"/>
+                        </ui:SimpleStackPanel>
+                    </Grid>
+                </StackPanel>
             </Border>
 
             <!-- Other Settings -->

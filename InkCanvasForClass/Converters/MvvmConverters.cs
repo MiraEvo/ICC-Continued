@@ -544,4 +544,48 @@ namespace Ink_Canvas.Converters
             return Binding.DoNothing;
         }
     }
+
+    /// <summary>
+    /// 布尔值反转转可见性转换器
+    /// </summary>
+    public class InverseBooleanToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool b)
+            {
+                return b ? Visibility.Collapsed : Visibility.Visible;
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Visibility visibility)
+            {
+                return visibility == Visibility.Collapsed;
+            }
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// 布尔值转背景色转换器
+    /// </summary>
+    public class BooleanToBackgroundConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool isBlack)
+            {
+                return isBlack ? new SolidColorBrush(Color.FromArgb(200, 0, 0, 0)) : new SolidColorBrush(Color.FromArgb(200, 255, 255, 255));
+            }
+            return new SolidColorBrush(Color.FromArgb(200, 0, 0, 0));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
