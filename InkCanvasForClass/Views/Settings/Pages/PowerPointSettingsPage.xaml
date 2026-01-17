@@ -24,7 +24,7 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
         <StackPanel Margin="0,0,12,24">
-            <TextBlock Text="PPT" Style="{StaticResource PageTitleStyle}"/>
+            <TextBlock Text="PowerPoint支持" Style="{StaticResource PageTitleStyle}"/>
 
             <TextBlock Text="此部分的设置项将会在幻灯片播放时使用，优先级高于其他设置项"
                        Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,16"/>
@@ -37,7 +37,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Image Source="/InkCanvasForClass;component/Resources/Icons-png/ppt_icon.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                    <Image Source="/InkCanvasForClass;component/Resources/Icons-png/Powerpoint.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Microsoft PowerPoint 支持" Style="{StaticResource SettingsTitleStyle}"/>
                     </StackPanel>
@@ -54,7 +54,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Image Source="/InkCanvasForClass;component/Resources/Icons-png/wps_icon.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                    <Image Source="/InkCanvasForClass;component/Resources/Icons-png/WPS.png" Width="24" Height="24" Margin="0,0,16,0" VerticalAlignment="Center"/>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="WPS 支持" Style="{StaticResource SettingsTitleStyle}"/>
                     </StackPanel>
