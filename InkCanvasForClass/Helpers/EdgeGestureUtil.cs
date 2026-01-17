@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Ink_Canvas.Helpers
 {
@@ -148,6 +148,7 @@ namespace Ink_Canvas.Helpers
         [DllImport("shell32.dll", SetLastError = true)]
         private static extern int SHGetPropertyStoreForWindow(IntPtr handle, ref Guid riid, ref IPropertyStore propertyStore);
 
+        [RequiresUnmanagedCode("Uses shell32 COM interop to update edge gesture settings.")]
         public static void DisableEdgeGestures(IntPtr hwnd, bool enable)
         {
             IPropertyStore pPropStore = null;

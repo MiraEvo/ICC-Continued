@@ -517,7 +517,7 @@ namespace Ink_Canvas.Services
         public void ResetToDefaults()
         {
             Settings = new Settings();
-            LogHelper.WriteLogToFile("Settings reset to defaults", LogHelper.LogType.Info);
+            LogHelper.WriteLogToFile("设置已重置为默认值", LogHelper.LogType.Info);
             OnSettingsLoaded(SettingsFilePath, false, true);
         }
 
@@ -530,7 +530,7 @@ namespace Ink_Canvas.Services
         {
             if (externalSettings == null)
             {
-                LogHelper.WriteLogToFile("SyncFrom called with null settings, ignored", LogHelper.LogType.Warning);
+                LogHelper.WriteLogToFile("SyncFrom 调用时 settings 为空，已忽略", LogHelper.LogType.Warning);
                 return;
             }
 
@@ -549,7 +549,7 @@ namespace Ink_Canvas.Services
                 IsLoaded = true;
             }
 
-            LogHelper.WriteLogToFile("Settings synced from external source", LogHelper.LogType.Info);
+            LogHelper.WriteLogToFile("设置已从外部来源同步", LogHelper.LogType.Info);
         }
 
         #region 事件触发方法

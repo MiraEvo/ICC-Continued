@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -34,6 +35,7 @@ namespace Ink_Canvas.Helpers
             public int Height => Bottom - Top;
         }
 
+        [RequiresUnmanagedCode("Uses user32 P/Invoke to query foreground window information.")]
         public static string WindowTitle() {
             IntPtr foregroundWindowHandle = GetForegroundWindow();
 
@@ -44,6 +46,7 @@ namespace Ink_Canvas.Helpers
             return windowTitle.ToString();
         }
 
+        [RequiresUnmanagedCode("Uses user32 P/Invoke to query foreground window information.")]
         public static string WindowClassName() {
             IntPtr foregroundWindowHandle = GetForegroundWindow();
 
@@ -54,6 +57,7 @@ namespace Ink_Canvas.Helpers
             return className.ToString();
         }
 
+        [RequiresUnmanagedCode("Uses user32 P/Invoke to query foreground window information.")]
         public static RECT WindowRect() {
             IntPtr foregroundWindowHandle = GetForegroundWindow();
 
@@ -63,6 +67,7 @@ namespace Ink_Canvas.Helpers
             return windowRect;
         }
 
+        [RequiresUnmanagedCode("Uses user32 P/Invoke to query foreground window information.")]
         public static string ProcessName() {
             IntPtr foregroundWindowHandle = GetForegroundWindow();
             uint processId;
@@ -77,6 +82,7 @@ namespace Ink_Canvas.Helpers
             }
         }
 
+        [RequiresUnmanagedCode("Uses user32 P/Invoke to query foreground window information.")]
         public static string ProcessPath()
         {
             IntPtr foregroundWindowHandle = GetForegroundWindow();

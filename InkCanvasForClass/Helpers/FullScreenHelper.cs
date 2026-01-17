@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -17,6 +18,7 @@ namespace Ink_Canvas.Helpers
     /// </summary>
     public static partial class FullScreenHelper
     {
+        [RequiresUnmanagedCode("Uses COM/Win32 APIs to manage fullscreen taskbar behavior.")]
         public static void MarkFullscreenWindowTaskbarList(IntPtr hwnd, bool isFullscreen)
         {
             try
@@ -51,6 +53,7 @@ namespace Ink_Canvas.Helpers
         /// 进入全屏模式后会禁用 DWM 过渡动画
         /// </summary>
         /// <param name="window"></param>
+        [RequiresUnmanagedCode("Uses Win32 APIs to update window styles/placement.")]
         public static void StartFullScreen(Window window)
         {
             if (window == null)
@@ -107,6 +110,7 @@ namespace Ink_Canvas.Helpers
         /// 退出全屏模式后会重新启用 DWM 过渡动画
         /// </summary>
         /// <param name="window"></param>
+        [RequiresUnmanagedCode("Uses Win32 APIs to restore window styles/placement.")]
         public static void EndFullScreen(Window window)
         {
             if (window == null)
@@ -191,6 +195,7 @@ namespace Ink_Canvas.Helpers
         /// 确保窗口全屏的Hook
         /// 使用HandleProcessCorruptedStateExceptions，防止访问内存过程中因为一些致命异常导致程序崩溃
         /// </summary>
+        [RequiresUnmanagedCode("Uses Win32 APIs and marshalling for fullscreen window management.")]
         private static IntPtr KeepFullScreenHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             //处理WM_WINDOWPOSCHANGING消息

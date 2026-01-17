@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
 // 由衷感謝 lindexi 提供的 《WPF 稳定的全屏化窗口方法》
-// 文章鏈接：https://blog.lindexi.com/post/WPF-%E7%A8%B3%E5%AE%9A%E7%9A%84%E5%85%A8%E5%B1%8F%E5%8C%96%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95.html
+// 文章鏈接：https://blog.lindexi.com/post/WPF-%E7%A8%B3%E5%AE%9A%E7%9A%84%E5%85%A8%E5%B1%8F%E5%8C%96%E7%AA%97%E5%8F%A9%E6%96%B9%E6%B3%95.html
 // lindexi 的部落格：https://blog.lindexi.com/
 
 namespace Ink_Canvas.Helpers
@@ -79,12 +80,15 @@ namespace Ink_Canvas.Helpers
                 public static extern Int32 SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, Int32 x, Int32 y, Int32 cx,
                     Int32 cy, Int32 wFlagslong);
 
+                [RequiresUnmanagedCode("Uses user32 P/Invoke to get window placement.")]
                 [DllImport(LibraryName, ExactSpelling = true)]
                 public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
 
+                [RequiresUnmanagedCode("Uses user32 P/Invoke to read window styles.")]
                 public static IntPtr GetWindowLongPtr(IntPtr hWnd, GetWindowLongFields nIndex) =>
                     GetWindowLongPtr(hWnd, (int) nIndex);
 
+                [RequiresUnmanagedCode("Uses user32 P/Invoke to read window styles.")]
                 public static IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex)
                 {
                     return IntPtr.Size > 4
@@ -100,9 +104,11 @@ namespace Ink_Canvas.Helpers
                 [DllImport(LibraryName, CharSet = Properties.BuildCharSet, EntryPoint = "GetWindowLongPtr")]
                 public static extern IntPtr GetWindowLongPtr_x64(IntPtr hWnd, int nIndex);
 
+                [RequiresUnmanagedCode("Uses user32 P/Invoke to update window styles.")]
                 public static IntPtr SetWindowLongPtr(IntPtr hWnd, GetWindowLongFields nIndex, IntPtr dwNewLong) =>
                     SetWindowLongPtr(hWnd, (int) nIndex, dwNewLong);
 
+                [RequiresUnmanagedCode("Uses user32 P/Invoke to update window styles.")]
                 public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
                 {
                     return IntPtr.Size > 4
