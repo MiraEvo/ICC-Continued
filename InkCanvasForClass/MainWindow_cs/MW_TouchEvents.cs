@@ -46,6 +46,16 @@ namespace Ink_Canvas {
         private Matrix palmScaleMatrix = new Matrix();
 
         /// <summary>
+        /// 手掌橡皮上次更新位置
+        /// </summary>
+        private Point? lastPalmEraserPoint = null;
+
+        /// <summary>
+        /// 手掌橡皮上次更新时间戳
+        /// </summary>
+        private int lastPalmEraserUpdateTick = 0;
+
+        /// <summary>
         /// 手掌橡皮的宽度
         /// </summary>
         private double palmEraserWidth = 64;
@@ -56,9 +66,28 @@ namespace Ink_Canvas {
         private int largeTouchDetectionCount = 0;
 
         /// <summary>
-        /// 需要连续检测到大触摸点的次数才触发手掌橡皮
+        /// 手掌橡皮触发连续检测次数（可配置）
         /// </summary>
-        private const int PALM_DETECTION_THRESHOLD = 2;
+        private int PalmEraserDetectionThreshold =>
+            Math.Max(1, Settings?.Gesture?.PalmEraserDetectionThreshold ?? 3);
+
+        /// <summary>
+        /// 手掌橡皮巨大触摸面积倍率（可配置）
+        /// </summary>
+        private double PalmEraserHugeAreaMultiplier =>
+            Math.Max(1.0, Settings?.Gesture?.PalmEraserHugeAreaMultiplier ?? 2.5);
+
+        /// <summary>
+        /// 手掌橡皮移动时最小更新距离（像素，可配置）
+        /// </summary>
+        private double PalmEraserMinMove =>
+            Math.Max(0.5, Settings?.Gesture?.PalmEraserMinMove ?? 2.5);
+
+        /// <summary>
+        /// 手掌橡皮移动时最小更新间隔（毫秒，可配置）
+        /// </summary>
+        private int PalmEraserMinIntervalMs =>
+            Math.Max(0, Settings?.Gesture?.PalmEraserMinIntervalMs ?? 12);
 
         #endregion
 
@@ -150,6 +179,20 @@ namespace Ink_Canvas {
                     || inkCanvas.EditingMode == InkCanvasEditingMode.Select) return;
 
                 TouchDownPointsList[e.StylusDevice.Id] = InkCanvasEditingMode.None;
+
+                try {
+                    var strokeVisual = GetStrokeVisual(e.StylusDevice.Id);
+                    var stylusPoints = e.GetStylusPoints(inkCanvas);
+                    if (stylusPoints.Count > 0) {
+                        var point = stylusPoints[stylusPoints.Count - 1];
+                        strokeVisual.Add(new StylusPoint(point.X, point.Y, point.PressureFactor));
+                        strokeVisual.Redraw();
+                    }
+                }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile("Error in MainWindow_StylusDown (Init Stroke): " + ex.Message,
+                        LogHelper.LogType.Error);
+                }
             }
         }
 
@@ -205,7 +248,7 @@ namespace Ink_Canvas {
                     }
 
                     var strokeVisual = GetStrokeVisual(e.StylusDevice.Id);
-                    var stylusPointCollection = e.GetStylusPoints(this);
+                    var stylusPointCollection = e.GetStylusPoints(inkCanvas);
                     foreach (var stylusPoint in stylusPointCollection)
                         strokeVisual.Add(new StylusPoint(stylusPoint.X, stylusPoint.Y, stylusPoint.PressureFactor));
                     strokeVisual.Redraw();
@@ -370,7 +413,10 @@ namespace Ink_Canvas {
             // 绘制初始橡皮擦形状
             var touchPoint = e.GetTouchPoint(Main_Grid).Position;
             DrawPalmEraserFeedback(touchPoint);
-            palmHitTester.AddPoint(touchPoint);
+            palmHitTester?.AddPoint(touchPoint);
+
+            lastPalmEraserPoint = touchPoint;
+            lastPalmEraserUpdateTick = Environment.TickCount;
 
             palmTouchStartPoint = touchPoint;
 
@@ -385,6 +431,20 @@ namespace Ink_Canvas {
             if (e.TouchDevice.Id != palmTouchDeviceId) return;
 
             var touchPoint = e.GetTouchPoint(Main_Grid).Position;
+
+            if (lastPalmEraserPoint.HasValue) {
+                var delta = touchPoint - lastPalmEraserPoint.Value;
+                var tick = Environment.TickCount;
+                var minMove = PalmEraserMinMove;
+                if (delta.LengthSquared < minMove * minMove ||
+                    tick - lastPalmEraserUpdateTick < PalmEraserMinIntervalMs) {
+                    return;
+                }
+
+                lastPalmEraserUpdateTick = tick;
+            }
+
+            lastPalmEraserPoint = touchPoint;
 
             // 绘制橡皮擦反馈
             DrawPalmEraserFeedback(touchPoint);
@@ -415,6 +475,8 @@ namespace Ink_Canvas {
             // 重置手掌橡皮相关标志
             isLastTouchEraser = false;
             largeTouchDetectionCount = 0;
+            lastPalmEraserPoint = null;
+            lastPalmEraserUpdateTick = 0;
 
             // 隐藏橡皮擦覆盖层
             GridEraserOverlay.Visibility = Visibility.Collapsed;
@@ -528,9 +590,9 @@ namespace Ink_Canvas {
 
                     // 如果连续检测次数达到阈值，或者面积非常大（肯定是手掌），则判定为手掌
                     // 面积非常大定义为：阈值的2倍
-                    bool isHugeArea = area >= minPalmArea * 2;
+                    bool isHugeArea = area >= minPalmArea * PalmEraserHugeAreaMultiplier;
 
-                    if (largeTouchDetectionCount >= PALM_DETECTION_THRESHOLD || isHugeArea) {
+                    if (largeTouchDetectionCount >= PalmEraserDetectionThreshold || isHugeArea) {
                         // 计算有效的橡皮擦宽度
                         detectedWidth *= (Settings.Startup.IsEnableNibMode
                             ? Settings.Advanced.NibModeBoundsWidthEraserSize

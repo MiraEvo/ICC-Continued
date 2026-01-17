@@ -110,6 +110,30 @@ namespace Ink_Canvas.ViewModels
             get => _gesture.MouseWheelDirection;
             set { if (SetProperty(_gesture.MouseWheelDirection, value, _gesture, (g, v) => g.MouseWheelDirection = v)) _saveAction?.Invoke(); }
         }
+
+        public int PalmEraserDetectionThreshold
+        {
+            get => _gesture.PalmEraserDetectionThreshold;
+            set { if (SetProperty(_gesture.PalmEraserDetectionThreshold, value, _gesture, (g, v) => g.PalmEraserDetectionThreshold = v)) _saveAction?.Invoke(); }
+        }
+
+        public double PalmEraserHugeAreaMultiplier
+        {
+            get => _gesture.PalmEraserHugeAreaMultiplier;
+            set { if (SetProperty(_gesture.PalmEraserHugeAreaMultiplier, value, _gesture, (g, v) => g.PalmEraserHugeAreaMultiplier = v)) _saveAction?.Invoke(); }
+        }
+
+        public double PalmEraserMinMove
+        {
+            get => _gesture.PalmEraserMinMove;
+            set { if (SetProperty(_gesture.PalmEraserMinMove, value, _gesture, (g, v) => g.PalmEraserMinMove = v)) _saveAction?.Invoke(); }
+        }
+
+        public int PalmEraserMinIntervalMs
+        {
+            get => _gesture.PalmEraserMinIntervalMs;
+            set { if (SetProperty(_gesture.PalmEraserMinIntervalMs, value, _gesture, (g, v) => g.PalmEraserMinIntervalMs = v)) _saveAction?.Invoke(); }
+        }
     }
 
     /// <summary>

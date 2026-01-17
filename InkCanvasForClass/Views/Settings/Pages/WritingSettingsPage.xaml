@@ -65,6 +65,76 @@
             </StackPanel>
         </Border>
 
+        <!-- 手掌橡皮 -->
+        <TextBlock Text="手掌橡皮" Style="{StaticResource SettingsGroupTitleStyle}"/>
+
+        <Border Style="{StaticResource SettingsCardStyle}">
+            <StackPanel>
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="触发稳定次数" VerticalAlignment="Center"/>
+                    <Slider Grid.Column="1" Minimum="1" Maximum="6"
+                            Value="{Binding Gesture.PalmEraserDetectionThreshold, Mode=TwoWay}"
+                            TickFrequency="1" IsSnapToTickEnabled="True" Margin="12,0"/>
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding Gesture.PalmEraserDetectionThreshold, StringFormat='{}{0}次'}"
+                               Style="{StaticResource SettingsValueStyle}"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="巨大触摸倍率" VerticalAlignment="Center"/>
+                    <Slider Grid.Column="1" Minimum="1.5" Maximum="4.0"
+                            Value="{Binding Gesture.PalmEraserHugeAreaMultiplier, Mode=TwoWay}"
+                            TickFrequency="0.1" IsSnapToTickEnabled="True" Margin="12,0"/>
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding Gesture.PalmEraserHugeAreaMultiplier, StringFormat='{}{0:F1}x'}"
+                               Style="{StaticResource SettingsValueStyle}"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="最小移动距离" VerticalAlignment="Center"/>
+                    <Slider Grid.Column="1" Minimum="0.5" Maximum="8.0"
+                            Value="{Binding Gesture.PalmEraserMinMove, Mode=TwoWay}"
+                            TickFrequency="0.5" IsSnapToTickEnabled="True" Margin="12,0"/>
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding Gesture.PalmEraserMinMove, StringFormat='{}{0:F1}px'}"
+                               Style="{StaticResource SettingsValueStyle}"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="最小更新间隔" VerticalAlignment="Center"/>
+                    <Slider Grid.Column="1" Minimum="0" Maximum="60"
+                            Value="{Binding Gesture.PalmEraserMinIntervalMs, Mode=TwoWay}"
+                            TickFrequency="2" IsSnapToTickEnabled="True" Margin="12,0"/>
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding Gesture.PalmEraserMinIntervalMs, StringFormat='{}{0}ms'}"
+                               Style="{StaticResource SettingsValueStyle}"/>
+                </Grid>
+
+                <TextBlock Text="数值越大越不容易触发，同时可提升稳定性；移动/间隔越大越省性能。"
+                           Style="{StaticResource HintTextStyle}"/>
+            </StackPanel>
+        </Border>
+
         <!-- ==================== 墨迹纠正 ==================== -->
         <TextBlock Text="墨迹纠正" Style="{StaticResource SettingsGroupTitleStyle}"/>
 

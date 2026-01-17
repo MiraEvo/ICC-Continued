@@ -22,6 +22,10 @@ namespace Ink_Canvas.Models.Settings
         private bool _enableMouseWheelGesture = true;
         private int _mouseWheelAction = 0;
         private int _mouseWheelDirection = 0;
+        private int _palmEraserDetectionThreshold = 3;
+        private double _palmEraserHugeAreaMultiplier = 2.5;
+        private double _palmEraserMinMove = 2.5;
+        private int _palmEraserMinIntervalMs = 12;
 
         /// <summary>
         /// 是否启用双指手势（缩放、平移或旋转）
@@ -183,6 +187,46 @@ namespace Ink_Canvas.Models.Settings
         {
             get => _mouseWheelDirection;
             set => SetProperty(ref _mouseWheelDirection, value);
+        }
+
+        /// <summary>
+        /// 手掌橡皮触发连续检测次数
+        /// </summary>
+        [JsonProperty("palmEraserDetectionThreshold")]
+        public int PalmEraserDetectionThreshold
+        {
+            get => _palmEraserDetectionThreshold;
+            set => SetProperty(ref _palmEraserDetectionThreshold, value);
+        }
+
+        /// <summary>
+        /// 手掌橡皮巨大触摸面积倍率
+        /// </summary>
+        [JsonProperty("palmEraserHugeAreaMultiplier")]
+        public double PalmEraserHugeAreaMultiplier
+        {
+            get => _palmEraserHugeAreaMultiplier;
+            set => SetProperty(ref _palmEraserHugeAreaMultiplier, value);
+        }
+
+        /// <summary>
+        /// 手掌橡皮最小移动距离（像素）
+        /// </summary>
+        [JsonProperty("palmEraserMinMove")]
+        public double PalmEraserMinMove
+        {
+            get => _palmEraserMinMove;
+            set => SetProperty(ref _palmEraserMinMove, value);
+        }
+
+        /// <summary>
+        /// 手掌橡皮最小更新间隔（毫秒）
+        /// </summary>
+        [JsonProperty("palmEraserMinIntervalMs")]
+        public int PalmEraserMinIntervalMs
+        {
+            get => _palmEraserMinIntervalMs;
+            set => SetProperty(ref _palmEraserMinIntervalMs, value);
         }
     }
 }
