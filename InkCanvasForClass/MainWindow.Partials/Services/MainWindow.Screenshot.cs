@@ -249,6 +249,7 @@ namespace Ink_Canvas {
             if (isUsingCallback) {
                 if (!Magnification.MagSetImageScalingCallback(hwndMag,
                         (hwnd, srcdata, srcheader, destdata, destheader, unclipped, clipped, dirty) => {
+                            // Bitmap ownership is transferred to callbackAction
                             Bitmap bm = new Bitmap((int)srcheader.width, (int)srcheader.height,
                                 (int)srcheader.width * 4, PixelFormat.Format32bppRgb, srcdata);
                             callbackAction(bm);
@@ -257,12 +258,13 @@ namespace Ink_Canvas {
             } else {
                 RECT rect;
                 GetWindowRect(hwndMag, out rect);
-                Bitmap bmp = new Bitmap(rect.Width, rect.Height);
+                using (Bitmap bmp = new Bitmap(rect.Width, rect.Height))
                 using (Graphics memoryGraphics = Graphics.FromImage(bmp)) {
                     PrintWindow(hwndMag, memoryGraphics.GetHdc(), PW_RENDERFULLCONTENT);
                     memoryGraphics.ReleaseHdc();
+                    // Create a copy for the callback since bmp will be disposed
+                    callbackAction(new Bitmap(bmp));
                 }
-                callbackAction(bmp);
             }
 
             // 反注册宿主窗口

@@ -734,10 +734,11 @@ namespace Ink_Canvas {
                 Application.Current.Dispatcher.Invoke(() => {
                     try {
                         memoryStreams[currentPos]?.Dispose();
-                        MemoryStream ms = new MemoryStream();
-                        inkCanvas.Strokes.Save(ms);
-                        ms.Position = 0;
-                        memoryStreams[currentPos] = ms;
+                        using (MemoryStream ms = new MemoryStream()) {
+                            inkCanvas.Strokes.Save(ms);
+                            ms.Position = 0;
+                            memoryStreams[currentPos] = new MemoryStream(ms.ToArray());
+                        }
                         // 复制引用以便异步保存
                         streamsToSave = memoryStreams;
                     }
@@ -834,10 +835,11 @@ namespace Ink_Canvas {
             var prevSlideId = previousSlideID;
             Application.Current.Dispatcher.Invoke(() => {
                 memoryStreams[prevSlideId]?.Dispose();
-                var ms = new MemoryStream();
-                inkCanvas.Strokes.Save(ms);
-                ms.Position = 0;
-                memoryStreams[prevSlideId] = ms;
+                using (var ms = new MemoryStream()) {
+                    inkCanvas.Strokes.Save(ms);
+                    ms.Position = 0;
+                    memoryStreams[prevSlideId] = new MemoryStream(ms.ToArray());
+                }
 
                 // 优化：异步保存截图
                 if (inkCanvas.Strokes.Count > Settings.Automation.MinimumAutomationStrokeNumber &&
@@ -1069,10 +1071,11 @@ namespace Ink_Canvas {
                 try {
                     var currentPos = pptApplication.SlideShowWindows[1].View.CurrentShowPosition;
                     memoryStreams[currentPos]?.Dispose();
-                    var ms = new MemoryStream();
-                    inkCanvas.Strokes.Save(ms);
-                    ms.Position = 0;
-                    memoryStreams[currentPos] = ms;
+                    using (var ms = new MemoryStream()) {
+                        inkCanvas.Strokes.Save(ms);
+                        ms.Position = 0;
+                        memoryStreams[currentPos] = new MemoryStream(ms.ToArray());
+                    }
                     timeMachine.ClearStrokeHistory();
                 }
                 catch (Exception ex) {
