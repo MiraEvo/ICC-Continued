@@ -357,10 +357,9 @@ namespace Ink_Canvas {
             if (MainWindow?.inkCanvas?.Strokes != null) {
                 Point? nearestPoint = FindNearestStrokePoint(point);
                 if (nearestPoint.HasValue) {
-                    double distance = Math.Sqrt(
-                        Math.Pow(point.X - nearestPoint.Value.X, 2) +
-                        Math.Pow(point.Y - nearestPoint.Value.Y, 2)
-                    );
+                    double dx = point.X - nearestPoint.Value.X;
+                    double dy = point.Y - nearestPoint.Value.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
 
                     if (distance <= _snapDistance) {
                         return nearestPoint.Value;
@@ -385,8 +384,8 @@ namespace Ink_Canvas {
                 // 检查起点
                 var startPoint = new Point(points[0].X, points[0].Y);
                 double startDistance = Math.Sqrt(
-                    Math.Pow(point.X - startPoint.X, 2) +
-                    Math.Pow(point.Y - startPoint.Y, 2)
+                    (point.X - startPoint.X) * (point.X - startPoint.X) +
+                    (point.Y - startPoint.Y) * (point.Y - startPoint.Y)
                 );
 
                 if (startDistance < minDistance) {
@@ -397,8 +396,8 @@ namespace Ink_Canvas {
                 // 检查终点
                 var endPoint = new Point(points[points.Count - 1].X, points[points.Count - 1].Y);
                 double endDistance = Math.Sqrt(
-                    Math.Pow(point.X - endPoint.X, 2) +
-                    Math.Pow(point.Y - endPoint.Y, 2)
+                    (point.X - endPoint.X) * (point.X - endPoint.X) +
+                    (point.Y - endPoint.Y) * (point.Y - endPoint.Y)
                 );
 
                 if (endDistance < minDistance) {
