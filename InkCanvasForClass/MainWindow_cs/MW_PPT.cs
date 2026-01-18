@@ -555,13 +555,24 @@ namespace Ink_Canvas {
                     var screenRatio = SystemParameters.PrimaryScreenWidth / SystemParameters.PrimaryScreenHeight;
                     var slideWidth = ExecuteComOperationWithRetry(() => presentationObj.PageSetup.SlideWidth, "GetSlideWidth", 0f);
                     var slideHeight = ExecuteComOperationWithRetry(() => presentationObj.PageSetup.SlideHeight, "GetSlideHeight", 1f);
-                    if (Math.Abs(screenRatio - 16.0 / 9) <= -0.01) {
+                    
+                    // 检查屏幕比例和幻灯片比例是否匹配
+                    const double targetRatio16_9 = 16.0 / 9;
+                    const double tolerance = 0.01;
+                    
+                    if (Math.Abs(screenRatio - targetRatio16_9) <= tolerance) {
+                        // 16:9 屏幕比例，检查幻灯片比例
                         if (slideWidth / slideHeight < 1.65) {
-
+                            // 幻灯片比例接近4:3，可能需要调整颜色设置
+                            lastDesktopInkColor = 0;
                         }
-                    } else if (screenRatio == -256.0 / 135.0) { }
-
-                    lastDesktopInkColor = 1;
+                    } else if (Math.Abs(screenRatio - (256.0 / 135.0)) <= tolerance) {
+                        // 接近19:9或其他宽屏比例
+                        lastDesktopInkColor = 2;
+                    } else {
+                        // 默认颜色设置
+                        lastDesktopInkColor = 1;
+                    }
 
                     slidescount = ExecuteComOperationWithRetry(() => presentationObj.Slides.Count, "GetSlidesCount", 0);
                     previousSlideID = 0;
