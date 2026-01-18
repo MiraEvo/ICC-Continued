@@ -22,11 +22,10 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
         <StackPanel Margin="0,0,12,24">
             <TextBlock Text="关于" Style="{StaticResource PageTitleStyle}"/>
+            <TextBlock Text="版本信息与开源许可" Style="{StaticResource PageSubtitleStyle}"/>
 
             <!-- UI Banner Placeholder -->
-            <Border CornerRadius="12" 
-                    Height="200" 
-                    Margin="0,0,0,24">
+            <Border Style="{StaticResource HeroBannerStyle}">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                         <GradientStop Color="#1E3A8A" Offset="0"/>
@@ -45,7 +44,7 @@
                             <GradientStop Color="#312E81" Offset="1"/>
                         </LinearGradientBrush>
                     </Grid.Background>
-                    
+
                     <!-- Futuristic Grid Pattern Overlay -->
                     <Grid Opacity="0.3">
                         <Grid.Background>
@@ -63,32 +62,32 @@
                             </DrawingBrush>
                         </Grid.Background>
                     </Grid>
-                    
+
                     <!-- Content -->
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="InkCanvasForClass-Continued" 
-                                   FontSize="32" 
-                                   FontWeight="Bold" 
-                                   Foreground="#F0F9FF" 
+                        <TextBlock Text="InkCanvasForClass-Continued"
+                                   FontSize="32"
+                                   FontWeight="Bold"
+                                   Foreground="#F0F9FF"
                                    HorizontalAlignment="Center"
                                    Margin="0,0,0,8"/>
-                        <TextBlock Text="Version:0.0.1.0" 
-                                   FontSize="18" 
-                                   Foreground="#93C5FD" 
+                        <TextBlock Text="Version:0.0.1.0"
+                                   FontSize="18"
+                                   Foreground="#93C5FD"
                                    HorizontalAlignment="Center"
                                    Margin="0,0,0,4"/>
-                        <TextBlock Text="Codename:Arona" 
-                                   FontSize="14" 
-                                   Foreground="#DBEAFE" 
+                        <TextBlock Text="Codename:Arona"
+                                   FontSize="14"
+                                   Foreground="#DBEAFE"
                                    HorizontalAlignment="Center"
                                    TextWrapping="Wrap"
                                    MaxWidth="400"/>
                     </StackPanel>
-                    
+
                     <!-- Glowing Accent Lines -->
-                    <Border BorderBrush="#60A5FA" 
-                            BorderThickness="1" 
-                            CornerRadius="12" 
+                    <Border BorderBrush="#60A5FA"
+                            BorderThickness="1"
+                            CornerRadius="12"
                             Opacity="0.5"
                             Margin="2"/>
                 </Grid>
@@ -106,9 +105,9 @@
                 </StackPanel>
             </StackPanel>
 
-            
+
             <!-- License Box -->
-            <Border Background="#2D2D30" BorderBrush="#3F3F46" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,24">
+            <Border Style="{StaticResource SettingsCardStyle}" Margin="0,0,0,24">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
                         <ui:FontIcon Glyph="&#xE8A9;" FontSize="24" Margin="0,0,12,0"/>

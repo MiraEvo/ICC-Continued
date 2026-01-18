@@ -13,79 +13,19 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <!-- 颜色定义 -->
-            <Color x:Key="CardBackgroundColor">#2D2D30</Color>
-            <Color x:Key="AccentColor">#60A5FA</Color>
-            <Color x:Key="PrimaryTextColor">#FAFAFA</Color>
-            <Color x:Key="SecondaryTextColor">#A1A1AA</Color>
-            <Color x:Key="BorderColor">#3F3F46</Color>
-
-            <!-- 画刷定义 -->
-            <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
-            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
-            <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}"/>
-            <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}"/>
-            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
-
-            <!-- 页面标题样式 -->
-            <Style x:Key="PageTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="28"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-                <Setter Property="Margin" Value="0,0,0,24"/>
-            </Style>
-
-            <!-- 设置卡片容器样式 -->
-            <Style x:Key="SettingsCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="CornerRadius" Value="8"/>
-                <Setter Property="Padding" Value="20"/>
-                <Setter Property="Margin" Value="0,0,0,12"/>
-            </Style>
-
-            <!-- 设置项标题样式 -->
-            <Style x:Key="SettingsTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-
-            <!-- 设置项描述样式 -->
-            <Style x:Key="SettingsDescriptionStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
-                <Setter Property="TextWrapping" Value="Wrap"/>
-                <Setter Property="Margin" Value="0,4,0,0"/>
-            </Style>
-
-            <!-- 设置分组标题样式 -->
-            <Style x:Key="SettingsGroupTitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="13"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Margin" Value="0,20,0,12"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-            </Style>
-
-            <!-- 图标样式 -->
-            <Style x:Key="SettingsIconStyle" TargetType="ui:FontIcon">
-                <Setter Property="FontSize" Value="22"/>
-                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-                <Setter Property="Margin" Value="0,0,16,0"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="Width" Value="24"/>
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="SettingsPageStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <StackPanel>
+        <!-- 页面标题 -->
         <TextBlock Text="快速设置" Style="{StaticResource PageTitleStyle}"/>
+        <TextBlock Text="常用设置项的快速访问入口" Style="{StaticResource PageSubtitleStyle}"/>
 
-        <!-- 启动设置 -->
-        <TextBlock Text="启动" Style="{StaticResource SettingsGroupTitleStyle}" Margin="0,0,0,8"/>
+        <!-- 启动设置分组 -->
+        <TextBlock Text="启动" Style="{StaticResource SettingsGroupTitleStyle}" Margin="0,8,0,12"/>
 
         <!-- 开机时运行 -->
         <Border Style="{StaticResource SettingsCardStyle}">
@@ -95,7 +35,14 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE7E8;" Style="{StaticResource SettingsIconStyle}"/>
+
+                <!-- 图标容器 -->
+                <Border Style="{StaticResource SettingsIconContainerStyle}">
+                    <ui:FontIcon Glyph="&#xE7E8;" FontSize="18"
+                                 Foreground="{StaticResource AccentBrush}"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
                     <TextBlock Text="开机时运行" Style="{StaticResource SettingsTitleStyle}"/>
                     <TextBlock Text="系统启动时自动运行此应用程序" Style="{StaticResource SettingsDescriptionStyle}"/>
@@ -113,7 +60,14 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE744;" Style="{StaticResource SettingsIconStyle}"/>
+
+                <!-- 图标容器 -->
+                <Border Style="{StaticResource SettingsIconContainerStyle}">
+                    <ui:FontIcon Glyph="&#xE744;" FontSize="18"
+                                 Foreground="{StaticResource AccentBrush}"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
                     <TextBlock Text="开机运行后收纳到侧边栏" Style="{StaticResource SettingsTitleStyle}"/>
                     <TextBlock Text="启动后自动将工具栏折叠到屏幕边缘" Style="{StaticResource SettingsDescriptionStyle}"/>
@@ -132,10 +86,17 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE740;" Style="{StaticResource SettingsIconStyle}"/>
+
+                <!-- 图标容器 -->
+                <Border Style="{StaticResource SettingsIconContainerStyle}">
+                    <ui:FontIcon Glyph="&#xE740;" FontSize="18"
+                                 Foreground="{StaticResource AccentBrush}"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
                     <TextBlock Text="浮动工具栏缩放" Style="{StaticResource SettingsTitleStyle}"/>
                     <TextBlock Text="调整工具栏的显示大小" Style="{StaticResource SettingsDescriptionStyle}"/>
@@ -144,11 +105,11 @@
                         Minimum="0.5" Maximum="2.0"
                         Value="{Binding Appearance.ViewboxFloatingBarScaleTransformValue, Mode=TwoWay}"
                         TickFrequency="0.1" IsSnapToTickEnabled="True"
-                        SmallChange="0.1" LargeChange="0.2"/>
+                        SmallChange="0.1" LargeChange="0.2"
+                        Style="{StaticResource ModernSliderStyle}"/>
                 <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right"
                            Text="{Binding Appearance.ViewboxFloatingBarScaleTransformValue, StringFormat={}{0:F1}x}"
-                           Style="{StaticResource SettingsTitleStyle}"
-                           Foreground="{StaticResource AccentBrush}"/>
+                           Style="{StaticResource SettingsValueStyle}"/>
             </Grid>
         </Border>
 
@@ -158,10 +119,17 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
-                <ui:FontIcon Glyph="&#xE7A6;" Style="{StaticResource SettingsIconStyle}"/>
+
+                <!-- 图标容器 -->
+                <Border Style="{StaticResource SettingsIconContainerStyle}">
+                    <ui:FontIcon Glyph="&#xE7A6;" FontSize="18"
+                                 Foreground="{StaticResource AccentBrush}"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
                     <TextBlock Text="浮动工具栏透明度" Style="{StaticResource SettingsTitleStyle}"/>
                     <TextBlock Text="调整工具栏的不透明度" Style="{StaticResource SettingsDescriptionStyle}"/>
@@ -170,12 +138,43 @@
                         Minimum="0.1" Maximum="1.0"
                         Value="{Binding Appearance.ViewboxFloatingBarOpacityValue, Mode=TwoWay}"
                         TickFrequency="0.1" IsSnapToTickEnabled="True"
-                        SmallChange="0.1" LargeChange="0.2"/>
+                        SmallChange="0.1" LargeChange="0.2"
+                        Style="{StaticResource ModernSliderStyle}"/>
                 <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right"
                            Text="{Binding Appearance.ViewboxFloatingBarOpacityValue, StringFormat={}{0:P0}}"
-                           Style="{StaticResource SettingsTitleStyle}"
-                           Foreground="{StaticResource AccentBrush}"/>
+                           Style="{StaticResource SettingsValueStyle}"/>
             </Grid>
         </Border>
+
+        <!-- 快速操作分组 -->
+        <TextBlock Text="快速操作" Style="{StaticResource SettingsGroupTitleStyle}"/>
+
+        <!-- 信息提示栏 -->
+        <Border Style="{StaticResource InfoInfoBarStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ui:FontIcon Glyph="&#xE946;" Foreground="{StaticResource InfoBrush}"
+                             FontSize="20" VerticalAlignment="Top" Margin="0,2,16,0"/>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="快捷键提示" Style="{StaticResource InfoBarTitleStyle}"
+                               Foreground="{StaticResource InfoBrush}"/>
+                    <TextBlock Style="{StaticResource InfoBarContentStyle}">
+                        <Run Text="• Ctrl + S：切换收纳模式"/>
+                        <LineBreak/>
+                        <Run Text="• Ctrl + F：强制全屏化"/>
+                        <LineBreak/>
+                        <Run Text="• Ctrl + T：重置工具栏位置"/>
+                        <LineBreak/>
+                        <Run Text="• Ctrl + R：重启应用"/>
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 底部间距 -->
+        <Border Height="40"/>
     </StackPanel>
 </UserControl>

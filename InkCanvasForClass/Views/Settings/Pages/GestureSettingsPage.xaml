@@ -22,6 +22,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
         <StackPanel Margin="0,0,12,24">
         <TextBlock Text="手势" Style="{StaticResource PageTitleStyle}"/>
+        <TextBlock Text="触控与鼠标手势行为设置" Style="{StaticResource PageSubtitleStyle}"/>
 
         <!-- ==================== 触摸手势 ==================== -->
 

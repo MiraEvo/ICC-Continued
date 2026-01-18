@@ -22,6 +22,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
         <StackPanel Margin="0,0,12,24">
         <TextBlock Text="书写" Style="{StaticResource PageTitleStyle}"/>
+        <TextBlock Text="书写与墨迹行为相关设置" Style="{StaticResource PageSubtitleStyle}"/>
 
         <!-- ==================== 画板和墨迹 ==================== -->
         <TextBlock Text="画板和墨迹" Style="{StaticResource SettingsGroupTitleStyle}"/>
@@ -90,7 +91,8 @@
                     <TextBlock Text="触发稳定次数" VerticalAlignment="Center"/>
                     <Slider Grid.Column="1" Minimum="1" Maximum="6"
                             Value="{Binding Gesture.PalmEraserDetectionThreshold, Mode=TwoWay}"
-                            TickFrequency="1" IsSnapToTickEnabled="True" Margin="12,0"/>
+                            TickFrequency="1" IsSnapToTickEnabled="True" Margin="12,0"
+                            Style="{StaticResource ModernSliderStyle}"/>
                     <TextBlock Grid.Column="2"
                                Text="{Binding Gesture.PalmEraserDetectionThreshold, StringFormat='{}{0}次'}"
                                Style="{StaticResource SettingsValueStyle}"/>
@@ -105,7 +107,8 @@
                     <TextBlock Text="巨大触摸倍率" VerticalAlignment="Center"/>
                     <Slider Grid.Column="1" Minimum="1.5" Maximum="4.0"
                             Value="{Binding Gesture.PalmEraserHugeAreaMultiplier, Mode=TwoWay}"
-                            TickFrequency="0.1" IsSnapToTickEnabled="True" Margin="12,0"/>
+                            TickFrequency="0.1" IsSnapToTickEnabled="True" Margin="12,0"
+                            Style="{StaticResource ModernSliderStyle}"/>
                     <TextBlock Grid.Column="2"
                                Text="{Binding Gesture.PalmEraserHugeAreaMultiplier, StringFormat='{}{0:F1}x'}"
                                Style="{StaticResource SettingsValueStyle}"/>
@@ -120,7 +123,8 @@
                     <TextBlock Text="最小移动距离" VerticalAlignment="Center"/>
                     <Slider Grid.Column="1" Minimum="0.5" Maximum="8.0"
                             Value="{Binding Gesture.PalmEraserMinMove, Mode=TwoWay}"
-                            TickFrequency="0.5" IsSnapToTickEnabled="True" Margin="12,0"/>
+                            TickFrequency="0.5" IsSnapToTickEnabled="True" Margin="12,0"
+                            Style="{StaticResource ModernSliderStyle}"/>
                     <TextBlock Grid.Column="2"
                                Text="{Binding Gesture.PalmEraserMinMove, StringFormat='{}{0:F1}px'}"
                                Style="{StaticResource SettingsValueStyle}"/>
@@ -135,7 +139,8 @@
                     <TextBlock Text="最小更新间隔" VerticalAlignment="Center"/>
                     <Slider Grid.Column="1" Minimum="0" Maximum="60"
                             Value="{Binding Gesture.PalmEraserMinIntervalMs, Mode=TwoWay}"
-                            TickFrequency="2" IsSnapToTickEnabled="True" Margin="12,0"/>
+                            TickFrequency="2" IsSnapToTickEnabled="True" Margin="12,0"
+                            Style="{StaticResource ModernSliderStyle}"/>
                     <TextBlock Grid.Column="2"
                                Text="{Binding Gesture.PalmEraserMinIntervalMs, StringFormat='{}{0}ms'}"
                                Style="{StaticResource SettingsValueStyle}"/>

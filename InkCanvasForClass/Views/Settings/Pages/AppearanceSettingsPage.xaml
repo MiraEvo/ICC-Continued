@@ -22,6 +22,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
         <StackPanel Margin="0,0,12,24">
         <TextBlock Text="外观" Style="{StaticResource PageTitleStyle}"/>
+        <TextBlock Text="界面外观与显示细节配置" Style="{StaticResource PageSubtitleStyle}"/>
 
         <!-- ==================== 按钮显示区域 ==================== -->
         <Border Style="{StaticResource SettingsCardStyle}">
@@ -148,7 +149,8 @@
                         Minimum="0.5" Maximum="2.0"
                         Value="{Binding Appearance.ViewboxFloatingBarScaleTransformValue, Mode=TwoWay}"
                         TickFrequency="0.1" IsSnapToTickEnabled="True"
-                        SmallChange="0.1" LargeChange="0.2"/>
+                        SmallChange="0.1" LargeChange="0.2"
+                        Style="{StaticResource ModernSliderStyle}"/>
                 <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right"
                            Text="{Binding Appearance.ViewboxFloatingBarScaleTransformValue, StringFormat={}{0:F1}}"
                            Style="{StaticResource SettingsTitleStyle}"
@@ -173,7 +175,8 @@
                         Minimum="0.1" Maximum="1.0"
                         Value="{Binding Appearance.ViewboxFloatingBarOpacityValue, Mode=TwoWay}"
                         TickFrequency="0.1" IsSnapToTickEnabled="True"
-                        SmallChange="0.1" LargeChange="0.2"/>
+                        SmallChange="0.1" LargeChange="0.2"
+                        Style="{StaticResource ModernSliderStyle}"/>
                 <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right"
                            Text="{Binding Appearance.ViewboxFloatingBarOpacityValue, StringFormat={}{0:F1}}"
                            Style="{StaticResource SettingsTitleStyle}"
@@ -199,7 +202,8 @@
                             Minimum="0.1" Maximum="1.0"
                             Value="{Binding Appearance.ViewboxFloatingBarOpacityInPPTValue, Mode=TwoWay}"
                             TickFrequency="0.1" IsSnapToTickEnabled="True"
-                            SmallChange="0.1" LargeChange="0.2"/>
+                            SmallChange="0.1" LargeChange="0.2"
+                            Style="{StaticResource ModernSliderStyle}"/>
                     <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right"
                                Text="{Binding Appearance.ViewboxFloatingBarOpacityInPPTValue, StringFormat={}{0:F1}}"
                                Style="{StaticResource SettingsTitleStyle}"
