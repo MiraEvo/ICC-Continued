@@ -1805,12 +1805,6 @@ namespace Ink_Canvas.Services
                 LogHelper.WriteLogToFile($"SafeAccessDynamicProperty：返回默认值 '{propertyName}'", LogHelper.LogType.Trace);
                 return defaultValue;
             }
-            catch (NullReferenceException ex)
-            {
-                LogHelper.WriteLogToFile($"SafeAccessDynamicProperty：访问属性 '{propertyName}' 时发生空引用：{ex.Message}", LogHelper.LogType.Warning);
-                LogHelper.WriteLogToFile($"SafeAccessDynamicProperty：返回默认值 '{propertyName}'", LogHelper.LogType.Trace);
-                return defaultValue;
-            }
             catch (Exception ex)
             {
                 LogHelper.WriteLogToFile($"SafeAccessDynamicProperty：访问属性 '{propertyName}' 发生异常：{ex.GetType().Name} - {ex.Message}", LogHelper.LogType.Error);
