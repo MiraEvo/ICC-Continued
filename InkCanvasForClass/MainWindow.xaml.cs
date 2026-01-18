@@ -1099,13 +1099,15 @@ namespace Ink_Canvas {
         public bool isLoaded = false;
 
         [LibraryImport("user32.dll")]
-        static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+        public static partial IntPtr GetSystemMenu(IntPtr hWnd, [MarshalAs(UnmanagedType.Bool)] bool bRevert);
 
         [LibraryImport("user32.dll")]
-        static extern bool EnableMenuItem(IntPtr hMenu, uint uIDEnableItem, uint uEnable);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool EnableMenuItem(IntPtr hMenu, uint uIDEnableItem, uint uEnable);
 
         [LibraryImport("user32.dll", SetLastError = true)]
-        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, UInt32 uFlags);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, UInt32 uFlags);
 
         const uint MF_BYCOMMAND = 0x00000000;
         const uint MF_GRAYED = 0x00000001;
@@ -1785,7 +1787,8 @@ namespace Ink_Canvas {
         }
 
         [LibraryImport("user32.dll", SetLastError = true)]
-        internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, [MarshalAs(UnmanagedType.Bool)] bool bRepaint);
 
         [RequiresUnmanagedCode("Uses user32 MoveWindow for forced fullscreen behavior.")]
         private void MainWindow_OnSizeChanged(object sender, SizeChangedEventArgs e) {
