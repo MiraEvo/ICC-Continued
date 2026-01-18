@@ -1418,8 +1418,6 @@ namespace Ink_Canvas {
                             Stroke s = null;
                             foreach (var stylusPoint in stroke.StylusPoints) {
 
-                                if (isRestartInkReplay) break;
-
                                 var timeoutCount = 0;
                                 while (isPauseInkReplay && timeoutCount < 1000) {
                                     Thread.Sleep(10);
@@ -1450,8 +1448,6 @@ namespace Ink_Canvas {
                         } else {
                             Stroke s = null;
                             foreach (var stylusPoint in stroke.StylusPoints) {
-
-                                if (isRestartInkReplay) break;
 
                                 var timeoutCount = 0;
                                 while (isPauseInkReplay && timeoutCount < 1000) {
