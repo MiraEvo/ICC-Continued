@@ -605,6 +605,7 @@ namespace Ink_Canvas {
                                 var i = -1;
                                 try {
                                     i = int.Parse(Path.GetFileNameWithoutExtension(file.Name));
+                                    memoryStreams[i]?.Dispose();
                                     memoryStreams[i] = new MemoryStream(File.ReadAllBytes(file.FullName));
                                     memoryStreams[i].Position = 0;
                                     count++;
@@ -732,6 +733,7 @@ namespace Ink_Canvas {
                 MemoryStream[] streamsToSave = null;
                 Application.Current.Dispatcher.Invoke(() => {
                     try {
+                        memoryStreams[currentPos]?.Dispose();
                         MemoryStream ms = new MemoryStream();
                         inkCanvas.Strokes.Save(ms);
                         ms.Position = 0;
@@ -831,6 +833,7 @@ namespace Ink_Canvas {
             // 优化：异步保存墨迹，不阻塞UI
             var prevSlideId = previousSlideID;
             Application.Current.Dispatcher.Invoke(() => {
+                memoryStreams[prevSlideId]?.Dispose();
                 var ms = new MemoryStream();
                 inkCanvas.Strokes.Save(ms);
                 ms.Position = 0;
@@ -1064,10 +1067,12 @@ namespace Ink_Canvas {
             if (!IsSlideShowRunning()) return;
             Application.Current.Dispatcher.Invoke(() => {
                 try {
+                    var currentPos = pptApplication.SlideShowWindows[1].View.CurrentShowPosition;
+                    memoryStreams[currentPos]?.Dispose();
                     var ms = new MemoryStream();
                     inkCanvas.Strokes.Save(ms);
                     ms.Position = 0;
-                    memoryStreams[pptApplication.SlideShowWindows[1].View.CurrentShowPosition] = ms;
+                    memoryStreams[currentPos] = ms;
                     timeMachine.ClearStrokeHistory();
                 }
                 catch (Exception ex) {

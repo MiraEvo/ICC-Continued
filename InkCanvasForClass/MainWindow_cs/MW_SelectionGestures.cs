@@ -953,7 +953,9 @@ namespace Ink_Canvas {
             StrokeSelectionCursorArea.ForceCursor = true;
             StreamResourceInfo sri_move = Application.GetResourceStream(
                 new Uri("Resources/Cursors/cursor-move.cur", UriKind.Relative));
-            StrokeSelectionCursorArea.Cursor = new Cursor(sri_move.Stream);
+            using (var cursor_move = new Cursor(sri_move.Stream)) {
+                StrokeSelectionCursorArea.Cursor = cursor_move;
+            }
 
             StreamResourceInfo sri_lr = Application.GetResourceStream(
                 new Uri("Resources/Cursors/cursor-resize-lr.cur", UriKind.Relative));
@@ -967,14 +969,24 @@ namespace Ink_Canvas {
             foreach (var bd in StrokeSelectionBorderHandles) {
                 bd.ForceCursor = true;
             }
-            StrokeSelectionBorderHandles[0].Cursor = StrokeSelectionBorderHandles[3].Cursor = new Cursor(sri_lt_rb.Stream);
-            StrokeSelectionBorderHandles[1].Cursor = StrokeSelectionBorderHandles[2].Cursor = new Cursor(sri_rt_lb.Stream);
-            StrokeSelectionBorderHandles[4].Cursor = StrokeSelectionBorderHandles[5].Cursor = new Cursor(sri_lr.Stream);
-            StrokeSelectionBorderHandles[6].Cursor = StrokeSelectionBorderHandles[7].Cursor = new Cursor(sri_tb.Stream);
+            using (var cursor_lt_rb = new Cursor(sri_lt_rb.Stream)) {
+                StrokeSelectionBorderHandles[0].Cursor = StrokeSelectionBorderHandles[3].Cursor = cursor_lt_rb;
+            }
+            using (var cursor_rt_lb = new Cursor(sri_rt_lb.Stream)) {
+                StrokeSelectionBorderHandles[1].Cursor = StrokeSelectionBorderHandles[2].Cursor = cursor_rt_lb;
+            }
+            using (var cursor_lr = new Cursor(sri_lr.Stream)) {
+                StrokeSelectionBorderHandles[4].Cursor = StrokeSelectionBorderHandles[5].Cursor = cursor_lr;
+            }
+            using (var cursor_tb = new Cursor(sri_tb.Stream)) {
+                StrokeSelectionBorderHandles[6].Cursor = StrokeSelectionBorderHandles[7].Cursor = cursor_tb;
+            }
 
             StreamResourceInfo sri_open_hand = Application.GetResourceStream(
                 new Uri("Resources/Cursors/open-hand-cursor.cur", UriKind.Relative));
-            StrokeSelectionBorderHandles[8].Cursor = new Cursor(sri_open_hand.Stream);
+            using (var cursor_open_hand = new Cursor(sri_open_hand.Stream)) {
+                StrokeSelectionBorderHandles[8].Cursor = cursor_open_hand;
+            }
         }
 
         public enum StrokeSelectionBorderHandlesEnum {
@@ -1216,7 +1228,9 @@ namespace Ink_Canvas {
                 StrokeSelectionCursorArea.ForceCursor = true;
                 StreamResourceInfo sri_move = Application.GetResourceStream(
                     new Uri("Resources/Cursors/cursor-move.cur", UriKind.Relative));
-                StrokeSelectionCursorArea.Cursor = new Cursor(sri_move.Stream);
+                using (var cursor = new Cursor(sri_move.Stream)) {
+                    StrokeSelectionCursorArea.Cursor = cursor;
+                }
             }
         }
 

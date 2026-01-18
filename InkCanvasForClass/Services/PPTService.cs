@@ -5291,6 +5291,7 @@ namespace Ink_Canvas.Services
                             try
                             {
                                 var i = int.Parse(Path.GetFileNameWithoutExtension(file.Name));
+                                _memoryStreams[i]?.Dispose();
                                 _memoryStreams[i] = new MemoryStream(await File.ReadAllBytesAsync(file.FullName));
                                 _memoryStreams[i].Position = 0;
                                 count++;

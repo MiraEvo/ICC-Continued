@@ -121,42 +121,42 @@ namespace Ink_Canvas {
                 }
 
                 if (arg != "/F") {
-                    var p = new Process();
-                    p.StartInfo = new ProcessStartInfo("taskkill", arg);
-                    p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    p.Start();
+                    using (var p = new Process()) {
+                        p.StartInfo = new ProcessStartInfo("taskkill", arg);
+                        p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                        p.Start();
 
-                    if (arg.Contains("EasiNote")) {
-                        Dispatcher.Invoke(() => {
-                            ShowNewToast("“希沃白板 5”已自动关闭", MW_Toast.ToastType.Warning, 3000);
-                        });
+                        if (arg.Contains("EasiNote")) {
+                            Dispatcher.Invoke(() => {
+                                ShowNewToast("“希沃白板 5”已自动关闭", MW_Toast.ToastType.Warning, 3000);
+                            });
+                        }
+
+                        if (arg.Contains("HiteAnnotation")) {
+                            Dispatcher.Invoke(() => {
+                                ShowNewToast("“鸿合屏幕书写”已自动关闭", MW_Toast.ToastType.Warning, 3000);
+                            });
+                        }
+
+                        if (arg.Contains("Ink Canvas Annotation") || arg.Contains("Ink Canvas Artistry")) {
+                            Dispatcher.Invoke(() => {
+                                ShowNewToast("“ICA”已自动关闭", MW_Toast.ToastType.Warning, 3000);
+                            });
+                        }
+
+                        if (arg.Contains("\"Ink Canvas.exe\"")) {
+                            Dispatcher.Invoke(() => {
+                                ShowNewToast("“Ink Canvas”已自动关闭", MW_Toast.ToastType.Warning, 3000);
+                            });
+                        }
+
+                        if (arg.Contains("VcomTeach"))
+                        {
+                            Dispatcher.Invoke(() => {
+                                ShowNewToast("“优教授课端”已自动关闭", MW_Toast.ToastType.Warning, 3000);
+                            });
+                        }
                     }
-
-                    if (arg.Contains("HiteAnnotation")) {
-                        Dispatcher.Invoke(() => {
-                            ShowNewToast("“鸿合屏幕书写”已自动关闭", MW_Toast.ToastType.Warning, 3000);
-                        });
-                    }
-
-                    if (arg.Contains("Ink Canvas Annotation") || arg.Contains("Ink Canvas Artistry")) {
-                        Dispatcher.Invoke(() => {
-                            ShowNewToast("“ICA”已自动关闭", MW_Toast.ToastType.Warning, 3000);
-                        });
-                    }
-
-                    if (arg.Contains("\"Ink Canvas.exe\"")) {
-                        Dispatcher.Invoke(() => {
-                            ShowNewToast("“Ink Canvas”已自动关闭", MW_Toast.ToastType.Warning, 3000);
-                        });
-                    }
-
-                    if (arg.Contains("VcomTeach"))
-                    {
-                        Dispatcher.Invoke(() => {
-                            ShowNewToast("“优教授课端”已自动关闭", MW_Toast.ToastType.Warning, 3000);
-                        });
-                    }
-
                 }
             }
             catch (Exception ex) {

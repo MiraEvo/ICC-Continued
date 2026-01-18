@@ -258,9 +258,10 @@ namespace Ink_Canvas {
                 RECT rect;
                 GetWindowRect(hwndMag, out rect);
                 Bitmap bmp = new Bitmap(rect.Width, rect.Height);
-                Graphics memoryGraphics = Graphics.FromImage(bmp);
-                PrintWindow(hwndMag, memoryGraphics.GetHdc(), PW_RENDERFULLCONTENT);
-                memoryGraphics.ReleaseHdc();
+                using (Graphics memoryGraphics = Graphics.FromImage(bmp)) {
+                    PrintWindow(hwndMag, memoryGraphics.GetHdc(), PW_RENDERFULLCONTENT);
+                    memoryGraphics.ReleaseHdc();
+                }
                 callbackAction(bmp);
             }
 
@@ -597,10 +598,11 @@ namespace Ink_Canvas {
 
         public static string GetProcessPathByPid(int processId) {
             string query = $"SELECT Name, ExecutablePath FROM Win32_Process WHERE ProcessId = {processId}";
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
-            foreach (ManagementObject obj in searcher.Get()) {
-                string executablePath = obj["ExecutablePath"]?.ToString();
-                if (!string.IsNullOrEmpty(executablePath)) return executablePath;
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query)) {
+                foreach (ManagementObject obj in searcher.Get()) {
+                    string executablePath = obj["ExecutablePath"]?.ToString();
+                    if (!string.IsNullOrEmpty(executablePath)) return executablePath;
+                }
             }
             return "";
         }
