@@ -70,9 +70,7 @@ namespace Ink_Canvas.Helpers {
         }
 
         public static async Task<bool> IsWritableAsync(string dirPath) {
-            var fn = new DirectoryInfo(dirPath).FullName;
-            var result = await Task.Run(() => IsWritable(dirPath));
-            return result;
+            return await Task.Run(() => IsWritable(dirPath));
         }
     }
 }

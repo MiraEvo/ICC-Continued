@@ -630,7 +630,6 @@ namespace Ink_Canvas {
         /// 判断触摸是否可能是墨迹擦（介于笔和手掌之间的触摸）
         /// </summary>
         private bool IsStrokeEraserTouch(TouchEventArgs e) {
-            var bounds = e.GetTouchPoint(null).Bounds;
             double width = GetTouchBoundWidth(e);
 
             // 触摸宽度在基准值和手掌阈值之间

@@ -262,7 +262,7 @@ namespace Ink_Canvas.Popups
                     OutputMIMEType = MainWindow.OutputImageMIMEFormat.Png,
                     AttachInk = settings.Snapshot.AttachInkWhenScreenshot,
                 };
-                var bm = await mainWindow.FullscreenSnapshot(config);
+                await mainWindow.FullscreenSnapshot(config);
 
                 // 显示保存路径
                 string message = "已保存截图";

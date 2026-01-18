@@ -205,7 +205,7 @@ namespace Ink_Canvas {
             FullscreenGrid.ReleaseMouseCapture();
             isFullscreenGridDown = false;
             if (_shapeType == null) return;
-            using (DrawingContext dc = DrawingVisualCanvas.DrawingVisual.RenderOpen()) {}
+            DrawingVisualCanvas.DrawingVisual.RenderOpen().Dispose();
 
             if (points.Count >= 2)
             {
@@ -298,9 +298,8 @@ namespace Ink_Canvas {
                     DrawGrid(dc);
                 }
             } else if (!_isGridEnabled) {
-                using (DrawingContext dc = DrawingVisualCanvas.DrawingVisual.RenderOpen()) {
-                    // 清空绘制
-                }
+                DrawingVisualCanvas.DrawingVisual.RenderOpen().Dispose();
+                // 清空绘制
             }
         }
 
@@ -449,7 +448,7 @@ namespace Ink_Canvas {
                 // 更新图标颜色为白色
                 if (button.Child is Grid grid && grid.Children.Count > 0) {
                     foreach (var child in grid.Children) {
-                        if (child is Image image && image.Source is DrawingImage drawingImage) {
+                        if (child is Image) {
                             // 这里可以更新图标颜色，但需要克隆DrawingImage
                             // 为简化实现，暂时只改变背景色
                         }
@@ -642,9 +641,8 @@ namespace Ink_Canvas {
                 UpdateToolButtonState(MultiPointButton, false);
 
                 // 清空绘制
-                using (DrawingContext dc = DrawingVisualCanvas.DrawingVisual.RenderOpen()) {
-                    // 清空
-                }
+                DrawingVisualCanvas.DrawingVisual.RenderOpen().Dispose();
+                // 清空
             };
             contextMenu.Items.Add(resetItem);
 

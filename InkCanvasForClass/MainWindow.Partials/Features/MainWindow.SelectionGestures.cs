@@ -1297,8 +1297,7 @@ namespace Ink_Canvas {
 
                     // Find center of element and then transform to get current location of center
                     var fe = e.Source as FrameworkElement;
-                    var center = new Point(fe.ActualWidth / 2, fe.ActualHeight / 2);
-                    center = new Point(inkCanvas.GetSelectionBounds().Left + inkCanvas.GetSelectionBounds().Width / 2,
+                    var center = new Point(inkCanvas.GetSelectionBounds().Left + inkCanvas.GetSelectionBounds().Width / 2,
                         inkCanvas.GetSelectionBounds().Top + inkCanvas.GetSelectionBounds().Height / 2);
                     center = m.Transform(center); // 转换为矩阵缩放和旋转的中心点
 

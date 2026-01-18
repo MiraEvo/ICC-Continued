@@ -1822,7 +1822,7 @@ namespace Ink_Canvas {
                             dialog.EnableHyperlinks = true;
                             Ookii.Dialogs.Wpf.TaskDialogButton okButton = new Ookii.Dialogs.Wpf.TaskDialogButton(Ookii.Dialogs.Wpf.ButtonType.Ok);
                             dialog.Buttons.Add(okButton);
-                            Ookii.Dialogs.Wpf.TaskDialogButton button = dialog.Show();
+                            dialog.Show();
                         }
                     } catch { /* 忽略错误 */ }
                 });

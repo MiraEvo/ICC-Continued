@@ -1374,7 +1374,7 @@ namespace Ink_Canvas.Services
                 // 对于 COM 对象，还需要检查是否可以通过 IDispatch 访问
                 try
                 {
-                    var value = dynamicObject.GetType().InvokeMember(
+                    dynamicObject.GetType().InvokeMember(
                         propertyName,
                         System.Reflection.BindingFlags.GetProperty,
                         null,
@@ -2567,7 +2567,7 @@ namespace Ink_Canvas.Services
 
                         // 获取窗口标题
                         var titleBuilder = new System.Text.StringBuilder(256);
-                        int titleLength = GetWindowText(hWnd, titleBuilder, titleBuilder.Capacity);
+                        GetWindowText(hWnd, titleBuilder, titleBuilder.Capacity);
                         string windowTitle = titleBuilder.ToString();
 
                         bool titleMatches = false;

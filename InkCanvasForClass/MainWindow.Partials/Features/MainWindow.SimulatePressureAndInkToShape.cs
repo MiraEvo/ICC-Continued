@@ -200,8 +200,6 @@ namespace Ink_Canvas {
                                                 iniP.Y = result.Centroid.Y - newA / 5;
                                                 endP.Y = result.Centroid.Y + newA / 5;
 
-                                                var topB = endP.Y - iniP.Y;
-
                                                 SetNewBackupOfStroke();
                                                 _currentCommitType = CommitReason.ShapeRecognition;
                                                 await Dispatcher.InvokeAsync(() => {

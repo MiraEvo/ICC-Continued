@@ -142,7 +142,6 @@ namespace Ink_Canvas {
             double sinTheta = (ed.Y - st.Y) / d;
             double cosTheta = (ed.X - st.X) / d;
             
-            int estimatedCount = (int)(d / (step * stepMultiplier)) + 1;
             var strokes = new StrokeCollection();
             
             // 预克隆 DrawingAttributes，避免在循环中重复克隆

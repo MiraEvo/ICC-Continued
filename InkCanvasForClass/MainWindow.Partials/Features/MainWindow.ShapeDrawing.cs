@@ -503,7 +503,6 @@ namespace Ink_Canvas {
             StylusPointCollection point;
             Stroke stroke;
             var strokes = new StrokeCollection();
-            var newIniP = iniP;
             switch (drawingShapeMode) {
                 case 24:
                 case 25:
@@ -625,8 +624,7 @@ namespace Ink_Canvas {
                         CuboidFrontRectEndP = endP;
                     }
                     else {
-                        var d = CuboidFrontRectIniP.Y - endP.Y;
-                        if (d < 0) d = -d;
+                        var d = Math.Abs(CuboidFrontRectIniP.Y - endP.Y);
                         var a = CuboidFrontRectEndP.X - CuboidFrontRectIniP.X;
                         var b = CuboidFrontRectEndP.Y - CuboidFrontRectIniP.Y;
 

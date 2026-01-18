@@ -14,7 +14,6 @@ namespace Ink_Canvas.Helpers {
                 return true;
             }
 
-            var hWnd = hwndSource.Handle;
             var targetBounds = GetPixelBoundsToScreen(target);
 
             var screens = System.Windows.Forms.Screen.AllScreens;

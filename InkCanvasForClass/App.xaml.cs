@@ -308,7 +308,7 @@ namespace Ink_Canvas
                         okButton.Default = true;
                         dialog.Buttons.Add(customButton);
                         dialog.Buttons.Add(okButton);
-                        TaskDialogButton button = dialog.ShowDialog();
+                        dialog.ShowDialog();
                     }
                 }
 

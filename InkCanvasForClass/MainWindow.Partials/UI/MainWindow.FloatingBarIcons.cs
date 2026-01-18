@@ -1634,8 +1634,7 @@ namespace Ink_Canvas {
                     dpiScaleY = source.CompositionTarget.TransformToDevice.M22;
                 }
 
-                var windowHandle = new WindowInteropHelper(this).Handle;
-                var screen = System.Windows.Forms.Screen.FromHandle(windowHandle);
+                var screen = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
                 double screenWidth = screen.Bounds.Width / dpiScaleX, screenHeight = screen.Bounds.Height / dpiScaleY;
                 var toolbarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.FullPrimaryScreenHeight -
                                     SystemParameters.WindowCaptionHeight;
@@ -1698,8 +1697,7 @@ namespace Ink_Canvas {
                     dpiScaleY = source.CompositionTarget.TransformToDevice.M22;
                 }
 
-                var windowHandle = new WindowInteropHelper(this).Handle;
-                var screen = System.Windows.Forms.Screen.FromHandle(windowHandle);
+                var screen = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
                 double screenWidth = screen.Bounds.Width / dpiScaleX, screenHeight = screen.Bounds.Height / dpiScaleY;
                 var toolbarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.FullPrimaryScreenHeight -
                                     SystemParameters.WindowCaptionHeight;
@@ -1742,8 +1740,7 @@ namespace Ink_Canvas {
                     dpiScaleY = source.CompositionTarget.TransformToDevice.M22;
                 }
 
-                var windowHandle = new WindowInteropHelper(this).Handle;
-                var screen = System.Windows.Forms.Screen.FromHandle(windowHandle);
+                var screen = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
                 double screenWidth = screen.Bounds.Width / dpiScaleX, screenHeight = screen.Bounds.Height / dpiScaleY;
                 var toolbarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.FullPrimaryScreenHeight -
                                     SystemParameters.WindowCaptionHeight;
