@@ -87,7 +87,7 @@ namespace Ink_Canvas
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (isTimerRunning) return;
-            if (ProcessBarTime.Visibility == Visibility.Visible && isTimerRunning == false)
+            if (ProcessBarTime.Visibility == Visibility.Visible)
             {
                 ProcessBarTime.Visibility = Visibility.Collapsed;
                 GridAdjustHour.Visibility = Visibility.Visible;
@@ -225,7 +225,7 @@ namespace Ink_Canvas
                 TextBlockHour.Foreground = new SolidColorBrush(StringToColor("#FF5B5D5F"));
                 return;
             }
-            else if (isTimerRunning && isPaused)
+            else if (isPaused)
             {
                 TextBlockHour.Text = hour.ToString("00");
                 TextBlockMinute.Text = minute.ToString("00");

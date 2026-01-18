@@ -1641,7 +1641,7 @@ namespace Ink_Canvas {
 
                 if (PosXCaculatedWithTaskbarHeight == false)
                     pos.Y = screenHeight - MarginFromEdge * scale;
-                else if (PosXCaculatedWithTaskbarHeight == true)
+                else
                     pos.Y = screenHeight - ViewboxFloatingBar.ActualHeight * scale -
                             toolbarHeight - scale * 3;
 

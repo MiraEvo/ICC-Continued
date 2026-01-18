@@ -41,7 +41,7 @@ namespace Ink_Canvas {
                     BtnWhiteBoardSwitchNext_Click(null, null);
                 if (e.Key == Key.Up || e.Key == Key.PageUp || e.Key == Key.Left || e.Key == Key.P)
                     BtnWhiteBoardSwitchPrevious_Click(null, null);
-            } else if (BorderFloatingBarExitPPTBtn.Visibility == Visibility.Visible || currentMode == 0) {
+            } else if (BorderFloatingBarExitPPTBtn.Visibility == Visibility.Visible) {
                 if (e.Key == Key.Down || e.Key == Key.PageDown || e.Key == Key.Right || e.Key == Key.N ||
                     e.Key == Key.Space) BtnPPTSlidesDown_Click(null, null);
                 if (e.Key == Key.Up || e.Key == Key.PageUp || e.Key == Key.Left || e.Key == Key.P)

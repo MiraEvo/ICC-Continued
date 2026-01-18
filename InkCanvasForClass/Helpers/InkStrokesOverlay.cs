@@ -78,7 +78,7 @@ namespace Ink_Canvas.Helpers
             }
 
             if (strokes.Count != 0) {
-                if (!isCached || (isCached && !ReferenceEquals(strokes, cachedStrokeCollection))) {
+                if (!isCached || !ReferenceEquals(strokes, cachedStrokeCollection)) {
                     cachedStrokeCollection = strokes;
                     cachedDrawingGroup = new DrawingGroup();
                     var gp_context = cachedDrawingGroup.Open();
