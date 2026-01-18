@@ -34,8 +34,15 @@ namespace Ink_Canvas
         }
 
         public MW_Toast ShowNotification(string notice) {
+            if (GridNotifications == null) {
+                // 如果 GridNotifications 未初始化，使用消息框作为备选方案
+                MessageBox.Show(notice, "通知", MessageBoxButton.OK, MessageBoxImage.Information);
+                return null;
+            }
+            
             var notification = new MW_Toast(MW_Toast.ToastType.Informative, notice, (self) => {
-                GridNotifications.Children.Remove(self);
+                if (GridNotifications != null)
+                    GridNotifications.Children.Remove(self);
             });
             GridNotifications.Children.Add(notification);
             notification.ShowAnimatedWithAutoDispose(3000 + notice.Length * 10);
@@ -43,8 +50,15 @@ namespace Ink_Canvas
         }
 
         public MW_Toast ShowNewToast(string notice, MW_Toast.ToastType type, int autoCloseMs) {
+            if (GridNotifications == null) {
+                // 如果 GridNotifications 未初始化，使用消息框作为备选方案
+                MessageBox.Show(notice, "通知", MessageBoxButton.OK, MessageBoxImage.Information);
+                return null;
+            }
+            
             var notification = new MW_Toast(type, notice, (self) => {
-                GridNotifications.Children.Remove(self);
+                if (GridNotifications != null)
+                    GridNotifications.Children.Remove(self);
             });
             GridNotifications.Children.Add(notification);
             notification.ShowAnimatedWithAutoDispose(autoCloseMs + notice.Length * 10);

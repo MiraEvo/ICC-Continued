@@ -45,7 +45,7 @@ namespace Ink_Canvas {
     /// - 此类采用 MVVM 模式，通过 ViewModel 管理 UI 状态和命令
     /// - 业务逻辑已迁移到服务层（Services）
     /// - 事件处理程序作为 View 回调，委托给 ViewModel 或服务层
-    /// - 使用 partial class 将功能分散到多个文件中（MainWindow_cs 目录）
+    /// - 使用 partial class 将功能分散到多个文件中（MainWindow.Partials 目录）
     ///
     /// 迁移状态：
     /// - ViewModel 初始化和事件订阅已完成

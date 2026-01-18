@@ -46,8 +46,8 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!-- 上下文菜单和橡皮擦资源 -->
-                <ResourceDictionary Source="MainWindow_cs/MW_ContextMenus.xaml" />
-                <ResourceDictionary Source="MainWindow_cs/MW_Eraser.xaml" />
+                <ResourceDictionary Source="MainWindow.Partials/Resources/MainWindow.ContextMenus.xaml" />
+                <ResourceDictionary Source="MainWindow.Partials/Resources/MainWindow.Eraser.xaml" />
                 <!-- 整合的图标资源字典 -->
                 <ResourceDictionary Source="Resources/Icons/IconsDictionary.xaml" />
                 <!-- 整合的转换器资源字典 -->
