@@ -160,14 +160,10 @@ namespace Ink_Canvas.Helpers
                 // 如果点太少，直接转换
                 if (stylusPoints.Count < 4 || !settings.EnableResampling)
                 {
-                    foreach (var stylusPoint in stylusPoints)
-                    {
-                        var inkPoint = new InkPoint(
-                            new Point(stylusPoint.X, stylusPoint.Y),
-                            Math.Max(0.1f, stylusPoint.PressureFactor)
-                        );
-                        inkPoints.Add(inkPoint);
-                    }
+                    inkPoints.AddRange(stylusPoints.Select(stylusPoint => new InkPoint(
+                        new Point(stylusPoint.X, stylusPoint.Y),
+                        Math.Max(0.1f, stylusPoint.PressureFactor)
+                    )));
                 }
                 else
                 {

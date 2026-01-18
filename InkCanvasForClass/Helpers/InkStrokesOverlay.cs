@@ -90,8 +90,7 @@ namespace Ink_Canvas.Helpers
                     }
                     stks_cloned.Draw(gp_context);
                     
-                    foreach (var ori_stk in strokes) {
-                        var geo = ori_stk.GetGeometry();
+                    foreach (var geo in strokes.Select(ori_stk => ori_stk.GetGeometry())) {
                         gp_context.DrawGeometry(WhiteBrush, null, geo);
                     }
                     gp_context.Close();
