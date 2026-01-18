@@ -1159,7 +1159,7 @@ namespace Ink_Canvas.Popups {
         /// </summary>
         private void PenWidthDecreaseButton_Click(object sender, RoutedEventArgs e) {
             if (PenWidthSlider != null && PenWidthSlider.Value > PenWidthSlider.Minimum) {
-                PenWidthSlider.Value = Math.Max(PenWidthSlider.Minimum, PenWidthSlider.Value - 1);
+                PenWidthSlider.Value -= 1;
             }
         }
 
@@ -1168,7 +1168,7 @@ namespace Ink_Canvas.Popups {
         /// </summary>
         private void PenWidthIncreaseButton_Click(object sender, RoutedEventArgs e) {
             if (PenWidthSlider != null && PenWidthSlider.Value < PenWidthSlider.Maximum) {
-                PenWidthSlider.Value = Math.Min(PenWidthSlider.Maximum, PenWidthSlider.Value + 1);
+                PenWidthSlider.Value += 1;
             }
         }
 

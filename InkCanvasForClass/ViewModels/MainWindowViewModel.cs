@@ -529,7 +529,10 @@ namespace Ink_Canvas.ViewModels
         [RelayCommand]
         private void ToggleWhiteboardMode()
         {
-            CurrentAppMode = CurrentAppMode == AppMode.Desktop ? AppMode.Whiteboard : AppMode.Desktop;
+            if (CurrentAppMode == AppMode.Desktop)
+                CurrentAppMode = AppMode.Whiteboard;
+            else
+                CurrentAppMode = AppMode.Desktop;
         }
 
         /// <summary>
