@@ -205,7 +205,6 @@ namespace Ink_Canvas {
             FullscreenGrid.ReleaseMouseCapture();
             isFullscreenGridDown = false;
             if (_shapeType == null) return;
-            DrawingVisualCanvas.DrawingVisual.RenderOpen().Dispose();
 
             if (points.Count >= 2)
             {
@@ -298,7 +297,6 @@ namespace Ink_Canvas {
                     DrawGrid(dc);
                 }
             } else if (!_isGridEnabled) {
-                DrawingVisualCanvas.DrawingVisual.RenderOpen().Dispose();
                 // 清空绘制
             }
         }
@@ -641,8 +639,6 @@ namespace Ink_Canvas {
                 UpdateToolButtonState(MultiPointButton, false);
 
                 // 清空绘制
-                DrawingVisualCanvas.DrawingVisual.RenderOpen().Dispose();
-                // 清空
             };
             contextMenu.Items.Add(resetItem);
 

@@ -161,7 +161,6 @@ namespace Ink_Canvas.Views.Eraser
         public void ClearEraserCursor()
         {
             var drawingVisual = EraserOverlay_DrawingVisual.DrawingVisual;
-            drawingVisual.RenderOpen().Dispose();
             // 清空绘图内容
         }
 
