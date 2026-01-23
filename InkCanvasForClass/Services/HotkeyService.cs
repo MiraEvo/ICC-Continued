@@ -14,8 +14,8 @@ namespace Ink_Canvas.Services
     {
         #region 私有字段
 
-        private readonly Dictionary<string, HotkeyRegistration> _registrations = new();
-        private readonly Dictionary<string, KeyGesture> _gestures = new();
+        private readonly Dictionary<string, HotkeyRegistration> _registrations = [];
+        private readonly Dictionary<string, KeyGesture> _gestures = [];
         private readonly object _lock = new();
         private bool _isEnabled = true;
 
@@ -65,12 +65,9 @@ namespace Ink_Canvas.Services
         /// <inheritdoc/>
         public bool RegisterHotkey(string id, KeyGesture gesture, Action action)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentNullException(nameof(id));
-            if (gesture == null)
-                throw new ArgumentNullException(nameof(gesture));
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
+            ArgumentException.ThrowIfNullOrWhiteSpace(id);
+            ArgumentNullException.ThrowIfNull(gesture);
+            ArgumentNullException.ThrowIfNull(action);
 
             lock (_lock)
             {
@@ -105,8 +102,7 @@ namespace Ink_Canvas.Services
         /// <inheritdoc/>
         public bool RegisterHotkey<T>(string id, KeyGesture gesture, Action<T> action, T parameter)
         {
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
+            ArgumentNullException.ThrowIfNull(action);
 
             return RegisterHotkey(id, gesture, () => action(parameter));
         }
@@ -302,7 +298,7 @@ namespace Ink_Canvas.Services
         /// <summary>
         /// 比较两个热键组合是否相同
         /// </summary>
-        private bool GesturesMatch(KeyGesture g1, KeyGesture g2)
+        private static bool GesturesMatch(KeyGesture g1, KeyGesture g2)
         {
             if (g1 == null || g2 == null)
                 return false;
@@ -313,7 +309,7 @@ namespace Ink_Canvas.Services
         /// <summary>
         /// 检查按键事件是否匹配热键组合
         /// </summary>
-        private bool MatchesGesture(KeyGesture gesture, Key key, ModifierKeys modifiers)
+        private static bool MatchesGesture(KeyGesture gesture, Key key, ModifierKeys modifiers)
         {
             if (gesture == null)
                 return false;
@@ -324,7 +320,7 @@ namespace Ink_Canvas.Services
         /// <summary>
         /// 格式化热键组合为字符串
         /// </summary>
-        private string FormatGesture(KeyGesture gesture)
+        private static string FormatGesture(KeyGesture gesture)
         {
             if (gesture == null)
                 return "None";
@@ -376,18 +372,11 @@ namespace Ink_Canvas.Services
         /// <summary>
         /// 热键注册信息
         /// </summary>
-        private class HotkeyRegistration
+        private class HotkeyRegistration(string id, KeyGesture gesture, Action action)
         {
-            public string Id { get; }
-            public KeyGesture Gesture { get; set; }
-            public Action Action { get; }
-
-            public HotkeyRegistration(string id, KeyGesture gesture, Action action)
-            {
-                Id = id;
-                Gesture = gesture;
-                Action = action;
-            }
+            public string Id { get; } = id;
+            public KeyGesture Gesture { get; set; } = gesture;
+            public Action Action { get; } = action;
         }
 
         #endregion
