@@ -234,7 +234,11 @@ namespace Ink_Canvas.Converters
                     var color2 = (Color)ColorConverter.ConvertFromString(colorString);
                     return new SolidColorBrush(color2);
                 }
-                catch
+                catch (FormatException)
+                {
+                    return Brushes.Black;
+                }
+                catch (InvalidOperationException)
                 {
                     return Brushes.Black;
                 }

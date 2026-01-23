@@ -94,8 +94,19 @@ namespace Ink_Canvas.Helpers
                 Process process = Process.GetProcessById((int)processId);
                 return process.MainModule.FileName;
             }
-            catch {
+            catch (ArgumentException)
+            {
                 // Process with the given ID not found
+                return "Unknown";
+            }
+            catch (InvalidOperationException)
+            {
+                // Process has exited or access denied
+                return "Unknown";
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                // System error occurred
                 return "Unknown";
             }
         }

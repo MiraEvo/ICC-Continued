@@ -27,7 +27,11 @@ namespace Ink_Canvas.Helpers
                 var obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_TaskbarList));
                 (obj as ITaskbarList2)?.MarkFullscreenWindow(hwnd, isFullscreen);
             }
-            catch
+            catch (COMException)
+            {
+                //应该不会挂
+            }
+            catch (UnauthorizedAccessException)
             {
                 //应该不会挂
             }
@@ -293,7 +297,11 @@ namespace Ink_Canvas.Helpers
                         }
                     }
                 }
-                catch
+                catch (AccessViolationException)
+                {
+                    // 这里也不需要日志啥的，只是为了防止上面有逗比逻辑，在消息循环里面炸了
+                }
+                catch (InvalidOperationException)
                 {
                     // 这里也不需要日志啥的，只是为了防止上面有逗比逻辑，在消息循环里面炸了
                 }

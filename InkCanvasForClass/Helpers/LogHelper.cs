@@ -20,9 +20,13 @@ namespace Ink_Canvas.Helpers
             {
                 Console.OutputEncoding = Encoding.Default;
             }
-            catch
+            catch (PlatformNotSupportedException)
             {
-                // Ignored
+                // Console not available on this platform
+            }
+            catch (IOException)
+            {
+                // Console encoding setup failed
             }
         }
 
@@ -126,9 +130,13 @@ namespace Ink_Canvas.Helpers
                         }
                     );
                 }
-                catch
+                catch (InvalidOperationException)
                 {
                     // Ignore Sentry errors to prevent recursive logging
+                }
+                catch (System.Net.Http.HttpRequestException)
+                {
+                    // Ignore Sentry network errors to prevent recursive logging
                 }
             }
 

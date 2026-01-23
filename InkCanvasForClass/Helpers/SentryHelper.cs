@@ -645,7 +645,11 @@ namespace Ink_Canvas.Helpers
                 {
                     _span?.Finish(_status);
                 }
-                catch
+                catch (InvalidOperationException)
+                {
+                    // Ignore dispose errors
+                }
+                catch (NullReferenceException)
                 {
                     // Ignore dispose errors
                 }

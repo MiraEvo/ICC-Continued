@@ -553,7 +553,11 @@ namespace Ink_Canvas.Helpers
                 double completenessScore = (double)actualPoints / expectedPoints;
                 return Math.Max(0.5, completenessScore);
             }
-            catch
+            catch (DivideByZeroException)
+            {
+                return 0.7;  // 出错时返回较高分数，让识别继续
+            }
+            catch (OverflowException)
             {
                 return 0.7;  // 出错时返回较高分数，让识别继续
             }
@@ -628,7 +632,11 @@ namespace Ink_Canvas.Helpers
 
                 return strokeCount > 0 ? totalClosureScore / strokeCount : 0.5;
             }
-            catch
+            catch (DivideByZeroException)
+            {
+                return 0.5;
+            }
+            catch (OverflowException)
             {
                 return 0.5;
             }
