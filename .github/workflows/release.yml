@@ -27,9 +27,12 @@ env:
   SOLUTION_PATH: 'Ink Canvas.sln'
 
 jobs:
-  build-release:
-    name: Build Release Artifacts
+  build-and-package:
+    name: Build & Package (${{ matrix.platform }})
     runs-on: windows-latest
+    strategy:
+      matrix:
+        platform: [x86, x64]
 
     steps:
       - name: Checkout code
@@ -44,108 +47,69 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
       - name: Restore dependencies
         run: dotnet restore "${{ env.SOLUTION_PATH }}"
 
-      - name: Build Release (x64)
+      - name: Build and Publish
         run: |
-          dotnet build "${{ env.SOLUTION_PATH }}" `
+          dotnet publish "InkCanvasForClass/InkCanvasForClass.csproj" `
             --configuration Release `
-            --no-restore `
-            -p:Platform=x64 `
+            --framework net8.0-windows `
+            --runtime win-${{ matrix.platform }} `
+            --self-contained false `
+            --output ./publish/${{ matrix.platform }} `
             -p:PublishReadyToRun=true `
-            -p:PublishSingleFile=false `
-            --verbosity minimal
-
-      - name: Build Release (x86)
-        run: |
-          dotnet build "${{ env.SOLUTION_PATH }}" `
-            --configuration Release `
-            --no-restore `
-            -p:Platform=x86 `
-            -p:PublishReadyToRun=true `
-            -p:PublishSingleFile=false `
-            --verbosity minimal
+            --no-restore
 
       - name: Run tests
         run: |
           dotnet test "${{ env.SOLUTION_PATH }}" `
             --configuration Release `
+            -p:Platform=${{ matrix.platform }} `
             --no-build `
             --no-restore `
             --logger "console;verbosity=minimal" `
             --results-directory TestResults `
             --collect:"XPlat Code Coverage"
 
-      - name: Publish x64
-        run: |
-          dotnet publish "InkCanvasForClass/InkCanvasForClass.csproj" `
-            --configuration Release `
-            --framework net8.0-windows `
-            --runtime win-x64 `
-            --self-contained false `
-            --output ./publish/x64 `
-            -p:PublishReadyToRun=true `
-            -p:PublishTrimmed=false
+      - name: Create portable package
+        run: Compress-Archive -Path "./publish/${{ matrix.platform }}/*" -DestinationPath "./InkCanvas-${{ matrix.platform }}-${{ github.event.inputs.version }}.zip" -Force
 
-      - name: Publish x86
-        run: |
-          dotnet publish "InkCanvasForClass/InkCanvasForClass.csproj" `
-            --configuration Release `
-            --framework net8.0-windows `
-            --runtime win-x86 `
-            --self-contained false `
-            --output ./publish/x86 `
-            -p:PublishReadyToRun=true `
-            -p:PublishTrimmed=false
-
-      - name: Create portable packages
-        run: |
-          # Create zip packages
-          Compress-Archive -Path "./publish/x64/*" -DestinationPath "./InkCanvas-x64-${{ github.event.inputs.version }}.zip" -Force
-          Compress-Archive -Path "./publish/x86/*" -DestinationPath "./InkCanvas-x86-${{ github.event.inputs.version }}.zip" -Force
-          
-          # Create version info file
-          $versionInfo = @{
-            Version = "${{ github.event.inputs.version }}"
-            BuildDate = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss UTC")
-            Commit = "${{ github.sha }}"
-            Branch = "${{ github.ref_name }}"
-            .NET = "8.0"
-          }
-          $versionInfo | ConvertTo-Json | Out-File -FilePath "./version-info.json" -Encoding utf8
-
-      - name: Upload build artifacts
+      - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts
-          path: |
-            *.zip
-            version-info.json
-            TestResults/
+          name: release-artifact-${{ matrix.platform }}
+          path: ./InkCanvas-${{ matrix.platform }}-${{ github.event.inputs.version }}.zip
           retention-days: 30
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.platform }}
+          path: TestResults/
+          retention-days: 7
+
 
   create-release:
     name: Create GitHub Release
-    needs: build-release
+    needs: build-and-package
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
-      - name: Download artifacts
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          name: release-artifacts
           path: ./artifacts
+
+      - name: Create version info file
+        run: |
+          echo "{\"Version\": \"${{ github.event.inputs.version }}\", \"BuildDate\": \"$(date -u +"%Y-%m-%d %H:%M:%S UTC")\", \"Commit\": \"${{ github.sha }}\", \"Branch\": \"${{ github.ref_name }}\", \".NET\": \"8.0\"}" > ./version-info.json
+
+      - name: Checkout code for tagging
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Create Git Tag
         if: github.event.inputs.create_tag == 'true'
@@ -159,7 +123,7 @@ jobs:
         if: github.event.inputs.generate_notes == 'true'
         id: release_notes
         run: |
-          # Generate release notes from commits since last tag
+          # (Script remains the same)
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [ -n "$LAST_TAG" ]; then
             echo "release_notes<<EOF" >> $GITHUB_OUTPUT
@@ -191,7 +155,7 @@ jobs:
             
             ## System Requirements
             - Windows 10/11 (x64 or x86)
-            - .NET 8.0 Runtime (included in self-contained builds)
+            - .NET 8.0 Runtime
             
             ## What's Included
             - `InkCanvas-x64-${{ github.event.inputs.version }}.zip` - 64-bit version
@@ -201,29 +165,27 @@ jobs:
             ---
             **Note**: This release was created automatically from commit ${{ github.sha }}
           files: |
-            artifacts/*.zip
-            artifacts/version-info.json
+            artifacts/release-artifact-*/*.zip
+            ./version-info.json
           draft: false
           prerelease: ${{ github.event.inputs.prerelease }}
-          generate_release_notes: ${{ github.event.inputs.generate_notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   notify-release:
     name: Notify Release Complete
-    needs: [build-release, create-release]
+    needs: [build-and-package, create-release]
     runs-on: ubuntu-latest
     if: always()
-
     steps:
       - name: Release Status
         run: |
-          if [ "${{ needs.build-release.result }}" == "success" ] && [ "${{ needs.create-release.result }}" == "success" ]; then
+          if [ "${{ needs.build-and-package.result }}" == "success" ] && [ "${{ needs.create-release.result }}" == "success" ]; then
             echo "✅ Release ${{ github.event.inputs.version }} completed successfully!"
             echo "📦 Available at: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.inputs.version }}"
           else
             echo "❌ Release failed!"
-            echo "Build status: ${{ needs.build-release.result }}"
+            echo "Build status: ${{ needs.build-and-package.result }}"
             echo "Release status: ${{ needs.create-release.result }}"
             exit 1
           fi
