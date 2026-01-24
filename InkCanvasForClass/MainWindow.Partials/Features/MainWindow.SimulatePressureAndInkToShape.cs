@@ -257,7 +257,6 @@ namespace Ink_Canvas {
 
                                     if (needRotation) {
                                         var m = new Matrix();
-                                        var fe = e.Source as FrameworkElement;
                                         double theta = 0;
                                         if (Math.Abs(p[2].X - p[0].X) < 0.0001)
                                         {

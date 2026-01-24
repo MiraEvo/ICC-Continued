@@ -1749,8 +1749,6 @@ namespace Ink_Canvas {
 
                 var screen = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
                 double screenWidth = screen.Bounds.Width / dpiScaleX, screenHeight = screen.Bounds.Height / dpiScaleY;
-                var toolbarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.FullPrimaryScreenHeight -
-                                    SystemParameters.WindowCaptionHeight;
                 var scale = _floatingBarViewModel?.Scale ?? 1.0;
                 pos.X = (screenWidth - ViewboxFloatingBar.ActualWidth * scale) / 2;
 

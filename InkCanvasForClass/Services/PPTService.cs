@@ -3115,7 +3115,7 @@ namespace Ink_Canvas.Services
                             bool canAccessWidth = false;
                             try
                             {
-                                int width = (int)slideShowWindow.Width;
+                                _ = (int)slideShowWindow.Width;
                                 canAccessWidth = true;
                                 LogHelper.WriteLogToFile("DetectWPSVersion: 可以访问 SlideShowWindow.Width", LogHelper.LogType.Trace);
                             }

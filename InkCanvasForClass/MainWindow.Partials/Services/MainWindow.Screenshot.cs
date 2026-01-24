@@ -302,7 +302,7 @@ namespace Ink_Canvas {
             staThread.Start();
             
             // 添加超时机制，防止无限等待
-            var timeoutTask = Task.Delay(3000).ContinueWith(_ => {
+            Task.Delay(3000).ContinueWith(_ => {
                 if (!tcs.Task.IsCompleted) {
                     tcs.TrySetResult(null); // 超时返回 null，让调用者回退到其他方法
                 }

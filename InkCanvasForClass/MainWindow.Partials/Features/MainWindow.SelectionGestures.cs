@@ -485,34 +485,33 @@ namespace Ink_Canvas {
             var nowWindowPosition = e.GetPosition(Main_Grid);
 
             // record last pt
-            var rlp = nowWindowPosition;
 
             // resize preview border
             var isReverseWidth = false; // 是否逆向 resize Width,true 為調小，false為調大
             var isReverseHeight = false; // 是否逆向 resize Height,true 為調小，false為調大
             if (lockedStrokeSelectionBorderHandleType == StrokeSelectionBorderHandlesEnum.LeftTop) {
-                isReverseWidth = ((Point)rlp).X > ((Point)resizingFirstPoint).X;
-                isReverseHeight = ((Point)rlp).Y > ((Point)resizingFirstPoint).Y;
+                isReverseWidth = nowWindowPosition.X > ((Point)resizingFirstPoint).X;
+                isReverseHeight = nowWindowPosition.Y > ((Point)resizingFirstPoint).Y;
             } else if (lockedStrokeSelectionBorderHandleType == StrokeSelectionBorderHandlesEnum.RightTop) {
-                isReverseWidth = ((Point)rlp).X < ((Point)resizingFirstPoint).X;
-                isReverseHeight = ((Point)rlp).Y > ((Point)resizingFirstPoint).Y;
+                isReverseWidth = nowWindowPosition.X < ((Point)resizingFirstPoint).X;
+                isReverseHeight = nowWindowPosition.Y > ((Point)resizingFirstPoint).Y;
             } else if (lockedStrokeSelectionBorderHandleType == StrokeSelectionBorderHandlesEnum.LeftBottom) {
-                isReverseWidth = ((Point)rlp).X > ((Point)resizingFirstPoint).X;
-                isReverseHeight = ((Point)rlp).Y < ((Point)resizingFirstPoint).Y;
+                isReverseWidth = nowWindowPosition.X > ((Point)resizingFirstPoint).X;
+                isReverseHeight = nowWindowPosition.Y < ((Point)resizingFirstPoint).Y;
             } else if (lockedStrokeSelectionBorderHandleType == StrokeSelectionBorderHandlesEnum.RightBottom) {
-                isReverseWidth = ((Point)rlp).X < ((Point)resizingFirstPoint).X;
-                isReverseHeight = ((Point)rlp).Y < ((Point)resizingFirstPoint).Y;
+                isReverseWidth = nowWindowPosition.X < ((Point)resizingFirstPoint).X;
+                isReverseHeight = nowWindowPosition.Y < ((Point)resizingFirstPoint).Y;
             } else if (lockedStrokeSelectionBorderHandleType == StrokeSelectionBorderHandlesEnum.Top) {
                 isReverseWidth = false;
-                isReverseHeight = ((Point)rlp).Y > ((Point)resizingFirstPoint).Y;
+                isReverseHeight = nowWindowPosition.Y > ((Point)resizingFirstPoint).Y;
             } else if (lockedStrokeSelectionBorderHandleType == StrokeSelectionBorderHandlesEnum.Bottom) {
                 isReverseWidth = false;
-                isReverseHeight = ((Point)rlp).Y < ((Point)resizingFirstPoint).Y;
+                isReverseHeight = nowWindowPosition.Y < ((Point)resizingFirstPoint).Y;
             } else if (lockedStrokeSelectionBorderHandleType == StrokeSelectionBorderHandlesEnum.Left) {
-                isReverseWidth = ((Point)rlp).X > ((Point)resizingFirstPoint).X;
+                isReverseWidth = nowWindowPosition.X > ((Point)resizingFirstPoint).X;
                 isReverseHeight = false;
             } else if (lockedStrokeSelectionBorderHandleType == StrokeSelectionBorderHandlesEnum.Right) {
-                isReverseWidth = ((Point)rlp).X < ((Point)resizingFirstPoint).X;
+                isReverseWidth = nowWindowPosition.X < ((Point)resizingFirstPoint).X;
                 isReverseHeight = false;
             }
 
@@ -520,19 +519,19 @@ namespace Ink_Canvas {
             var l = Math.Round(
                 ((Rect)originalSelectionBounds).Left +
                 ((int)lockedStrokeSelectionBorderHandleType == 0 || (int)lockedStrokeSelectionBorderHandleType == 2 || (int)lockedStrokeSelectionBorderHandleType == 4
-                    ? new Rect(((Point)resizingFirstPoint), ((Point)rlp)).Width *
+                    ? new Rect(((Point)resizingFirstPoint), nowWindowPosition).Width *
                       (isReverseWidth ? 1 : -1)
                     : 0), 0);
             var t = Math.Round(
                 ((Rect)originalSelectionBounds).Top +
                 ((int)lockedStrokeSelectionBorderHandleType == 0 || (int)lockedStrokeSelectionBorderHandleType == 1 || (int)lockedStrokeSelectionBorderHandleType == 6
-                    ? new Rect(((Point)resizingFirstPoint), ((Point)rlp)).Height *
+                    ? new Rect(((Point)resizingFirstPoint), nowWindowPosition).Height *
                       (isReverseHeight ? 1 : -1)
                     : 0), 0);
             var w = (int)lockedStrokeSelectionBorderHandleType != 6 && (int)lockedStrokeSelectionBorderHandleType != 7 ? Math.Round(((Rect)originalSelectionBounds).Width + new Rect(((Point)resizingFirstPoint),
-                ((Point)rlp)).Width * (isReverseWidth ? -1 : 1), 0) : ((Rect)originalSelectionBounds).Width;
+                nowWindowPosition).Width * (isReverseWidth ? -1 : 1), 0) : ((Rect)originalSelectionBounds).Width;
             var h = (int)lockedStrokeSelectionBorderHandleType != 4 && (int)lockedStrokeSelectionBorderHandleType != 5 ? Math.Round(((Rect)originalSelectionBounds).Height + new Rect(((Point)resizingFirstPoint),
-                ((Point)rlp)).Height * (isReverseHeight ? -1 : 1), 0) : ((Rect)originalSelectionBounds).Height;
+                nowWindowPosition).Height * (isReverseHeight ? -1 : 1), 0) : ((Rect)originalSelectionBounds).Height;
 
             var final_w = Math.Round(w,0);
             var final_h = Math.Round(h,0);
@@ -553,7 +552,7 @@ namespace Ink_Canvas {
                 System.Windows.Controls.Canvas.SetLeft(StrokeSelectionBorder, l);
                 System.Windows.Controls.Canvas.SetTop(StrokeSelectionBorder, t);
 
-                resizingLastPoint = rlp;
+                resizingLastPoint = nowWindowPosition;
 
                 if (!(final_w < 96 && final_h < 64)) StrokeSelectionSizeToast.Visibility = Visibility.Visible;
                 else StrokeSelectionSizeToast.Visibility = Visibility.Collapsed;
@@ -1296,7 +1295,6 @@ namespace Ink_Canvas {
                     var m = new Matrix();
 
                     // Find center of element and then transform to get current location of center
-                    var fe = e.Source as FrameworkElement;
                     var center = new Point(inkCanvas.GetSelectionBounds().Left + inkCanvas.GetSelectionBounds().Width / 2,
                         inkCanvas.GetSelectionBounds().Top + inkCanvas.GetSelectionBounds().Height / 2);
                     center = m.Transform(center); // 转换为矩阵缩放和旋转的中心点

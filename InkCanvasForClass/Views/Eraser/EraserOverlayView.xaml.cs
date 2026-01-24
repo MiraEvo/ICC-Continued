@@ -162,7 +162,7 @@ namespace Ink_Canvas.Views.Eraser
         {
             var drawingVisual = EraserOverlay_DrawingVisual.DrawingVisual;
             // 清空绘图内容：打开绘图上下文但不进行任何绘制，从而清除之前的内容
-            using (var dc = drawingVisual.RenderOpen())
+            using (var _ = drawingVisual.RenderOpen())
             {
                 // Intentionally left blank to clear the visual.
             }
