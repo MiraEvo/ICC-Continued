@@ -209,7 +209,11 @@ namespace Ink_Canvas.Helpers
                 try
                 {
                     //得到WINDOWPOS结构体
-                    var pos = (WindowPosition) Marshal.PtrToStructure(lParam, typeof(WindowPosition));
+                    if (lParam == IntPtr.Zero)
+                        return IntPtr.Zero;
+                    
+                    if (Marshal.PtrToStructure(lParam, typeof(WindowPosition)) is not WindowPosition pos)
+                        return IntPtr.Zero;
 
                     if ((pos.Flags & WindowPositionFlags.SWP_NOMOVE) != 0 &&
                         (pos.Flags & WindowPositionFlags.SWP_NOSIZE) != 0)

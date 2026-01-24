@@ -88,7 +88,7 @@ namespace Ink_Canvas.Helpers
         /// <param name="strokes">WPF 笔画集合</param>
         /// <param name="settings">识别设置（可选）</param>
         /// <returns>识别结果，如果识别失败则返回 default</returns>
-        public static ShapeRecognizeResult RecognizeShape(StrokeCollection strokes, InkToShapeSettings settings = null)
+        public static ShapeRecognizeResult RecognizeShape(StrokeCollection strokes, InkToShapeSettings? settings = null)
         {
             if (strokes == null || strokes.Count == 0)
                 return default;
@@ -137,7 +137,7 @@ namespace Ink_Canvas.Helpers
         /// <param name="strokes">WPF 笔画集合</param>
         /// <param name="settings">识别设置（可选）</param>
         /// <returns>识别结果，如果识别失败则返回 default</returns>
-        public static async Task<ShapeRecognizeResult> RecognizeShapeAsync(StrokeCollection strokes, InkToShapeSettings settings = null)
+        public static async Task<ShapeRecognizeResult> RecognizeShapeAsync(StrokeCollection strokes, InkToShapeSettings? settings = null)
         {
             if (strokes == null || strokes.Count == 0)
             {

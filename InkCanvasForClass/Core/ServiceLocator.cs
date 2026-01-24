@@ -10,7 +10,7 @@ namespace Ink_Canvas.Core
     public static class ServiceLocator
     {
         private static IServiceProvider _serviceProvider;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         /// <summary>
         /// 获取或设置服务提供者
@@ -37,7 +37,7 @@ namespace Ink_Canvas.Core
         /// </summary>
         /// <typeparam name="T">服务类型</typeparam>
         /// <returns>服务实例或 null</returns>
-        public static T GetService<T>() where T : class
+        public static T? GetService<T>() where T : class
         {
             EnsureInitialized();
             return _serviceProvider.GetService<T>();
@@ -60,7 +60,7 @@ namespace Ink_Canvas.Core
         /// </summary>
         /// <param name="serviceType">服务类型</param>
         /// <returns>服务实例或 null</returns>
-        public static object GetService(Type serviceType)
+        public static object? GetService(Type serviceType)
         {
             EnsureInitialized();
             return _serviceProvider.GetService(serviceType);

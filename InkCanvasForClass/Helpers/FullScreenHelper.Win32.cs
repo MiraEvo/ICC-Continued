@@ -290,7 +290,7 @@ namespace Ink_Canvas.Helpers
                 return (Left == other.Left) && (Right == other.Right) && (Top == other.Top) && (Bottom == other.Bottom);
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 return obj is Rectangle rectangle && Equals(rectangle);
             }

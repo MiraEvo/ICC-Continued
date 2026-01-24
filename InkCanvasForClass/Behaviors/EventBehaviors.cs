@@ -79,8 +79,8 @@ namespace Ink_Canvas.Behaviors
 
         #endregion
 
-        private Delegate _eventHandler;
-        private EventInfo _eventInfo;
+        private Delegate? _eventHandler;
+        private EventInfo? _eventInfo;
 
         private static void OnEventNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -117,8 +117,11 @@ namespace Ink_Canvas.Behaviors
                 nameof(OnEventRaised),
                 BindingFlags.NonPublic | BindingFlags.Instance);
 
-            _eventHandler = Delegate.CreateDelegate(_eventInfo.EventHandlerType, this, methodInfo);
-            _eventInfo.AddEventHandler(AssociatedObject, _eventHandler);
+            if (_eventInfo.EventHandlerType != null)
+            {
+                _eventHandler = Delegate.CreateDelegate(_eventInfo.EventHandlerType, this, methodInfo);
+                _eventInfo.AddEventHandler(AssociatedObject, _eventHandler);
+            }
         }
 
         private void DetachEvent()
@@ -259,35 +262,35 @@ namespace Ink_Canvas.Behaviors
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            ExecuteCommand(MouseDownCommand, e);
+            MouseEventBehavior.ExecuteCommand(MouseDownCommand, e);
         }
 
         private void OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-            ExecuteCommand(MouseUpCommand, e);
+            MouseEventBehavior.ExecuteCommand(MouseUpCommand, e);
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            ExecuteCommand(MouseMoveCommand, e);
+            MouseEventBehavior.ExecuteCommand(MouseMoveCommand, e);
         }
 
         private void OnMouseEnter(object sender, MouseEventArgs e)
         {
-            ExecuteCommand(MouseEnterCommand, e);
+            MouseEventBehavior.ExecuteCommand(MouseEnterCommand, e);
         }
 
         private void OnMouseLeave(object sender, MouseEventArgs e)
         {
-            ExecuteCommand(MouseLeaveCommand, e);
+            MouseEventBehavior.ExecuteCommand(MouseLeaveCommand, e);
         }
 
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            ExecuteCommand(MouseWheelCommand, e);
+            MouseEventBehavior.ExecuteCommand(MouseWheelCommand, e);
         }
 
-        private void ExecuteCommand(ICommand command, EventArgs e)
+        private static void ExecuteCommand(ICommand command, EventArgs e)
         {
             if (command?.CanExecute(e) == true)
             {
@@ -398,30 +401,30 @@ namespace Ink_Canvas.Behaviors
 
         private void OnTouchDown(object sender, TouchEventArgs e)
         {
-            ExecuteCommand(TouchDownCommand, e);
+            TouchEventBehavior.ExecuteCommand(TouchDownCommand, e);
         }
 
         private void OnTouchUp(object sender, TouchEventArgs e)
         {
-            ExecuteCommand(TouchUpCommand, e);
+            TouchEventBehavior.ExecuteCommand(TouchUpCommand, e);
         }
 
         private void OnTouchMove(object sender, TouchEventArgs e)
         {
-            ExecuteCommand(TouchMoveCommand, e);
+            TouchEventBehavior.ExecuteCommand(TouchMoveCommand, e);
         }
 
         private void OnTouchEnter(object sender, TouchEventArgs e)
         {
-            ExecuteCommand(TouchEnterCommand, e);
+            TouchEventBehavior.ExecuteCommand(TouchEnterCommand, e);
         }
 
         private void OnTouchLeave(object sender, TouchEventArgs e)
         {
-            ExecuteCommand(TouchLeaveCommand, e);
+            TouchEventBehavior.ExecuteCommand(TouchLeaveCommand, e);
         }
 
-        private void ExecuteCommand(ICommand command, EventArgs e)
+        private static void ExecuteCommand(ICommand command, EventArgs e)
         {
             if (command?.CanExecute(e) == true)
             {
@@ -515,20 +518,20 @@ namespace Ink_Canvas.Behaviors
 
         private void OnStylusDown(object sender, StylusDownEventArgs e)
         {
-            ExecuteCommand(StylusDownCommand, e);
+            StylusEventBehavior.ExecuteCommand(StylusDownCommand, e);
         }
 
         private void OnStylusUp(object sender, StylusEventArgs e)
         {
-            ExecuteCommand(StylusUpCommand, e);
+            StylusEventBehavior.ExecuteCommand(StylusUpCommand, e);
         }
 
         private void OnStylusMove(object sender, StylusEventArgs e)
         {
-            ExecuteCommand(StylusMoveCommand, e);
+            StylusEventBehavior.ExecuteCommand(StylusMoveCommand, e);
         }
 
-        private void ExecuteCommand(ICommand command, EventArgs e)
+        private static void ExecuteCommand(ICommand command, EventArgs e)
         {
             if (command?.CanExecute(e) == true)
             {
@@ -704,20 +707,20 @@ namespace Ink_Canvas.Behaviors
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            ExecuteCommand(KeyDownCommand, e);
+            KeyboardEventBehavior.ExecuteCommand(KeyDownCommand, e);
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e)
         {
-            ExecuteCommand(KeyUpCommand, e);
+            KeyboardEventBehavior.ExecuteCommand(KeyUpCommand, e);
         }
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            ExecuteCommand(PreviewKeyDownCommand, e);
+            KeyboardEventBehavior.ExecuteCommand(PreviewKeyDownCommand, e);
         }
 
-        private void ExecuteCommand(ICommand command, EventArgs e)
+        private static void ExecuteCommand(ICommand command, EventArgs e)
         {
             if (command?.CanExecute(e) == true)
             {

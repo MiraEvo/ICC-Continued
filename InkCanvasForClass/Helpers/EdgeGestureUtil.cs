@@ -104,7 +104,7 @@ namespace Ink_Canvas.Helpers
                         VarEnum.VT_I8 => hVal,
                         VarEnum.VT_INT => iVal,
                         VarEnum.VT_UI4 => ulVal,
-                        VarEnum.VT_LPWSTR => Marshal.PtrToStringUni(pwszVal),
+                        VarEnum.VT_LPWSTR => Marshal.PtrToStringUni(pwszVal) ?? string.Empty,
                         VarEnum.VT_BLOB => GetBlob(),
                         _ => throw new NotImplementedException("PropVariant " + ve.ToString())
                     };
@@ -151,18 +151,18 @@ namespace Ink_Canvas.Helpers
         [RequiresUnmanagedCode("Uses shell32 COM interop to update edge gesture settings.")]
         public static void DisableEdgeGestures(IntPtr hwnd, bool enable)
         {
-            IPropertyStore pPropStore = null;
-            int hr = SHGetPropertyStoreForWindow(hwnd, ref IID_PROPERTY_STORE, ref pPropStore);
+            IPropertyStore propertyStore = null;
+            int hr = SHGetPropertyStoreForWindow(hwnd, ref IID_PROPERTY_STORE, ref propertyStore);
             if (hr == 0)
             {
-                PropertyKey propKey = new();
-                propKey.fmtid = DISABLE_TOUCH_SCREEN;
-                propKey.pid = 2;
-                PropVariant var = new();
-                var.vt = VT_BOOL;
-                var.boolVal = enable;
-                pPropStore.SetValue(ref propKey, ref var);
-                Marshal.FinalReleaseComObject(pPropStore);
+                PropertyKey propKey = new(DISABLE_TOUCH_SCREEN, 2);
+                PropVariant var = new()
+                {
+                    vt = VT_BOOL,
+                    boolVal = enable
+                };
+                propertyStore.SetValue(ref propKey, ref var);
+                Marshal.FinalReleaseComObject(propertyStore);
             }
         }
 

@@ -66,7 +66,7 @@ namespace Ink_Canvas.Helpers
         /// <param name="offsetX">X 偏移量</param>
         /// <param name="offsetY">Y 偏移量</param>
         /// <returns>渲染后的位图</returns>
-        private static Bitmap RenderStrokesToBitmap(StrokeCollection strokes, int width, int height, double offsetX, double offsetY)
+        private static Bitmap? RenderStrokesToBitmap(StrokeCollection strokes, int width, int height, double offsetX, double offsetY)
         {
             if (strokes == null || strokes.Count == 0 || width <= 0 || height <= 0)
                 return null;
@@ -116,7 +116,7 @@ namespace Ink_Canvas.Helpers
         /// <summary>
         /// 将 RenderTargetBitmap 转换为 System.Drawing.Bitmap（优化版本，直接复制像素数据）
         /// </summary>
-        private static Bitmap RenderTargetBitmapToBitmapFast(RenderTargetBitmap renderBitmap)
+        private static Bitmap? RenderTargetBitmapToBitmapFast(RenderTargetBitmap renderBitmap)
         {
             if (renderBitmap == null)
                 return null;
@@ -148,7 +148,7 @@ namespace Ink_Canvas.Helpers
         /// <summary>
         /// 将 RenderTargetBitmap 转换为 System.Drawing.Bitmap（兼容版本，使用 PNG 编码）
         /// </summary>
-        private static Bitmap RenderTargetBitmapToBitmap(RenderTargetBitmap renderBitmap)
+        private static Bitmap? RenderTargetBitmapToBitmap(RenderTargetBitmap renderBitmap)
         {
             if (renderBitmap == null)
                 return null;

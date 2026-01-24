@@ -25,8 +25,8 @@ namespace Ink_Canvas.Helpers
 
                 if (remoteVersion != null)
                 {
-                    Version local = new Version(localVersion);
-                    Version remote = new Version(remoteVersion);
+                    Version local = new(localVersion);
+                    Version remote = new(remoteVersion);
                     if (remote > local)
                     {
                         LogHelper.WriteLogToFile("自动更新 | 检测到新版本：" + remoteVersion, LogHelper.LogType.Info);
@@ -248,7 +248,7 @@ namespace Ink_Canvas.Helpers
         {
             try
             {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo
+                ProcessStartInfo processStartInfo = new()
                 {
                     FileName = "cmd.exe",
                     Arguments = $"/c {command}",
@@ -258,7 +258,7 @@ namespace Ink_Canvas.Helpers
                     CreateNoWindow = true
                 };
 
-                using (Process process = new Process { StartInfo = processStartInfo })
+                using (Process process = new() { StartInfo = processStartInfo })
                 {
                     process.Start();
                     Application.Current.Shutdown();
@@ -303,8 +303,8 @@ namespace Ink_Canvas.Helpers
 
     internal class AutoUpdateWithSilenceTimeComboBox
     {
-        public static ObservableCollection<string> Hours { get; set; } = new ObservableCollection<string>();
-        public static ObservableCollection<string> Minutes { get; set; } = new ObservableCollection<string>();
+        public static ObservableCollection<string> Hours { get; set; } = [];
+        public static ObservableCollection<string> Minutes { get; set; } = [];
 
         public static void InitializeAutoUpdateWithSilenceTimeComboBoxOptions(ComboBox startTimeComboBox, ComboBox endTimeComboBox)
         {
