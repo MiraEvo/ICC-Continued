@@ -700,17 +700,51 @@ namespace Ink_Canvas {
             if (e.Manipulators.Count() != 0) return;
             if (forceEraser) return;
             inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
+            
+            // 重置缓存状态，确保下次手势操作从干净状态开始
+            _lastManipulationUpdateTick = 0;
+            _lastTranslation = new Point(0, 0);
+            _lastRotation = 0;
+            _lastScale = new Vector(1, 1);
+            _cachedManipulationMatrix.SetIdentity();
         }
 
         private Matrix _cachedManipulationMatrix = Matrix.Identity;
+        private int _lastManipulationUpdateTick = 0;
+        private const int MANIPULATION_UPDATE_INTERVAL_MS = 8; // 限制更新频率为125Hz
+        private Point _lastTranslation = new Point(0, 0);
+        private double _lastRotation = 0;
+        private Vector _lastScale = new Vector(1, 1);
 
         private void Main_Grid_ManipulationDelta(object sender, ManipulationDeltaEventArgs e) {
             if (isInMultiTouchMode || !Settings.Gesture.IsEnableTwoFingerGesture) return;
             if ((dec.Count >= 2 && (Settings.PowerPointSettings.IsEnableTwoFingerGestureInPresentationMode ||
                                     BorderFloatingBarExitPPTBtn.Visibility != Visibility.Visible)) ||
                 isSingleFingerDragMode) {
+                
+                // 节流：限制更新频率
+                var currentTick = Environment.TickCount;
+                if (currentTick - _lastManipulationUpdateTick < MANIPULATION_UPDATE_INTERVAL_MS) {
+                    return;
+                }
+                _lastManipulationUpdateTick = currentTick;
+
                 var md = e.DeltaManipulation;
                 var trans = md.Translation;
+
+                // 优化：只有当变换值发生显著变化时才重新计算矩阵
+                bool needsMatrixUpdate = Math.Abs(trans.X - _lastTranslation.X) > 0.1 ||
+                                       Math.Abs(trans.Y - _lastTranslation.Y) > 0.1 ||
+                                       Math.Abs(md.Rotation - _lastRotation) > 0.1 ||
+                                       Math.Abs(md.Scale.X - _lastScale.X) > 0.001 ||
+                                       Math.Abs(md.Scale.Y - _lastScale.Y) > 0.001;
+
+                if (!needsMatrixUpdate) return;
+
+                // 更新上次值
+                _lastTranslation = new Point(trans.X, trans.Y);
+                _lastRotation = md.Rotation;
+                _lastScale = md.Scale;
 
                 _cachedManipulationMatrix.SetIdentity();
 
@@ -738,34 +772,73 @@ namespace Ink_Canvas {
                 var scaleY = md.Scale.Y;
 
                 if (strokeCount != 0) {
+                    // 批量处理选中的笔画
+                    var strokesToTransform = new List<Stroke>();
+                    var circlesToUpdate = new List<Circle>();
+                    
                     foreach (var stroke in strokes) {
-                        stroke.Transform(_cachedManipulationMatrix, false);
+                        strokesToTransform.Add(stroke);
 
-                        foreach (var circle in circles)
+                        foreach (var circle in circles) {
                             if (stroke == circle.Stroke) {
-                                var stylusPoints = circle.Stroke.StylusPoints;
-                                var halfCount = stylusPoints.Count / 2;
-                                circle.R = GetDistance(stylusPoints[0].ToPoint(),
-                                    stylusPoints[halfCount].ToPoint()) / 2;
-                                circle.Centroid = new Point(
-                                    (stylusPoints[0].X + stylusPoints[halfCount].X) / 2,
-                                    (stylusPoints[0].Y + stylusPoints[halfCount].Y) / 2);
+                                circlesToUpdate.Add(circle);
                                 break;
                             }
-
-                        if (!enableTwoFingerZoom) continue;
-                        try {
-                            stroke.DrawingAttributes.Width *= scaleX;
-                            stroke.DrawingAttributes.Height *= scaleY;
                         }
-                        catch (Exception ex) {
-                            LogHelper.WriteLogToFile("Main_Grid_ManipulationDelta 修改笔迹属性失败：" + ex.Message, LogHelper.LogType.Error);
+                    }
+
+                    // 批量应用变换
+                    foreach (var stroke in strokesToTransform) {
+                        stroke.Transform(_cachedManipulationMatrix, false);
+                    }
+
+                    // 批量更新圆形属性
+                    foreach (var circle in circlesToUpdate) {
+                        var stylusPoints = circle.Stroke.StylusPoints;
+                        var halfCount = stylusPoints.Count / 2;
+                        circle.R = GetDistance(stylusPoints[0].ToPoint(),
+                            stylusPoints[halfCount].ToPoint()) / 2;
+                        circle.Centroid = new Point(
+                            (stylusPoints[0].X + stylusPoints[halfCount].X) / 2,
+                            (stylusPoints[0].Y + stylusPoints[halfCount].Y) / 2);
+                    }
+
+                    // 批量更新缩放属性
+                    if (enableTwoFingerZoom) {
+                        foreach (var stroke in strokesToTransform) {
+                            try {
+                                stroke.DrawingAttributes.Width *= scaleX;
+                                stroke.DrawingAttributes.Height *= scaleY;
+                            }
+                            catch (Exception ex) {
+                                LogHelper.WriteLogToFile("Main_Grid_ManipulationDelta 修改笔迹属性失败：" + ex.Message, LogHelper.LogType.Error);
+                            }
                         }
                     }
                 } else {
-                    foreach (var stroke in inkCanvas.Strokes) {
+                    // 批量处理所有笔画
+                    var allStrokes = inkCanvas.Strokes.ToList();
+                    var allCircles = circles.ToList();
+
+                    // 批量应用变换
+                    foreach (var stroke in allStrokes) {
                         stroke.Transform(_cachedManipulationMatrix, false);
-                        if (enableTwoFingerZoom) {
+                    }
+
+                    // 批量更新圆形
+                    foreach (var circle in allCircles) {
+                        var stylusPoints = circle.Stroke.StylusPoints;
+                        var halfCount = stylusPoints.Count / 2;
+                        circle.R = GetDistance(stylusPoints[0].ToPoint(),
+                            stylusPoints[halfCount].ToPoint()) / 2;
+                        circle.Centroid = new Point(
+                            (stylusPoints[0].X + stylusPoints[halfCount].X) / 2,
+                            (stylusPoints[0].Y + stylusPoints[halfCount].Y) / 2);
+                    }
+
+                    // 批量更新缩放属性
+                    if (enableTwoFingerZoom) {
+                        foreach (var stroke in allStrokes) {
                             try {
                                 stroke.DrawingAttributes.Width *= scaleX;
                                 stroke.DrawingAttributes.Height *= scaleY;
@@ -774,17 +847,6 @@ namespace Ink_Canvas {
                                 LogHelper.WriteLogToFile("Main_Grid_ManipulationDelta 批量修改笔迹属性失败：" + ex.Message, LogHelper.LogType.Error);
                             }
                         }
-                    }
-
-                    foreach (var circle in circles) {
-                        var stylusPoints = circle.Stroke.StylusPoints;
-                        var halfCount = stylusPoints.Count / 2;
-                        circle.R = GetDistance(stylusPoints[0].ToPoint(),
-                            stylusPoints[halfCount].ToPoint()) / 2;
-                        circle.Centroid = new Point(
-                            (stylusPoints[0].X + stylusPoints[halfCount].X) / 2,
-                            (stylusPoints[0].Y + stylusPoints[halfCount].Y) / 2
-                        );
                     }
                 }
             }
