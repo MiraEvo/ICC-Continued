@@ -21,9 +21,16 @@ namespace Ink_Canvas.Helpers
                     Process.Start(executablePath);
                     //Console.WriteLine(softwareName + " 启动成功！");
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("启动失败: " + ex.Message);
+                catch (System.ComponentModel.Win32Exception ex) {
+                    Console.WriteLine("启动失败 (Win32错误): " + ex.Message);
+                    //MessageBox.Show("启动失败: " + ex.Message);
+                }
+                catch (UnauthorizedAccessException ex) {
+                    Console.WriteLine("启动失败 (访问被拒绝): " + ex.Message);
+                    //MessageBox.Show("启动失败: " + ex.Message);
+                }
+                catch (System.IO.FileNotFoundException ex) {
+                    Console.WriteLine("启动失败 (文件未找到): " + ex.Message);
                     //MessageBox.Show("启动失败: " + ex.Message);
                 }
             }

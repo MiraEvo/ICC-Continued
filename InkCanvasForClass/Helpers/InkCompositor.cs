@@ -99,9 +99,16 @@ namespace Ink_Canvas.Helpers
 
                 return RenderTargetBitmapToBitmapFast(renderBitmap);
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"RenderStrokesToBitmap failed: {ex.Message}", LogHelper.LogType.Error);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"RenderStrokesToBitmap failed (Invalid operation): {ex.Message}", LogHelper.LogType.Error);
+                return null;
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"RenderStrokesToBitmap failed (Invalid argument): {ex.Message}", LogHelper.LogType.Error);
+                return null;
+            }
+            catch (System.Windows.Media.Animation.AnimationException ex) {
+                LogHelper.WriteLogToFile($"RenderStrokesToBitmap failed (Animation error): {ex.Message}", LogHelper.LogType.Error);
                 return null;
             }
         }

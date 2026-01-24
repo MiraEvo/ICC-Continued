@@ -10,6 +10,7 @@ using System.Windows.Media;
 using Windows.UI.Input.Inking;
 using Windows.UI.Input.Inking.Analysis;
 using Ink_Canvas.Models.Settings;
+using System.Runtime.InteropServices;
 
 namespace Ink_Canvas.Helpers
 {
@@ -116,9 +117,16 @@ namespace Ink_Canvas.Helpers
 
                 return result;
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"RecognizeShape failed: {ex.Message}\nStackTrace: {ex.StackTrace}\nInnerException: {ex.InnerException?.Message}", LogHelper.LogType.Error);
+            catch (TaskCanceledException ex) {
+                LogHelper.WriteLogToFile($"RecognizeShape failed (Task cancelled): {ex.Message}\nStackTrace: {ex.StackTrace}\nInnerException: {ex.InnerException?.Message}", LogHelper.LogType.Error);
+                return default;
+            }
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"RecognizeShape failed (Invalid operation): {ex.Message}\nStackTrace: {ex.StackTrace}\nInnerException: {ex.InnerException?.Message}", LogHelper.LogType.Error);
+                return default;
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"RecognizeShape failed (Invalid argument): {ex.Message}\nStackTrace: {ex.StackTrace}\nInnerException: {ex.InnerException?.Message}", LogHelper.LogType.Error);
                 return default;
             }
         }
@@ -154,9 +162,14 @@ namespace Ink_Canvas.Helpers
                     strokeContainer = new InkStrokeContainer();
                     // LogHelper.WriteLogToFile("RecognizeShapeAsync: InkAnalyzer and InkStrokeContainer created successfully", LogHelper.LogType.Trace);
                 }
-                catch (Exception initEx)
+                catch (UnauthorizedAccessException ex)
                 {
-                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: Failed to create InkAnalyzer or InkStrokeContainer: {initEx.Message}\nStackTrace: {initEx.StackTrace}", LogHelper.LogType.Error);
+                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: Failed to create InkAnalyzer or InkStrokeContainer (Access denied): {ex.Message}\nStackTrace: {ex.StackTrace}", LogHelper.LogType.Error);
+                    return default;
+                }
+                catch (COMException ex)
+                {
+                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: Failed to create InkAnalyzer or InkStrokeContainer (COM error): {ex.Message}\nStackTrace: {ex.StackTrace}", LogHelper.LogType.Error);
                     return default;
                 }
 
@@ -176,9 +189,14 @@ namespace Ink_Canvas.Helpers
                     uwpStrokes = StrokeConverter.ToUwpStrokes(strokes, false);  // 禁用重采样
                     // LogHelper.WriteLogToFile($"RecognizeShapeAsync: Converted {strokes.Count} WPF strokes to {uwpStrokes.Count} UWP strokes", LogHelper.LogType.Trace);
                 }
-                catch (Exception convertEx)
+                catch (ArgumentException ex)
                 {
-                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: Failed to convert strokes: {convertEx.Message}\nStackTrace: {convertEx.StackTrace}", LogHelper.LogType.Error);
+                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: Failed to convert strokes (Invalid argument): {ex.Message}\nStackTrace: {ex.StackTrace}", LogHelper.LogType.Error);
+                    return default;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: Failed to convert strokes (Invalid operation): {ex.Message}\nStackTrace: {ex.StackTrace}", LogHelper.LogType.Error);
                     return default;
                 }
 
@@ -211,9 +229,14 @@ namespace Ink_Canvas.Helpers
                     }
                     // LogHelper.WriteLogToFile("RecognizeShapeAsync: Set stroke data kind to Drawing for all strokes", LogHelper.LogType.Trace);
                 }
-                catch (Exception addEx)
+                catch (ArgumentException ex)
                 {
-                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: Failed to add strokes to analyzer: {addEx.Message}\nStackTrace: {addEx.StackTrace}", LogHelper.LogType.Error);
+                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: Failed to add strokes to analyzer (Invalid argument): {ex.Message}\nStackTrace: {ex.StackTrace}", LogHelper.LogType.Error);
+                    return default;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: Failed to add strokes to analyzer (Invalid operation): {ex.Message}\nStackTrace: {ex.StackTrace}", LogHelper.LogType.Error);
                     return default;
                 }
 
@@ -224,9 +247,19 @@ namespace Ink_Canvas.Helpers
                     result = await analyzer.AnalyzeAsync().AsTask().ConfigureAwait(false);
                     // LogHelper.WriteLogToFile($"RecognizeShapeAsync: Analysis completed with status: {result.Status}", LogHelper.LogType.Trace);
                 }
-                catch (Exception analyzeEx)
+                catch (TaskCanceledException ex)
                 {
-                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: AnalyzeAsync failed: {analyzeEx.Message}\nStackTrace: {analyzeEx.StackTrace}\nHResult: 0x{analyzeEx.HResult:X8}", LogHelper.LogType.Error);
+                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: AnalyzeAsync failed (Task cancelled): {ex.Message}\nStackTrace: {ex.StackTrace}\nHResult: 0x{ex.HResult:X8}", LogHelper.LogType.Error);
+                    return default;
+                }
+                catch (COMException ex)
+                {
+                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: AnalyzeAsync failed (COM error): {ex.Message}\nStackTrace: {ex.StackTrace}\nHResult: 0x{ex.HResult:X8}", LogHelper.LogType.Error);
+                    return default;
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    LogHelper.WriteLogToFile($"RecognizeShapeAsync: AnalyzeAsync failed (Access denied): {ex.Message}\nStackTrace: {ex.StackTrace}\nHResult: 0x{ex.HResult:X8}", LogHelper.LogType.Error);
                     return default;
                 }
 
@@ -304,9 +337,37 @@ namespace Ink_Canvas.Helpers
                     bestScore
                 );
             }
-            catch (Exception ex)
+            catch (TaskCanceledException ex)
             {
-                var errorMessage = $"RecognizeShapeAsync failed: {ex.Message}";
+                var errorMessage = $"RecognizeShapeAsync failed (Task cancelled): {ex.Message}";
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $"\nInnerException: {ex.InnerException.Message}";
+                }
+                errorMessage += $"\nStackTrace: {ex.StackTrace}";
+                errorMessage += $"\nHResult: 0x{ex.HResult:X8}";
+                errorMessage += $"\nException Type: {ex.GetType().FullName}";
+
+                LogHelper.WriteLogToFile(errorMessage, LogHelper.LogType.Error);
+                return default;
+            }
+            catch (COMException ex)
+            {
+                var errorMessage = $"RecognizeShapeAsync failed (COM error): {ex.Message}";
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $"\nInnerException: {ex.InnerException.Message}";
+                }
+                errorMessage += $"\nStackTrace: {ex.StackTrace}";
+                errorMessage += $"\nHResult: 0x{ex.HResult:X8}";
+                errorMessage += $"\nException Type: {ex.GetType().FullName}";
+
+                LogHelper.WriteLogToFile(errorMessage, LogHelper.LogType.Error);
+                return default;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var errorMessage = $"RecognizeShapeAsync failed (Access denied): {ex.Message}";
                 if (ex.InnerException != null)
                 {
                     errorMessage += $"\nInnerException: {ex.InnerException.Message}";
@@ -367,9 +428,14 @@ namespace Ink_Canvas.Helpers
                         return true;
                 }
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                LogHelper.WriteLogToFile("ValidateShapeGeometry 发生错误：" + ex.Message, LogHelper.LogType.Error);
+                LogHelper.WriteLogToFile("ValidateShapeGeometry 发生错误（参数错误）：" + ex.Message, LogHelper.LogType.Error);
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                LogHelper.WriteLogToFile("ValidateShapeGeometry 发生错误（无效操作）：" + ex.Message, LogHelper.LogType.Error);
                 return true;
             }
         }
@@ -677,9 +743,17 @@ namespace Ink_Canvas.Helpers
 
                 LogHelper.WriteLogToFile("墨迹分析 API 预热成功", LogHelper.LogType.Info);
             }
-            catch (Exception ex)
+            catch (TaskCanceledException ex)
             {
-                LogHelper.WriteLogToFile("墨迹分析 API 预热失败：" + ex.Message, LogHelper.LogType.Error);
+                LogHelper.WriteLogToFile("墨迹分析 API 预热失败（任务取消）：" + ex.Message, LogHelper.LogType.Error);
+            }
+            catch (COMException ex)
+            {
+                LogHelper.WriteLogToFile("墨迹分析 API 预热失败（COM错误）：" + ex.Message, LogHelper.LogType.Error);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                LogHelper.WriteLogToFile("墨迹分析 API 预热失败（访问被拒绝）：" + ex.Message, LogHelper.LogType.Error);
             }
         }
 

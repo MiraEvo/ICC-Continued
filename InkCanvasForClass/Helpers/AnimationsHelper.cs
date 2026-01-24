@@ -83,8 +83,14 @@ namespace Ink_Canvas.Helpers
 
                 sb.Begin((FrameworkElement)element);
             }
-            catch (Exception ex) {
-                LogHelper.WriteLogToFile("动画 ShowWithSlideFromBottomAndFade 执行失败：" + ex.Message, LogHelper.LogType.Trace);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithSlideFromBottomAndFade 执行失败（无效操作）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithSlideFromBottomAndFade 执行失败（参数错误）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (System.Windows.Media.Animation.AnimationException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithSlideFromBottomAndFade 执行失败（动画异常）：" + ex.Message, LogHelper.LogType.Trace);
             }
         }
 
@@ -121,8 +127,14 @@ namespace Ink_Canvas.Helpers
 
                 sb.Begin((FrameworkElement)element);
             }
-            catch (Exception ex) {
-                LogHelper.WriteLogToFile("动画 ShowWithSlideFromLeftAndFade 执行失败：" + ex.Message, LogHelper.LogType.Trace);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithSlideFromLeftAndFade 执行失败（无效操作）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithSlideFromLeftAndFade 执行失败（参数错误）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (System.Windows.Media.Animation.AnimationException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithSlideFromLeftAndFade 执行失败（动画异常）：" + ex.Message, LogHelper.LogType.Trace);
             }
         }
 
@@ -162,8 +174,14 @@ namespace Ink_Canvas.Helpers
 
                 sb.Begin((FrameworkElement)element);
             }
-            catch (Exception ex) {
-                LogHelper.WriteLogToFile("动画 ShowWithScaleFromLeft 执行失败：" + ex.Message, LogHelper.LogType.Trace);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithScaleFromLeft 执行失败（无效操作）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithScaleFromLeft 执行失败（参数错误）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (System.Windows.Media.Animation.AnimationException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithScaleFromLeft 执行失败（动画异常）：" + ex.Message, LogHelper.LogType.Trace);
             }
         }
 
@@ -203,8 +221,14 @@ namespace Ink_Canvas.Helpers
 
                 sb.Begin((FrameworkElement)element);
             }
-            catch (Exception ex) {
-                LogHelper.WriteLogToFile("动画 ShowWithScaleFromRight 执行失败：" + ex.Message, LogHelper.LogType.Trace);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithScaleFromRight 执行失败（无效操作）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithScaleFromRight 执行失败（参数错误）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (System.Windows.Media.Animation.AnimationException ex) {
+                LogHelper.WriteLogToFile("动画 ShowWithScaleFromRight 执行失败（动画异常）：" + ex.Message, LogHelper.LogType.Trace);
             }
         }
 
@@ -246,8 +270,14 @@ namespace Ink_Canvas.Helpers
                 element.RenderTransform = new TranslateTransform();
                 sb.Begin((FrameworkElement)element);
             }
-            catch (Exception ex) {
-                LogHelper.WriteLogToFile("动画 HideWithSlideAndFade 执行失败：" + ex.Message, LogHelper.LogType.Trace);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile("动画 HideWithSlideAndFade 执行失败（无效操作）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile("动画 HideWithSlideAndFade 执行失败（参数错误）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (System.Windows.Media.Animation.AnimationException ex) {
+                LogHelper.WriteLogToFile("动画 HideWithSlideAndFade 执行失败（动画异常）：" + ex.Message, LogHelper.LogType.Trace);
             }
         }
 

@@ -102,9 +102,11 @@ namespace Ink_Canvas.Helpers
 
                 LogHelper.WriteLogToFile("Sentry SDK 初始化成功（增强功能已启用）", LogHelper.LogType.Info);
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"初始化 Sentry SDK 失败：{ex.Message}", LogHelper.LogType.Error);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"初始化 Sentry SDK 失败（无效操作）：{ex.Message}", LogHelper.LogType.Error);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"初始化 Sentry SDK 失败（参数错误）：{ex.Message}", LogHelper.LogType.Error);
             }
         }
 
@@ -125,9 +127,11 @@ namespace Ink_Canvas.Helpers
                     scope.SetTag("is_64bit_process", Environment.Is64BitProcess.ToString());
                 });
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"设置 Sentry 默认标签失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 默认标签失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 默认标签失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -147,9 +151,11 @@ namespace Ink_Canvas.Helpers
                 SentrySdk.Close();
                 _isInitialized = false;
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"关闭 Sentry SDK 失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"关闭 Sentry SDK 失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (System.TimeoutException ex) {
+                LogHelper.WriteLogToFile($"关闭 Sentry SDK 失败（超时）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -181,9 +187,11 @@ namespace Ink_Canvas.Helpers
 
                 LogHelper.WriteLogToFile($"Sentry 用户已设置：{userId}", LogHelper.LogType.Trace);
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"设置 Sentry 用户失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 用户失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 用户失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -198,9 +206,11 @@ namespace Ink_Canvas.Helpers
                 var machineId = $"{Environment.MachineName}_{Environment.UserName}".GetHashCode().ToString("X8");
                 SetUser(machineId, Environment.UserName);
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"设置匿名用户失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"设置匿名用户失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"设置匿名用户失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -216,9 +226,11 @@ namespace Ink_Canvas.Helpers
                     scope.User = null;
                 });
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"清除 Sentry 用户失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"清除 Sentry 用户失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"清除 Sentry 用户失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -267,9 +279,11 @@ namespace Ink_Canvas.Helpers
                     data: data
                 );
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"添加面包屑失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"添加面包屑失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"添加面包屑失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -430,9 +444,12 @@ namespace Ink_Canvas.Helpers
                     }
                 });
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"Sentry 捕获异常失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"Sentry 捕获异常失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+                return SentryId.Empty;
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"Sentry 捕获异常失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
                 return SentryId.Empty;
             }
         }
@@ -473,9 +490,12 @@ namespace Ink_Canvas.Helpers
                     }
                 });
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"Sentry 捕获消息失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"Sentry 捕获消息失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+                return SentryId.Empty;
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"Sentry 捕获消息失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
                 return SentryId.Empty;
             }
         }
@@ -501,9 +521,12 @@ namespace Ink_Canvas.Helpers
                 LogHelper.WriteLogToFile($"Sentry 事务已开始：{name}（{operation}）", LogHelper.LogType.Trace);
                 return _currentTransaction;
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"启动 Sentry 事务失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"启动 Sentry 事务失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+                return null;
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"启动 Sentry 事务失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
                 return null;
             }
         }
@@ -534,9 +557,11 @@ namespace Ink_Canvas.Helpers
                     LogHelper.WriteLogToFile("Sentry 事务已结束", LogHelper.LogType.Trace);
                 }
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"结束 Sentry 事务失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"结束 Sentry 事务失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"结束 Sentry 事务失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -562,9 +587,12 @@ namespace Ink_Canvas.Helpers
                 _currentSpan = _currentTransaction.StartChild(operation, description);
                 return _currentSpan;
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"启动 Sentry Span 失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"启动 Sentry Span 失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+                return null;
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"启动 Sentry Span 失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
                 return null;
             }
         }
@@ -583,9 +611,11 @@ namespace Ink_Canvas.Helpers
                     _currentSpan = null;
                 }
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"结束 Sentry Span 失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"结束 Sentry Span 失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"结束 Sentry Span 失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -617,9 +647,11 @@ namespace Ink_Canvas.Helpers
                         _span = _currentTransaction.StartChild(operation, description);
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogHelper.WriteLogToFile($"创建 SpanScope 失败：{ex.Message}", LogHelper.LogType.Warning);
+                catch (InvalidOperationException ex) {
+                    LogHelper.WriteLogToFile($"创建 SpanScope 失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+                }
+                catch (ArgumentException ex) {
+                    LogHelper.WriteLogToFile($"创建 SpanScope 失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
                 }
             }
 
@@ -670,9 +702,11 @@ namespace Ink_Canvas.Helpers
                     scope.SetTag(key, value);
                 });
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"设置 Sentry 标签失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 标签失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 标签失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -692,9 +726,11 @@ namespace Ink_Canvas.Helpers
                     }
                 });
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"设置 Sentry 标签集合失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 标签集合失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 标签集合失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -712,9 +748,11 @@ namespace Ink_Canvas.Helpers
                     scope.SetExtra(key, value);
                 });
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"设置 Sentry 额外数据失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 额外数据失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 额外数据失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -732,9 +770,11 @@ namespace Ink_Canvas.Helpers
                     scope.Contexts[key] = data;
                 });
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"设置 Sentry 上下文失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 上下文失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile($"设置 Sentry 上下文失败（参数错误）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 
@@ -822,9 +862,11 @@ namespace Ink_Canvas.Helpers
             {
                 SentrySdk.Flush(TimeSpan.FromMilliseconds(timeoutMs));
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"刷新 Sentry 失败：{ex.Message}", LogHelper.LogType.Warning);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"刷新 Sentry 失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (System.TimeoutException ex) {
+                LogHelper.WriteLogToFile($"刷新 Sentry 失败（超时）：{ex.Message}", LogHelper.LogType.Warning);
             }
         }
 

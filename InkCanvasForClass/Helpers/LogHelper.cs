@@ -154,10 +154,22 @@ namespace Ink_Canvas.Helpers
                     sw.WriteLine(fullLogMessage);
                 }
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException ex)
             {
-                // Fallback: write to debug output if file logging fails
-                Debug.WriteLine($"[LogHelper] Failed to write to log file: {ex.Message}");
+                // Fallback: write to debug output if file logging fails due to access permissions
+                Debug.WriteLine($"[LogHelper] Failed to write to log file (Access denied): {ex.Message}");
+                Debug.WriteLine($"[LogHelper] Original message: {fullLogMessage}");
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                // Fallback: write to debug output if file logging fails due to missing directory
+                Debug.WriteLine($"[LogHelper] Failed to write to log file (Directory not found): {ex.Message}");
+                Debug.WriteLine($"[LogHelper] Original message: {fullLogMessage}");
+            }
+            catch (IOException ex)
+            {
+                // Fallback: write to debug output if file logging fails due to IO error
+                Debug.WriteLine($"[LogHelper] Failed to write to log file (IO error): {ex.Message}");
                 Debug.WriteLine($"[LogHelper] Original message: {fullLogMessage}");
             }
         }

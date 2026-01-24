@@ -26,15 +26,27 @@ namespace Ink_Canvas.Helpers {
                                 }
                             }
                         }
-                    } catch (Exception ex) {
-                        LogHelper.WriteLogToFile("自动清理 | 处理文件时出错：" + ex.ToString(), LogHelper.LogType.Error);
+                    } catch (UnauthorizedAccessException ex) {
+                        LogHelper.WriteLogToFile("自动清理 | 处理文件时出错（访问被拒绝）：" + ex.ToString(), LogHelper.LogType.Error);
+                    }
+                    catch (DirectoryNotFoundException ex) {
+                        LogHelper.WriteLogToFile("自动清理 | 处理文件时出错（目录未找到）：" + ex.ToString(), LogHelper.LogType.Error);
+                    }
+                    catch (IOException ex) {
+                        LogHelper.WriteLogToFile("自动清理 | 处理文件时出错（IO错误）：" + ex.ToString(), LogHelper.LogType.Error);
                     }
                 }
 
                 try { // 递归删除空文件夹
                     DeleteEmptyFolders(directoryPath);
-                } catch (Exception ex) {
-                    LogHelper.WriteLogToFile("自动清理 | 处理文件时出错：" + ex.ToString(), LogHelper.LogType.Error);
+                } catch (UnauthorizedAccessException ex) {
+                    LogHelper.WriteLogToFile("自动清理 | 处理文件时出错（访问被拒绝）：" + ex.ToString(), LogHelper.LogType.Error);
+                }
+                catch (DirectoryNotFoundException ex) {
+                    LogHelper.WriteLogToFile("自动清理 | 处理文件时出错（目录未找到）：" + ex.ToString(), LogHelper.LogType.Error);
+                }
+                catch (IOException ex) {
+                    LogHelper.WriteLogToFile("自动清理 | 处理文件时出错（IO错误）：" + ex.ToString(), LogHelper.LogType.Error);
                 }
             }
         }

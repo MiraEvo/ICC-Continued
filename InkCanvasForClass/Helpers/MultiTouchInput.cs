@@ -85,8 +85,11 @@ namespace Ink_Canvas.Helpers
                     Stroke.Draw(dc);
                 }
             }
-            catch (Exception ex) {
-                LogHelper.WriteLogToFile("Stroke redraw failed: " + ex.Message, LogHelper.LogType.Trace);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile("Stroke redraw failed (Invalid operation): " + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (ArgumentException ex) {
+                LogHelper.WriteLogToFile("Stroke redraw failed (Invalid argument): " + ex.Message, LogHelper.LogType.Trace);
             }
         }
 

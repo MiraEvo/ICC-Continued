@@ -14,6 +14,7 @@ using Ookii.Dialogs.Wpf;
 using System.Diagnostics;
 using Lierda.WPFHelper;
 using System.Windows.Shell;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sentry;
 using System.Runtime.CompilerServices;
@@ -116,8 +117,14 @@ namespace Ink_Canvas
                         mutex = null;
                         LogHelper.WriteLogToFile("应用退出：互斥锁已释放", LogHelper.LogType.Info);
                     }
-                    catch (Exception ex) {
-                        LogHelper.WriteLogToFile("应用退出：释放互斥锁失败 - " + ex.Message, LogHelper.LogType.Error);
+                    catch (ObjectDisposedException ex) {
+                        LogHelper.WriteLogToFile("应用退出：释放互斥锁失败（对象已释放） - " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    catch (InvalidOperationException ex) {
+                        LogHelper.WriteLogToFile("应用退出：释放互斥锁失败（无效操作） - " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    catch (UnauthorizedAccessException ex) {
+                        LogHelper.WriteLogToFile("应用退出：释放互斥锁失败（访问被拒绝） - " + ex.Message, LogHelper.LogType.Error);
                     }
                 }
 
@@ -128,23 +135,38 @@ namespace Ink_Canvas
                         _taskbar = null;
                         LogHelper.WriteLogToFile("应用退出：托盘图标已释放", LogHelper.LogType.Info);
                     }
-                    catch (Exception ex) {
-                        LogHelper.WriteLogToFile("应用退出：释放托盘图标失败 - " + ex.Message, LogHelper.LogType.Error);
+                    catch (ObjectDisposedException ex) {
+                        LogHelper.WriteLogToFile("应用退出：释放托盘图标失败（对象已释放） - " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    catch (InvalidOperationException ex) {
+                        LogHelper.WriteLogToFile("应用退出：释放托盘图标失败（无效操作） - " + ex.Message, LogHelper.LogType.Error);
+                    }
+                    catch (UnauthorizedAccessException ex) {
+                        LogHelper.WriteLogToFile("应用退出：释放托盘图标失败（访问被拒绝） - " + ex.Message, LogHelper.LogType.Error);
                     }
                 }
 
                 LogHelper.WriteLogToFile("应用退出：清理完成，准备强制退出", LogHelper.LogType.Event);
             }
-            catch (Exception ex) {
-                LogHelper.WriteLogToFile("应用退出：清理过程发生错误 - " + ex.Message, LogHelper.LogType.Error);
+            catch (IOException ex) {
+                LogHelper.WriteLogToFile("应用退出：清理过程发生IO错误 - " + ex.Message, LogHelper.LogType.Error);
+            }
+            catch (UnauthorizedAccessException ex) {
+                LogHelper.WriteLogToFile("应用退出：清理过程发生访问权限错误 - " + ex.Message, LogHelper.LogType.Error);
+            }
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile("应用退出：清理过程发生无效操作错误 - " + ex.Message, LogHelper.LogType.Error);
             }
             finally {
                 // 关闭 Sentry，使用更短的超时避免卡住
                 try {
                     SentryHelper.Close(500);
                 }
-                catch (Exception ex) {
-                    LogHelper.WriteLogToFile("应用退出：关闭 Sentry 失败 - " + ex.Message, LogHelper.LogType.Warning);
+                catch (System.TimeoutException ex) {
+                    LogHelper.WriteLogToFile("应用退出：关闭 Sentry 失败（超时） - " + ex.Message, LogHelper.LogType.Warning);
+                }
+                catch (ObjectDisposedException ex) {
+                    LogHelper.WriteLogToFile("应用退出：关闭 Sentry 失败（对象已释放） - " + ex.Message, LogHelper.LogType.Warning);
                 }
 
                 // 强制终止进程，确保不会残留
@@ -325,12 +347,21 @@ namespace Ink_Canvas
                         var obj = JObject.Parse(text);
                         isUsingWindowChrome = (bool)obj.SelectToken("startup.enableWindowChromeRendering");
                     }
-                    catch (Exception ex) {
-                        LogHelper.WriteLogToFile("解析 Settings.json 的 WindowChrome 配置失败：" + ex.Message, LogHelper.LogType.Error);
+                    catch (JsonReaderException ex) {
+                        LogHelper.WriteLogToFile("解析 Settings.json 的 WindowChrome 配置失败（JSON格式错误）:" + ex.Message, LogHelper.LogType.Error);
+                    }
+                    catch (FileNotFoundException ex) {
+                        LogHelper.WriteLogToFile("解析 Settings.json 的 WindowChrome 配置失败（文件未找到）:" + ex.Message, LogHelper.LogType.Error);
+                    }
+                    catch (UnauthorizedAccessException ex) {
+                        LogHelper.WriteLogToFile("读取 Settings.json 失败（访问被拒绝）:" + ex.Message, LogHelper.LogType.Error);
+                    }
+                    catch (IOException ex) {
+                        LogHelper.WriteLogToFile("读取 Settings.json 失败（IO错误）:" + ex.Message, LogHelper.LogType.Error);
                     }
                 }
-            } catch (Exception ex) {
-                LogHelper.WriteLogToFile(ex.ToString(), LogHelper.LogType.Error);
+            } catch (System.Security.SecurityException ex) {
+                LogHelper.WriteLogToFile("读取 Settings.json 失败（安全权限错误）:" + ex.Message, LogHelper.LogType.Error);
             }
 
             mainWin = new();
@@ -388,12 +419,18 @@ namespace Ink_Canvas
                         SenderScrollViewer.ScrollToVerticalOffset(SenderScrollViewer.VerticalOffset - e.Delta * Constants.MouseWheelScrollMultiplier * System.Windows.Forms.SystemInformation.MouseWheelScrollLines / Constants.MouseWheelDeltaStandard);
                         e.Handled = true;
                     }
-                    catch (Exception ex) {
-                        LogHelper.WriteLogToFile("滚轮偏移计算失败：" + ex.Message, LogHelper.LogType.Trace);
+                    catch (InvalidOperationException ex) {
+                        LogHelper.WriteLogToFile("滚轮偏移计算失败（无效操作）：" + ex.Message, LogHelper.LogType.Trace);
+                    }
+                    catch (OverflowException ex) {
+                        LogHelper.WriteLogToFile("滚轮偏移计算失败（数值溢出）：" + ex.Message, LogHelper.LogType.Trace);
                     }
             }
-            catch (Exception ex) {
-                LogHelper.WriteLogToFile("滚轮事件处理失败：" + ex.Message, LogHelper.LogType.Trace);
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile("滚轮事件处理失败（无效操作）：" + ex.Message, LogHelper.LogType.Trace);
+            }
+            catch (OverflowException ex) {
+                LogHelper.WriteLogToFile("滚轮事件处理失败（数值溢出）：" + ex.Message, LogHelper.LogType.Trace);
             }
         }
     }

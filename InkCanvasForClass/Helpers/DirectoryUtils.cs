@@ -54,8 +54,16 @@ namespace Ink_Canvas.Helpers {
 
                 try {
                     SetDirectoryLastWriteUtc(dirPath, lastWriteDate);
-                } catch (Exception ex) {
-                    LogHelper.WriteLogToFile($"Failed to restore directory last write time: {ex.Message}", LogHelper.LogType.Trace);
+                } catch (UnauthorizedAccessException ex) {
+                    LogHelper.WriteLogToFile($"Failed to restore directory last write time (Access denied): {ex.Message}", LogHelper.LogType.Trace);
+                    // Non-critical error, continue
+                }
+                catch (IOException ex) {
+                    LogHelper.WriteLogToFile($"Failed to restore directory last write time (IO error): {ex.Message}", LogHelper.LogType.Trace);
+                    // Non-critical error, continue
+                }
+                catch (InvalidOperationException ex) {
+                    LogHelper.WriteLogToFile($"Failed to restore directory last write time (Invalid operation): {ex.Message}", LogHelper.LogType.Trace);
                     // Non-critical error, continue
                 }
 
@@ -63,8 +71,17 @@ namespace Ink_Canvas.Helpers {
             } catch (UnauthorizedAccessException ex) {
                 LogHelper.WriteLogToFile($"Access denied checking directory writability: {ex.Message}", LogHelper.LogType.Trace);
                 return false;
-            } catch (Exception ex) {
-                LogHelper.WriteLogToFile($"Error checking directory writability: {ex.Message}", LogHelper.LogType.Warning);
+            }
+            catch (DirectoryNotFoundException ex) {
+                LogHelper.WriteLogToFile($"Error checking directory writability (Directory not found): {ex.Message}", LogHelper.LogType.Warning);
+                return false;
+            }
+            catch (IOException ex) {
+                LogHelper.WriteLogToFile($"Error checking directory writability (IO error): {ex.Message}", LogHelper.LogType.Warning);
+                return false;
+            }
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"Error checking directory writability (Invalid operation): {ex.Message}", LogHelper.LogType.Warning);
                 return false;
             }
         }

@@ -8,6 +8,7 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Controls;
+using System.ComponentModel;
 
 namespace Ink_Canvas.Helpers
 {
@@ -45,9 +46,18 @@ namespace Ink_Canvas.Helpers
                 LogHelper.NewLog(ex);
                 return null;
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"自动更新 | 检查更新时发生异常：{ex.Message}", LogHelper.LogType.Error);
+            catch (TaskCanceledException ex) {
+                LogHelper.WriteLogToFile($"自动更新 | 检查更新被取消：{ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                return null;
+            }
+            catch (HttpRequestException ex) {
+                LogHelper.WriteLogToFile($"自动更新 | 网络请求错误：{ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+                return null;
+            }
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"自动更新 | 无效操作：{ex.Message}", LogHelper.LogType.Error);
                 LogHelper.NewLog(ex);
                 return null;
             }
@@ -59,8 +69,10 @@ namespace Ink_Canvas.Helpers
             {
                 // Ensure TLS 1.2/1.3 are supported
                 System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls13;
-            } catch (Exception ex) {
-                LogHelper.WriteLogToFile($"设置安全协议失败：{ex.Message}", LogHelper.LogType.Warning);
+            } catch (NotSupportedException ex) {
+                LogHelper.WriteLogToFile($"设置安全协议失败（不支持）：{ex.Message}", LogHelper.LogType.Warning);
+            } catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"设置安全协议失败（无效操作）：{ex.Message}", LogHelper.LogType.Warning);
             }
 
             using (HttpClient client = new HttpClient())
@@ -76,9 +88,11 @@ namespace Ink_Canvas.Helpers
                 {
                     LogHelper.WriteLogToFile($"自动更新 | HTTP 请求错误（SSL/TLS？）：{ex.Message} | 内部异常：{ex.InnerException?.Message}", LogHelper.LogType.Error);
                 }
-                catch (Exception ex)
-                {
-                    LogHelper.WriteLogToFile($"自动更新 | 请求失败：{ex.Message}", LogHelper.LogType.Error);
+                catch (TaskCanceledException ex) {
+                    LogHelper.WriteLogToFile($"自动更新 | 请求被取消：{ex.Message}", LogHelper.LogType.Error);
+                }
+                catch (InvalidOperationException ex) {
+                    LogHelper.WriteLogToFile($"自动更新 | 无效操作：{ex.Message}", LogHelper.LogType.Error);
                 }
 
                 return null;
@@ -109,9 +123,20 @@ namespace Ink_Canvas.Helpers
                 LogHelper.WriteLogToFile("自动更新 | 安装包下载完成。");
                 return true;
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"自动更新 | 下载或安装更新失败：{ex.Message}", LogHelper.LogType.Error);
+            catch (TaskCanceledException ex) {
+                LogHelper.WriteLogToFile($"自动更新 | 下载或安装更新被取消：{ex.Message}", LogHelper.LogType.Error);
+
+                SaveDownloadStatus(false);
+                return false;
+            }
+            catch (HttpRequestException ex) {
+                LogHelper.WriteLogToFile($"自动更新 | 下载或安装更新网络错误：{ex.Message}", LogHelper.LogType.Error);
+
+                SaveDownloadStatus(false);
+                return false;
+            }
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"自动更新 | 下载或安装更新无效操作：{ex.Message}", LogHelper.LogType.Error);
 
                 SaveDownloadStatus(false);
                 return false;
@@ -177,9 +202,14 @@ namespace Ink_Canvas.Helpers
 
                 File.WriteAllText(statusFilePath, isSuccess.ToString());
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"自动更新 | 保存下载状态失败：{ex.Message}", LogHelper.LogType.Error);
+            catch (UnauthorizedAccessException ex) {
+                LogHelper.WriteLogToFile($"自动更新 | 保存下载状态失败（访问被拒绝）：{ex.Message}", LogHelper.LogType.Error);
+            }
+            catch (DirectoryNotFoundException ex) {
+                LogHelper.WriteLogToFile($"自动更新 | 保存下载状态失败（目录未找到）：{ex.Message}", LogHelper.LogType.Error);
+            }
+            catch (IOException ex) {
+                LogHelper.WriteLogToFile($"自动更新 | 保存下载状态失败（IO错误）：{ex.Message}", LogHelper.LogType.Error);
             }
         }
 
@@ -203,9 +233,13 @@ namespace Ink_Canvas.Helpers
                     Application.Current.Shutdown();
                 });
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"AutoUpdate | Error installing update: {ex.Message}", LogHelper.LogType.Error);
+            catch (FileNotFoundException ex) {
+                LogHelper.WriteLogToFile($"AutoUpdate | Setup file not found: {ex.Message}", LogHelper.LogType.Error);
+                return;
+            }
+            catch (UnauthorizedAccessException ex) {
+                LogHelper.WriteLogToFile($"AutoUpdate | Setup file access denied: {ex.Message}", LogHelper.LogType.Error);
+                return;
             }
         }
 
@@ -232,9 +266,16 @@ namespace Ink_Canvas.Helpers
                     int exitCode = process.ExitCode;*/
                 }
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"AutoUpdate | Failed to execute command: {ex.Message}", LogHelper.LogType.Error);
+            catch (Win32Exception ex) {
+                LogHelper.WriteLogToFile($"AutoUpdate | Failed to execute command (Win32 error): {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+            }
+            catch (UnauthorizedAccessException ex) {
+                LogHelper.WriteLogToFile($"AutoUpdate | Failed to execute command (Access denied): {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.NewLog(ex);
+            }
+            catch (InvalidOperationException ex) {
+                LogHelper.WriteLogToFile($"AutoUpdate | Failed to execute command (Invalid operation): {ex.Message}", LogHelper.LogType.Error);
                 LogHelper.NewLog(ex);
             }
         }
@@ -248,9 +289,14 @@ namespace Ink_Canvas.Helpers
                     Directory.Delete(updatesFolderPath, true);
                 }
             }
-            catch (Exception ex)
-            {
-                LogHelper.WriteLogToFile($"AutoUpdate clearing| Error deleting updates folder: {ex.Message}", LogHelper.LogType.Error);
+            catch (UnauthorizedAccessException ex) {
+                LogHelper.WriteLogToFile($"AutoUpdate clearing| Error deleting updates folder (Access denied): {ex.Message}", LogHelper.LogType.Error);
+            }
+            catch (DirectoryNotFoundException ex) {
+                LogHelper.WriteLogToFile($"AutoUpdate clearing| Error deleting updates folder (Directory not found): {ex.Message}", LogHelper.LogType.Error);
+            }
+            catch (IOException ex) {
+                LogHelper.WriteLogToFile($"AutoUpdate clearing| Error deleting updates folder (IO error): {ex.Message}", LogHelper.LogType.Error);
             }
         }
     }
