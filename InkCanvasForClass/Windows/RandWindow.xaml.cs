@@ -175,18 +175,19 @@ namespace Ink_Canvas {
                     replaces = File.ReadAllLines(App.RootPath + "Replace.txt");
                 }
 
-                //Fix emtpy lines
-                foreach (string str in fileNames) {
-                    string s = str;
-                    //Make replacement
-                    foreach (string replace in replaces) {
-                        if (s == Strings.Left(replace, replace.IndexOf("-->"))) {
-                            s = Strings.Mid(replace, replace.IndexOf("-->") + 4);
+                //Fix empty lines using LINQ Select for better readability
+                Names.AddRange(fileNames
+                    .Select(str => {
+                        string s = str;
+                        //Make replacement
+                        foreach (string replace in replaces) {
+                            if (s == Strings.Left(replace, replace.IndexOf("-->"))) {
+                                s = Strings.Mid(replace, replace.IndexOf("-->") + 4);
+                            }
                         }
-                    }
-
-                    if (s != "") Names.Add(s);
-                }
+                        return s;
+                    })
+                    .Where(s => s != ""));
 
                 PeopleCount = Names.Count();
                 TextBlockPeopleCount.Text = PeopleCount.ToString();
