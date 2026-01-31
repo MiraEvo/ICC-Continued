@@ -184,7 +184,7 @@ namespace Ink_Canvas {
                     var strokeVisual = GetStrokeVisual(e.StylusDevice.Id);
                     var stylusPoints = e.GetStylusPoints(inkCanvas);
                     if (stylusPoints.Count > 0) {
-                        var point = stylusPoints[stylusPoints.Count - 1];
+                        var point = stylusPoints[^1];
                         strokeVisual.Add(new StylusPoint(point.X, point.Y, point.PressureFactor));
                         strokeVisual.Redraw();
                     }
@@ -292,12 +292,11 @@ namespace Ink_Canvas {
                 : inkCanvas.EditingMode;
         }
 
-        private Dictionary<int, InkCanvasEditingMode> TouchDownPointsList { get; } =
-            new Dictionary<int, InkCanvasEditingMode>();
+        private Dictionary<int, InkCanvasEditingMode> TouchDownPointsList { get; } = new();
 
-        private Dictionary<int, StrokeVisual> StrokeVisualList { get; } = new Dictionary<int, StrokeVisual>();
-        private Dictionary<int, VisualCanvas> VisualCanvasList { get; } = new Dictionary<int, VisualCanvas>();
-        private Dictionary<int, int> StrokeVisualLastRedrawTick { get; } = new Dictionary<int, int>();
+        private Dictionary<int, StrokeVisual> StrokeVisualList { get; } = new();
+        private Dictionary<int, VisualCanvas> VisualCanvasList { get; } = new();
+        private Dictionary<int, int> StrokeVisualLastRedrawTick { get; } = new();
 
         private const int StrokeVisualRedrawIntervalMs = 8;
 
@@ -326,7 +325,7 @@ namespace Ink_Canvas {
 
 
 
-        private Point iniP = new Point(0, 0);
+        private Point iniP = new(0, 0);
         private bool isLastTouchEraser = false;
         private bool forcePointEraser = true;
 
@@ -542,7 +541,7 @@ namespace Ink_Canvas {
         /// </summary>
         private void PalmEraser_StrokeHit(object sender, StrokeHitEventArgs args) {
             StrokeCollection eraseResult = args.GetPointEraseResults();
-            StrokeCollection strokesToReplace = new StrokeCollection { args.HitStroke };
+            StrokeCollection strokesToReplace = new() { args.HitStroke };
 
             // 过滤掉锁定的笔画
             var filtered2Replace = strokesToReplace.Where(stroke => !stroke.ContainsPropertyData(IsLockGuid)).ToArray();
@@ -645,7 +644,7 @@ namespace Ink_Canvas {
             return width <= BoundsWidth * eraserThresholdValue;
         }
 
-        private HashSet<int> dec = new HashSet<int>();
+        private HashSet<int> dec = new();
         private Point centerPoint;
         private InkCanvasEditingMode lastInkCanvasEditingMode = InkCanvasEditingMode.Ink;
         private bool isSingleFingerDragMode = false;
@@ -682,7 +681,7 @@ namespace Ink_Canvas {
             dec.Remove(e.TouchDevice.Id);
             inkCanvas.Opacity = 1;
             if (dec.Count == 0)
-                if (lastTouchDownStrokeCollection.Count() != inkCanvas.Strokes.Count() &&
+                if (lastTouchDownStrokeCollection.Count != inkCanvas.Strokes.Count &&
                     !(drawingShapeMode == 9 && !isFirstTouchCuboid)) {
                     var whiteboardIndex = CurrentWhiteboardIndex;
                     if (currentMode == 0) whiteboardIndex = 0;
@@ -712,9 +711,9 @@ namespace Ink_Canvas {
         private Matrix _cachedManipulationMatrix = Matrix.Identity;
         private int _lastManipulationUpdateTick = 0;
         private const int MANIPULATION_UPDATE_INTERVAL_MS = 8; // 限制更新频率为125Hz
-        private Point _lastTranslation = new Point(0, 0);
+        private Point _lastTranslation = new(0, 0);
         private double _lastRotation = 0;
-        private Vector _lastScale = new Vector(1, 1);
+        private Vector _lastScale = new(1, 1);
 
         private void Main_Grid_ManipulationDelta(object sender, ManipulationDeltaEventArgs e) {
             if (isInMultiTouchMode || !Settings.Gesture.IsEnableTwoFingerGesture) return;

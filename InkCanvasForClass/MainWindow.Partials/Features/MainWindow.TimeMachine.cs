@@ -34,16 +34,16 @@ namespace Ink_Canvas {
             new();
 
         private Dictionary<Guid, List<Stroke>> DrawingAttributesHistoryFlag = new() {
-            { DrawingAttributeIds.Color, new List<Stroke>() },
-            { DrawingAttributeIds.DrawingFlags, new List<Stroke>() },
-            { DrawingAttributeIds.IsHighlighter, new List<Stroke>() },
-            { DrawingAttributeIds.StylusHeight, new List<Stroke>() },
-            { DrawingAttributeIds.StylusTip, new List<Stroke>() },
-            { DrawingAttributeIds.StylusTipTransform, new List<Stroke>() },
-            { DrawingAttributeIds.StylusWidth, new List<Stroke>() }
+            { DrawingAttributeIds.Color, new() },
+            { DrawingAttributeIds.DrawingFlags, new() },
+            { DrawingAttributeIds.IsHighlighter, new() },
+            { DrawingAttributeIds.StylusHeight, new() },
+            { DrawingAttributeIds.StylusTip, new() },
+            { DrawingAttributeIds.StylusTipTransform, new() },
+            { DrawingAttributeIds.StylusWidth, new() }
         };
 
-        private TimeMachine timeMachine = new TimeMachine();
+        private TimeMachine timeMachine = new();
 
         private void ApplyHistoryToCanvas(TimeMachineHistory item, IccInkCanvas applyCanvas = null) {
             _currentCommitType = CommitReason.CodeInput;
@@ -59,14 +59,12 @@ namespace Ink_Canvas {
                             canvas.Strokes.Add(strokes);
                 } else {
                     foreach (var strokes in item.CurrentStroke)
-                        if (canvas.Strokes.Contains(strokes))
-                            canvas.Strokes.Remove(strokes);
+                        canvas.Strokes.Remove(strokes);
                 }
             } else if (item.CommitType == TimeMachineHistoryType.ShapeRecognition) {
                 if (item.StrokeHasBeenCleared) {
                     foreach (var strokes in item.CurrentStroke)
-                        if (canvas.Strokes.Contains(strokes))
-                            canvas.Strokes.Remove(strokes);
+                        canvas.Strokes.Remove(strokes);
 
                     foreach (var strokes in item.ReplacedStroke)
                         if (!canvas.Strokes.Contains(strokes))
@@ -77,8 +75,7 @@ namespace Ink_Canvas {
                             canvas.Strokes.Add(strokes);
 
                     foreach (var strokes in item.ReplacedStroke)
-                        if (canvas.Strokes.Contains(strokes))
-                            canvas.Strokes.Remove(strokes);
+                        canvas.Strokes.Remove(strokes);
                 }
             } else if (item.CommitType == TimeMachineHistoryType.Manipulation) {
                 if (!item.StrokeHasBeenCleared) {
@@ -117,8 +114,7 @@ namespace Ink_Canvas {
 
                     if (item.ReplacedStroke != null)
                         foreach (var replacedStroke in item.ReplacedStroke)
-                            if (canvas.Strokes.Contains(replacedStroke))
-                                canvas.Strokes.Remove(replacedStroke);
+                            canvas.Strokes.Remove(replacedStroke);
                 } else {
                     if (item.ReplacedStroke != null)
                         foreach (var replacedStroke in item.ReplacedStroke)
@@ -127,8 +123,7 @@ namespace Ink_Canvas {
 
                     if (item.CurrentStroke != null)
                         foreach (var currentStroke in item.CurrentStroke)
-                            if (canvas.Strokes.Contains(currentStroke))
-                                canvas.Strokes.Remove(currentStroke);
+                            canvas.Strokes.Remove(currentStroke);
                 }
             }
 
@@ -136,7 +131,7 @@ namespace Ink_Canvas {
         }
 
         private StrokeCollection ApplyHistoriesToNewStrokeCollection(TimeMachineHistory[] items) {
-            IccInkCanvas fakeInkCanv = new IccInkCanvas() {
+            var fakeInkCanv = new IccInkCanvas {
                 Width = inkCanvas.ActualWidth,
                 Height = inkCanvas.ActualHeight,
                 EditingMode = InkCanvasEditingMode.None,
@@ -241,8 +236,7 @@ namespace Ink_Canvas {
         }
 
         private void Stroke_DrawingAttributesChanged(object sender, PropertyDataChangedEventArgs e) {
-            var key = sender as Stroke;
-            if (key == null) return;
+            if (sender is not Stroke key) return;
             
             var currentValue = key.DrawingAttributes.Clone();
             DrawingAttributesHistory.TryGetValue(key, out var previousTuple);
@@ -282,20 +276,20 @@ namespace Ink_Canvas {
 
         private void Stroke_StylusPointsReplaced(object sender, StylusPointsReplacedEventArgs e) {
             if (isMouseGesturing) return;
-            StrokeInitialHistory[sender as Stroke] = e.NewStylusPoints.Clone();
+            if (sender is not Stroke stroke) return;
+            StrokeInitialHistory[stroke] = e.NewStylusPoints.Clone();
         }
 
         private void Stroke_StylusPointsChanged(object sender, EventArgs e) {
             if (isMouseGesturing) return;
             
-            var stroke = sender as Stroke;
-            if (stroke == null) return;
+            if (sender is not Stroke stroke) return;
             
             var selectedStrokes = inkCanvas.GetSelectedStrokes();
             var count = selectedStrokes.Count;
             if (count == 0) count = inkCanvas.Strokes.Count;
             
-            StrokeManipulationHistory ??= new Dictionary<Stroke, Tuple<StylusPointCollection, StylusPointCollection>>(count);
+            StrokeManipulationHistory ??= new(count);
 
             if (StrokeInitialHistory.TryGetValue(stroke, out var initialPoints)) {
                 StrokeManipulationHistory[stroke] =

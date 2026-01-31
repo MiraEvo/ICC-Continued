@@ -350,8 +350,8 @@ namespace Ink_Canvas {
         private void SymbolIconUndo_MouseUp(object sender, MouseButtonEventArgs e) {
             //if (lastBorderMouseDownObject != sender) return;
 
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == SymbolIconUndo && lastBorderMouseDownObject != SymbolIconUndo) {
                 if (e?.StylusDevice?.TabletDevice.Type != TabletDeviceType.Touch) return;
             }
@@ -364,8 +364,8 @@ namespace Ink_Canvas {
         private void SymbolIconRedo_MouseUp(object sender, MouseButtonEventArgs e) {
             //if (lastBorderMouseDownObject != sender) return;
 
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == SymbolIconRedo && lastBorderMouseDownObject != SymbolIconRedo) {
                 if (e?.StylusDevice?.TabletDevice.Type != TabletDeviceType.Touch) return;
             }
@@ -384,8 +384,8 @@ namespace Ink_Canvas {
 
         private void ImageBlackboard_MouseUp(object sender, MouseButtonEventArgs e) {
 
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == WhiteboardFloatingBarBtn && lastBorderMouseDownObject != WhiteboardFloatingBarBtn) return;
 
             LeftUnFoldButtonQuickPanel.Visibility = Visibility.Collapsed;
@@ -538,8 +538,8 @@ namespace Ink_Canvas {
 
         private void SymbolIconDelete_MouseUp(object sender, MouseButtonEventArgs e) {
 
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == SymbolIconDelete && lastBorderMouseDownObject != SymbolIconDelete) return;
 
             if (inkCanvas.GetSelectedStrokes().Count > 0) {
@@ -795,8 +795,8 @@ namespace Ink_Canvas {
         }
 
         private void FreezeFloatingBarBtn_MouseUp(object sender, MouseButtonEventArgs e) {
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == FreezeFloatingBarBtn && lastBorderMouseDownObject != FreezeFloatingBarBtn) return;
 
             IsAnnotationFreezeOn = !IsAnnotationFreezeOn;
@@ -804,8 +804,8 @@ namespace Ink_Canvas {
 
         private async void CursorIcon_Click(object sender, RoutedEventArgs e)
         {
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == Cursor_Icon && lastBorderMouseDownObject != Cursor_Icon) return;
 
             if (ShapeDrawingV2Layer.IsInShapeDrawingMode) ShapeDrawingV2Layer.EndShapeDrawing();
@@ -896,8 +896,8 @@ namespace Ink_Canvas {
 
         private void PenIcon_Click(object sender, RoutedEventArgs e) {
 
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == Pen_Icon && lastBorderMouseDownObject != Pen_Icon) return;
 
             if (ShapeDrawingV2Layer.IsInShapeDrawingMode) ShapeDrawingV2Layer.EndShapeDrawing();
@@ -1058,8 +1058,8 @@ namespace Ink_Canvas {
         /// <param name="sender">sender</param>
         /// <param name="e">MouseButtonEventArgs</param>
         private void SymbolIconSelect_MouseUp(object sender, MouseButtonEventArgs e) {
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == SymbolIconSelect && lastBorderMouseDownObject != SymbolIconSelect) return;
 
             if (ShapeDrawingV2Layer.IsInShapeDrawingMode) ShapeDrawingV2Layer.EndShapeDrawing();
@@ -1089,8 +1089,8 @@ namespace Ink_Canvas {
         private void EraserIcon_Click(object sender, RoutedEventArgs e)
         {
 
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == Eraser_Icon && lastBorderMouseDownObject != Eraser_Icon) return;
 
             if (ShapeDrawingV2Layer.IsInShapeDrawingMode) ShapeDrawingV2Layer.EndShapeDrawing();
@@ -1172,8 +1172,8 @@ namespace Ink_Canvas {
         private void EraserIconByStrokes_Click(object sender, RoutedEventArgs e)
         {
 
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == EraserByStrokes_Icon && lastBorderMouseDownObject != EraserByStrokes_Icon) return;
 
             if (ShapeDrawingV2Layer.IsInShapeDrawingMode) ShapeDrawingV2Layer.EndShapeDrawing();
@@ -1588,8 +1588,8 @@ namespace Ink_Canvas {
 
         private void SymbolIconTools_MouseUp(object sender, MouseButtonEventArgs e) {
 
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == ToolsFloatingBarBtn && lastBorderMouseDownObject != ToolsFloatingBarBtn) return;
 
             if (BorderTools.Visibility == Visibility.Visible) {
@@ -1784,8 +1784,8 @@ namespace Ink_Canvas {
 
         private void CursorWithDelIcon_Click(object sender, RoutedEventArgs e) {
 
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == CursorWithDelFloatingBarBtn && lastBorderMouseDownObject != CursorWithDelFloatingBarBtn) return;
 
             SymbolIconDelete_MouseUp(null, null);
@@ -1839,8 +1839,8 @@ namespace Ink_Canvas {
         #region Left Side Panel
 
         private void BtnFingerDragMode_Click(object sender, RoutedEventArgs e) {
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = CachedTransparentBrush;
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = CachedTransparentBrush;
             if (sender == HandFloatingBarBtn && lastBorderMouseDownObject != HandFloatingBarBtn) return;
 
             isSingleFingerDragMode = !isSingleFingerDragMode;

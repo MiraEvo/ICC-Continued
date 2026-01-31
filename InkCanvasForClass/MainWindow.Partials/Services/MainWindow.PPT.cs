@@ -48,23 +48,23 @@ using System.Collections.Concurrent;
 
 namespace Ink_Canvas {
     public partial class MainWindow {
-        public static Microsoft.Office.Interop.PowerPoint.Application? pptApplication = null;
-        public static Presentation? presentation = null;
-        public static Slides? slides = null;
-        public static Slide? slide = null;
-        public static int slidescount = 0;
+        private static Microsoft.Office.Interop.PowerPoint.Application? pptApplication;
+        private static Presentation? presentation;
+        private static Slides? slides;
+        private static Slide? slide;
+        private static int slidescount;
 
         // PPT联动优化：缓存的画刷对象，避免重复创建
-        private static readonly SolidColorBrush _darkBgBrush = new SolidColorBrush(Color.FromRgb(39, 39, 42));
-        private static readonly SolidColorBrush _darkBorderBrush = new SolidColorBrush(Color.FromRgb(82, 82, 91));
-        private static readonly SolidColorBrush _lightBgBrush = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-        private static readonly SolidColorBrush _lightBorderBrush = new SolidColorBrush(Color.FromRgb(161, 161, 170));
-        private static readonly SolidColorBrush _whiteBrush = new SolidColorBrush(Colors.White);
-        private static readonly SolidColorBrush _darkTextBrush = new SolidColorBrush(Color.FromRgb(24, 24, 27));
-        private static readonly SolidColorBrush _darkGeometryBrush = new SolidColorBrush(Color.FromRgb(39, 39, 42));
+        private static readonly SolidColorBrush _darkBgBrush = new(Color.FromRgb(39, 39, 42));
+        private static readonly SolidColorBrush _darkBorderBrush = new(Color.FromRgb(82, 82, 91));
+        private static readonly SolidColorBrush _lightBgBrush = new(Color.FromRgb(244, 244, 245));
+        private static readonly SolidColorBrush _lightBorderBrush = new(Color.FromRgb(161, 161, 170));
+        private static readonly SolidColorBrush _whiteBrush = new(Colors.White);
+        private static readonly SolidColorBrush _darkTextBrush = new(Color.FromRgb(24, 24, 27));
+        private static readonly SolidColorBrush _darkGeometryBrush = new(Color.FromRgb(39, 39, 42));
 
         // PPT联动优化：使用线程池代替每次new Thread
-        private static readonly object _pptOperationLock = new object();
+        private static readonly object _pptOperationLock = new();
 
         static MainWindow() {
             // 冻结画刷以提高性能
@@ -78,16 +78,15 @@ namespace Ink_Canvas {
         }
 
         #pragma warning disable CA1420
-        [DllImport("ole32.dll")]
-        private static extern void CLSIDFromProgIDEx([MarshalAs(UnmanagedType.LPWStr)] string lpszProgID, out Guid lpclsid);
+        [LibraryImport("ole32.dll")]
+        private static partial void CLSIDFromProgIDEx([MarshalAs(UnmanagedType.LPWStr)] string lpszProgID, out Guid lpclsid);
 
         [DllImport("oleaut32.dll", PreserveSig = false)]
         private static extern void GetActiveObject(ref Guid rclsid, IntPtr pvReserved, [MarshalAs(UnmanagedType.IUnknown)] out object ppunk);
 
         [RequiresUnmanagedCode("Uses ole32/oleaut32 COM interop to fetch running PowerPoint instance.")]
         public static object GetActiveObject(string progId) {
-            Guid clsid;
-            CLSIDFromProgIDEx(progId, out clsid);
+            CLSIDFromProgIDEx(progId, out var clsid);
             GetActiveObject(ref clsid, IntPtr.Zero, out object obj);
             return obj;
         }
@@ -619,7 +618,7 @@ namespace Ink_Canvas {
                                 }
                             }
 
-                        LogHelper.WriteLogToFile($"已加载保存的墨迹：{count.ToString()} 份");
+                        LogHelper.WriteLogToFile($"已加载保存的墨迹：{count} 份");
                     }
 
                 BorderFloatingBarExitPPTBtn.Visibility = Visibility.Visible;

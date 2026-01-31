@@ -51,10 +51,11 @@ namespace Ink_Canvas {
             AnimationsHelper.HideWithSlideAndFade(BorderTools);
             AnimationsHelper.HideWithSlideAndFade(BoardBorderTools);
 
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = Settings.Automation.AutoSavedStrokesLocation;
-            openFileDialog.Title = "打开墨迹文件";
-            openFileDialog.Filter = "Ink Canvas Strokes File (*.icstk)|*.icstk";
+            var openFileDialog = new OpenFileDialog {
+                InitialDirectory = Settings.Automation.AutoSavedStrokesLocation,
+                Title = "打开墨迹文件",
+                Filter = "Ink Canvas Strokes File (*.icstk)|*.icstk"
+            };
             if (openFileDialog.ShowDialog() != true) return;
             LogHelper.WriteLogToFile($"导入墨迹文件：{openFileDialog.FileName}",
                 LogHelper.LogType.Event);
@@ -67,7 +68,7 @@ namespace Ink_Canvas {
                         ClearStrokes(true);
                         timeMachine.ClearStrokeHistory();
                         inkCanvas.Strokes.Add(strokes);
-                        LogHelper.NewLog($"导入墨迹数：{inkCanvas.Strokes.Count.ToString()}");
+                        LogHelper.NewLog($"导入墨迹数：{inkCanvas.Strokes.Count}");
                     }
                 }
 
@@ -78,7 +79,7 @@ namespace Ink_Canvas {
                         ClearStrokes(true);
                         timeMachine.ClearStrokeHistory();
                         inkCanvas.Strokes.Add(strokes);
-                        LogHelper.NewLog($"导入墨迹数（备用流）：{strokes.Count.ToString()}");
+                        LogHelper.NewLog($"导入墨迹数（备用流）：{strokes.Count}");
                     }
 
                 if (inkCanvas.Visibility != Visibility.Visible) SymbolIconCursor_Click(sender, null);

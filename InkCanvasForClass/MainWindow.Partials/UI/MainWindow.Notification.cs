@@ -41,8 +41,7 @@ namespace Ink_Canvas
             }
             
             var notification = new MW_Toast(MW_Toast.ToastType.Informative, notice, (self) => {
-                if (GridNotifications != null)
-                    GridNotifications.Children.Remove(self);
+                GridNotifications?.Children.Remove(self);
             });
             GridNotifications.Children.Add(notification);
             notification.ShowAnimatedWithAutoDispose(3000 + notice.Length * 10);
@@ -57,8 +56,7 @@ namespace Ink_Canvas
             }
             
             var notification = new MW_Toast(type, notice, (self) => {
-                if (GridNotifications != null)
-                    GridNotifications.Children.Remove(self);
+                GridNotifications?.Children.Remove(self);
             });
             GridNotifications.Children.Add(notification);
             notification.ShowAnimatedWithAutoDispose(autoCloseMs + notice.Length * 10);

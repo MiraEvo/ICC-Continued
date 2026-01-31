@@ -24,7 +24,7 @@ namespace Ink_Canvas
             public StrokeCollection Strokes { get; set; }
         }
 
-        ObservableCollection<PageListViewItem> blackBoardSidePageListViewObservableCollection = new ObservableCollection<PageListViewItem>();
+        ObservableCollection<PageListViewItem> blackBoardSidePageListViewObservableCollection = new();
 
         /// <summary>
         /// <para>刷新白板的缩略图页面列表。</para>
@@ -36,8 +36,7 @@ namespace Ink_Canvas
                 {
                     var st = ApplyHistoriesToNewStrokeCollection(TimeMachineHistories[index]);
                     st.Clip(new Rect(0, 0, (int)inkCanvas.ActualWidth, (int)inkCanvas.ActualHeight));
-                    var pitem = new PageListViewItem()
-                    {
+                    var pitem = new PageListViewItem {
                         Index = index,
                         Strokes = st,
                     };
@@ -48,8 +47,7 @@ namespace Ink_Canvas
                 foreach (int index in Enumerable.Range(1, WhiteboardTotalCount)) {
                     var st = ApplyHistoriesToNewStrokeCollection(TimeMachineHistories[index]);
                     st.Clip(new Rect(0,0, (int)inkCanvas.ActualWidth, (int)inkCanvas.ActualHeight));
-                    var pitem = new PageListViewItem()
-                    {
+                    var pitem = new PageListViewItem {
                         Index = index,
                         Strokes = st,
                     };
@@ -59,8 +57,7 @@ namespace Ink_Canvas
 
             var _st = inkCanvas.Strokes.Clone();
             _st.Clip(new Rect(0, 0, (int)inkCanvas.ActualWidth, (int)inkCanvas.ActualHeight));
-            var _pitem = new PageListViewItem()
-            {
+            var _pitem = new PageListViewItem {
                 Index = CurrentWhiteboardIndex,
                 Strokes = _st,
             };
