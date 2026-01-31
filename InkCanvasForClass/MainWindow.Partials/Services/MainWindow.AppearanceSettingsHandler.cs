@@ -201,21 +201,23 @@ namespace Ink_Canvas
             var nibModePanel = this.FindName("NibModeSimpleStackPanel") as FrameworkElement;
             var boardNibModePanel = this.FindName("BoardNibModeSimpleStackPanel") as FrameworkElement;
             
-            if (nibModePanel != null || boardNibModePanel != null)
+            if (nibModePanel == null && boardNibModePanel == null)
             {
-                var visibility = Settings.Appearance.IsEnableDisPlayNibModeToggler 
-                    ? Visibility.Visible 
-                    : Visibility.Collapsed;
-                
-                if (nibModePanel != null)
-                {
-                    nibModePanel.Visibility = visibility;
-                }
-                
-                if (boardNibModePanel != null)
-                {
-                    boardNibModePanel.Visibility = visibility;
-                }
+                return;
+            }
+
+            var visibility = Settings.Appearance.IsEnableDisPlayNibModeToggler
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (nibModePanel != null)
+            {
+                nibModePanel.Visibility = visibility;
+            }
+
+            if (boardNibModePanel != null)
+            {
+                boardNibModePanel.Visibility = visibility;
             }
         }
 

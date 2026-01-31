@@ -43,8 +43,8 @@ namespace Ink_Canvas {
 
         private void ImageDrawShape_MouseUp(object sender, MouseButtonEventArgs e) {
 
-            if (lastBorderMouseDownObject != null && lastBorderMouseDownObject is Panel)
-                ((Panel)lastBorderMouseDownObject).Background = new SolidColorBrush(Colors.Transparent);
+            if (lastBorderMouseDownObject is Panel panel)
+                panel.Background = new SolidColorBrush(Colors.Transparent);
             if (sender == ShapeDrawFloatingBarBtn && lastBorderMouseDownObject != ShapeDrawFloatingBarBtn) return;
 
             if (ShapeDrawingPopupV2.IsOpen == false) {
@@ -96,7 +96,7 @@ namespace Ink_Canvas {
                 inkCanvas.EditingMode = InkCanvasEditingMode.None;
                 inkCanvas.IsManipulationEnabled = true;
 
-                if (sender is FrameworkElement fe && fe.Tag != null && int.TryParse(fe.Tag.ToString(), out int mode))
+                if (sender is FrameworkElement { Tag: not null } fe && int.TryParse(fe.Tag.ToString(), out int mode))
                 {
                     drawingShapeMode = mode;
                 }

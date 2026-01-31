@@ -17,8 +17,8 @@ using Point = System.Windows.Point;
 
 namespace Ink_Canvas {
     public partial class MainWindow {
-        private StrokeCollection newStrokes = new StrokeCollection();
-        private List<Circle> circles = new List<Circle>();
+        private StrokeCollection newStrokes = new();
+        private List<Circle> circles = new();
 
         private void inkCanvas_StrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e) {
             if (Settings.Canvas.FitToCurve == true) drawingAttributes.FitToCurve = false;

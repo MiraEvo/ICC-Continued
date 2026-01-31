@@ -27,9 +27,8 @@ namespace Ink_Canvas
             inkCanvas.ForceCursor = true;
             StreamResourceInfo sri = Application.GetResourceStream(
                 new Uri("Resources/Cursors/close-hand-cursor.cur", UriKind.Relative));
-            using (var cursor = new Cursor(sri.Stream)) {
-                inkCanvas.Cursor = cursor;
-            }
+            using var cursor = new Cursor(sri.Stream);
+            inkCanvas.Cursor = cursor;
         }
 
         public void InkCanvas_MouseRightButtonUp(object sender, MouseButtonEventArgs e) {

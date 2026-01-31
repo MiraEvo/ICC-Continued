@@ -28,12 +28,12 @@ namespace Ink_Canvas {
         private Dictionary<Stroke, Tuple<StylusPointCollection, StylusPointCollection>> StrokeManipulationHistory;
 
         private Dictionary<Stroke, StylusPointCollection> StrokeInitialHistory =
-            new Dictionary<Stroke, StylusPointCollection>();
+            new();
 
         private Dictionary<Stroke, Tuple<DrawingAttributes, DrawingAttributes>> DrawingAttributesHistory =
-            new Dictionary<Stroke, Tuple<DrawingAttributes, DrawingAttributes>>();
+            new();
 
-        private Dictionary<Guid, List<Stroke>> DrawingAttributesHistoryFlag = new Dictionary<Guid, List<Stroke>>() {
+        private Dictionary<Guid, List<Stroke>> DrawingAttributesHistoryFlag = new() {
             { DrawingAttributeIds.Color, new List<Stroke>() },
             { DrawingAttributeIds.DrawingFlags, new List<Stroke>() },
             { DrawingAttributeIds.IsHighlighter, new List<Stroke>() },

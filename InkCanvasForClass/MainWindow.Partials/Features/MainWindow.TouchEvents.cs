@@ -33,7 +33,7 @@ namespace Ink_Canvas {
         /// <summary>
         /// 手掌触摸的初始位置
         /// </summary>
-        private Point palmTouchStartPoint = new Point();
+        private Point palmTouchStartPoint = new();
 
         /// <summary>
         /// 手掌橡皮的增量命中测试器
@@ -43,7 +43,7 @@ namespace Ink_Canvas {
         /// <summary>
         /// 手掌橡皮的缩放矩阵
         /// </summary>
-        private Matrix palmScaleMatrix = new Matrix();
+        private Matrix palmScaleMatrix = new();
 
         /// <summary>
         /// 手掌橡皮上次更新位置
