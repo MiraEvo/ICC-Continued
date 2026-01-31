@@ -53,18 +53,18 @@ namespace Ink_Canvas {
 
         #region Dubi906w 的轮子
 
-        [LibraryImport("user32.dll", EntryPoint = "SetWindowLongW", SetLastError = true)]
-        private static partial int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
 
-        [LibraryImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
-        private static partial IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
-        [LibraryImport("user32.dll", EntryPoint = "GetWindowLongW", SetLastError = true)]
-        private static partial IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
-        [LibraryImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         #endregion Dubi906w 的轮子
 
@@ -91,46 +91,46 @@ namespace Ink_Canvas {
         private static IntPtr windowHostHandle;
 
         // PInvoke 輪子
-        [LibraryImport("user32.dll", EntryPoint = "CreateWindowExW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        private static partial IntPtr CreateWindowEx(int dwExStyle, string lpClassName, string lpWindowName, int dwStyle,
+        [DllImport("user32.dll", EntryPoint = "CreateWindowExW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr CreateWindowEx(int dwExStyle, string lpClassName, string lpWindowName, int dwStyle,
             int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
 
-        [LibraryImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static partial bool DestroyWindow(IntPtr hWnd);
+        private static extern bool DestroyWindow(IntPtr hWnd);
 
-        [LibraryImport("user32.dll", EntryPoint = "RegisterClassExW", SetLastError = true)]
-        private static partial ushort RegisterClassEx(ref WNDCLASSEX lpwcx);
+        [DllImport("user32.dll", EntryPoint = "RegisterClassExW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern ushort RegisterClassEx(ref WNDCLASSEX lpwcx);
 
-        [LibraryImport("user32.dll", EntryPoint = "DefWindowProcW", SetLastError = true)]
-        private static partial IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll", EntryPoint = "DefWindowProcW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
-        [LibraryImport("user32.dll", EntryPoint = "LoadCursorW", SetLastError = true)]
-        private static partial IntPtr LoadCursor(IntPtr hInstance, IntPtr lpCursorName);
+        [DllImport("user32.dll", EntryPoint = "LoadCursorW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr LoadCursor(IntPtr hInstance, IntPtr lpCursorName);
 
-        [LibraryImport("user32.dll", EntryPoint = "UnregisterClassW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+        [DllImport("user32.dll", EntryPoint = "UnregisterClassW", SetLastError = true, CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static partial bool UnregisterClass(string lpClassName, IntPtr hInstance);
+        private static extern bool UnregisterClass(string lpClassName, IntPtr hInstance);
 
-        [LibraryImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static partial bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+        private static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
 
-        [LibraryImport("user32.dll", EntryPoint = "GetWindowLongW", SetLastError = true)]
-        private static partial int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
-        [LibraryImport("user32.dll", EntryPoint = "SetWindowLongW", SetLastError = true)]
-        private static partial int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
-        [LibraryImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static partial bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, [MarshalAs(UnmanagedType.Bool)] bool bErase);
+        private static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, [MarshalAs(UnmanagedType.Bool)] bool bErase);
 
         [StructLayout(LayoutKind.Sequential)]
         private struct WNDCLASSEX {
             public uint cbSize;
             public uint style;
-            [MarshalAs(UnmanagedType.FunctionPtr)] public WndProc lpfnWndProc;
+            public IntPtr lpfnWndProc;
             public int cbClsExtra;
             public int cbWndExtra;
             public IntPtr hInstance;
@@ -140,6 +140,29 @@ namespace Ink_Canvas {
             public IntPtr lpszMenuName;
             public IntPtr lpszClassName;
             public IntPtr hIconSm;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT {
+            public int X;
+            public int Y;
+        }
+
+        public struct WINDOWPLACEMENT {
+            public int length;
+            public int flags;
+            public int showCmd;
+            public POINT ptMinPosition;
+            public POINT ptMaxPosition;
+            public RECT rcNormalPosition;
+
+            public static WINDOWPLACEMENT Default {
+                get {
+                    WINDOWPLACEMENT result = new WINDOWPLACEMENT();
+                    result.length = Marshal.SizeOf(result);
+                    return result;
+                }
+            }
         }
 
         private delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
@@ -169,7 +192,8 @@ namespace Ink_Canvas {
             try {
                 var wndClassEx = new WNDCLASSEX {
                     cbSize = (uint)Marshal.SizeOf<WNDCLASSEX>(), style = CS_HREDRAW | CS_VREDRAW,
-                    lpfnWndProc = StaticWndProcDelegate, hInstance = IntPtr.Zero,
+                    lpfnWndProc = Marshal.GetFunctionPointerForDelegate(StaticWndProcDelegate),
+                    hInstance = IntPtr.Zero,
                     hCursor = LoadCursor(IntPtr.Zero, (IntPtr)IDC_ARROW), hbrBackground = (IntPtr)(1 + COLOR_BTNFACE),
                     lpszClassName = classNamePtr,
                     lpszMenuName = IntPtr.Zero,
@@ -333,8 +357,8 @@ namespace Ink_Canvas {
 
         #region 窗口截图（復刻Powerpoint）
 
-        [LibraryImport("user32.dll", EntryPoint = "SendMessageW", SetLastError = false)]
-        static partial IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImport("user32.dll", EntryPoint = "SendMessageW", SetLastError = false, CharSet = CharSet.Unicode)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
         [RequiresUnmanagedCode("Uses user32 GetClassLongPtr for window class data.")]
         public static IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex) {
@@ -344,57 +368,57 @@ namespace Ink_Canvas {
                 return new IntPtr(GetClassLongPtr32(hWnd, nIndex));
         }
 
-        [LibraryImport("user32.dll", EntryPoint = "GetClassLongW")]
-        public static partial uint GetClassLongPtr32(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll", EntryPoint = "GetClassLongW", CharSet = CharSet.Unicode)]
+        public static extern uint GetClassLongPtr32(IntPtr hWnd, int nIndex);
 
-        [LibraryImport("user32.dll", EntryPoint = "GetClassLongPtrW")]
-        public static partial IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll", EntryPoint = "GetClassLongPtrW", CharSet = CharSet.Unicode)]
+        public static extern IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
 
-        [LibraryImport("user32.dll", EntryPoint = "EnumDesktopWindows", SetLastError = true)]
+        [DllImport("user32.dll", EntryPoint = "EnumDesktopWindows", SetLastError = true, CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool EnumDesktopWindows(IntPtr hDesktop, EnumDesktopWindowsDelegate lpEnumCallbackFunction, IntPtr lParam);
+        public static extern bool EnumDesktopWindows(IntPtr hDesktop, EnumDesktopWindowsDelegate lpEnumCallbackFunction, IntPtr lParam);
 
-        [LibraryImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool IsWindowVisible(IntPtr hWnd);
+        public static extern bool IsWindowVisible(IntPtr hWnd);
 
-        [LibraryImport("user32.dll", EntryPoint = "GetWindowTextW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        public static partial int GetWindowText(IntPtr hWnd, [Out] char[] lpWindowText, int nMaxCount);
+        [DllImport("user32.dll", EntryPoint = "GetWindowTextW", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern int GetWindowText(IntPtr hWnd, [Out] char[] lpWindowText, int nMaxCount);
 
-        [LibraryImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static partial bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
+        private static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
 
-        [LibraryImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static partial bool GetWindowRect(IntPtr handle, out RECT rect);
+        private static extern bool GetWindowRect(IntPtr handle, out RECT rect);
 
-        [LibraryImport("user32.dll", EntryPoint = "GetWindowTextLengthW", SetLastError = true)]
-        static partial int GetWindowTextLength(IntPtr hWnd);
+        [DllImport("user32.dll", EntryPoint = "GetWindowTextLengthW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern int GetWindowTextLength(IntPtr hWnd);
 
-        [LibraryImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+        public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
 
-        [LibraryImport("user32.dll", EntryPoint = "FindWindowExW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        public static partial IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName,
+        [DllImport("user32.dll", EntryPoint = "FindWindowExW", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName,
             string windowTitle);
 
-        [LibraryImport("user32.dll", SetLastError = true)]
-        public static partial IntPtr GetShellWindow();
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetShellWindow();
 
-        [LibraryImport("dwmapi.dll")]
-        static partial int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, [MarshalAs(UnmanagedType.Bool)] out bool pvAttribute, int cbAttribute);
-        [LibraryImport("dwmapi.dll")]
-        static partial int DwmGetWindowAttribute(IntPtr hwnd, DwmWindowAttribute dwAttribute, out RECT pvAttribute, int cbAttribute);
-        [LibraryImport("user32.dll", SetLastError = true)]
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, [MarshalAs(UnmanagedType.Bool)] out bool pvAttribute, int cbAttribute);
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmGetWindowAttribute(IntPtr hwnd, DwmWindowAttribute dwAttribute, out RECT pvAttribute, int cbAttribute);
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static partial bool GetLayeredWindowAttributes(IntPtr hwnd, out uint crKey, out byte bAlpha, out uint dwFlags);
+        private static extern bool GetLayeredWindowAttributes(IntPtr hwnd, out uint crKey, out byte bAlpha, out uint dwFlags);
         public delegate bool EnumWindowsProc(IntPtr hwnd, IntPtr lParam);
-        [LibraryImport("user32.dll", SetLastError=true)]
-        static partial uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
-        [LibraryImport("user32.dll")]
-        internal static partial int GetDpiForWindow(IntPtr hWnd);
+        [DllImport("user32.dll", SetLastError=true)]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+        [DllImport("user32.dll")]
+        internal static extern int GetDpiForWindow(IntPtr hWnd);
 
         enum DwmWindowAttribute : uint {
             NCRenderingEnabled = 1,
@@ -480,22 +504,7 @@ namespace Ink_Canvas {
             }
         }
 
-        public struct WINDOWPLACEMENT {
-            public int length;
-            public int flags;
-            public int showCmd;
-            public System.Drawing.Point ptMinPosition;
-            public System.Drawing.Point ptMaxPosition;
-            public System.Drawing.Rectangle rcNormalPosition;
 
-            public static WINDOWPLACEMENT Default {
-                get {
-                    WINDOWPLACEMENT result = new WINDOWPLACEMENT();
-                    result.length = Marshal.SizeOf(result);
-                    return result;
-                }
-            }
-        }
 
         public delegate bool EnumDesktopWindowsDelegate(IntPtr hWnd, int lParam);
 

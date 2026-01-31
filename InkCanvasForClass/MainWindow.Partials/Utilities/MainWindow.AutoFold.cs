@@ -101,7 +101,7 @@ namespace Ink_Canvas {
                 // update tool selection
                 SelectedMode = ICCToolsEnum.CursorMode;
                 ForceUpdateToolSelection(null);
-                SidePannelMarginAnimation(-10);
+                SidePanelMarginAnimation(-10);
 
             });
             isFloatingBarChangingHideMode = false;

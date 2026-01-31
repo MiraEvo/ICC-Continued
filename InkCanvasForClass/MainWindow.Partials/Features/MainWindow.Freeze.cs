@@ -20,7 +20,7 @@ namespace Ink_Canvas {
 
         [LibraryImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static partial bool UpdateWindow(IntPtr hWnd);
+        private static partial bool UpdateWindow(IntPtr hWnd);
 
         /// <summary>
         /// 初始化画面定格窗口
@@ -37,7 +37,8 @@ namespace Ink_Canvas {
             try {
                 var wndClassEx = new WNDCLASSEX {
                     cbSize = (uint)Marshal.SizeOf<WNDCLASSEX>(), style = CS_HREDRAW | CS_VREDRAW,
-                    lpfnWndProc = StaticWndProcDelegate, hInstance = IntPtr.Zero,
+                    lpfnWndProc = Marshal.GetFunctionPointerForDelegate(StaticWndProcDelegate),
+                    hInstance = IntPtr.Zero,
                     hCursor = LoadCursor(IntPtr.Zero, (IntPtr)IDC_ARROW), hbrBackground = (IntPtr)(1 + COLOR_BTNFACE),
                     lpszClassName = classNamePtr,
                     lpszMenuName = IntPtr.Zero,
