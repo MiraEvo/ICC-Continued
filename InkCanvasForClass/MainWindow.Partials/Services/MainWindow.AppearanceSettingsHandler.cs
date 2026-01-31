@@ -18,8 +18,7 @@ using System.Windows.Media.Imaging;
 
 namespace Ink_Canvas
 {
-    public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
-    {
+    public partial class MainWindow {
         /// <summary>
         /// 初始化外观设置事件监听
         /// </summary>

@@ -38,7 +38,7 @@ namespace Ink_Canvas {
         }
     }
 
-    public partial class MainWindow : Wpf.Ui.Controls.FluentWindow {
+    public partial class MainWindow {
         private System.Timers.Timer timerCheckPPT = new();
         private System.Timers.Timer timerKillProcess = new();
         private System.Timers.Timer timerCheckAutoFold = new();

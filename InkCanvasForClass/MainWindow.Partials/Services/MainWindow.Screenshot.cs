@@ -48,7 +48,7 @@ using Path = System.IO.Path;
 using Rectangle = System.Drawing.Rectangle;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Wpf.Ui.Controls.FluentWindow {
+    public partial class MainWindow {
         #region MagnificationAPI 获取屏幕截图并过滤ICC窗口
 
         #region Dubi906w 的轮子

@@ -15,7 +15,7 @@ using Matrix = System.Windows.Media.Matrix;
 using Point = System.Windows.Point;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Wpf.Ui.Controls.FluentWindow {
+    public partial class MainWindow {
         #region Floating Control
 
         private object lastBorderMouseDownObject;

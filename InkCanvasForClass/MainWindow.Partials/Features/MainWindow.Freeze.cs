@@ -11,7 +11,7 @@ using System.Windows;
 using Vanara.PInvoke;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Wpf.Ui.Controls.FluentWindow {
+    public partial class MainWindow {
 
         public IntPtr MagnificationWinHandle;
         public IntPtr MagnificationHostWindowHandle;

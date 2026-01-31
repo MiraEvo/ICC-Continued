@@ -55,7 +55,7 @@ using System.Xml.Linq;
 using Image = System.Windows.Controls.Image;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Wpf.Ui.Controls.FluentWindow {
+    public partial class MainWindow {
         #region 常用颜色画刷缓存
 
         private static readonly SolidColorBrush CachedTransparentBrush = new SolidColorBrush(Colors.Transparent);

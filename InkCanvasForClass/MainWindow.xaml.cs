@@ -54,7 +54,7 @@ namespace Ink_Canvas {
     /// - 设置面板导航已通过事件绑定
     /// - 白板页面管理已通过 ViewModel 事件处理
     /// </summary>
-    public partial class MainWindow : FluentWindow {
+    public partial class MainWindow : Window {
         public Services.ISettingsService SettingsService => (Services.ISettingsService)((App)Application.Current).Services.GetService(typeof(Services.ISettingsService));
         public Settings Settings => SettingsService.Settings;
 
