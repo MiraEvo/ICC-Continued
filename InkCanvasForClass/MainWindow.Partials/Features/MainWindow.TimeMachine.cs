@@ -1,13 +1,9 @@
 using Ink_Canvas.Helpers;
-using System.Collections.Generic;
-using System;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Diagnostics;
-using System.Windows.Media.Imaging;
 
 namespace Ink_Canvas {
     public partial class MainWindow {
@@ -27,11 +23,9 @@ namespace Ink_Canvas {
         private StrokeCollection CuboidStrokeCollection;
         private Dictionary<Stroke, Tuple<StylusPointCollection, StylusPointCollection>> StrokeManipulationHistory;
 
-        private Dictionary<Stroke, StylusPointCollection> StrokeInitialHistory =
-            new();
+        private Dictionary<Stroke, StylusPointCollection> StrokeInitialHistory = [];
 
-        private Dictionary<Stroke, Tuple<DrawingAttributes, DrawingAttributes>> DrawingAttributesHistory =
-            new();
+        private Dictionary<Stroke, Tuple<DrawingAttributes, DrawingAttributes>> DrawingAttributesHistory = [];
 
         private Dictionary<Guid, List<Stroke>> DrawingAttributesHistoryFlag = new() {
             { DrawingAttributeIds.Color, new() },
@@ -209,8 +203,8 @@ namespace Ink_Canvas {
             if (_currentCommitType == CommitReason.CodeInput || _currentCommitType == CommitReason.ShapeDrawing) return;
 
             if ((addedCount != 0 || removedCount != 0) && IsEraseByPoint) {
-                AddedStroke ??= new StrokeCollection();
-                ReplacedStroke ??= new StrokeCollection();
+                AddedStroke ??= new();
+                ReplacedStroke ??= new();
                 if (addedCount > 0) AddedStroke.Add(addedStrokes);
                 if (removedCount > 0) ReplacedStroke.Add(removedStrokes);
                 return;

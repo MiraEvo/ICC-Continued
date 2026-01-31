@@ -1,7 +1,6 @@
 ﻿using Ink_Canvas.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -141,9 +140,9 @@ namespace Ink_Canvas {
                         ? Settings.Advanced.NibModeBoundsWidthThresholdValue
                         : Settings.Advanced.FingerModeBoundsWidthThresholdValue;
                     if (boundWidth > BoundsWidth * EraserThresholdValue) {
-                        boundWidth *= (Settings.Startup.IsEnableNibMode
+                        boundWidth *= Settings.Startup.IsEnableNibMode
                             ? Settings.Advanced.NibModeBoundsWidthEraserSize
-                            : Settings.Advanced.FingerModeBoundsWidthEraserSize);
+                            : Settings.Advanced.FingerModeBoundsWidthEraserSize;
                         if (Settings.Advanced.IsSpecialScreen) boundWidth *= Settings.Advanced.TouchMultiplier;
                         TouchDownPointsList[e.TouchDevice.Id] = InkCanvasEditingMode.EraseByPoint;
                         eraserWidth = boundWidth;
@@ -292,11 +291,11 @@ namespace Ink_Canvas {
                 : inkCanvas.EditingMode;
         }
 
-        private Dictionary<int, InkCanvasEditingMode> TouchDownPointsList { get; } = new();
+        private Dictionary<int, InkCanvasEditingMode> TouchDownPointsList { get; } = [];
 
-        private Dictionary<int, StrokeVisual> StrokeVisualList { get; } = new();
-        private Dictionary<int, VisualCanvas> VisualCanvasList { get; } = new();
-        private Dictionary<int, int> StrokeVisualLastRedrawTick { get; } = new();
+        private Dictionary<int, StrokeVisual> StrokeVisualList { get; } = [];
+        private Dictionary<int, VisualCanvas> VisualCanvasList { get; } = [];
+        private Dictionary<int, int> StrokeVisualLastRedrawTick { get; } = [];
 
         private const int StrokeVisualRedrawIntervalMs = 8;
 
@@ -607,9 +606,9 @@ namespace Ink_Canvas {
 
                     if (largeTouchDetectionCount >= PalmEraserDetectionThreshold || isHugeArea) {
                         // 计算有效的橡皮擦宽度
-                        detectedWidth *= (Settings.Startup.IsEnableNibMode
+                        detectedWidth *= Settings.Startup.IsEnableNibMode
                             ? Settings.Advanced.NibModeBoundsWidthEraserSize
-                            : Settings.Advanced.FingerModeBoundsWidthEraserSize);
+                            : Settings.Advanced.FingerModeBoundsWidthEraserSize;
 
                         if (Settings.Advanced.IsSpecialScreen) {
                             detectedWidth *= Settings.Advanced.TouchMultiplier;
@@ -644,7 +643,7 @@ namespace Ink_Canvas {
             return width <= BoundsWidth * eraserThresholdValue;
         }
 
-        private HashSet<int> dec = new();
+        private HashSet<int> dec = [];
         private Point centerPoint;
         private InkCanvasEditingMode lastInkCanvasEditingMode = InkCanvasEditingMode.Ink;
         private bool isSingleFingerDragMode = false;
@@ -696,7 +695,7 @@ namespace Ink_Canvas {
         private void inkCanvas_ManipulationInertiaStarting(object sender, ManipulationInertiaStartingEventArgs e) { }
 
         private void Main_Grid_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e) {
-            if (e.Manipulators.Count() != 0) return;
+            if (e.Manipulators.Any()) return;
             if (forceEraser) return;
             inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
             

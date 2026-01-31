@@ -68,18 +68,20 @@ namespace Ink_Canvas {
             int style = GetWindowLong(windowHostHandle, GWL_STYLE);
             style &= ~WS_CAPTION; // 隐藏标题栏
             style &= ~WS_THICKFRAME; // 禁止窗口拉伸
-            SetWindowLong(windowHostHandle, GWL_STYLE, style);
+            var setStyleResult = SetWindowLong(windowHostHandle, GWL_STYLE, style);
+            if (setStyleResult == 0 && Marshal.GetLastWin32Error() != 0) return;
             SetWindowPos(windowHostHandle, IntPtr.Zero, 0, 0, 0, 0, SWP_NOSIZE | SWP_FRAMECHANGED);
             // 設定額外樣式
             int exStyle = GetWindowLong(windowHostHandle, GWL_EXSTYLE);
             exStyle |= WS_EX_TOOLWINDOW; /* <- 隐藏任务栏图标 */
             exStyle &= ~WS_EX_APPWINDOW;
-            SetWindowLong(windowHostHandle, GWL_EXSTYLE, exStyle);
+            var setExStyleResult = SetWindowLong(windowHostHandle, GWL_EXSTYLE, exStyle);
+            if (setExStyleResult == 0 && Marshal.GetLastWin32Error() != 0) return;
             // 导出成员
             MagnificationWinHandle = hwndMag;
             MagnificationHostWindowHandle = windowHostHandle;
             // 設定放大鏡工廠
-            Magnification.MAGTRANSFORM matrix = new Magnification.MAGTRANSFORM();
+            Magnification.MAGTRANSFORM matrix = new();
             matrix[0, 0] = 1.0f;
             matrix[0, 1] = 0.0f;
             matrix[0, 2] = 0.0f;
@@ -91,7 +93,7 @@ namespace Ink_Canvas {
             matrix[2, 2] = 0.0f;
             if (!Magnification.MagSetWindowTransform(hwndMag, matrix)) return;
             // 設定放大鏡轉化矩乘陣列
-            Magnification.MAGCOLOREFFECT magEffect = new Magnification.MAGCOLOREFFECT();
+            Magnification.MAGCOLOREFFECT magEffect = new();
             magEffect[0, 0] = 1.0f;
             magEffect[0, 1] = 0.0f;
             magEffect[0, 2] = 0.0f;
@@ -121,7 +123,7 @@ namespace Ink_Canvas {
             // 顯示窗體
             ShowWindow(windowHostHandle, SW_SHOW);
             // 过滤窗口
-            var hwnds = new List<HWND> { hwndMag };
+            List<HWND> hwnds = new() { hwndMag };
             hwnds.AddRange(hwndsList);
             if (!Magnification.MagSetWindowFilterList(hwndMag, Magnification.MW_FILTERMODE.MW_FILTERMODE_EXCLUDE,
                     hwnds.Count, hwnds.ToArray())) return;
@@ -181,7 +183,7 @@ namespace Ink_Canvas {
         [RequiresUnmanagedCode("Uses Win32 Magnification APIs to update window filter list.")]
         public void SetFreezeFrameWindowsFilterList(HWND[] hwndsList) {
             if (!isFreezeFrameLoaded) return;
-            var hwnds = new List<HWND> { MagnificationWinHandle };
+            List<HWND> hwnds = new() { MagnificationWinHandle };
             hwnds.AddRange(hwndsList);
             if (!Magnification.MagSetWindowFilterList(MagnificationWinHandle, Magnification.MW_FILTERMODE.MW_FILTERMODE_EXCLUDE,
                     hwnds.Count, hwnds.ToArray())) return;
@@ -195,8 +197,7 @@ namespace Ink_Canvas {
                     System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height))) return new Bitmap(1,1);
             InvalidateRect(MagnificationWinHandle, IntPtr.Zero, true);
             UpdateWindow(MagnificationHostWindowHandle);
-            RECT rect;
-            GetWindowRect(MagnificationWinHandle, out rect);
+            GetWindowRect(MagnificationWinHandle, out var rect);
             Bitmap bmp = new Bitmap(rect.Width, rect.Height);
             Graphics memoryGraphics = Graphics.FromImage(bmp);
             PrintWindow(MagnificationWinHandle, memoryGraphics.GetHdc(), PW_RENDERFULLCONTENT);

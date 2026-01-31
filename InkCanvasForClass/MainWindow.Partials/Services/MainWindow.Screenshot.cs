@@ -223,13 +223,15 @@ namespace Ink_Canvas {
             int style = GetWindowLong(windowHostHandle, GWL_STYLE);
             style &= ~WS_CAPTION; // 隐藏标题栏
             style &= ~WS_THICKFRAME; // 禁止窗口拉伸
-            SetWindowLong(windowHostHandle, GWL_STYLE, style);
+            var setStyleResult = SetWindowLong(windowHostHandle, GWL_STYLE, style);
+            if (setStyleResult == 0 && Marshal.GetLastWin32Error() != 0) return;
             SetWindowPos(windowHostHandle, IntPtr.Zero, 0, 0, 0, 0, SWP_NOSIZE | SWP_FRAMECHANGED);
             // 設定額外樣式
             int exStyle = GetWindowLong(windowHostHandle, GWL_EXSTYLE);
             exStyle |= WS_EX_TOOLWINDOW; /* <- 隐藏任务栏图标 */
             exStyle &= ~WS_EX_APPWINDOW;
-            SetWindowLong(windowHostHandle, GWL_EXSTYLE, exStyle);
+            var setExStyleResult = SetWindowLong(windowHostHandle, GWL_EXSTYLE, exStyle);
+            if (setExStyleResult == 0 && Marshal.GetLastWin32Error() != 0) return;
             // 設定放大鏡工廠
             Magnification.MAGTRANSFORM matrix = new Magnification.MAGTRANSFORM();
             matrix[0, 0] = 1.0f;

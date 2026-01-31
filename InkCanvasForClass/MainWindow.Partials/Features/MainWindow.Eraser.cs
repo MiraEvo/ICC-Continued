@@ -39,31 +39,31 @@ namespace Ink_Canvas {
 
         private void EraserOverlay_Loaded(object sender, RoutedEventArgs e) {
             var bd = (Border)sender;
-            bd.StylusDown += ((o, args) => {
+            bd.StylusDown += (o, args) => {
                 e.Handled = true;
                 if (args.StylusDevice.TabletDevice.Type == TabletDeviceType.Stylus) ((Border)o).CaptureStylus();
                 EraserOverlay_PointerDown(sender);
-            });
-            bd.StylusUp += ((o, args) => {
+            };
+            bd.StylusUp += (o, args) => {
                 e.Handled = true;
                 if (args.StylusDevice.TabletDevice.Type == TabletDeviceType.Stylus) ((Border)o).ReleaseStylusCapture();
                 EraserOverlay_PointerUp(sender);
-            });
-            bd.StylusMove += ((o, args) => {
+            };
+            bd.StylusMove += (o, args) => {
                 e.Handled = true;
                 EraserOverlay_PointerMove(sender, args.GetPosition(Main_Grid));
-            });
-            bd.MouseDown += ((o, args) => {
+            };
+            bd.MouseDown += (o, args) => {
                 ((Border)o).CaptureMouse();
                 EraserOverlay_PointerDown(sender);
-            });
-            bd.MouseUp += ((o, args) => {
+            };
+            bd.MouseUp += (o, args) => {
                 ((Border)o).ReleaseMouseCapture();
                 EraserOverlay_PointerUp(sender);
-            });
-            bd.MouseMove += ((o, args) => {
+            };
+            bd.MouseMove += (o, args) => {
                 EraserOverlay_PointerMove(sender, args.GetPosition(Main_Grid));
-            });
+            };
             bd.StylusButtonUp += (o, args) => {
                 Trace.WriteLine("ButtonUp!!!!!");
             };
@@ -123,9 +123,7 @@ namespace Ink_Canvas {
             StrokeHitEventArgs args) {
             StrokeCollection eraseResult =
                 args.GetPointEraseResults();
-            StrokeCollection strokesToReplace = new() {
-                args.HitStroke
-            };
+            StrokeCollection strokesToReplace = new() { args.HitStroke };
 
             // replace the old stroke with the new one.
             var filtered2Replace = strokesToReplace.Where(stroke => !stroke.ContainsPropertyData(IsLockGuid)).ToArray();

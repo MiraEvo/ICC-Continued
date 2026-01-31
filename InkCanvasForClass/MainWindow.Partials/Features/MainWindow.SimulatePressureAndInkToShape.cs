@@ -2,23 +2,19 @@
 using Ink_Canvas.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 using Point = System.Windows.Point;
 
 namespace Ink_Canvas {
     public partial class MainWindow {
-        private StrokeCollection newStrokes = new();
-        private List<Circle> circles = new();
+        private StrokeCollection newStrokes = [];
+        private List<Circle> circles = [];
 
         private void inkCanvas_StrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e) {
             if (Settings.Canvas.FitToCurve == true) drawingAttributes.FitToCurve = false;
@@ -51,7 +47,7 @@ namespace Ink_Canvas {
                             // 优化：如果整体识别成功且置信度高，跳过单笔画识别
                             if (result == null || result.ConfidenceScore < 0.8)
                             {
-                                var strokeReco = new StrokeCollection();
+                                StrokeCollection strokeReco = [];
                                 // 优化：只检查最近的笔画，而不是所有笔画
                                 int checkCount = Math.Min(newStrokes.Count, 2);
                                 for (var i = newStrokes.Count - 1; i >= newStrokes.Count - checkCount; i--) {
@@ -133,7 +129,7 @@ namespace Ink_Canvas {
                                         inkCanvas.Strokes.Add(stroke);
                                     });
                                     _currentCommitType = CommitReason.UserInput;
-                                    newStrokes = new StrokeCollection();
+                                    newStrokes = [];
                                 }
                             }
                             else if (recognizedShapeName.Contains("Ellipse") &&
@@ -146,9 +142,7 @@ namespace Ink_Canvas {
                                 var a = GetDistance(p[0], p[2]) / 2; //长半轴
                                 var b = GetDistance(p[1], p[3]) / 2; //短半轴
                                 if (a < b) {
-                                    var t = a;
-                                    a = b;
-                                    b = t;
+                                    (a, b) = (b, a);
                                 }
 
                                 result.Centroid = new Point((p[0].X + p[2].X) / 2, (p[0].Y + p[2].Y) / 2);
@@ -205,7 +199,7 @@ namespace Ink_Canvas {
                                                 await Dispatcher.InvokeAsync(() => {
                                                     inkCanvas.Strokes.Remove(result.InkDrawingNode.Strokes);
                                                 });
-                                                newStrokes = new StrokeCollection();
+                                                newStrokes = [];
 
                                                 var _pointList = GenerateEllipseGeometry(iniP, endP, false, true);
                                                 var _point = new StylusPointCollection(_pointList);
@@ -213,13 +207,11 @@ namespace Ink_Canvas {
                                                     DrawingAttributes = Dispatcher.Invoke(()=>inkCanvas.DefaultDrawingAttributes.Clone())
                                                 };
                                                 await Dispatcher.InvokeAsync(() => {
-                                                    var _dashedLineStroke =
+                                                    var dashedLineStrokes =
                                                         GenerateDashedLineEllipseStrokeCollection(iniP, endP, true,
                                                             false);
-                                                    var strokes = new StrokeCollection() {
-                                                        _stroke,
-                                                        _dashedLineStroke
-                                                    };
+                                                    var strokes = new StrokeCollection { _stroke };
+                                                    strokes.Add(dashedLineStrokes);
                                                     inkCanvas.Strokes.Add(strokes);
                                                     _currentCommitType = CommitReason.UserInput;
                                                 });
@@ -278,7 +270,7 @@ namespace Ink_Canvas {
                                         inkCanvas.Strokes.Add(stroke);
                                         _currentCommitType = CommitReason.UserInput;
                                         GridInkCanvasSelectionCover.Visibility = Visibility.Collapsed;
-                                        newStrokes = new StrokeCollection();
+                                        newStrokes = [];
                                     });
                                 }
                             }
@@ -324,7 +316,7 @@ namespace Ink_Canvas {
                                         inkCanvas.Strokes.Add(stroke);
                                         _currentCommitType = CommitReason.UserInput;
                                         GridInkCanvasSelectionCover.Visibility = Visibility.Collapsed;
-                                        newStrokes = new StrokeCollection();
+                                        newStrokes = [];
                                     });
                                 }
                             }
@@ -382,7 +374,7 @@ namespace Ink_Canvas {
                                         inkCanvas.Strokes.Add(stroke);
                                         _currentCommitType = CommitReason.UserInput;
                                         GridInkCanvasSelectionCover.Visibility = Visibility.Collapsed;
-                                        newStrokes = new StrokeCollection();
+                                        newStrokes = [];
                                     });
 
                                 }
@@ -435,7 +427,7 @@ namespace Ink_Canvas {
                     case 1:
                         if (penType == 0)
                             try {
-                                var stylusPoints = new StylusPointCollection();
+                                StylusPointCollection stylusPoints = [];
                                 var n = e.Stroke.StylusPoints.Count - 1;
                                 var s = "";
 
@@ -467,37 +459,37 @@ namespace Ink_Canvas {
                     case 0:
                         if (penType == 0)
                             try {
-                                var stylusPoints = new StylusPointCollection();
+                                StylusPointCollection stylusPoints = [];
                                 var n = e.Stroke.StylusPoints.Count - 1;
                                 var pressure = 0.1;
                                 var x = 10;
                                 if (n == 1) return;
                                 if (n >= x) {
                                     for (var i = 0; i < n - x; i++) {
-                                        var point = new StylusPoint();
-
-                                        point.PressureFactor = (float)0.5;
-                                        point.X = e.Stroke.StylusPoints[i].X;
-                                        point.Y = e.Stroke.StylusPoints[i].Y;
+                                        var point = new StylusPoint {
+                                            PressureFactor = 0.5f,
+                                            X = e.Stroke.StylusPoints[i].X,
+                                            Y = e.Stroke.StylusPoints[i].Y
+                                        };
                                         stylusPoints.Add(point);
                                     }
 
                                     for (var i = n - x; i <= n; i++) {
-                                        var point = new StylusPoint();
-
-                                        point.PressureFactor = (float)((0.5 - pressure) * (n - i) / x + pressure);
-                                        point.X = e.Stroke.StylusPoints[i].X;
-                                        point.Y = e.Stroke.StylusPoints[i].Y;
+                                        var point = new StylusPoint {
+                                            PressureFactor = (float)((0.5 - pressure) * (n - i) / x + pressure),
+                                            X = e.Stroke.StylusPoints[i].X,
+                                            Y = e.Stroke.StylusPoints[i].Y
+                                        };
                                         stylusPoints.Add(point);
                                     }
                                 }
                                 else {
                                     for (var i = 0; i <= n; i++) {
-                                        var point = new StylusPoint();
-
-                                        point.PressureFactor = (float)(0.4 * (n - i) / n + pressure);
-                                        point.X = e.Stroke.StylusPoints[i].X;
-                                        point.Y = e.Stroke.StylusPoints[i].Y;
+                                        var point = new StylusPoint {
+                                            PressureFactor = (float)(0.4 * (n - i) / n + pressure),
+                                            X = e.Stroke.StylusPoints[i].X,
+                                            Y = e.Stroke.StylusPoints[i].Y
+                                        };
                                         stylusPoints.Add(point);
                                     }
                                 }
@@ -526,12 +518,12 @@ namespace Ink_Canvas {
             strokeCollections[whiteboardIndex] = lastTouchDownStrokeCollection;
         }
 
-        public double GetDistance(Point point1, Point point2) {
+        public static double GetDistance(Point point1, Point point2) {
             return Math.Sqrt((point1.X - point2.X) * (point1.X - point2.X) +
                              (point1.Y - point2.Y) * (point1.Y - point2.Y));
         }
 
-        public double GetPointSpeed(Point point1, Point point2, Point point3) {
+        public static double GetPointSpeed(Point point1, Point point2, Point point3) {
             return (Math.Sqrt((point1.X - point2.X) * (point1.X - point2.X) +
                               (point1.Y - point2.Y) * (point1.Y - point2.Y))
                     + Math.Sqrt((point3.X - point2.X) * (point3.X - point2.X) +
@@ -539,7 +531,7 @@ namespace Ink_Canvas {
                    / 20;
         }
 
-        public Point[] FixPointsDirection(Point p1, Point p2) {
+        public static Point[] FixPointsDirection(Point p1, Point p2) {
             double dx = Math.Abs(p1.X - p2.X);
             double dy = Math.Abs(p1.Y - p2.Y);
 
@@ -568,12 +560,12 @@ namespace Ink_Canvas {
                 }
             }
 
-            return new Point[2] { p1, p2 };
+            return [p1, p2];
         }
 
         public StylusPointCollection GenerateFakePressureTriangle(StylusPointCollection points) {
             if (Settings.InkToShape.IsInkToShapeNoFakePressureTriangle == true || penType == 1) {
-                var newPoint = new StylusPointCollection();
+                StylusPointCollection newPoint = [];
                 newPoint.Add(new StylusPoint(points[0].X, points[0].Y));
                 var cPoint = GetCenterPoint(points[0], points[1]);
                 newPoint.Add(new StylusPoint(cPoint.X, cPoint.Y));
@@ -589,7 +581,7 @@ namespace Ink_Canvas {
                 return newPoint;
             }
             else {
-                var newPoint = new StylusPointCollection();
+                StylusPointCollection newPoint = [];
                 newPoint.Add(new StylusPoint(points[0].X, points[0].Y, (float)0.4));
                 var cPoint = GetCenterPoint(points[0], points[1]);
                 newPoint.Add(new StylusPoint(cPoint.X, cPoint.Y, (float)0.8));
@@ -611,7 +603,7 @@ namespace Ink_Canvas {
                 return points;
             }
             else {
-                var newPoint = new StylusPointCollection();
+                StylusPointCollection newPoint = [];
                 newPoint.Add(new StylusPoint(points[0].X, points[0].Y, (float)0.4));
                 var cPoint = GetCenterPoint(points[0], points[1]);
                 newPoint.Add(new StylusPoint(cPoint.X, cPoint.Y, (float)0.8));
@@ -632,11 +624,11 @@ namespace Ink_Canvas {
             }
         }
 
-        public Point GetCenterPoint(Point point1, Point point2) {
+        public static Point GetCenterPoint(Point point1, Point point2) {
             return new Point((point1.X + point2.X) / 2, (point1.Y + point2.Y) / 2);
         }
 
-        public StylusPoint GetCenterPoint(StylusPoint point1, StylusPoint point2) {
+        public static StylusPoint GetCenterPoint(StylusPoint point1, StylusPoint point2) {
             return new StylusPoint((point1.X + point2.X) / 2, (point1.Y + point2.Y) / 2);
         }
     }
