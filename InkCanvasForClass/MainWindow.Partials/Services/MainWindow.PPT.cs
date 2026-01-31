@@ -77,6 +77,7 @@ namespace Ink_Canvas {
             _darkGeometryBrush.Freeze();
         }
 
+        #pragma warning disable CA1420
         [DllImport("ole32.dll")]
         private static extern void CLSIDFromProgIDEx([MarshalAs(UnmanagedType.LPWStr)] string lpszProgID, out Guid lpclsid);
 
@@ -90,6 +91,7 @@ namespace Ink_Canvas {
             GetActiveObject(ref clsid, IntPtr.Zero, out object obj);
             return obj;
         }
+        #pragma warning restore CA1420
 
         private void BtnCheckPPT_Click(object sender, RoutedEventArgs e) {
             try {
