@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Windows;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
         public static bool StartAutomaticallyCreate(string exeName) {
             try {
                 Type shellType = Type.GetTypeFromProgID("WScript.Shell");

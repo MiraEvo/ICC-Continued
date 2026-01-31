@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // MW_ShapeDrawing.cs - 形状绘制逻辑
 // ============================================================================
 //
@@ -38,7 +38,7 @@ using MessageBox = System.Windows.MessageBox;
 using Point = System.Windows.Point;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
         #region Floating Bar Control
 
         private void ImageDrawShape_MouseUp(object sender, MouseButtonEventArgs e) {

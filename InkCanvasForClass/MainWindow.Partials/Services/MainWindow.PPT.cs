@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // MW_PPT.cs - PowerPoint 集成逻辑
 // ============================================================================
 //
@@ -47,7 +47,7 @@ using Microsoft.Office.Core;
 using System.Collections.Concurrent;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
         public static Microsoft.Office.Interop.PowerPoint.Application? pptApplication = null;
         public static Presentation? presentation = null;
         public static Slides? slides = null;

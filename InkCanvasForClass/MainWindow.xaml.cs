@@ -2002,9 +2002,9 @@ namespace Ink_Canvas {
                 if (isDownloadSuccessful) {
                     if (!Settings.Startup.IsAutoUpdateWithSilence) {
                         if (MessageBox.Show("InkCanvasForClass 新版本安装包已下载完成，是否立即更新？",
-                                "InkCanvasForClass New Version Available", MessageBoxButton.YesNo,
+                                "InkCanvasForClass New Version Available", System.Windows.MessageBoxButton.YesNo,
                                 MessageBoxImage.Question) ==
-                            MessageBoxResult.Yes) AutoUpdateHelper.InstallNewVersionApp(AvailableLatestVersion, false);
+                            System.Windows.MessageBoxResult.Yes) AutoUpdateHelper.InstallNewVersionApp(AvailableLatestVersion, false);
                     } else {
                         timerCheckAutoUpdateWithSilence.Start();
                     }

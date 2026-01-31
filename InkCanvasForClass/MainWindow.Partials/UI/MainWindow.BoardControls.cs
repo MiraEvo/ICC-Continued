@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // MW_BoardControls.cs - 白板模式控制逻辑
 // ============================================================================
 // 
@@ -41,7 +41,7 @@ using System.Xml.Linq;
 using System.Windows.Controls;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
         private StrokeCollection[] strokeCollections = new StrokeCollection[101];
         private bool[] whiteboadLastModeIsRedo = new bool[101];
         private StrokeCollection lastTouchDownStrokeCollection = new StrokeCollection();

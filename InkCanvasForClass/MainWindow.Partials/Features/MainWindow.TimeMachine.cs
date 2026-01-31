@@ -1,4 +1,4 @@
-﻿using Ink_Canvas.Helpers;
+using Ink_Canvas.Helpers;
 using System.Collections.Generic;
 using System;
 using System.Windows;
@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Windows.Media.Imaging;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
         private enum CommitReason {
             UserInput,
             CodeInput,

@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // MW_Hotkeys.cs - 热键和键盘事件处理
 // ============================================================================
 // 
@@ -27,7 +27,7 @@ using Ink_Canvas.Helpers;
 using static Ink_Canvas.Popups.ColorPalette;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e) {
             if (BorderFloatingBarExitPPTBtn.Visibility != Visibility.Visible || currentMode != 0) return;
             if (e.Delta >= 120)

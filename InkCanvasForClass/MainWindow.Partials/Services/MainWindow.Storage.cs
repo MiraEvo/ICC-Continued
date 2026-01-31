@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -17,7 +17,7 @@ using Ink_Canvas.Helpers;
 using JetBrains.Annotations;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
 
         public static long GetDirectorySize(System.IO.DirectoryInfo directoryInfo, bool recursive = true)
         {

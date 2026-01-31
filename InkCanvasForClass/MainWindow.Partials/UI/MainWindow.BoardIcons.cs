@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // MW_BoardIcons.cs - 白板工具栏按钮交互
 // ============================================================================
 // 
@@ -28,7 +28,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
 
         private Border lastBoardToolBtnDownBorder = null;
         private Border lastBoardSideBtnDownBorder = null;

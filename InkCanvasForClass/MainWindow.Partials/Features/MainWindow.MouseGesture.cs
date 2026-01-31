@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,7 +13,7 @@ using System.Windows.Resources;
 
 namespace Ink_Canvas
 {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
 
         private bool isMouseGesturing = false;
         private Point startPoint;

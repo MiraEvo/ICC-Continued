@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // MW_Eraser.cs - 橡皮擦逻辑
 // ============================================================================
 // 
@@ -26,7 +26,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Ink_Canvas {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
 
         public bool isUsingGeometryEraser = false;
         private IncrementalStrokeHitTester hitTester = null;
