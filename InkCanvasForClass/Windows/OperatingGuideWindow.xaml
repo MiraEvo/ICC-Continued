@@ -4,12 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ink_Canvas.Dialogs"
+        xmlns:vm="clr-namespace:Ink_Canvas.ViewModels"
         xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
         ui:ThemeManager.RequestedTheme="Light" Topmost="True" Background="Transparent"
+        WindowState="{Binding WindowState}"
         mc:Ignorable="d" WindowStyle="None" AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
         Title="Ink Canvas Annotation 使用指南"
         Height="600" Width="500">
+    <Window.DataContext>
+        <vm:OperatingGuideWindowViewModel/>
+    </Window.DataContext>
     <Border Background="#F0F3F9" CornerRadius="10" BorderThickness="1" BorderBrush="#0066BF" Margin="10,10,10,50">
         <Grid>
             <Border MouseMove="WindowDragMove" Visibility="Visible" Width="64" Height="15" CornerRadius="8" Background="Gray" Margin="0,0,0,5" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
@@ -71,19 +76,19 @@
                     </Viewbox>
                 </ui:SimpleStackPanel>
             </ScrollViewer>
-            <Viewbox Visibility="{Binding ElementName=BigViewController, Path=Visibility}" Margin="20,20,20,20" HorizontalAlignment="Right">
+            <Viewbox Visibility="{Binding IsNormalState, Converter={StaticResource BoolToVisibilityConverter}}" Margin="20,20,20,20" HorizontalAlignment="Right">
                 <ui:SimpleStackPanel Height="180" Orientation="Horizontal">
-                    <Border x:Name="BtnFullscreen" MouseUp="BtnFullscreen_MouseUp" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    <Border MouseUp="BtnFullscreen_MouseUp" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                             Margin="5"
                             Background="#FBFBFD" Height="20" Width="20" CornerRadius="100">
                         <Border.Effect>
                             <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.1" BlurRadius="3"/>
                         </Border.Effect>
                         <Viewbox Margin="5.5">
-                            <ui:FontIcon Name="SymbolIconFullscreen" Glyph="&#xE740;" Foreground="Black"/>
+                            <ui:FontIcon Glyph="{Binding FullscreenButtonIcon}" Foreground="Black"/>
                         </Viewbox>
                     </Border>
-                    <Border x:Name="BtnClose" MouseUp="BtnClose_MouseUp" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    <Border MouseUp="BtnClose_MouseUp" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                         Margin="5"
                         Background="#E32A34" Height="20" Width="20" CornerRadius="100">
                         <Border.Effect>
