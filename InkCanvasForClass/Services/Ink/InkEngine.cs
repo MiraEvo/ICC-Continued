@@ -25,6 +25,7 @@ namespace Ink_Canvas.Services.Ink
         private readonly MemoryCache _recognitionCache;
         private readonly InkRenderContext _renderContext;
         private readonly InkRenderer _renderer;
+        private readonly InkRecognitionPipeline _recognitionPipeline;
         private readonly InkRenderOptions _renderOptions;
         private DrawingAttributes _defaultDrawingAttributes;
         private Task _processingTask;
@@ -72,11 +73,13 @@ namespace Ink_Canvas.Services.Ink
             });
             _renderContext = new InkRenderContext();
             _renderer = new InkRenderer();
+            _recognitionPipeline = new InkRecognitionPipeline();
             _renderOptions = options ?? new InkRenderOptions();
             _defaultDrawingAttributes = new DrawingAttributes();
 
             // 启动处理任务
             _processingTask = ProcessOperationsAsync(_processingCts.Token);
+            _recognitionPipeline.Start();
         }
 
         /// <summary>
@@ -347,7 +350,7 @@ namespace Ink_Canvas.Services.Ink
         }
 
         /// <summary>
-        /// 异步形状识别
+        /// 异步形状识别 - 使用识别管道
         /// </summary>
         private async Task RecognizeShapeAsync(InkStrokeData strokeData)
         {
@@ -355,24 +358,11 @@ namespace Ink_Canvas.Services.Ink
 
             try
             {
-                // 检查缓存
-                var cacheKey = ComputeStrokeHash(strokeData);
-                if (_recognitionCache.TryGetValue<InkRecognitionResult>(cacheKey, out var cachedResult))
-                {
-                    RecognitionCompleted?.Invoke(this, new InkRecognitionCompletedEventArgs(
-                        strokeData, cachedResult, stopwatch.Elapsed));
-                    return;
-                }
+                // 创建临时笔画集合
+                var tempStrokes = new StrokeCollection { strokeData.ToWpfStroke() };
 
-                // 这里可以调用 InkRecognizeHelper 进行实际识别
-                // 暂时返回空结果
-                var result = InkRecognitionResult.Failed("Recognition not implemented");
-
-                // 缓存结果
-                var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetSize(1)
-                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
-                _recognitionCache.Set(cacheKey, result, cacheOptions);
+                // 使用识别管道
+                var result = await _recognitionPipeline.SubmitAsync(tempStrokes);
 
                 RecognitionCompleted?.Invoke(this, new InkRecognitionCompletedEventArgs(
                     strokeData, result, stopwatch.Elapsed));
@@ -383,16 +373,6 @@ namespace Ink_Canvas.Services.Ink
                 RecognitionCompleted?.Invoke(this, new InkRecognitionCompletedEventArgs(
                     strokeData, result, stopwatch.Elapsed));
             }
-        }
-
-        private string ComputeStrokeHash(InkStrokeData strokeData)
-        {
-            if (strokeData.Points.Count == 0)
-                return string.Empty;
-
-            var first = strokeData.Points[0];
-            var last = strokeData.Points[strokeData.Points.Count - 1];
-            return $"{strokeData.Points.Count}_{first.X:F0}_{first.Y:F0}_{last.X:F0}_{last.Y:F0}";
         }
 
         private void ThrowIfDisposed()
@@ -419,6 +399,7 @@ namespace Ink_Canvas.Services.Ink
             _recognitionCache.Dispose();
             _renderContext.Dispose();
             _renderer.Dispose();
+            _recognitionPipeline.Dispose();
 
             _disposed = true;
         }
