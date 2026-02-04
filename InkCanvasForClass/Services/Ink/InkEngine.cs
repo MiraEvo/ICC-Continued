@@ -1,0 +1,432 @@
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Ink;
+using System.Windows.Media;
+using Microsoft.Extensions.Caching.Memory;
+
+namespace Ink_Canvas.Services.Ink
+{
+    /// <summary>
+    /// 现代墨迹引擎实现
+    /// </summary>
+    public class InkEngine : IInkEngine
+    {
+        private readonly StrokeCollection _strokes;
+        private readonly ConcurrentDictionary<Guid, InkStrokeData> _strokeDataMap;
+        private readonly Channel<InkOperation> _operationChannel;
+        private readonly CancellationTokenSource _processingCts;
+        private readonly MemoryCache _recognitionCache;
+        private readonly InkRenderContext _renderContext;
+        private readonly InkRenderOptions _renderOptions;
+        private DrawingAttributes _defaultDrawingAttributes;
+        private Task _processingTask;
+        private bool _disposed;
+
+        /// <inheritdoc />
+        public event EventHandler<InkStrokeCollectedEventArgs> StrokeCollected;
+
+        /// <inheritdoc />
+        public event EventHandler<InkRecognitionCompletedEventArgs> RecognitionCompleted;
+
+        /// <inheritdoc />
+        public event EventHandler<InkRenderCompletedEventArgs> RenderCompleted;
+
+        /// <inheritdoc />
+        public StrokeCollection Strokes => _strokes;
+
+        /// <inheritdoc />
+        public DrawingAttributes DefaultDrawingAttributes
+        {
+            get => _defaultDrawingAttributes;
+            set => _defaultDrawingAttributes = value?.Clone() ?? new DrawingAttributes();
+        }
+
+        /// <inheritdoc />
+        public bool IsShapeRecognitionEnabled { get; set; }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        public InkEngine(InkRenderOptions options = null)
+        {
+            _strokes = new StrokeCollection();
+            _strokeDataMap = new ConcurrentDictionary<Guid, InkStrokeData>();
+            _operationChannel = Channel.CreateUnbounded<InkOperation>(new UnboundedChannelOptions
+            {
+                SingleReader = true,
+                SingleWriter = false
+            });
+            _processingCts = new CancellationTokenSource();
+            _recognitionCache = new MemoryCache(new MemoryCacheOptions
+            {
+                SizeLimit = 50,
+                ExpirationScanFrequency = TimeSpan.FromSeconds(30)
+            });
+            _renderContext = new InkRenderContext();
+            _renderOptions = options ?? new InkRenderOptions();
+            _defaultDrawingAttributes = new DrawingAttributes();
+
+            // 启动处理任务
+            _processingTask = ProcessOperationsAsync(_processingCts.Token);
+        }
+
+        /// <inheritdoc />
+        public async Task AddStrokeAsync(InkStrokeData strokeData, CancellationToken cancellationToken = default)
+        {
+            ThrowIfDisposed();
+
+            var operation = new InkOperation
+            {
+                Type = InkOperationType.Add,
+                StrokeData = strokeData,
+                CompletionSource = new TaskCompletionSource()
+            };
+
+            await _operationChannel.Writer.WriteAsync(operation, cancellationToken);
+            await operation.CompletionSource.Task.WaitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public async Task AddStrokesAsync(IEnumerable<InkStrokeData> strokeDataCollection, CancellationToken cancellationToken = default)
+        {
+            ThrowIfDisposed();
+
+            var strokes = strokeDataCollection?.ToArray() ?? Array.Empty<InkStrokeData>();
+            if (strokes.Length == 0) return;
+
+            var operation = new InkOperation
+            {
+                Type = InkOperationType.AddBatch,
+                StrokeDataCollection = strokes,
+                CompletionSource = new TaskCompletionSource()
+            };
+
+            await _operationChannel.Writer.WriteAsync(operation, cancellationToken);
+            await operation.CompletionSource.Task.WaitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public async Task RemoveStrokeAsync(InkStrokeData strokeData, CancellationToken cancellationToken = default)
+        {
+            ThrowIfDisposed();
+
+            var operation = new InkOperation
+            {
+                Type = InkOperationType.Remove,
+                StrokeData = strokeData,
+                CompletionSource = new TaskCompletionSource()
+            };
+
+            await _operationChannel.Writer.WriteAsync(operation, cancellationToken);
+            await operation.CompletionSource.Task.WaitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public async Task ClearAsync(CancellationToken cancellationToken = default)
+        {
+            ThrowIfDisposed();
+
+            var operation = new InkOperation
+            {
+                Type = InkOperationType.Clear,
+                CompletionSource = new TaskCompletionSource()
+            };
+
+            await _operationChannel.Writer.WriteAsync(operation, cancellationToken);
+            await operation.CompletionSource.Task.WaitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public InkRenderContext GetRenderContext()
+        {
+            return _renderContext;
+        }
+
+        /// <inheritdoc />
+        public async Task RenderAsync(DrawingContext drawingContext, Rect bounds, CancellationToken cancellationToken = default)
+        {
+            ThrowIfDisposed();
+
+            var stopwatch = Stopwatch.StartNew();
+
+            await Task.Run(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                // 使用 DrawingVisual 进行离屏渲染
+                var drawingVisual = new DrawingVisual();
+                using (var context = drawingVisual.RenderOpen())
+                {
+                    // 渲染所有笔画
+                    foreach (var stroke in _strokes)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        stroke.Draw(context);
+                    }
+                }
+
+                // 将渲染结果绘制到目标上下文
+                var renderBitmap = new RenderTargetBitmap(
+                    (int)bounds.Width,
+                    (int)bounds.Height,
+                    96, 96,
+                    PixelFormats.Pbgra32);
+
+                renderBitmap.Render(drawingVisual);
+                drawingContext.DrawImage(renderBitmap, bounds);
+
+            }, cancellationToken);
+
+            stopwatch.Stop();
+
+            RenderCompleted?.Invoke(this, new InkRenderCompletedEventArgs(
+                bounds,
+                _strokes.Count,
+                stopwatch.Elapsed));
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<InkStrokeData> HitTest(Point point, double tolerance = 1.0)
+        {
+            var rect = new Rect(
+                point.X - tolerance,
+                point.Y - tolerance,
+                tolerance * 2,
+                tolerance * 2);
+
+            return HitTest(rect);
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<InkStrokeData> HitTest(Rect rect)
+        {
+            var hitStrokes = _strokes.HitTest(rect, 50);
+            
+            foreach (var stroke in hitStrokes)
+            {
+                // 查找对应的 InkStrokeData
+                var strokeData = _strokeDataMap.Values.FirstOrDefault(
+                    sd => sd.ToWpfStroke().GetGeometry().Equals(stroke.GetGeometry()));
+                
+                if (strokeData.Id != Guid.Empty)
+                {
+                    yield return strokeData;
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public Rect GetStrokesBounds()
+        {
+            if (_strokes.Count == 0)
+                return Rect.Empty;
+
+            return _strokes.GetBounds();
+        }
+
+        /// <inheritdoc />
+        public Task PreloadAsync(CancellationToken cancellationToken = default)
+        {
+            // 预加载识别模型等初始化工作
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// 处理操作队列
+        /// </summary>
+        private async Task ProcessOperationsAsync(CancellationToken cancellationToken)
+        {
+            await foreach (var operation in _operationChannel.Reader.ReadAllAsync(cancellationToken))
+            {
+                try
+                {
+                    switch (operation.Type)
+                    {
+                        case InkOperationType.Add:
+                            ProcessAddOperation(operation);
+                            break;
+                        case InkOperationType.AddBatch:
+                            ProcessAddBatchOperation(operation);
+                            break;
+                        case InkOperationType.Remove:
+                            ProcessRemoveOperation(operation);
+                            break;
+                        case InkOperationType.Clear:
+                            ProcessClearOperation(operation);
+                            break;
+                    }
+
+                    operation.CompletionSource.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    operation.CompletionSource.SetException(ex);
+                }
+            }
+        }
+
+        private void ProcessAddOperation(InkOperation operation)
+        {
+            var strokeData = operation.StrokeData;
+            
+            // 转换为 WPF Stroke 并添加
+            var wpfStroke = strokeData.ToWpfStroke();
+            _strokes.Add(wpfStroke);
+            _strokeDataMap[strokeData.Id] = strokeData;
+
+            // 触发事件
+            StrokeCollected?.Invoke(this, new InkStrokeCollectedEventArgs(strokeData));
+
+            // 如果启用形状识别，异步进行识别
+            if (IsShapeRecognitionEnabled)
+            {
+                _ = Task.Run(async () => await RecognizeShapeAsync(strokeData));
+            }
+        }
+
+        private void ProcessAddBatchOperation(InkOperation operation)
+        {
+            var strokeDataCollection = operation.StrokeDataCollection;
+            var wpfStrokes = new StrokeCollection();
+
+            foreach (var strokeData in strokeDataCollection)
+            {
+                var wpfStroke = strokeData.ToWpfStroke();
+                wpfStrokes.Add(wpfStroke);
+                _strokeDataMap[strokeData.Id] = strokeData;
+            }
+
+            _strokes.Add(wpfStrokes);
+        }
+
+        private void ProcessRemoveOperation(InkOperation operation)
+        {
+            var strokeData = operation.StrokeData;
+            
+            // 查找并移除对应的 WPF Stroke
+            var strokeToRemove = _strokes.FirstOrDefault(s => 
+                s.StylusPoints.Count == strokeData.Points.Count &&
+                s.StylusPoints[0].X == strokeData.Points[0].X);
+
+            if (strokeToRemove != null)
+            {
+                _strokes.Remove(strokeToRemove);
+            }
+
+            _strokeDataMap.TryRemove(strokeData.Id, out _);
+        }
+
+        private void ProcessClearOperation(InkOperation operation)
+        {
+            _strokes.Clear();
+            _strokeDataMap.Clear();
+            _recognitionCache.Clear();
+            _renderContext.ClearAllCaches();
+        }
+
+        /// <summary>
+        /// 异步形状识别
+        /// </summary>
+        private async Task RecognizeShapeAsync(InkStrokeData strokeData)
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            try
+            {
+                // 检查缓存
+                var cacheKey = ComputeStrokeHash(strokeData);
+                if (_recognitionCache.TryGetValue<InkRecognitionResult>(cacheKey, out var cachedResult))
+                {
+                    RecognitionCompleted?.Invoke(this, new InkRecognitionCompletedEventArgs(
+                        strokeData, cachedResult, stopwatch.Elapsed));
+                    return;
+                }
+
+                // 这里可以调用 InkRecognizeHelper 进行实际识别
+                // 暂时返回空结果
+                var result = InkRecognitionResult.Failed("Recognition not implemented");
+
+                // 缓存结果
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetSize(1)
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
+                _recognitionCache.Set(cacheKey, result, cacheOptions);
+
+                RecognitionCompleted?.Invoke(this, new InkRecognitionCompletedEventArgs(
+                    strokeData, result, stopwatch.Elapsed));
+            }
+            catch (Exception ex)
+            {
+                var result = InkRecognitionResult.Failed(ex.Message);
+                RecognitionCompleted?.Invoke(this, new InkRecognitionCompletedEventArgs(
+                    strokeData, result, stopwatch.Elapsed));
+            }
+        }
+
+        private string ComputeStrokeHash(InkStrokeData strokeData)
+        {
+            if (strokeData.Points.Count == 0)
+                return string.Empty;
+
+            var first = strokeData.Points[0];
+            var last = strokeData.Points[strokeData.Points.Count - 1];
+            return $"{strokeData.Points.Count}_{first.X:F0}_{first.Y:F0}_{last.X:F0}_{last.Y:F0}";
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException(nameof(InkEngine));
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            if (_disposed) return;
+
+            _processingCts.Cancel();
+            _operationChannel.Writer.Complete();
+            
+            try
+            {
+                _processingTask?.Wait(TimeSpan.FromSeconds(5));
+            }
+            catch { }
+
+            _processingCts.Dispose();
+            _recognitionCache.Dispose();
+            _renderContext.Dispose();
+
+            _disposed = true;
+        }
+    }
+
+    /// <summary>
+    /// 墨迹操作类型
+    /// </summary>
+    internal enum InkOperationType
+    {
+        Add,
+        AddBatch,
+        Remove,
+        Clear
+    }
+
+    /// <summary>
+    /// 墨迹操作
+    /// </summary>
+    internal class InkOperation
+    {
+        public InkOperationType Type { get; set; }
+        public InkStrokeData StrokeData { get; set; }
+        public InkStrokeData[] StrokeDataCollection { get; set; }
+        public TaskCompletionSource CompletionSource { get; set; }
+    }
+}
