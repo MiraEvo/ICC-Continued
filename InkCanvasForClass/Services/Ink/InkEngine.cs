@@ -24,6 +24,7 @@ namespace Ink_Canvas.Services.Ink
         private readonly CancellationTokenSource _processingCts;
         private readonly MemoryCache _recognitionCache;
         private readonly InkRenderContext _renderContext;
+        private readonly InkRenderer _renderer;
         private readonly InkRenderOptions _renderOptions;
         private DrawingAttributes _defaultDrawingAttributes;
         private Task _processingTask;
@@ -70,11 +71,20 @@ namespace Ink_Canvas.Services.Ink
                 ExpirationScanFrequency = TimeSpan.FromSeconds(30)
             });
             _renderContext = new InkRenderContext();
+            _renderer = new InkRenderer();
             _renderOptions = options ?? new InkRenderOptions();
             _defaultDrawingAttributes = new DrawingAttributes();
 
             // 启动处理任务
             _processingTask = ProcessOperationsAsync(_processingCts.Token);
+        }
+
+        /// <summary>
+        /// 初始化渲染器
+        /// </summary>
+        public void InitializeRenderer(int width, int height)
+        {
+            _renderer.Initialize(width, height);
         }
 
         /// <inheritdoc />
@@ -156,39 +166,44 @@ namespace Ink_Canvas.Services.Ink
 
             var stopwatch = Stopwatch.StartNew();
 
-            await Task.Run(() =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                // 使用 DrawingVisual 进行离屏渲染
-                var drawingVisual = new DrawingVisual();
-                using (var context = drawingVisual.RenderOpen())
-                {
-                    // 渲染所有笔画
-                    foreach (var stroke in _strokes)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        stroke.Draw(context);
-                    }
-                }
-
-                // 将渲染结果绘制到目标上下文
-                var renderBitmap = new RenderTargetBitmap(
-                    (int)bounds.Width,
-                    (int)bounds.Height,
-                    96, 96,
-                    PixelFormats.Pbgra32);
-
-                renderBitmap.Render(drawingVisual);
-                drawingContext.DrawImage(renderBitmap, bounds);
-
-            }, cancellationToken);
+            // 使用双缓冲渲染器
+            await _renderer.RenderStrokesAsync(_strokes, bounds, cancellationToken);
+            
+            // 交换缓冲区并渲染到目标
+            _renderer.SwapBuffers();
+            _renderer.RenderToDrawingContext(drawingContext, bounds);
 
             stopwatch.Stop();
 
             RenderCompleted?.Invoke(this, new InkRenderCompletedEventArgs(
                 bounds,
                 _strokes.Count,
+                stopwatch.Elapsed));
+        }
+
+        /// <summary>
+        /// 增量渲染 - 只渲染新增笔画
+        /// </summary>
+        public async Task RenderIncrementalAsync(
+            StrokeCollection newStrokes,
+            Rect bounds,
+            CancellationToken cancellationToken = default)
+        {
+            ThrowIfDisposed();
+
+            var stopwatch = Stopwatch.StartNew();
+
+            // 使用增量渲染
+            await _renderer.RenderIncrementalAsync(_strokes, newStrokes, bounds, cancellationToken);
+            
+            // 交换缓冲区
+            _renderer.SwapBuffers();
+
+            stopwatch.Stop();
+
+            RenderCompleted?.Invoke(this, new InkRenderCompletedEventArgs(
+                bounds,
+                newStrokes.Count,
                 stopwatch.Elapsed));
         }
 
@@ -403,6 +418,7 @@ namespace Ink_Canvas.Services.Ink
             _processingCts.Dispose();
             _recognitionCache.Dispose();
             _renderContext.Dispose();
+            _renderer.Dispose();
 
             _disposed = true;
         }
