@@ -13,12 +13,29 @@ namespace Ink_Canvas.ProcessBars
         public CycleProcessBar()
         {
             InitializeComponent();
-            IsPaused = false;
         }
+
+        #region IsPaused DependencyProperty
+
+        public static readonly DependencyProperty IsPausedProperty =
+            DependencyProperty.Register(
+                nameof(IsPaused),
+                typeof(bool),
+                typeof(CycleProcessBar),
+                new PropertyMetadata(false, OnIsPausedChanged));
 
         public bool IsPaused
         {
-            set { SetRingColor(value); }
+            get => (bool)GetValue(IsPausedProperty);
+            set => SetValue(IsPausedProperty, value);
+        }
+
+        private static void OnIsPausedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is CycleProcessBar control && e.NewValue is bool isPaused)
+            {
+                control.SetRingColor(isPaused);
+            }
         }
 
         private void SetRingColor(bool isPaused)
@@ -33,29 +50,50 @@ namespace Ink_Canvas.ProcessBars
             }
         }
 
+        #endregion
+
+        #region CurrentValue DependencyProperty
+
+        public static readonly DependencyProperty CurrentValueProperty =
+            DependencyProperty.Register(
+                nameof(CurrentValue),
+                typeof(double),
+                typeof(CycleProcessBar),
+                new PropertyMetadata(0.0, OnCurrentValueChanged));
+
+        public double CurrentValue
+        {
+            get => (double)GetValue(CurrentValueProperty);
+            set => SetValue(CurrentValueProperty, value);
+        }
+
+        private static void OnCurrentValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is CycleProcessBar control && e.NewValue is double value)
+            {
+                control.SetValue(value);
+            }
+        }
+
+        #endregion
+
         private Color StringToColor(string colorStr)
         {
             Byte[] argb = new Byte[4];
             for (int i = 0; i < 4; i++)
             {
                 char[] charArray = colorStr.Substring(i * 2 + 1, 2).ToCharArray();
-                //string str = "11";
                 Byte b1 = toByte(charArray[0]);
                 Byte b2 = toByte(charArray[1]);
                 argb[i] = (Byte)(b2 | (b1 << 4));
             }
-            return Color.FromArgb(argb[0], argb[1], argb[2], argb[3]);//#FFFFFFFF
+            return Color.FromArgb(argb[0], argb[1], argb[2], argb[3]);
         }
 
         private static byte toByte(char c)
         {
             byte b = (byte)"0123456789ABCDEF".IndexOf(c);
             return b;
-        }
-
-        public double CurrentValue
-        {
-            set { SetValue(value); }
         }
 
         /// <summary>
@@ -84,79 +122,33 @@ namespace Ink_Canvas.ProcessBars
             if (percentValue == 0) myCycleProcessBar.Visibility = Visibility.Hidden;
             else myCycleProcessBar.Visibility = Visibility.Visible;
 
-
             //数字显示
             lbValue.Content = (percentValue * 100).ToString("0") + "%";
-
-            /***********************************************
-            * 整个环形进度条使用Path来绘制，采用三角函数来计算
-            * 环形根据角度来分别绘制，以90度划分，方便计算比例
-            ***********************************************/
 
             bool isLagreCircle = false; //是否优势弧，即大于180度的弧形
 
             //小于90度
             if (angel <= 90)
             {
-                /*****************
-                          *
-                          *   *
-                          * * ra
-                   * * * * * * * * *
-                          *
-                          *
-                          *
-                ******************/
                 double ra = (90 - angel) * Math.PI / 180; //弧度
                 endLeft = leftStart + Math.Cos(ra) * radius; //余弦横坐标
                 endTop = topStart + radius - Math.Sin(ra) * radius; //正弦纵坐标
             }
-
             else if (angel <= 180)
             {
-                /*****************
-                          *
-                          *  
-                          * 
-                   * * * * * * * * *
-                          * * ra
-                          *  *
-                          *   *
-                ******************/
-
                 double ra = (angel - 90) * Math.PI / 180; //弧度
                 endLeft = leftStart + Math.Cos(ra) * radius; //余弦横坐标
                 endTop = topStart + radius + Math.Sin(ra) * radius;//正弦纵坐标
             }
-
             else if (angel <= 270)
             {
-                /*****************
-                          *
-                          *  
-                          * 
-                   * * * * * * * * *
-                        * *
-                       *ra*
-                      *   *
-                ******************/
                 isLagreCircle = true; //优势弧
                 double ra = (angel - 180) * Math.PI / 180;
                 endLeft = leftStart - Math.Sin(ra) * radius;
                 endTop = topStart + radius + Math.Cos(ra) * radius;
             }
-
             else if (angel < 360)
             {
-                /*****************
-                      *   *
-                       *  *  
-                     ra * * 
-                   * * * * * * * * *
-                          *
-                          *
-                          *
-                ******************/
                 isLagreCircle = true; //优势弧
                 double ra = (angel - 270) * Math.PI / 180;
                 endLeft = leftStart - Math.Cos(ra) * radius;
