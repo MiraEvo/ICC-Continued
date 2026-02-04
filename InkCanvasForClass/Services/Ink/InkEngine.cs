@@ -95,6 +95,8 @@ namespace Ink_Canvas.Services.Ink
         {
             ThrowIfDisposed();
 
+            using var timer = InkPerformanceMonitor.Instance.BeginOperation("StrokeAdd");
+
             var operation = new InkOperation
             {
                 Type = InkOperationType.Add,
@@ -167,7 +169,7 @@ namespace Ink_Canvas.Services.Ink
         {
             ThrowIfDisposed();
 
-            var stopwatch = Stopwatch.StartNew();
+            using var timer = InkPerformanceMonitor.Instance.BeginOperation("Render");
 
             // 使用双缓冲渲染器
             await _renderer.RenderStrokesAsync(_strokes, bounds, cancellationToken);
@@ -176,12 +178,10 @@ namespace Ink_Canvas.Services.Ink
             _renderer.SwapBuffers();
             _renderer.RenderToDrawingContext(drawingContext, bounds);
 
-            stopwatch.Stop();
-
             RenderCompleted?.Invoke(this, new InkRenderCompletedEventArgs(
                 bounds,
                 _strokes.Count,
-                stopwatch.Elapsed));
+                TimeSpan.Zero));
         }
 
         /// <summary>
@@ -354,7 +354,7 @@ namespace Ink_Canvas.Services.Ink
         /// </summary>
         private async Task RecognizeShapeAsync(InkStrokeData strokeData)
         {
-            var stopwatch = Stopwatch.StartNew();
+            using var timer = InkPerformanceMonitor.Instance.BeginOperation("ShapeRecognition");
 
             try
             {
@@ -365,13 +365,13 @@ namespace Ink_Canvas.Services.Ink
                 var result = await _recognitionPipeline.SubmitAsync(tempStrokes);
 
                 RecognitionCompleted?.Invoke(this, new InkRecognitionCompletedEventArgs(
-                    strokeData, result, stopwatch.Elapsed));
+                    strokeData, result, TimeSpan.Zero));
             }
             catch (Exception ex)
             {
                 var result = InkRecognitionResult.Failed(ex.Message);
                 RecognitionCompleted?.Invoke(this, new InkRecognitionCompletedEventArgs(
-                    strokeData, result, stopwatch.Elapsed));
+                    strokeData, result, TimeSpan.Zero));
             }
         }
 
