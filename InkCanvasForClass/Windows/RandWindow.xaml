@@ -4,15 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-        xmlns:vm="clr-namespace:Ink_Canvas.ViewModels"
         xmlns:local="clr-namespace:Ink_Canvas" FontFamily="Microsoft YaHei UI"
         ui:ThemeManager.RequestedTheme="Light" Topmost="True" Background="Transparent"
         mc:Ignorable="d" WindowStyle="None" AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
         Title="Ink Canvas 抽奖" Height="500" Width="900">
-    <Window.DataContext>
-        <vm:RandWindowViewModel />
-    </Window.DataContext>
     <Border Background="#F0F3F9" CornerRadius="10" BorderThickness="1" BorderBrush="#0066BF" Margin="0" ClipToBounds="True">
         <Canvas>
             <Image Source="/Resources/hatsune-miku1.png" Width="300" Canvas.Bottom="-140" Canvas.Left="-48" Canvas.Top="304"></Image>
