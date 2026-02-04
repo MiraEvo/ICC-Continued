@@ -363,7 +363,7 @@ namespace Ink_Canvas.ViewModels
         /// </summary>
         private void UpdateStartButtonIcon()
         {
-            StartButtonIcon = TotalCount == 1 ? "\uE77B" : "\uE716";
+            StartButtonIcon = TotalCount == 1 ? "Person24" : "People24";
         }
 
         /// <summary>
