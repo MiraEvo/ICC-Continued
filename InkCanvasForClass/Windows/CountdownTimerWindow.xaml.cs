@@ -1,12 +1,10 @@
 ﻿using Ink_Canvas.Helpers;
+using Ink_Canvas.ViewModels;
 using System;
-using System.Media;
 using System.Runtime.InteropServices;
-using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 
 namespace Ink_Canvas
 {
@@ -15,342 +13,60 @@ namespace Ink_Canvas
     /// </summary>
     public partial class CountdownTimerWindow : Window
     {
+        private bool _isInCompact = false;
+
+        /// <summary>
+        /// ViewModel 实例
+        /// </summary>
+        public CountdownTimerWindowViewModel ViewModel { get; private set; }
+
         public CountdownTimerWindow()
         {
             InitializeComponent();
+
+            // 创建并设置 ViewModel
+            ViewModel = new CountdownTimerWindowViewModel();
+            DataContext = ViewModel;
+
+            // 订阅 ViewModel 事件
+            ViewModel.RequestClose += OnRequestClose;
+            ViewModel.ToggleFullscreenRequested += OnToggleFullscreenRequested;
+            ViewModel.ToggleCompactModeRequested += OnToggleCompactModeRequested;
+
             AnimationsHelper.ShowWithSlideFromBottomAndFade(this, 0.25);
-
-            timer.Elapsed += Timer_Elapsed;
-            timer.Interval = 50;
         }
 
-        private void Timer_Elapsed(object? sender, ElapsedEventArgs e)
-        {
-            if (!isTimerRunning || isPaused)
-            {
-                timer.Stop();
-                return;
-            }
+        #region 事件处理
 
-            TimeSpan timeSpan = DateTime.Now - startTime;
-            TimeSpan totalTimeSpan = new TimeSpan(hour, minute, second);
-            TimeSpan leftTimeSpan = totalTimeSpan - timeSpan;
-            if (leftTimeSpan.Milliseconds > 0) leftTimeSpan += new TimeSpan(0, 0, 1);
-            double spentTimePercent = timeSpan.TotalMilliseconds / (totalSeconds * 1000.0);
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                ProcessBarTime.CurrentValue = 1 - spentTimePercent;
-                TextBlockHour.Text = leftTimeSpan.Hours.ToString("00");
-                TextBlockMinute.Text = leftTimeSpan.Minutes.ToString("00");
-                TextBlockSecond.Text = leftTimeSpan.Seconds.ToString("00");
-                TbCurrentTime.Text = leftTimeSpan.ToString(@"hh\:mm\:ss");
-                if (spentTimePercent >= 1)
-                {
-                    ProcessBarTime.CurrentValue = 0;
-                    TextBlockHour.Text = "00";
-                    TextBlockMinute.Text = "00";
-                    TextBlockSecond.Text = "00";
-                    timer.Stop();
-                    isTimerRunning = false;
-                    SymbolIconStart.Glyph = "\uE768";
-                    BtnStartCover.Visibility = Visibility.Visible;
-                    TextBlockHour.Foreground = new SolidColorBrush(StringToColor("#FF5B5D5F"));
-                    BorderStopTime.Visibility = Visibility.Collapsed;
-                }
-            });
-            if (spentTimePercent >= 1)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    //Play sound
-                    player.Stream = Properties.Resources.TimerDownNotice;
-                    player.Play();
-                });
-            }
-        }
-
-        SoundPlayer player = new SoundPlayer();
-
-        int hour = 0;
-        int minute = 1;
-        int second = 0;
-        int totalSeconds = 60;
-
-        DateTime startTime = DateTime.Now;
-        DateTime pauseTime = DateTime.Now;
-
-        bool isTimerRunning = false;
-        bool isPaused = false;
-
-        System.Timers.Timer timer = new System.Timers.Timer();
-
-        private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (isTimerRunning) return;
-            if (ProcessBarTime.Visibility == Visibility.Visible)
-            {
-                ProcessBarTime.Visibility = Visibility.Collapsed;
-                GridAdjustHour.Visibility = Visibility.Visible;
-                TextBlockHour.Foreground = Brushes.Black;
-            }
-            else
-            {
-                ProcessBarTime.Visibility = Visibility.Visible;
-                GridAdjustHour.Visibility = Visibility.Collapsed;
-                TextBlockHour.Foreground = new SolidColorBrush(StringToColor("#FF5B5D5F"));
-
-                if (hour == 0 && minute == 0 && second == 0)
-                {
-                    second = 1;
-                    TextBlockSecond.Text = second.ToString("00");
-                }
-            }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            hour++;
-            if (hour >= 100) hour = 0;
-            TextBlockHour.Text = hour.ToString("00");
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            hour += 5;
-            if (hour >= 100) hour = 0;
-            TextBlockHour.Text = hour.ToString("00");
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-            hour--;
-            if (hour < 0) hour = 99;
-            TextBlockHour.Text = hour.ToString("00");
-        }
-
-        private void Button_Click_3(object sender, RoutedEventArgs e)
-        {
-            hour -= 5;
-            if (hour < 0) hour = 99;
-            TextBlockHour.Text = hour.ToString("00");
-        }
-
-        private void Button_Click_4(object sender, RoutedEventArgs e)
-        {
-            minute++;
-            if (minute >= 60) minute = 0;
-            TextBlockMinute.Text = minute.ToString("00");
-        }
-
-        private void Button_Click_5(object sender, RoutedEventArgs e)
-        {
-            minute += 5;
-            if (minute >= 60) minute = 0;
-            TextBlockMinute.Text = minute.ToString("00");
-        }
-
-        private void Button_Click_6(object sender, RoutedEventArgs e)
-        {
-            minute--;
-            if (minute < 0) minute = 59;
-            TextBlockMinute.Text = minute.ToString("00");
-        }
-
-        private void Button_Click_7(object sender, RoutedEventArgs e)
-        {
-            minute -= 5;
-            if (minute < 0) minute = 59;
-            TextBlockMinute.Text = minute.ToString("00");
-        }
-
-        private void Button_Click_8(object sender, RoutedEventArgs e)
-        {
-            second += 5;
-            if (second >= 60) second = 0;
-            TextBlockSecond.Text = second.ToString("00");
-        }
-
-        private void Button_Click_9(object sender, RoutedEventArgs e)
-        {
-            second++;
-            if (second >= 60) second = 0;
-            TextBlockSecond.Text = second.ToString("00");
-        }
-
-        private void Button_Click_10(object sender, RoutedEventArgs e)
-        {
-            second--;
-            if (second < 0) second = 59;
-            TextBlockSecond.Text = second.ToString("00");
-        }
-
-        private void Button_Click_11(object sender, RoutedEventArgs e)
-        {
-            second -= 5;
-            if (second < 0) second = 59;
-            TextBlockSecond.Text = second.ToString("00");
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            ProcessBarTime.Visibility = Visibility.Visible;
-            GridAdjustHour.Visibility = Visibility.Collapsed;
-            BorderStopTime.Visibility = Visibility.Collapsed;
-        }
-
-        private void BtnFullscreen_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (WindowState == WindowState.Normal)
-            {
-                WindowState = WindowState.Maximized;
-                SymbolIconFullscreen.Glyph = "\uE73F";
-            }
-            else
-            {
-                WindowState = WindowState.Normal;
-                SymbolIconFullscreen.Glyph = "\uE740";
-            }
-        }
-
-        private void BtnReset_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (!isTimerRunning)
-            {
-                TextBlockHour.Text = hour.ToString("00");
-                TextBlockMinute.Text = minute.ToString("00");
-                TextBlockSecond.Text = second.ToString("00");
-                BtnResetCover.Visibility = Visibility.Visible;
-                BtnStartCover.Visibility = Visibility.Collapsed;
-                BorderStopTime.Visibility = Visibility.Collapsed;
-                TextBlockHour.Foreground = new SolidColorBrush(StringToColor("#FF5B5D5F"));
-                return;
-            }
-            else if (isPaused)
-            {
-                TextBlockHour.Text = hour.ToString("00");
-                TextBlockMinute.Text = minute.ToString("00");
-                TextBlockSecond.Text = second.ToString("00");
-                BtnResetCover.Visibility = Visibility.Visible;
-                BtnStartCover.Visibility = Visibility.Collapsed;
-                BorderStopTime.Visibility = Visibility.Collapsed;
-                TextBlockHour.Foreground = new SolidColorBrush(StringToColor("#FF5B5D5F"));
-                SymbolIconStart.Glyph = "\uE768";
-                isTimerRunning = false;
-                timer.Stop();
-                isPaused = false;
-                ProcessBarTime.CurrentValue = 0;
-                ProcessBarTime.IsPaused = false;
-            }
-            else
-            {
-                UpdateStopTime();
-                startTime = DateTime.Now;
-                Timer_Elapsed(timer, null!);
-            }
-        }
-
-        void UpdateStopTime()
-        {
-            TimeSpan totalTimeSpan = new TimeSpan(hour, minute, second);
-            TextBlockStopTime.Text = (startTime + totalTimeSpan).ToString("t");
-        }
-
-        private Color StringToColor(string colorStr)
-        {
-            Byte[] argb = new Byte[4];
-            for (int i = 0; i < 4; i++)
-            {
-                char[] charArray = colorStr.Substring(i * 2 + 1, 2).ToCharArray();
-                //string str = "11";
-                Byte b1 = toByte(charArray[0]);
-                Byte b2 = toByte(charArray[1]);
-                argb[i] = (Byte)(b2 | (b1 << 4));
-            }
-
-            return Color.FromArgb(argb[0], argb[1], argb[2], argb[3]); //#FFFFFFFF
-        }
-
-        private static byte toByte(char c)
-        {
-            byte b = (byte)"0123456789ABCDEF".IndexOf(c);
-            return b;
-        }
-
-        private void BtnStart_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (isPaused && isTimerRunning)
-            {
-                //继续
-                startTime += DateTime.Now - pauseTime;
-                ProcessBarTime.IsPaused = false;
-                TextBlockHour.Foreground = Brushes.Black;
-                SymbolIconStart.Glyph = "\uE769";
-                isPaused = false;
-                timer.Start();
-                UpdateStopTime();
-                BorderStopTime.Visibility = Visibility.Visible;
-            }
-            else if (isTimerRunning)
-            {
-                //暂停
-                pauseTime = DateTime.Now;
-                ProcessBarTime.IsPaused = true;
-                TextBlockHour.Foreground = new SolidColorBrush(StringToColor("#FF5B5D5F"));
-                SymbolIconStart.Glyph = "\uE768";
-                BorderStopTime.Visibility = Visibility.Collapsed;
-                isPaused = true;
-                timer.Stop();
-            }
-            else
-            {
-                //从头开始
-                startTime = DateTime.Now;
-                totalSeconds = ((hour * 60) + minute) * 60 + second;
-                ProcessBarTime.IsPaused = false;
-                TextBlockHour.Foreground = Brushes.Black;
-                SymbolIconStart.Glyph = "\uE769";
-                BtnResetCover.Visibility = Visibility.Collapsed;
-
-                if (totalSeconds <= 10)
-                {
-                    timer.Interval = 20;
-                }
-                else if (totalSeconds <= 60)
-                {
-                    timer.Interval = 30;
-                }
-                else if (totalSeconds <= 120)
-                {
-                    timer.Interval = 50;
-                }
-                else
-                {
-                    timer.Interval = 100;
-                }
-
-                isPaused = false;
-                isTimerRunning = true;
-                timer.Start();
-                UpdateStopTime();
-                BorderStopTime.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            isTimerRunning = false;
-            timer.Stop();
-            timer.Dispose();
-        }
-
-        private void BtnClose_MouseUp(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// 请求关闭窗口
+        /// </summary>
+        private void OnRequestClose(object sender, EventArgs e)
         {
             Close();
         }
 
-        private bool _isInCompact = false;
+        /// <summary>
+        /// 请求切换全屏
+        /// </summary>
+        private void OnToggleFullscreenRequested(object sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Normal)
+            {
+                WindowState = WindowState.Maximized;
+                ViewModel.FullscreenButtonIcon = "\uE73F";
+            }
+            else
+            {
+                WindowState = WindowState.Normal;
+                ViewModel.FullscreenButtonIcon = "\uE740";
+            }
+        }
 
-        private void BtnMinimal_OnMouseUp(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// 请求切换紧凑模式
+        /// </summary>
+        private void OnToggleCompactModeRequested(object sender, EventArgs e)
         {
             if (_isInCompact)
             {
@@ -362,7 +78,8 @@ namespace Ink_Canvas
                 // Set to center
                 double dpiScaleX = 1, dpiScaleY = 1;
                 PresentationSource source = PresentationSource.FromVisual(this);
-                if (source != null) {
+                if (source != null)
+                {
                     dpiScaleX = source.CompositionTarget.TransformToDevice.M11;
                     dpiScaleY = source.CompositionTarget.TransformToDevice.M22;
                 }
@@ -386,10 +103,135 @@ namespace Ink_Canvas
             _isInCompact = !_isInCompact;
         }
 
+        #endregion
+
+        #region UI 事件处理
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // 初始化由 ViewModel 处理
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ViewModel?.CloseCommand.Execute(null);
+        }
+
+        private void GridTime_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel?.ToggleSettingModeCommand.CanExecute(null) == true)
+            {
+                ViewModel.ToggleSettingModeCommand.Execute(null);
+            }
+        }
+
+        private void BtnStart_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel?.StartPauseResumeCommand.CanExecute(null) == true)
+            {
+                ViewModel.StartPauseResumeCommand.Execute(null);
+            }
+        }
+
+        private void BtnReset_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel?.ResetCommand.CanExecute(null) == true)
+            {
+                ViewModel.ResetCommand.Execute(null);
+            }
+        }
+
+        private void BtnFullscreen_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel?.ToggleFullscreenCommand.CanExecute(null) == true)
+            {
+                ViewModel.ToggleFullscreenCommand.Execute(null);
+            }
+        }
+
+        private void BtnMinimal_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel?.ToggleCompactModeCommand.CanExecute(null) == true)
+            {
+                ViewModel.ToggleCompactModeCommand.Execute(null);
+            }
+        }
+
+        private void BtnClose_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel?.CloseCommand.CanExecute(null) == true)
+            {
+                ViewModel.CloseCommand.Execute(null);
+            }
+        }
+
         private void WindowDragMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
                 DragMove();
+        }
+
+        #endregion
+
+        #region 时间调整按钮事件
+
+        private void ButtonHourPlus1_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.IncrementHourCommand.Execute(1);
+        }
+
+        private void ButtonHourMinus1_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.DecrementHourCommand.Execute(1);
+        }
+
+        private void ButtonMinutePlus1_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.IncrementMinuteCommand.Execute(1);
+        }
+
+        private void ButtonMinuteMinus1_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.DecrementMinuteCommand.Execute(1);
+        }
+
+        private void ButtonSecondPlus1_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.IncrementSecondCommand.Execute(1);
+        }
+
+        private void ButtonSecondMinus1_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.DecrementSecondCommand.Execute(1);
+        }
+
+        private void ButtonSecondPlus5_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.IncrementSecondCommand.Execute(5);
+        }
+
+        private void ButtonSecondMinus5_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.DecrementSecondCommand.Execute(5);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 窗口关闭时清理资源
+        /// </summary>
+        protected override void OnClosed(EventArgs e)
+        {
+            // 取消订阅事件
+            if (ViewModel != null)
+            {
+                ViewModel.RequestClose -= OnRequestClose;
+                ViewModel.ToggleFullscreenRequested -= OnToggleFullscreenRequested;
+                ViewModel.ToggleCompactModeRequested -= OnToggleCompactModeRequested;
+                ViewModel.Cleanup();
+            }
+
+            base.OnClosed(e);
         }
     }
 }
