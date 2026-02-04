@@ -72,6 +72,14 @@ namespace Ink_Canvas.ViewModels
                     OriginalText = NamesText;
                 }
             }
+            catch (IOException ex)
+            {
+                ErrorOccurred?.Invoke(this, $"加载名单失败（IO错误）: {ex.Message}");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ErrorOccurred?.Invoke(this, $"加载名单失败（无权限）: {ex.Message}");
+            }
             catch (Exception ex)
             {
                 ErrorOccurred?.Invoke(this, $"加载名单失败: {ex.Message}");
@@ -90,6 +98,14 @@ namespace Ink_Canvas.ViewModels
                 await File.WriteAllTextAsync(namesPath, NamesText);
                 OriginalText = NamesText;
                 NamesSaved?.Invoke(this, EventArgs.Empty);
+            }
+            catch (IOException ex)
+            {
+                ErrorOccurred?.Invoke(this, $"保存名单失败（IO错误）: {ex.Message}");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ErrorOccurred?.Invoke(this, $"保存名单失败（无权限）: {ex.Message}");
             }
             catch (Exception ex)
             {

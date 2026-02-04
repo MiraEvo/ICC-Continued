@@ -295,7 +295,7 @@ namespace Ink_Canvas {
         /// <param name="autoAlignCenter">
         ///     是否自動居中浮動工具欄
         /// </param>
-        private async void HideSubPanels(string mode = null, bool autoAlignCenter = false) {
+        private async Task HideSubPanelsAsync(string mode = null, bool autoAlignCenter = false) {
             AnimationsHelper.HideWithSlideAndFade(BorderTools);
             AnimationsHelper.HideWithSlideAndFade(BoardBorderTools);
             // AnimationsHelper.HideWithSlideAndFade(PenPalette);
@@ -341,6 +341,18 @@ namespace Ink_Canvas {
 
             await Task.Delay(20);
             isHidingSubPanelsWhenInking = false;
+        }
+
+        /// <summary>
+        /// 隐藏子面板（事件处理器包装）
+        /// </summary>
+        private async void HideSubPanels(string mode = null, bool autoAlignCenter = false) {
+            try {
+                await HideSubPanelsAsync(mode, autoAlignCenter);
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"隐藏子面板失败: {ex.Message}", LogHelper.LogType.Error);
+            }
         }
 
         #endregion

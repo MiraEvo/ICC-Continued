@@ -39,7 +39,12 @@ namespace Ink_Canvas {
         }
 
         public async void FoldFloatingBar_MouseUp(object sender, MouseButtonEventArgs e) {
-            await FoldFloatingBar(sender);
+            try {
+                await FoldFloatingBar(sender);
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"折叠浮动栏失败: {ex.Message}", LogHelper.LogType.Error);
+            }
         }
 
         public async Task FoldFloatingBar(object sender)

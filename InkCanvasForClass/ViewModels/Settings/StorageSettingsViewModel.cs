@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Ink_Canvas.Helpers;
 using Ink_Canvas.Models.Settings;
 using System;
 using System.Collections.ObjectModel;
@@ -227,7 +228,7 @@ namespace Ink_Canvas.ViewModels.Settings
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error opening folder: {ex.Message}");
+                LogHelper.WriteLogToFile($"打开文件夹失败: {ex.Message}", LogHelper.LogType.Error);
                 MessageBox.Show($"无法打开文件夹：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -250,7 +251,7 @@ namespace Ink_Canvas.ViewModels.Settings
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine($"Failed to delete cache file {file}: {ex.Message}");
+                            LogHelper.WriteLogToFile($"删除缓存文件失败 {file}: {ex.Message}", LogHelper.LogType.Warning);
                         }
                     }
                     
@@ -260,7 +261,7 @@ namespace Ink_Canvas.ViewModels.Settings
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error clearing cache: {ex.Message}");
+                LogHelper.WriteLogToFile($"清理缓存失败: {ex.Message}", LogHelper.LogType.Error);
                 MessageBox.Show($"清理缓存失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

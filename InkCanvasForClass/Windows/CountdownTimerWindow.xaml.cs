@@ -15,6 +15,16 @@ namespace Ink_Canvas
     /// </summary>
     public partial class CountdownTimerWindow : Window
     {
+        // 缓存的画笔，避免频繁创建
+        private static readonly SolidColorBrush DefaultHourForegroundBrush = CreateFrozenBrush("#FF5B5D5F");
+
+        private static SolidColorBrush CreateFrozenBrush(string colorHex)
+        {
+            var brush = new SolidColorBrush(StringToColor(colorHex));
+            brush.Freeze();
+            return brush;
+        }
+
         public CountdownTimerWindow()
         {
             InitializeComponent();
@@ -54,7 +64,7 @@ namespace Ink_Canvas
                     isTimerRunning = false;
                     SymbolIconStart.Glyph = "\uE768";
                     BtnStartCover.Visibility = Visibility.Visible;
-                    TextBlockHour.Foreground = new SolidColorBrush(StringToColor("#FF5B5D5F"));
+                    TextBlockHour.Foreground = DefaultHourForegroundBrush;
                     BorderStopTime.Visibility = Visibility.Collapsed;
                 }
             });
@@ -97,7 +107,7 @@ namespace Ink_Canvas
             {
                 ProcessBarTime.Visibility = Visibility.Visible;
                 GridAdjustHour.Visibility = Visibility.Collapsed;
-                TextBlockHour.Foreground = new SolidColorBrush(StringToColor("#FF5B5D5F"));
+                TextBlockHour.Foreground = DefaultHourForegroundBrush;
 
                 if (hour == 0 && minute == 0 && second == 0)
                 {
@@ -255,7 +265,7 @@ namespace Ink_Canvas
             TextBlockStopTime.Text = (startTime + totalTimeSpan).ToString("t");
         }
 
-        private Color StringToColor(string colorStr)
+        private static Color StringToColor(string colorStr)
         {
             Byte[] argb = new Byte[4];
             for (int i = 0; i < 4; i++)

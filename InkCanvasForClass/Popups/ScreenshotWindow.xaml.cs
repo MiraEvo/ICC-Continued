@@ -239,7 +239,7 @@ namespace Ink_Canvas.Popups
 
 
 
-        private async void CaptureFullScreen() {
+        private async Task CaptureFullScreenAsync() {
             LoadingOverlay.Visibility = Visibility.Visible;
             MainFuncPanel.Effect = new BlurEffect() {
                 KernelType = KernelType.Gaussian,
@@ -284,6 +284,15 @@ namespace Ink_Canvas.Popups
             }
         }
 
+        private async void CaptureFullScreen() {
+            try {
+                await CaptureFullScreenAsync();
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"全屏截图操作失败: {ex.Message}", LogHelper.LogType.Error);
+            }
+        }
+
         private void IconMouseLeave(object sender, MouseEventArgs e) {
             if (lastDownIcon == null) return;
             lastDownIcon = null;
@@ -314,12 +323,18 @@ namespace Ink_Canvas.Popups
                     _screenshotGridWindow = new WindowScreenshotGridWindow(windows, mainWindow);
                     _screenshotGridWindow.Show();
                 }
-                catch (TaskCanceledException) {}
-                catch (Exception ex) {}
+                catch (TaskCanceledException) {
+                    // 用户取消操作，无需处理
+                }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"加载窗口截图网格失败: {ex.Message}", LogHelper.LogType.Error);
+                }
             } else {
                 try {
                     _screenshotGridWindow.Close();
-                } catch (Exception ex) { }
+                } catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"关闭截图网格窗口失败: {ex.Message}", LogHelper.LogType.Error);
+                }
 
             }*/
 

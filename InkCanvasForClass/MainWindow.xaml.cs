@@ -1573,9 +1573,9 @@ namespace Ink_Canvas {
         /// <summary>
         /// 应用特殊版本推荐设置
         /// </summary>
-        private async void ApplySpecialVersionSettings()
+        private async Task ApplySpecialVersionSettingsAsync()
         {
-             await Task.Delay(1000);
+            await Task.Delay(1000);
             try {
                 isLoaded = false;
 
@@ -1740,6 +1740,19 @@ namespace Ink_Canvas {
                 }
 
                 isLoaded = true;
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile("应用特殊版本设置失败：" + ex.Message, LogHelper.LogType.Error);
+            }
+        }
+
+        /// <summary>
+        /// 应用特殊版本推荐设置（事件处理器包装）
+        /// </summary>
+        private async void ApplySpecialVersionSettings()
+        {
+            try {
+                await ApplySpecialVersionSettingsAsync();
             }
             catch (Exception ex) {
                 LogHelper.WriteLogToFile("应用特殊版本设置失败：" + ex.Message, LogHelper.LogType.Error);
@@ -1993,7 +2006,7 @@ namespace Ink_Canvas {
             }
         }
 
-        private async void AutoUpdate() {
+        private async Task AutoUpdateAsync() {
             AvailableLatestVersion = await AutoUpdateHelper.CheckForUpdates();
 
             if (AvailableLatestVersion != null) {
@@ -2011,6 +2024,15 @@ namespace Ink_Canvas {
                 }
             } else {
                 AutoUpdateHelper.DeleteUpdatesFolder();
+            }
+        }
+
+        private async void AutoUpdate() {
+            try {
+                await AutoUpdateAsync();
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"自动更新检查失败: {ex.Message}", LogHelper.LogType.Error);
             }
         }
 
