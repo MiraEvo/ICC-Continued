@@ -4,30 +4,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ink_Canvas.Dialogs"
-        xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-        mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen" ui:WindowHelper.UseModernWindowStyle="True"
-        ResizeMode="NoResize" Closed="Window_Closed" ui:ThemeManager.RequestedTheme="Light"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize" Closed="Window_Closed"
         Title="{Binding WindowTitle}" Height="160" Width="450" FontFamily="Microsoft YaHei UI">
     <Grid>
         <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition/>
-                <RowDefinition Height="40"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Viewbox HorizontalAlignment="Left" Margin="10" Height="30">
-                <ui:FontIcon Glyph="&#xE7E9;" Foreground="{Binding IconForeground}"/>
+                <ui:SymbolIcon Symbol="QuestionCircle24" Foreground="{Binding IconForeground}"/>
             </Viewbox>
-            <TextBlock TextWrapping="Wrap" Text="{Binding MessageText}" Margin="60,0,10,0" VerticalAlignment="Center"/>
-            <ui:SimpleStackPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Spacing="10">
-                <Button Margin="0" Content="{Binding YesButtonText}" Width="100" FontFamily="Microsoft YaHei UI" Click="ButtonYes_Click" Foreground="White">
-                    <Button.Resources>
-                        <SolidColorBrush x:Key="{x:Static ui:ThemeKeys.ButtonBackgroundKey}" Color="#15803d"/>
-                        <SolidColorBrush x:Key="{x:Static ui:ThemeKeys.ButtonBackgroundPointerOverKey}" Color="#15803d"/>
-                        <SolidColorBrush x:Key="{x:Static ui:ThemeKeys.ButtonBackgroundPressedKey}" Color="#166534"/>
-                    </Button.Resources>
-                </Button>
-                <Button Margin="0" Content="{Binding NoButtonText}" Width="100" FontFamily="Microsoft YaHei UI" Click="ButtonNo_Click" Foreground="#555555"/>
-            </ui:SimpleStackPanel>
+            <ui:TextBlock TextWrapping="Wrap" Text="{Binding MessageText}" Margin="60,0,10,0" VerticalAlignment="Center" FontTypography="Body"/>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,10,0,0">
+                <ui:Button Margin="0,0,10,0" Content="{Binding YesButtonText}" Width="100" FontFamily="Microsoft YaHei UI" Click="ButtonYes_Click" Appearance="Success"/>
+                <ui:Button Content="{Binding NoButtonText}" Width="100" FontFamily="Microsoft YaHei UI" Click="ButtonNo_Click" Appearance="Secondary"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

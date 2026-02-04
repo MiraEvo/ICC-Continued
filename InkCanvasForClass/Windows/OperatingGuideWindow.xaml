@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ink_Canvas.Dialogs"
         xmlns:vm="clr-namespace:Ink_Canvas.ViewModels"
-        xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-        ui:ThemeManager.RequestedTheme="Light" Topmost="True" Background="Transparent"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Topmost="True" Background="Transparent"
         WindowState="{Binding WindowState}"
         mc:Ignorable="d" WindowStyle="None" AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
@@ -19,65 +19,65 @@
         <Grid>
             <Border MouseMove="WindowDragMove" Visibility="Visible" Width="64" Height="15" CornerRadius="8" Background="Gray" Margin="0,0,0,5" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
             <ScrollViewer Margin="0,0,0,30" VerticalScrollBarVisibility="Auto"
-              PanningMode="VerticalOnly" ui:ThemeManager.RequestedTheme="Light"
+              PanningMode="VerticalOnly"
               ManipulationBoundaryFeedback="ScrollViewerManipulationBoundaryFeedback">
-                <ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel Margin="20,20,20,0" Orientation="Horizontal" HorizontalAlignment="Left">
+                <StackPanel>
+                    <StackPanel Margin="20,20,20,0" Orientation="Horizontal" HorizontalAlignment="Left">
                         <Image Margin="5, 0" Source="/Resources/Icons-Fluent/ic_fluent_keyboard_24_regular.png"
                            RenderOptions.BitmapScalingMode="HighQuality" Height="40" Width="40"/>
                         <TextBlock FontSize="22" Text="软件快捷键" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                    </ui:SimpleStackPanel>
+                    </StackPanel>
 
                     <Viewbox Height="320" HorizontalAlignment="Left">
-                        <ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                        <StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <Image Source="/Resources/Icons-Fluent/ic_fluent_control_button_24_regular.png"
                                    RenderOptions.BitmapScalingMode="HighQuality" Height="20" Width="20"/>
                                 <TextBlock FontSize="10" Text=" + Z  ——  撤销" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <Image Source="/Resources/Icons-Fluent/ic_fluent_control_button_24_regular.png"
                                    RenderOptions.BitmapScalingMode="HighQuality" Height="20" Width="20"/>
                                 <TextBlock FontSize="10" Text=" + Y  ——  重做" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <Image Source="/Resources/Icons-Fluent/ic_fluent_control_button_24_regular.png"
                                    RenderOptions.BitmapScalingMode="HighQuality" Height="20" Width="20"/>
                                 <TextBlock FontSize="10" Text=" + E  ——  清屏" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <TextBlock FontSize="10" Text=" Alt  + V  ——  显示/隐藏笑脸右侧工具栏（Visibility）" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <TextBlock FontSize="10" Text=" Alt  + C  ——  截屏（Capture）" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <TextBlock FontSize="10" Text=" Alt  + S  ——  切换至选择模式（Select）" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <TextBlock FontSize="10" Text=" Alt  + D  ——  切换至批注模式 / 墨迹颜色选择器（Draw）" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <TextBlock FontSize="10" Text=" Alt  + Q  ——  退出批注模式（Quit）" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <TextBlock FontSize="10" Text=" Alt  + B  ——  切换/退出画板模式（Board）" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <TextBlock FontSize="10" Text=" Alt  + E  ——  切换至面积擦/墨迹擦功能（Eraser）" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <TextBlock FontSize="10" Text=" Alt  + L  ——  切换至单次直线绘制功能（Line）" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
+                            </StackPanel>
+                            <StackPanel Margin="20, 0" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <TextBlock FontSize="10" Text="Shift + Esc  ——  退出 PPT 放映" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                            </ui:SimpleStackPanel>
-                        </ui:SimpleStackPanel>
+                            </StackPanel>
+                        </StackPanel>
                     </Viewbox>
-                </ui:SimpleStackPanel>
+                </StackPanel>
             </ScrollViewer>
             <Viewbox Visibility="{Binding IsNormalState, Converter={StaticResource BoolToVisibilityConverter}}" Margin="20,20,20,20" HorizontalAlignment="Right">
-                <ui:SimpleStackPanel Height="180" Orientation="Horizontal">
+                <StackPanel Height="180" Orientation="Horizontal">
                     <Border MouseUp="BtnFullscreen_MouseUp" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                             Margin="5"
                             Background="#FBFBFD" Height="20" Width="20" CornerRadius="100">
@@ -85,7 +85,7 @@
                             <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.1" BlurRadius="3"/>
                         </Border.Effect>
                         <Viewbox Margin="5.5">
-                            <ui:FontIcon Glyph="{Binding FullscreenButtonIcon}" Foreground="Black"/>
+                            <ui:SymbolIcon Symbol="{Binding FullscreenButtonIcon}" Foreground="Black"/>
                         </Viewbox>
                     </Border>
                     <Border MouseUp="BtnClose_MouseUp" HorizontalAlignment="Right" VerticalAlignment="Bottom"
@@ -95,10 +95,10 @@
                             <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.1" BlurRadius="3"/>
                         </Border.Effect>
                         <Viewbox Margin="5.5">
-                            <ui:FontIcon Glyph="&#xE894;"  Foreground="White"/>
+                            <ui:SymbolIcon Symbol="Dismiss24"  Foreground="White"/>
                         </Viewbox>
                     </Border>
-                </ui:SimpleStackPanel>
+                </StackPanel>
             </Viewbox>
         </Grid>
     </Border>
