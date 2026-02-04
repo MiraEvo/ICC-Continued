@@ -85,18 +85,6 @@ namespace Ink_Canvas.ViewModels
             Math.Max(1, _settingsService?.Settings?.Gesture?.PalmEraserDetectionThreshold ?? 3);
 
         /// <summary>
-        /// 手掌橡皮巨大触摸面积倍率（可配置）
-        /// </summary>
-        private double PalmEraserHugeAreaMultiplier =>
-            Math.Max(1.0, _settingsService?.Settings?.Gesture?.PalmEraserHugeAreaMultiplier ?? 2.5);
-
-        /// <summary>
-        /// 手掌橡皮移动时最小更新距离（像素，可配置）
-        /// </summary>
-        private double PalmEraserMinMove =>
-            Math.Max(0.5, _settingsService?.Settings?.Gesture?.PalmEraserMinMove ?? 2.5);
-
-        /// <summary>
         /// 手掌橡皮移动时最小更新间隔（毫秒，可配置）
         /// </summary>
         private int PalmEraserMinIntervalMs =>
@@ -277,7 +265,7 @@ namespace Ink_Canvas.ViewModels
             {
                 var delta = currentPoint - _lastPalmEraserPoint.Value;
                 var tick = Environment.TickCount;
-                var minMove = PalmEraserMinMove;
+                var minMove = 2.5; // 默认最小移动距离
                 if (delta.LengthSquared < minMove * minMove ||
                     tick - _lastPalmEraserUpdateTick < PalmEraserMinIntervalMs)
                 {
@@ -444,8 +432,8 @@ namespace Ink_Canvas.ViewModels
                     _largeTouchDetectionCount++;
 
                     // 如果连续检测次数达到阈值，或者面积非常大（肯定是手掌），则判定为手掌
-                    // 面积非常大定义为：阈值的2倍
-                    bool isHugeArea = area >= minPalmArea * PalmEraserHugeAreaMultiplier;
+                    // 面积非常大定义为：阈值的2.5倍
+                    bool isHugeArea = area >= minPalmArea * 2.5;
 
                     if (_largeTouchDetectionCount >= PalmEraserDetectionThreshold || isHugeArea)
                     {

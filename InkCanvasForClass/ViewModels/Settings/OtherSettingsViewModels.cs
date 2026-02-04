@@ -117,18 +117,6 @@ namespace Ink_Canvas.ViewModels
             set { if (SetProperty(_gesture.PalmEraserDetectionThreshold, value, _gesture, (g, v) => g.PalmEraserDetectionThreshold = v)) _saveAction?.Invoke(); }
         }
 
-        public double PalmEraserHugeAreaMultiplier
-        {
-            get => _gesture.PalmEraserHugeAreaMultiplier;
-            set { if (SetProperty(_gesture.PalmEraserHugeAreaMultiplier, value, _gesture, (g, v) => g.PalmEraserHugeAreaMultiplier = v)) _saveAction?.Invoke(); }
-        }
-
-        public double PalmEraserMinMove
-        {
-            get => _gesture.PalmEraserMinMove;
-            set { if (SetProperty(_gesture.PalmEraserMinMove, value, _gesture, (g, v) => g.PalmEraserMinMove = v)) _saveAction?.Invoke(); }
-        }
-
         public int PalmEraserMinIntervalMs
         {
             get => _gesture.PalmEraserMinIntervalMs;
@@ -142,12 +130,6 @@ namespace Ink_Canvas.ViewModels
         }
 
         // 现代化手掌橡皮擦设置
-        public bool UseModernPalmEraser
-        {
-            get => _gesture.UseModernPalmEraser;
-            set { if (SetProperty(_gesture.UseModernPalmEraser, value, _gesture, (g, v) => g.UseModernPalmEraser = v)) _saveAction?.Invoke(); }
-        }
-
         public bool UseAdaptiveThreshold
         {
             get => _gesture.UseAdaptiveThreshold;

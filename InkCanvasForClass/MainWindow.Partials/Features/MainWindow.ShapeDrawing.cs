@@ -434,27 +434,11 @@ namespace Ink_Canvas {
         #endregion
 
         private void inkCanvas_TouchMove(object sender, TouchEventArgs e) {
-            // 先处理手掌橡皮移动（兼容模式）
-            if (isPalmErasing) {
-                Main_Grid_TouchMove_PalmEraser(sender, e);
-                return;
-            }
-
             // 使用现代化的手掌橡皮擦服务
-            if (UseModernPalmEraser && _palmEraserService != null) {
+            if (_palmEraserService != null) {
                 bool isPalm = _palmEraserService.ProcessTouchMove(e, inkCanvas);
                 if (isPalm) {
                     // 手掌橡皮正在处理
-                    return;
-                }
-            }
-            // 回退到兼容模式
-            else if (!Settings.Gesture.DisableGestureEraser && Settings.Gesture.PalmEraserDetectOnMove) {
-                bool shouldCheckPalmEraser = Settings.Advanced.TouchMultiplier != 0 || !Settings.Advanced.IsSpecialScreen;
-                if (shouldCheckPalmEraser && IsPalmTouch(e, out double palmWidth)) {
-                    isLastTouchEraser = true;
-                    if (drawingShapeMode == 0 && forceEraser) return;
-                    StartPalmEraser(e, palmWidth);
                     return;
                 }
             }
@@ -770,9 +754,9 @@ namespace Ink_Canvas {
         private Point CuboidFrontRectEndP = new Point();
 
         private void Main_Grid_TouchUp(object sender, TouchEventArgs e) {
-            // 先处理手掌橡皮抬起
-            if (isPalmErasing) {
-                Main_Grid_TouchUp_PalmEraser(sender, e);
+            // 使用现代化的手掌橡皮擦服务
+            if (_palmEraserService != null) {
+                _palmEraserService.ProcessTouchUp(e, inkCanvas);
             }
 
             inkCanvas.ReleaseAllTouchCaptures();
