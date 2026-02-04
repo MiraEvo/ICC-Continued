@@ -6,11 +6,14 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace Ink_Canvas.Services
 {
     /// <summary>
     /// 设置服务实现，提供设置的加载、保存和访问功能
+    /// 使用 YAML 格式存储设置，提供更好的可读性和注释支持
     /// </summary>
     public class SettingsService : ISettingsService
     {
@@ -58,6 +61,11 @@ namespace Ink_Canvas.Services
         /// 设置文件路径
         /// </summary>
         public string SettingsFilePath { get; }
+
+        /// <summary>
+        /// 旧版 JSON 设置文件路径（用于迁移）
+        /// </summary>
+        public string LegacyJsonSettingsPath { get; }
 
         #endregion
 
@@ -148,13 +156,35 @@ namespace Ink_Canvas.Services
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="settingsFilePath">设置文件路径，默认为 App.RootPath + "Settings.json"</param>
+        /// <param name="settingsFilePath">设置文件路径，默认为 App.RootPath + "Settings.yml"</param>
         public SettingsService(string settingsFilePath = null)
         {
-            SettingsFilePath = settingsFilePath ?? Path.Combine(App.RootPath, "Settings.json");
+            SettingsFilePath = settingsFilePath ?? Path.Combine(App.RootPath, "Settings.yml");
+            LegacyJsonSettingsPath = Path.Combine(App.RootPath, "Settings.json");
             _settings = new Settings();
             SubscribeToSettingsChanges(_settings);
         }
+
+        #region YAML 序列化器
+
+        private static IDeserializer CreateYamlDeserializer()
+        {
+            return new DeserializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .IgnoreUnmatchedProperties()
+                .Build();
+        }
+
+        private static ISerializer CreateYamlSerializer()
+        {
+            return new SerializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitDefaults)
+                .WithIndentedSequences()
+                .Build();
+        }
+
+        #endregion
 
         /// <summary>
         /// 从文件加载设置
@@ -167,9 +197,31 @@ namespace Ink_Canvas.Services
 
             try
             {
+                // 优先尝试加载 YAML 格式
                 if (File.Exists(SettingsFilePath))
                 {
-                    string json = File.ReadAllText(SettingsFilePath);
+                    string yaml = File.ReadAllText(SettingsFilePath);
+                    var deserializer = CreateYamlDeserializer();
+                    var loadedSettings = deserializer.Deserialize<Settings>(yaml);
+
+                    if (loadedSettings != null)
+                    {
+                        Settings = loadedSettings;
+                        IsLoaded = true;
+                        loadedFromFile = true;
+
+                        // 检查并迁移路径
+                        CheckAndMigratePaths();
+
+                        LogHelper.WriteLogToFile($"Settings loaded successfully from YAML: {SettingsFilePath}", LogHelper.LogType.Info);
+                        OnSettingsLoaded(SettingsFilePath, loadedFromFile, isDefault);
+                        return true;
+                    }
+                }
+                // 如果 YAML 不存在，尝试迁移旧版 JSON
+                else if (File.Exists(LegacyJsonSettingsPath))
+                {
+                    string json = File.ReadAllText(LegacyJsonSettingsPath);
                     var loadedSettings = JsonConvert.DeserializeObject<Settings>(json);
 
                     if (loadedSettings != null)
@@ -177,11 +229,25 @@ namespace Ink_Canvas.Services
                         Settings = loadedSettings;
                         IsLoaded = true;
                         loadedFromFile = true;
-                        
+
                         // 检查并迁移路径
                         CheckAndMigratePaths();
-                        
-                        LogHelper.WriteLogToFile($"Settings loaded successfully from {SettingsFilePath}", LogHelper.LogType.Info);
+
+                        // 迁移到 YAML 格式
+                        Save();
+
+                        // 可选：删除旧版 JSON 文件
+                        try
+                        {
+                            File.Delete(LegacyJsonSettingsPath);
+                            LogHelper.WriteLogToFile($"Migrated and deleted legacy JSON settings: {LegacyJsonSettingsPath}", LogHelper.LogType.Info);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.WriteLogToFile($"Failed to delete legacy JSON settings: {ex.Message}", LogHelper.LogType.Warning);
+                        }
+
+                        LogHelper.WriteLogToFile($"Settings migrated from JSON to YAML: {SettingsFilePath}", LogHelper.LogType.Info);
                         OnSettingsLoaded(SettingsFilePath, loadedFromFile, isDefault);
                         return true;
                     }
@@ -192,18 +258,18 @@ namespace Ink_Canvas.Services
                     Settings = new Settings();
                     IsLoaded = true;
                     isDefault = true;
-                    
+
                     // 检查并迁移路径 (即使是默认设置也需要检查路径是否正确)
                     CheckAndMigratePaths();
-                    
+
                     LogHelper.WriteLogToFile($"Settings file not found, using defaults: {SettingsFilePath}", LogHelper.LogType.Info);
                     OnSettingsLoaded(SettingsFilePath, loadedFromFile, isDefault);
                     return true;
                 }
             }
-            catch (JsonException ex)
+            catch (Exception ex) when (ex is YamlDotNet.Core.YamlException || ex is JsonException)
             {
-                LogHelper.WriteLogToFile($"Failed to parse settings JSON: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.WriteLogToFile($"Failed to parse settings file: {ex.Message}", LogHelper.LogType.Error);
             }
             catch (IOException ex)
             {
@@ -236,7 +302,7 @@ namespace Ink_Canvas.Services
                 string newDefaultPath = Path.Combine(programDir, "Data");
 
                 bool needSave = false;
-                
+
                 // 确保对象不为空
                 if (Settings.Automation == null) Settings.Automation = new AutomationSettings();
                 if (Settings.Storage == null) Settings.Storage = new StorageSettings();
@@ -365,9 +431,31 @@ namespace Ink_Canvas.Services
 
             try
             {
+                // 优先尝试加载 YAML 格式
                 if (File.Exists(SettingsFilePath))
                 {
-                    string json = await File.ReadAllTextAsync(SettingsFilePath);
+                    string yaml = await File.ReadAllTextAsync(SettingsFilePath);
+                    var deserializer = CreateYamlDeserializer();
+                    var loadedSettings = deserializer.Deserialize<Settings>(yaml);
+
+                    if (loadedSettings != null)
+                    {
+                        Settings = loadedSettings;
+                        IsLoaded = true;
+                        loadedFromFile = true;
+
+                        // 检查并迁移路径
+                        CheckAndMigratePaths();
+
+                        LogHelper.WriteLogToFile($"Settings loaded successfully from YAML: {SettingsFilePath}", LogHelper.LogType.Info);
+                        OnSettingsLoaded(SettingsFilePath, loadedFromFile, isDefault);
+                        return true;
+                    }
+                }
+                // 如果 YAML 不存在，尝试迁移旧版 JSON
+                else if (File.Exists(LegacyJsonSettingsPath))
+                {
+                    string json = await File.ReadAllTextAsync(LegacyJsonSettingsPath);
                     var loadedSettings = JsonConvert.DeserializeObject<Settings>(json);
 
                     if (loadedSettings != null)
@@ -375,11 +463,25 @@ namespace Ink_Canvas.Services
                         Settings = loadedSettings;
                         IsLoaded = true;
                         loadedFromFile = true;
-                        
+
                         // 检查并迁移路径
                         CheckAndMigratePaths();
-                        
-                        LogHelper.WriteLogToFile($"Settings loaded successfully from {SettingsFilePath}", LogHelper.LogType.Info);
+
+                        // 迁移到 YAML 格式
+                        await SaveAsync();
+
+                        // 可选：删除旧版 JSON 文件
+                        try
+                        {
+                            File.Delete(LegacyJsonSettingsPath);
+                            LogHelper.WriteLogToFile($"Migrated and deleted legacy JSON settings: {LegacyJsonSettingsPath}", LogHelper.LogType.Info);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.WriteLogToFile($"Failed to delete legacy JSON settings: {ex.Message}", LogHelper.LogType.Warning);
+                        }
+
+                        LogHelper.WriteLogToFile($"Settings migrated from JSON to YAML: {SettingsFilePath}", LogHelper.LogType.Info);
                         OnSettingsLoaded(SettingsFilePath, loadedFromFile, isDefault);
                         return true;
                     }
@@ -389,18 +491,18 @@ namespace Ink_Canvas.Services
                     Settings = new Settings();
                     IsLoaded = true;
                     isDefault = true;
-                    
+
                     // 检查并迁移路径
                     CheckAndMigratePaths();
-                    
+
                     LogHelper.WriteLogToFile($"Settings file not found, using defaults: {SettingsFilePath}", LogHelper.LogType.Info);
                     OnSettingsLoaded(SettingsFilePath, loadedFromFile, isDefault);
                     return true;
                 }
             }
-            catch (JsonException ex)
+            catch (Exception ex) when (ex is YamlDotNet.Core.YamlException || ex is JsonException)
             {
-                LogHelper.WriteLogToFile($"Failed to parse settings JSON: {ex.Message}", LogHelper.LogType.Error);
+                LogHelper.WriteLogToFile($"Failed to parse settings file: {ex.Message}", LogHelper.LogType.Error);
                 LogHelper.NewLog(ex);
             }
             catch (IOException ex)
@@ -427,7 +529,7 @@ namespace Ink_Canvas.Services
         }
 
         /// <summary>
-        /// 保存设置到文件
+        /// 保存设置到文件（YAML 格式）
         /// </summary>
         /// <returns>是否保存成功</returns>
         public bool Save()
@@ -441,10 +543,19 @@ namespace Ink_Canvas.Services
                     Directory.CreateDirectory(directory);
                 }
 
-                string json = JsonConvert.SerializeObject(Settings, Formatting.Indented);
-                File.WriteAllText(SettingsFilePath, json);
+                // 使用 YAML 序列化
+                var serializer = CreateYamlSerializer();
+                string yaml = serializer.Serialize(Settings);
 
-                LogHelper.WriteLogToFile($"Settings saved successfully to {SettingsFilePath}", LogHelper.LogType.Info);
+                // 添加文件头注释
+                string yamlWithHeader = $"# InkCanvasForClass 设置文件\n" +
+                                       $"# 生成时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}\n" +
+                                       $"# 警告: 手动修改时请确保 YAML 格式正确\n\n" +
+                                       yaml;
+
+                File.WriteAllText(SettingsFilePath, yamlWithHeader);
+
+                LogHelper.WriteLogToFile($"Settings saved successfully to YAML: {SettingsFilePath}", LogHelper.LogType.Info);
                 OnSettingsSaved(SettingsFilePath, true);
                 return true;
             }
@@ -463,7 +574,7 @@ namespace Ink_Canvas.Services
         }
 
         /// <summary>
-        /// 异步保存设置到文件
+        /// 异步保存设置到文件（YAML 格式）
         /// </summary>
         /// <returns>是否保存成功</returns>
         public async Task<bool> SaveAsync()
@@ -476,18 +587,21 @@ namespace Ink_Canvas.Services
                     Directory.CreateDirectory(directory);
                 }
 
-                string json = JsonConvert.SerializeObject(Settings, Formatting.Indented);
-                await File.WriteAllTextAsync(SettingsFilePath, json);
+                // 使用 YAML 序列化
+                var serializer = CreateYamlSerializer();
+                string yaml = serializer.Serialize(Settings);
 
-                LogHelper.WriteLogToFile($"Settings saved successfully to {SettingsFilePath}", LogHelper.LogType.Info);
+                // 添加文件头注释
+                string yamlWithHeader = $"# InkCanvasForClass 设置文件\n" +
+                                       $"# 生成时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}\n" +
+                                       $"# 警告: 手动修改时请确保 YAML 格式正确\n\n" +
+                                       yaml;
+
+                await File.WriteAllTextAsync(SettingsFilePath, yamlWithHeader);
+
+                LogHelper.WriteLogToFile($"Settings saved successfully to YAML: {SettingsFilePath}", LogHelper.LogType.Info);
                 OnSettingsSaved(SettingsFilePath, true);
                 return true;
-            }
-            catch (JsonException ex)
-            {
-                LogHelper.WriteLogToFile($"Failed to serialize settings to JSON: {ex.Message}", LogHelper.LogType.Error);
-                LogHelper.NewLog(ex);
-                OnSettingsSaved(SettingsFilePath, false, ex.Message);
             }
             catch (IOException ex)
             {

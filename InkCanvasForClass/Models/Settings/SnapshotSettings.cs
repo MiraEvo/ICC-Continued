@@ -17,7 +17,7 @@ namespace Ink_Canvas.Models.Settings
         /// <summary>
         /// 是否使用 Magnification API 进行截图
         /// </summary>
-        [JsonProperty("usingMagnificationAPI")]
+        [JsonProperty("screenshotUsingMagnificationAPI")]
         public bool ScreenshotUsingMagnificationAPI
         {
             get => _screenshotUsingMagnificationAPI;

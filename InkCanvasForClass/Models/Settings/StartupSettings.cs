@@ -38,7 +38,7 @@ namespace Ink_Canvas.Models.Settings
         /// <summary>
         /// 静默更新开始时间
         /// </summary>
-        [JsonProperty("isAutoUpdateWithSilenceStartTime")]
+        [JsonProperty("autoUpdateWithSilenceStartTime")]
         public string AutoUpdateWithSilenceStartTime
         {
             get => _autoUpdateWithSilenceStartTime;
@@ -48,7 +48,7 @@ namespace Ink_Canvas.Models.Settings
         /// <summary>
         /// 静默更新结束时间
         /// </summary>
-        [JsonProperty("isAutoUpdateWithSilenceEndTime")]
+        [JsonProperty("autoUpdateWithSilenceEndTime")]
         public string AutoUpdateWithSilenceEndTime
         {
             get => _autoUpdateWithSilenceEndTime;

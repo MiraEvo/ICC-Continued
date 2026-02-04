@@ -18,6 +18,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sentry;
 using System.Runtime.CompilerServices;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace Ink_Canvas
 {
@@ -364,9 +366,34 @@ namespace Ink_Canvas
 
             var isUsingWindowChrome = false;
             try {
-                if (File.Exists(App.RootPath + "Settings.json")) {
+                // 优先尝试读取 YAML 格式，如果不存在则尝试 JSON
+                string yamlPath = Path.Combine(App.RootPath, "Settings.yml");
+                string jsonPath = Path.Combine(App.RootPath, "Settings.json");
+
+                if (File.Exists(yamlPath)) {
                     try {
-                        string text = File.ReadAllText(App.RootPath + "Settings.json");
+                        string yaml = File.ReadAllText(yamlPath);
+                        var deserializer = new DeserializerBuilder()
+                            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                            .IgnoreUnmatchedProperties()
+                            .Build();
+                        dynamic obj = deserializer.Deserialize<dynamic>(yaml);
+                        if (obj != null && obj.ContainsKey("startup"))
+                        {
+                            var startup = obj["startup"] as Dictionary<object, object>;
+                            if (startup != null && startup.ContainsKey("enableWindowChromeRendering"))
+                            {
+                                isUsingWindowChrome = Convert.ToBoolean(startup["enableWindowChromeRendering"]);
+                            }
+                        }
+                    }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile("解析 Settings.yml 的 WindowChrome 配置失败:" + ex.Message, LogHelper.LogType.Error);
+                    }
+                }
+                else if (File.Exists(jsonPath)) {
+                    try {
+                        string text = File.ReadAllText(jsonPath);
                         var obj = JObject.Parse(text);
                         isUsingWindowChrome = (bool)obj.SelectToken("startup.enableWindowChromeRendering");
                     }
@@ -384,7 +411,7 @@ namespace Ink_Canvas
                     }
                 }
             } catch (System.Security.SecurityException ex) {
-                LogHelper.WriteLogToFile("读取 Settings.json 失败（安全权限错误）:" + ex.Message, LogHelper.LogType.Error);
+                LogHelper.WriteLogToFile("读取设置文件失败（安全权限错误）:" + ex.Message, LogHelper.LogType.Error);
             }
 
             mainWin = new();
