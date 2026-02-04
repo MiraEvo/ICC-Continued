@@ -8,18 +8,18 @@ using System.Windows.Media;
 namespace Ink_Canvas.Services
 {
     /// <summary>
-    /// InkCanvas 服务实现 - 包装 IccInkCanvas
+    /// InkCanvas 服务实现 - 包装 IccInkCanvasModern
     /// </summary>
     public class InkCanvasService : IInkCanvasService
     {
-        private readonly IccInkCanvas _inkCanvas;
+        private readonly IccInkCanvasModern _inkCanvas;
         private InkCanvasMode _currentMode = InkCanvasMode.Ink;
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="inkCanvas">IccInkCanvas 实例</param>
-        public InkCanvasService(IccInkCanvas inkCanvas)
+        /// <param name="inkCanvas">IccInkCanvasModern 实例</param>
+        public InkCanvasService(IccInkCanvasModern inkCanvas)
         {
             _inkCanvas = inkCanvas ?? throw new ArgumentNullException(nameof(inkCanvas));
             
@@ -74,9 +74,9 @@ namespace Ink_Canvas.Services
         #region 属性
 
         /// <summary>
-        /// 获取内部 IccInkCanvas 实例（用于兼容现有代码）
+        /// 获取内部 IccInkCanvasModern 实例（用于兼容现有代码）
         /// </summary>
-        public IccInkCanvas InternalInkCanvas => _inkCanvas;
+        public IccInkCanvasModern InternalInkCanvas => _inkCanvas;
 
         /// <inheritdoc />
         public StrokeCollection Strokes

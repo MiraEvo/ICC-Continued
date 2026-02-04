@@ -39,7 +39,7 @@ namespace Ink_Canvas {
 
         private TimeMachine timeMachine = new();
 
-        private void ApplyHistoryToCanvas(TimeMachineHistory item, IccInkCanvas applyCanvas = null) {
+        private void ApplyHistoryToCanvas(TimeMachineHistory item, IccInkCanvasModern applyCanvas = null) {
             _currentCommitType = CommitReason.CodeInput;
             var canvas = inkCanvas;
             if (applyCanvas != null) {
@@ -125,7 +125,7 @@ namespace Ink_Canvas {
         }
 
         private StrokeCollection ApplyHistoriesToNewStrokeCollection(TimeMachineHistory[] items) {
-            var fakeInkCanv = new IccInkCanvas {
+            var fakeInkCanv = new IccInkCanvasModern {
                 Width = inkCanvas.ActualWidth,
                 Height = inkCanvas.ActualHeight,
                 EditingMode = InkCanvasEditingMode.None,

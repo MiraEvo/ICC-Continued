@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ink_Canvas.Models.Settings;
+using Ink_Canvas.Services.Ink;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +10,18 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using Windows.UI.Input.Inking;
 using Windows.UI.Input.Inking.Analysis;
-using Ink_Canvas.Models.Settings;
-using System.Runtime.InteropServices;
 
 namespace Ink_Canvas.Helpers
 {
     /// <summary>
-    /// 形状识别帮助类 - 使用 Windows.UI.Input.Inking.Analysis API
+    /// 形状识别帮助类 - 兼容层，内部使用 InkRecognitionPipeline
     /// 优化版本：修复空引用返回问题，增强健壮性
     /// </summary>
     public class InkRecognizeHelper
     {
+        // 新的识别管道（延迟初始化）
+        private static InkRecognitionPipeline _recognitionPipeline;
+
         // 识别结果缓存（基于笔画哈希）
         private static readonly ConcurrentDictionary<int, CachedRecognitionResult> _recognitionCache = new();
 
@@ -27,6 +30,19 @@ namespace Ink_Canvas.Helpers
 
         // 最大缓存条目数
         private const int MaxCacheEntries = 50;
+
+        /// <summary>
+        /// 获取或创建识别管道
+        /// </summary>
+        private static InkRecognitionPipeline GetRecognitionPipeline()
+        {
+            if (_recognitionPipeline == null)
+            {
+                _recognitionPipeline = new InkRecognitionPipeline();
+                _recognitionPipeline.Start();
+            }
+            return _recognitionPipeline;
+        }
 
         /// <summary>
         /// 清理过期缓存
@@ -137,6 +153,7 @@ namespace Ink_Canvas.Helpers
         /// <summary>
         /// 识别形状（异步）
         /// 确保永远不返回 null，失败时返回 ShapeRecognizeResult.Empty
+        /// 注意：此方法现在内部使用 InkRecognitionPipeline 进行识别
         /// </summary>
         public static async Task<ShapeRecognizeResult> RecognizeShapeAsync(StrokeCollection strokes, InkToShapeSettings? settings = null)
         {
@@ -146,6 +163,37 @@ namespace Ink_Canvas.Helpers
             }
 
             settings ??= new InkToShapeSettings();
+
+            // 尝试使用新的 InkRecognitionPipeline
+            try
+            {
+                var pipeline = GetRecognitionPipeline();
+                var result = await pipeline.SubmitAsync(strokes);
+
+                if (result.IsSuccessful && result.Confidence >= settings.ConfidenceThreshold)
+                {
+                    // 转换新结果格式到旧格式
+                    var drawingKind = ConvertShapeTypeToDrawingKind(result.RecognizedShape);
+                    if (drawingKind.HasValue)
+                    {
+                        return new ShapeRecognizeResult(
+                            new Point(result.BoundingBox.X + result.BoundingBox.Width / 2, 
+                                     result.BoundingBox.Y + result.BoundingBox.Height / 2),
+                            result.HotPoints,
+                            drawingKind.Value,
+                            result.BoundingBox,
+                            strokes,
+                            result.Confidence
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"InkRecognitionPipeline failed, falling back to legacy: {ex.Message}", LogHelper.LogType.Warning);
+            }
+
+            // 回退到原有实现
             var analyzer = new InkAnalyzer();
             var strokeContainer = new InkStrokeContainer();
 
@@ -486,10 +534,24 @@ namespace Ink_Canvas.Helpers
         {
             try
             {
+                // 尝试使用新的识别管道进行预加载
+                try
+                {
+                    var pipeline = GetRecognitionPipeline();
+                    // 管道已自动启动，无需额外操作
+                    LogHelper.WriteLogToFile("InkRecognitionPipeline preloaded successfully", LogHelper.LogType.Info);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.WriteLogToFile($"New pipeline preload failed, falling back to legacy: {ex.Message}", LogHelper.LogType.Warning);
+                }
+
+                // 回退到原有实现
                 var analyzer = new InkAnalyzer();
                 var container = new InkStrokeContainer();
                 var builder = new InkStrokeBuilder();
-                var points = new List<InkPoint>
+                var points = new List<Windows.UI.Input.Inking.InkPoint>
                 {
                     new(new Windows.Foundation.Point(0, 0), 0.5f),
                     new(new Windows.Foundation.Point(100, 100), 0.5f)
@@ -529,6 +591,27 @@ namespace Ink_Canvas.Helpers
         public static void ClearCache()
         {
             _recognitionCache.Clear();
+        }
+
+        /// <summary>
+        /// 将 InkShapeType 转换为 InkAnalysisDrawingKind
+        /// </summary>
+        private static InkAnalysisDrawingKind? ConvertShapeTypeToDrawingKind(InkShapeType shapeType)
+        {
+            return shapeType switch
+            {
+                InkShapeType.Circle => InkAnalysisDrawingKind.Circle,
+                InkShapeType.Ellipse => InkAnalysisDrawingKind.Ellipse,
+                InkShapeType.Triangle => InkAnalysisDrawingKind.Triangle,
+                InkShapeType.Rectangle => InkAnalysisDrawingKind.Rectangle,
+                InkShapeType.Square => InkAnalysisDrawingKind.Square,
+                InkShapeType.Diamond => InkAnalysisDrawingKind.Diamond,
+                InkShapeType.Parallelogram => InkAnalysisDrawingKind.Parallelogram,
+                InkShapeType.Trapezoid => InkAnalysisDrawingKind.Trapezoid,
+                InkShapeType.Pentagon => InkAnalysisDrawingKind.Pentagon,
+                InkShapeType.Hexagon => InkAnalysisDrawingKind.Hexagon,
+                _ => null
+            };
         }
     }
 

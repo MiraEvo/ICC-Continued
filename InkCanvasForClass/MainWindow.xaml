@@ -156,7 +156,7 @@
         <Label Name="Label" Visibility="Collapsed" Foreground="Gray" Content="0" />
         <Grid Name="InkCanvasGridForInkReplay">
             <helpers:RectangleSelectionViewer x:Name="RectangleSelection" />
-            <inkCanvas:IccInkCanvas x:Name="inkCanvas" ForceCursor="False"
+            <inkCanvas:IccInkCanvasModern x:Name="inkCanvas" ForceCursor="False"
                                     TouchUp="Main_Grid_TouchUp" TouchDown="Main_Grid_TouchDown"
                                     TouchMove="inkCanvas_TouchMove"
                                     ManipulationDelta="Main_Grid_ManipulationDelta"
