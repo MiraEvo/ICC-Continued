@@ -299,9 +299,8 @@ namespace Ink_Canvas.Services.Ink
                     cancellationToken.ThrowIfCancellationRequested();
 
                     var inkPoints = stroke.StylusPoints
-                        .Select(sp => new InkPoint(
-                            new Windows.Foundation.Point(sp.X, sp.Y),
-                            sp.PressureFactor))
+                        .Select(sp => new Windows.UI.Input.Inking.InkPoint(
+                            new Windows.Foundation.Point(sp.X, sp.Y), sp.PressureFactor))
                         .ToList();
 
                     if (inkPoints.Count >= 2)

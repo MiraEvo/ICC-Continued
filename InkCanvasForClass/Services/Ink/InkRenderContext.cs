@@ -54,7 +54,7 @@ namespace Ink_Canvas.Services.Ink
                 return;
             }
 
-            _writeableBitmap?.Dispose();
+            // WriteableBitmap 不需要 Dispose
             _writeableBitmap = new WriteableBitmap(
                 width, 
                 height, 
@@ -178,7 +178,8 @@ namespace Ink_Canvas.Services.Ink
         {
             if (_disposed) return;
 
-            _writeableBitmap?.Dispose();
+            // WriteableBitmap 不需要 Dispose
+            _writeableBitmap = null;
             ClearAllCaches();
             _disposed = true;
         }

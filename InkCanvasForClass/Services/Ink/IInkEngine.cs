@@ -104,7 +104,9 @@ namespace Ink_Canvas.Services.Ink
 
         public InkStrokeCollectedEventArgs(InkStrokeData strokeData)
         {
-            StrokeData = strokeData ?? throw new ArgumentNullException(nameof(strokeData));
+            if (strokeData.Id == Guid.Empty)
+                throw new ArgumentNullException(nameof(strokeData));
+            StrokeData = strokeData;
             Timestamp = DateTimeOffset.UtcNow;
         }
     }

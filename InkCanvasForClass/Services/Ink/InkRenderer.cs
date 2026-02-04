@@ -63,9 +63,7 @@ namespace Ink_Canvas.Services.Ink
 
             lock (_renderLock)
             {
-                // 释放旧资源
-                _frontBuffer?.Dispose();
-                _backBuffer?.Dispose();
+                // 释放旧资源（WriteableBitmap 不需要 Dispose）
                 _renderTarget?.Clear();
 
                 // 创建双缓冲区
@@ -312,9 +310,11 @@ namespace Ink_Canvas.Services.Ink
 
             lock (_renderLock)
             {
-                _frontBuffer?.Dispose();
-                _backBuffer?.Dispose();
+                // WriteableBitmap 不需要 Dispose，只需清空引用
+                _frontBuffer = null;
+                _backBuffer = null;
                 _renderTarget?.Clear();
+                _renderTarget = null;
             }
 
             _disposed = true;

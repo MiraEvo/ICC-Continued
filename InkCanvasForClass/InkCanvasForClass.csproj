@@ -65,6 +65,7 @@
 
     <!-- 显式添加以修复 CVE-2021-26701 漏洞 -->
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.1" />
     <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.9.27" NoWarn="NU1701" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     <PackageReference Include="Lierda.WPFHelper" Version="1.0.3" NoWarn="NU1701" />

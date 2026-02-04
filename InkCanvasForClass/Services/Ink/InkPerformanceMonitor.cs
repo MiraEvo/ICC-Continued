@@ -1,3 +1,4 @@
+using Ink_Canvas.Helpers;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -164,7 +165,7 @@ namespace Ink_Canvas.Services.Ink
     /// <summary>
     /// 操作计时器
     /// </summary>
-    public readonly struct OperationTimer : IDisposable
+    public struct OperationTimer : IDisposable
     {
         private readonly InkPerformanceMonitor _monitor;
         private readonly string _operationName;
