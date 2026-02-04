@@ -30,18 +30,14 @@
                             <Border.Effect>
                                 <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.15" BlurRadius="3"/>
                             </Border.Effect>
-                            <Viewbox Margin="20">
-                                <ui:SymbolIcon Symbol="Subtract24" Foreground="Black"/>
-                            </Viewbox>
+                            <ui:SymbolIcon Symbol="Subtract24" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
                         </Border>
                         <TextBlock Text="{Binding TotalCount}" FontFamily="Consolas" FontSize="55" Margin="10" Width="80" TextAlignment="Center" VerticalAlignment="Center"/>
                         <Border x:Name="BorderBtnAdd" MouseUp="BorderBtnAdd_MouseUp" Background="#FBFBFD" Height="70" Width="70" CornerRadius="100" Opacity="{Binding IncrementCountCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
                             <Border.Effect>
                                 <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.15" BlurRadius="3"/>
                             </Border.Effect>
-                            <Viewbox Margin="20">
-                                <ui:SymbolIcon Symbol="Add24" Foreground="Black"/>
-                            </Viewbox>
+                            <ui:SymbolIcon Symbol="Add24" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
                         </Border>
                     </StackPanel>
                     <StackPanel Visibility="Collapsed" Margin="0,8,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
@@ -65,9 +61,7 @@
                     </StackPanel>
                     <Border x:Name="BorderBtnRand" MouseUp="BorderBtnRand_MouseUp" Background="#0066BF" Height="70" Width="200" CornerRadius="35" Opacity="{Binding StartRandomSelectionCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
                         <StackPanel Margin="3,0" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Viewbox Margin="0,20">
-                                <ui:SymbolIcon Symbol="{Binding StartButtonIcon}" Foreground="White"/>
-                            </Viewbox>
+                            <ui:SymbolIcon Symbol="{Binding StartButtonIcon}" Foreground="White" FontSize="24" VerticalAlignment="Center"/>
                             <TextBlock Text="开抽" Foreground="White" FontSize="32" Margin="10,0,4,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
@@ -78,19 +72,15 @@
                     <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.15" BlurRadius="3"/>
                 </Border.Effect>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Viewbox Margin="15,12">
-                        <ui:SymbolIcon Symbol="People24" Foreground="Black"/>
-                    </Viewbox>
-                    <TextBlock Margin="5,12,15,12" Text="{Binding PeopleCountText}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <ui:SymbolIcon Symbol="People24" Foreground="Black" FontSize="16" VerticalAlignment="Center" Margin="15,0,5,0"/>
+                    <TextBlock Margin="0,12,15,12" Text="{Binding PeopleCountText}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
             <Border UseLayoutRounding="True" Canvas.Bottom="8" Canvas.Right="8" x:Name="BtnClose" MouseUp="BtnClose_MouseUp" HorizontalAlignment="Right" VerticalAlignment="{Binding ElementName=BorderBtnHelp, Path=VerticalAlignment}" Margin="10" Grid.Column="1" Background="#E32A34" Height="40" Width="40" CornerRadius="100">
                 <Border.Effect>
                     <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.1" BlurRadius="3"/>
                 </Border.Effect>
-                <Viewbox Margin="14">
-                    <ui:SymbolIcon Symbol="Dismiss24" Foreground="White"/>
-                </Viewbox>
+                <ui:SymbolIcon Symbol="Dismiss24" Foreground="White" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
         </Canvas>
 
