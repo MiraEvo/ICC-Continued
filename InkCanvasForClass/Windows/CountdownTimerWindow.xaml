@@ -51,9 +51,7 @@
                     <Button Margin="10" Grid.Row="2" Grid.Column="3" Content="-1" FontSize="50" Click="ButtonSecondMinus1_Click"/>
                 </Grid>
                 <Viewbox Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Margin="10" FontSize="30" Foreground="{Binding TimeForeground}" MouseUp="GridTime_MouseUp">
-                        <Run Text="{Binding HourText}"/><Run Text=":"/><Run Text="{Binding MinuteText}"/><Run Text=":"/><Run Text="{Binding SecondText}"/>
-                    </TextBlock>
+                    <TextBlock Margin="10" FontSize="30" Foreground="{Binding TimeForeground}" MouseUp="GridTime_MouseUp" Text="{Binding TimeDisplayText}"/>
                 </Viewbox>
             </Grid>
             <Grid Grid.Column="1">

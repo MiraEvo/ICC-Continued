@@ -43,6 +43,7 @@ namespace Ink_Canvas.ViewModels
         /// </summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HourText))]
+        [NotifyPropertyChangedFor(nameof(TimeDisplayText))]
         private int _hour = 0;
 
         /// <summary>
@@ -50,6 +51,7 @@ namespace Ink_Canvas.ViewModels
         /// </summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(MinuteText))]
+        [NotifyPropertyChangedFor(nameof(TimeDisplayText))]
         private int _minute = 1;
 
         /// <summary>
@@ -57,6 +59,7 @@ namespace Ink_Canvas.ViewModels
         /// </summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SecondText))]
+        [NotifyPropertyChangedFor(nameof(TimeDisplayText))]
         private int _second = 0;
 
         /// <summary>
@@ -73,6 +76,11 @@ namespace Ink_Canvas.ViewModels
         /// 秒显示文本
         /// </summary>
         public string SecondText => Second.ToString("00");
+
+        /// <summary>
+        /// 时间显示文本（时:分:秒）
+        /// </summary>
+        public string TimeDisplayText => $"{HourText}:{MinuteText}:{SecondText}";
 
         /// <summary>
         /// 当前显示时间（紧凑模式）
