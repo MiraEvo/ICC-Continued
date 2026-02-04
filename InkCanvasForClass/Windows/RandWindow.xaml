@@ -4,11 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+        xmlns:vm="clr-namespace:Ink_Canvas.ViewModels"
         xmlns:local="clr-namespace:Ink_Canvas" FontFamily="Microsoft YaHei UI"
         ui:ThemeManager.RequestedTheme="Light" Topmost="True" Background="Transparent"
-        mc:Ignorable="d" WindowStyle="None" AllowsTransparency="True" Loaded="Window_Loaded"
+        mc:Ignorable="d" WindowStyle="None" AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
         Title="Ink Canvas 抽奖" Height="500" Width="900">
+    <Window.DataContext>
+        <vm:RandWindowViewModel />
+    </Window.DataContext>
     <Border Background="#F0F3F9" CornerRadius="10" BorderThickness="1" BorderBrush="#0066BF" Margin="0" ClipToBounds="True">
         <Canvas>
             <Image Source="/Resources/hatsune-miku1.png" Width="300" Canvas.Bottom="-140" Canvas.Left="-48" Canvas.Top="304"></Image>
@@ -19,14 +23,14 @@
                 </Grid.ColumnDefinitions>
                 <Viewbox HorizontalAlignment="Center" Margin="20,0">
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="50" MinHeight="470">
-                        <Label Name="LabelOutput" FontSize="130" Content="" Block.TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <Label Name="LabelOutput2" FontSize="130" Visibility="Collapsed" Content="" Block.TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <Label Name="LabelOutput3" FontSize="130" Visibility="Collapsed" Content="" Block.TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Label FontSize="130" Content="{Binding OutputText}" Block.TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Label FontSize="130" Visibility="{Binding IsOutput2Visible, Converter={StaticResource BoolToVisibilityConverter}}" Content="{Binding OutputText2}" Block.TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Label FontSize="130" Visibility="{Binding IsOutput3Visible, Converter={StaticResource BoolToVisibilityConverter}}" Content="{Binding OutputText3}" Block.TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </ui:SimpleStackPanel>
                 </Viewbox>
-                <ui:SimpleStackPanel Spacing="8" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Opacity="1" Name="PeopleControlPane" Width="256">
+                <ui:SimpleStackPanel Spacing="8" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Opacity="{Binding ControlPanelOpacity}" IsEnabled="{Binding IsControlPanelEnabled}" Name="PeopleControlPane" Width="256">
                     <StackPanel Orientation="Horizontal">
-                        <Border x:Name="BorderBtnMinus" MouseUp="BorderBtnMinus_MouseUp" Background="#FBFBFD" Height="70" Width="70" CornerRadius="100">
+                        <Border x:Name="BorderBtnMinus" MouseUp="BorderBtnMinus_MouseUp" Background="#FBFBFD" Height="70" Width="70" CornerRadius="100" Opacity="{Binding DecrementCountCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
                             <Border.Effect>
                                 <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.15" BlurRadius="3"/>
                             </Border.Effect>
@@ -49,8 +53,8 @@
                                 </Image>
                             </Viewbox>
                         </Border>
-                        <TextBlock Name="LabelNumberCount" Text="1" FontFamily="Consolas" FontSize="55" Margin="10" Width="80" TextAlignment="Center"/>
-                        <Border x:Name="BorderBtnAdd" MouseUp="BorderBtnAdd_MouseUp" Background="#FBFBFD" Height="70" Width="70" CornerRadius="100">
+                        <TextBlock Text="{Binding TotalCount}" FontFamily="Consolas" FontSize="55" Margin="10" Width="80" TextAlignment="Center"/>
+                        <Border x:Name="BorderBtnAdd" MouseUp="BorderBtnAdd_MouseUp" Background="#FBFBFD" Height="70" Width="70" CornerRadius="100" Opacity="{Binding IncrementCountCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
                             <Border.Effect>
                                 <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.15" BlurRadius="3"/>
                             </Border.Effect>
@@ -93,17 +97,17 @@
                             <ComboBoxItem>只抽女</ComboBoxItem>
                         </ComboBox>
                     </ui:SimpleStackPanel>
-                    <Border x:Name="BorderBtnRand" MouseUp="BorderBtnRand_MouseUp" Background="#0066BF" Height="70" Width="200" CornerRadius="35">
+                    <Border x:Name="BorderBtnRand" MouseUp="BorderBtnRand_MouseUp" Background="#0066BF" Height="70" Width="200" CornerRadius="35" Opacity="{Binding StartRandomSelectionCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
                         <ui:SimpleStackPanel Margin="3,0" Spacing="20" Orientation="Horizontal" HorizontalAlignment="Center">
                             <Viewbox Margin="0,20">
-                                <ui:FontIcon Name="SymbolIconStart" Glyph="&#xE77B;" Foreground="White"/>
+                                <ui:FontIcon Glyph="{Binding StartButtonIcon}" Foreground="White"/>
                             </Viewbox>
                             <TextBlock Text="开抽" Foreground="White" FontSize="32" Margin="-1,-1,4,0" VerticalAlignment="Center"/>
                         </ui:SimpleStackPanel>
                     </Border>
                 </ui:SimpleStackPanel>
             </Grid>
-            <Border UseLayoutRounding="True" Canvas.Bottom="8" Canvas.Right="8" x:Name="BorderBtnHelp" MouseUp="BorderBtnHelp_MouseUp" Background="#FBFBFD" Grid.Column="1" Margin="10,10,60,10" Height="40" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="20">
+            <Border UseLayoutRounding="True" Canvas.Bottom="8" Canvas.Right="8" x:Name="BorderBtnHelp" MouseUp="BorderBtnHelp_MouseUp" Background="#FBFBFD" Grid.Column="1" Margin="10,10,60,10" Height="40" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="20" Visibility="{Binding IsHelpButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                 <Border.Effect>
                     <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.15" BlurRadius="3"/>
                 </Border.Effect>
@@ -111,7 +115,7 @@
                     <Viewbox Margin="15,12">
                         <ui:FontIcon Glyph="&#xE716;" Foreground="Black"/>
                     </Viewbox>
-                    <TextBlock Margin="-5,12,15,12" Name="TextBlockPeopleCount" Text="点击此处以导入名单" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Margin="-5,12,15,12" Text="{Binding PeopleCountText}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </ui:SimpleStackPanel>
             </Border>
             <Border UseLayoutRounding="True" Canvas.Bottom="8" Canvas.Right="8" x:Name="BtnClose" MouseUp="BtnClose_MouseUp" HorizontalAlignment="Right" VerticalAlignment="{Binding ElementName=BorderBtnHelp, Path=VerticalAlignment}" Margin="10" Grid.Column="1" Background="#E32A34" Height="40" Width="40" CornerRadius="100">

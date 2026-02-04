@@ -99,5 +99,8 @@
     
     <!-- 启用状态转透明度 -->
     <legacyConverters:IsEnabledToOpacityConverter x:Key="IsEnabledToOpacityConverter" />
+    
+    <!-- 布尔值转透明度（True -> 1.0, False -> 0.4） -->
+    <legacyConverters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
 
 </ResourceDictionary>

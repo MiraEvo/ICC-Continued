@@ -81,11 +81,12 @@ namespace Ink_Canvas.Converter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is bool isHalfOpacity && isHalfOpacity)
+            // 当值为 true 时返回 1.0（不透明），为 false 时返回 0.4（半透明）
+            if (value is bool isEnabled && isEnabled)
             {
-                return 0.5;
+                return 1.0;
             }
-            return 1.0;
+            return 0.4;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

@@ -13,7 +13,7 @@
                 <ResourceDictionary Source="Resources/DrawShapeImageDictionary.xaml"/>
                 <ResourceDictionary Source="Resources/IconImageDictionary.xaml"/>
                 <ResourceDictionary Source="Resources/Styles/Light.xaml"/>
-                <ResourceDictionary Source="Converters/ConvertersDictionary.xaml"/>
+                <ResourceDictionary Source="Resources/Converters/ConvertersDictionary.xaml"/>
                 <wpfui:ThemesDictionary Theme="Light" />
                 <wpfui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
