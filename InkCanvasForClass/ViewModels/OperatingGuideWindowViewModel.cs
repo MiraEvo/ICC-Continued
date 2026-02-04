@@ -28,7 +28,7 @@ namespace Ink_Canvas.ViewModels
         /// 全屏按钮图标
         /// </summary>
         [ObservableProperty]
-        private string _fullscreenButtonIcon = "\uE740";
+        private string _fullscreenButtonIcon = "Fullscreen24";
 
         #endregion
 
@@ -52,12 +52,12 @@ namespace Ink_Canvas.ViewModels
             if (WindowState == System.Windows.WindowState.Normal)
             {
                 WindowState = System.Windows.WindowState.Maximized;
-                FullscreenButtonIcon = "\uE73F";
+                FullscreenButtonIcon = "Contract24";
             }
             else
             {
                 WindowState = System.Windows.WindowState.Normal;
-                FullscreenButtonIcon = "\uE740";
+                FullscreenButtonIcon = "Fullscreen24";
             }
         }
 
