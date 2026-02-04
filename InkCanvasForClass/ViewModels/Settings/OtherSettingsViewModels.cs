@@ -140,6 +140,49 @@ namespace Ink_Canvas.ViewModels
             get => _gesture.PalmEraserDetectOnMove;
             set { if (SetProperty(_gesture.PalmEraserDetectOnMove, value, _gesture, (g, v) => g.PalmEraserDetectOnMove = v)) _saveAction?.Invoke(); }
         }
+
+        // 现代化手掌橡皮擦设置
+        public bool UseModernPalmEraser
+        {
+            get => _gesture.UseModernPalmEraser;
+            set { if (SetProperty(_gesture.UseModernPalmEraser, value, _gesture, (g, v) => g.UseModernPalmEraser = v)) _saveAction?.Invoke(); }
+        }
+
+        public bool UseAdaptiveThreshold
+        {
+            get => _gesture.UseAdaptiveThreshold;
+            set { if (SetProperty(_gesture.UseAdaptiveThreshold, value, _gesture, (g, v) => g.UseAdaptiveThreshold = v)) _saveAction?.Invoke(); }
+        }
+
+        public bool UsePredictiveErasing
+        {
+            get => _gesture.UsePredictiveErasing;
+            set { if (SetProperty(_gesture.UsePredictiveErasing, value, _gesture, (g, v) => g.UsePredictiveErasing = v)) _saveAction?.Invoke(); }
+        }
+
+        public double PalmProbabilityThreshold
+        {
+            get => _gesture.PalmProbabilityThreshold;
+            set { if (SetProperty(_gesture.PalmProbabilityThreshold, value, _gesture, (g, v) => g.PalmProbabilityThreshold = v)) _saveAction?.Invoke(); }
+        }
+
+        public int TouchHistorySize
+        {
+            get => _gesture.TouchHistorySize;
+            set { if (SetProperty(_gesture.TouchHistorySize, value, _gesture, (g, v) => g.TouchHistorySize = v)) _saveAction?.Invoke(); }
+        }
+
+        public bool EnableHapticFeedback
+        {
+            get => _gesture.EnableHapticFeedback;
+            set { if (SetProperty(_gesture.EnableHapticFeedback, value, _gesture, (g, v) => g.EnableHapticFeedback = v)) _saveAction?.Invoke(); }
+        }
+
+        public double PalmEraserVelocityThreshold
+        {
+            get => _gesture.PalmEraserVelocityThreshold;
+            set { if (SetProperty(_gesture.PalmEraserVelocityThreshold, value, _gesture, (g, v) => g.PalmEraserVelocityThreshold = v)) _saveAction?.Invoke(); }
+        }
     }
 
     /// <summary>

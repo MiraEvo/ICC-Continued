@@ -1,4 +1,5 @@
 ﻿using Ink_Canvas.Helpers;
+using Ink_Canvas.Services.PalmEraser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,78 +16,225 @@ namespace Ink_Canvas {
         #region Palm Eraser State
 
         /// <summary>
-        /// 是否处于手掌橡皮模式（自动检测触发）
+        /// 现代化的手掌橡皮擦服务
+        /// </summary>
+        private PalmEraserService _palmEraserService;
+
+        /// <summary>
+        /// 是否使用现代化的手掌橡皮擦
+        /// </summary>
+        private bool UseModernPalmEraser => Settings?.Gesture?.UseModernPalmEraser ?? true;
+
+        // 以下字段仅用于兼容模式（旧逻辑）
+
+        /// <summary>
+        /// 是否处于手掌橡皮模式（自动检测触发）- 兼容模式
         /// </summary>
         private bool isPalmErasing = false;
 
         /// <summary>
-        /// 手掌橡皮触发前的编辑模式（用于恢复）
+        /// 手掌橡皮触发前的编辑模式（用于恢复）- 兼容模式
         /// </summary>
         private InkCanvasEditingMode editModeBeforePalmEraser = InkCanvasEditingMode.Ink;
 
         /// <summary>
-        /// 当前手掌触摸设备的ID
+        /// 当前手掌触摸设备的ID - 兼容模式
         /// </summary>
         private int palmTouchDeviceId = -1;
 
         /// <summary>
-        /// 手掌触摸的初始位置
+        /// 手掌触摸的初始位置 - 兼容模式
         /// </summary>
         private Point palmTouchStartPoint = new();
 
         /// <summary>
-        /// 手掌橡皮的增量命中测试器
+        /// 手掌橡皮的增量命中测试器 - 兼容模式
         /// </summary>
         private IncrementalStrokeHitTester palmHitTester = null;
 
         /// <summary>
-        /// 手掌橡皮的缩放矩阵
+        /// 手掌橡皮的缩放矩阵 - 兼容模式
         /// </summary>
         private Matrix palmScaleMatrix = new();
 
         /// <summary>
-        /// 手掌橡皮上次更新位置
+        /// 手掌橡皮上次更新位置 - 兼容模式
         /// </summary>
         private Point? lastPalmEraserPoint = null;
 
         /// <summary>
-        /// 手掌橡皮上次更新时间戳
+        /// 手掌橡皮上次更新时间戳 - 兼容模式
         /// </summary>
         private int lastPalmEraserUpdateTick = 0;
 
         /// <summary>
-        /// 手掌橡皮的宽度
+        /// 手掌橡皮的宽度 - 兼容模式
         /// </summary>
         private double palmEraserWidth = 64;
 
         /// <summary>
-        /// 连续检测到的大触摸点数量（用于稳定性判断）
+        /// 连续检测到的大触摸点数量（用于稳定性判断）- 兼容模式
         /// </summary>
         private int largeTouchDetectionCount = 0;
 
         /// <summary>
-        /// 手掌橡皮触发连续检测次数（可配置）
+        /// 手掌橡皮触发连续检测次数（可配置）- 兼容模式
         /// </summary>
         private int PalmEraserDetectionThreshold =>
             Math.Max(1, Settings?.Gesture?.PalmEraserDetectionThreshold ?? 3);
 
         /// <summary>
-        /// 手掌橡皮巨大触摸面积倍率（可配置）
+        /// 手掌橡皮巨大触摸面积倍率（可配置）- 兼容模式
         /// </summary>
         private double PalmEraserHugeAreaMultiplier =>
             Math.Max(1.0, Settings?.Gesture?.PalmEraserHugeAreaMultiplier ?? 2.5);
 
         /// <summary>
-        /// 手掌橡皮移动时最小更新距离（像素，可配置）
+        /// 手掌橡皮移动时最小更新距离（像素，可配置）- 兼容模式
         /// </summary>
         private double PalmEraserMinMove =>
             Math.Max(0.5, Settings?.Gesture?.PalmEraserMinMove ?? 2.5);
 
         /// <summary>
-        /// 手掌橡皮移动时最小更新间隔（毫秒，可配置）
+        /// 手掌橡皮移动时最小更新间隔（毫秒，可配置）- 兼容模式
         /// </summary>
         private int PalmEraserMinIntervalMs =>
             Math.Max(0, Settings?.Gesture?.PalmEraserMinIntervalMs ?? 12);
+
+        #endregion
+
+        #region Modern Palm Eraser Service
+
+        /// <summary>
+        /// 初始化现代化的手掌橡皮擦服务
+        /// </summary>
+        private void InitializePalmEraserService()
+        {
+            if (_palmEraserService != null)
+            {
+                // 取消订阅旧事件
+                _palmEraserService.Activated -= OnPalmEraserActivated;
+                _palmEraserService.Moved -= OnPalmEraserMoved;
+                _palmEraserService.Ended -= OnPalmEraserEnded;
+                _palmEraserService.StrokeErased -= OnPalmEraserStrokeErased;
+                _palmEraserService.VisualFeedbackNeeded -= OnPalmEraserVisualFeedbackNeeded;
+            }
+
+            _palmEraserService = new PalmEraserService(Settings?.Gesture);
+
+            // 配置服务
+            _palmEraserService.BaseBoundsWidth = BoundsWidth;
+            _palmEraserService.IsQuadIr = Settings?.Advanced?.IsQuadIR ?? false;
+            _palmEraserService.IsSpecialScreen = Settings?.Advanced?.IsSpecialScreen ?? false;
+            _palmEraserService.TouchMultiplier = Settings?.Advanced?.TouchMultiplier ?? 1.0;
+            _palmEraserService.IsNibMode = Settings?.Startup?.IsEnableNibMode ?? false;
+            _palmEraserService.NibModeBoundsWidthThreshold = Settings?.Advanced?.NibModeBoundsWidthThresholdValue ?? 2.5;
+            _palmEraserService.FingerModeBoundsWidthThreshold = Settings?.Advanced?.FingerModeBoundsWidthThresholdValue ?? 2.0;
+            _palmEraserService.NibModeEraserSizeMultiplier = Settings?.Advanced?.NibModeBoundsWidthEraserSize ?? 1.0;
+            _palmEraserService.FingerModeEraserSizeMultiplier = Settings?.Advanced?.FingerModeBoundsWidthEraserSize ?? 1.0;
+
+            // 订阅事件
+            _palmEraserService.Activated += OnPalmEraserActivated;
+            _palmEraserService.Moved += OnPalmEraserMoved;
+            _palmEraserService.Ended += OnPalmEraserEnded;
+            _palmEraserService.StrokeErased += OnPalmEraserStrokeErased;
+            _palmEraserService.VisualFeedbackNeeded += OnPalmEraserVisualFeedbackNeeded;
+
+            // 初始化服务
+            _palmEraserService.Initialize(Settings?.Gesture);
+
+            LogHelper.WriteLogToFile("Modern PalmEraserService initialized", LogHelper.LogType.Info);
+        }
+
+        /// <summary>
+        /// 手掌橡皮擦激活事件处理
+        /// </summary>
+        private void OnPalmEraserActivated(object sender, PalmEraserActivatedEventArgs e)
+        {
+            isLastTouchEraser = true;
+            if (drawingShapeMode == 0 && forceEraser) return;
+
+            // 显示橡皮擦覆盖层
+            GridEraserOverlay.Visibility = Visibility.Visible;
+
+            // 设置编辑模式为无
+            inkCanvas.EditingMode = InkCanvasEditingMode.None;
+
+            LogHelper.WriteLogToFile($"Modern palm eraser activated, width: {e.Width}, confidence: {e.Confidence:F2}", LogHelper.LogType.Trace);
+        }
+
+        /// <summary>
+        /// 手掌橡皮擦移动事件处理
+        /// </summary>
+        private void OnPalmEraserMoved(object sender, PalmEraserMoveEventArgs e)
+        {
+            // 移动处理在 VisualFeedbackNeeded 中完成
+        }
+
+        /// <summary>
+        /// 手掌橡皮擦结束事件处理
+        /// </summary>
+        private void OnPalmEraserEnded(object sender, PalmEraserEndedEventArgs e)
+        {
+            // 隐藏橡皮擦覆盖层
+            GridEraserOverlay.Visibility = Visibility.Collapsed;
+
+            // 清除视觉反馈
+            var ct = EraserOverlay_DrawingVisual.DrawingVisual.RenderOpen();
+            ct.DrawRectangle(new SolidColorBrush(Colors.Transparent), null, new Rect(0, 0, ActualWidth, ActualHeight));
+            ct.Close();
+
+            // 提交擦除历史
+            if (ReplacedStroke != null || AddedStroke != null)
+            {
+                timeMachine.CommitStrokeEraseHistory(ReplacedStroke, AddedStroke);
+                AddedStroke = null;
+                ReplacedStroke = null;
+            }
+
+            // 恢复编辑模式
+            if (!forceEraser)
+            {
+                inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
+            }
+
+            isLastTouchEraser = false;
+
+            LogHelper.WriteLogToFile("Modern palm eraser ended", LogHelper.LogType.Trace);
+        }
+
+        /// <summary>
+        /// 笔画被擦除事件处理
+        /// </summary>
+        private void OnPalmEraserStrokeErased(object sender, StrokeErasedEventArgs e)
+        {
+            if (e.StrokesToAdd != null && e.StrokesToAdd.Count > 0)
+            {
+                inkCanvas.Strokes.Replace(e.StrokesToReplace, e.StrokesToAdd);
+                ReplacedStroke = e.StrokesToReplace;
+                AddedStroke = e.StrokesToAdd;
+            }
+            else
+            {
+                inkCanvas.Strokes.Remove(e.StrokesToReplace);
+                ReplacedStroke = e.StrokesToReplace;
+                AddedStroke = null;
+            }
+        }
+
+        /// <summary>
+        /// 视觉反馈事件处理
+        /// </summary>
+        private void OnPalmEraserVisualFeedbackNeeded(object sender, EraserVisualFeedbackEventArgs e)
+        {
+            var ct = EraserOverlay_DrawingVisual.DrawingVisual.RenderOpen();
+            var mt = e.ScaleMatrix;
+            mt.Translate(e.Position.X - e.Width / 2, e.Position.Y - e.Height / 2);
+            ct.PushTransform(new MatrixTransform(mt));
+            ct.DrawDrawing(FindResource(e.IsCircleShape ? "EraserCircleDrawingGroup" : "EraserDrawingGroup") as DrawingGroup);
+            ct.Pop();
+            ct.Close();
+        }
 
         #endregion
 
@@ -353,8 +501,16 @@ namespace Ink_Canvas {
                 bool shouldCheckPalmEraser = Settings.Advanced.TouchMultiplier != 0 || !Settings.Advanced.IsSpecialScreen;
 
                 if (shouldCheckPalmEraser) {
-                    // 使用优化的手掌检测方法
-                    if (IsPalmTouch(e, out double palmWidth)) {
+                    // 使用现代化的手掌橡皮擦服务
+                    if (UseModernPalmEraser && _palmEraserService != null) {
+                        bool isPalm = _palmEraserService.ProcessTouchDown(e, inkCanvas);
+                        if (isPalm) {
+                            // 手掌橡皮已激活，由服务处理后续
+                            return;
+                        }
+                    }
+                    // 回退到兼容模式
+                    else if (IsPalmTouch(e, out double palmWidth)) {
                         // 手掌橡皮模式（面积擦）- 使用自定义可视化
                         isLastTouchEraser = true;
                         if (drawingShapeMode == 0 && forceEraser) return;
@@ -670,6 +826,11 @@ namespace Ink_Canvas {
         }
 
         private void inkCanvas_PreviewTouchUp(object sender, TouchEventArgs e) {
+            // 使用现代化的手掌橡皮擦服务
+            if (UseModernPalmEraser && _palmEraserService != null) {
+                _palmEraserService.ProcessTouchUp(e, inkCanvas);
+            }
+
             inkCanvas.ReleaseAllTouchCaptures();
             ViewboxFloatingBar.IsHitTestVisible = true;
             BlackboardUIGridForInkReplay.IsHitTestVisible = true;

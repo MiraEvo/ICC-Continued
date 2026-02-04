@@ -434,13 +434,22 @@ namespace Ink_Canvas {
         #endregion
 
         private void inkCanvas_TouchMove(object sender, TouchEventArgs e) {
-            // 先处理手掌橡皮移动
+            // 先处理手掌橡皮移动（兼容模式）
             if (isPalmErasing) {
                 Main_Grid_TouchMove_PalmEraser(sender, e);
                 return;
             }
 
-            if (!Settings.Gesture.DisableGestureEraser && Settings.Gesture.PalmEraserDetectOnMove) {
+            // 使用现代化的手掌橡皮擦服务
+            if (UseModernPalmEraser && _palmEraserService != null) {
+                bool isPalm = _palmEraserService.ProcessTouchMove(e, inkCanvas);
+                if (isPalm) {
+                    // 手掌橡皮正在处理
+                    return;
+                }
+            }
+            // 回退到兼容模式
+            else if (!Settings.Gesture.DisableGestureEraser && Settings.Gesture.PalmEraserDetectOnMove) {
                 bool shouldCheckPalmEraser = Settings.Advanced.TouchMultiplier != 0 || !Settings.Advanced.IsSpecialScreen;
                 if (shouldCheckPalmEraser && IsPalmTouch(e, out double palmWidth)) {
                     isLastTouchEraser = true;

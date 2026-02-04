@@ -27,6 +27,13 @@ namespace Ink_Canvas.Models.Settings
         private double _palmEraserMinMove = 2.5;
         private int _palmEraserMinIntervalMs = 12;
         private bool _palmEraserDetectOnMove = true;
+        private bool _useModernPalmEraser = true;
+        private bool _useAdaptiveThreshold = true;
+        private bool _usePredictiveErasing = true;
+        private double _palmProbabilityThreshold = 0.75;
+        private int _touchHistorySize = 10;
+        private bool _enableHapticFeedback = true;
+        private double _palmEraserVelocityThreshold = 0.5;
 
         /// <summary>
         /// 是否启用双指手势（缩放、平移或旋转）
@@ -238,6 +245,76 @@ namespace Ink_Canvas.Models.Settings
         {
             get => _palmEraserDetectOnMove;
             set => SetProperty(ref _palmEraserDetectOnMove, value);
+        }
+
+        /// <summary>
+        /// 是否使用现代化的手掌橡皮擦逻辑
+        /// </summary>
+        [JsonProperty("useModernPalmEraser")]
+        public bool UseModernPalmEraser
+        {
+            get => _useModernPalmEraser;
+            set => SetProperty(ref _useModernPalmEraser, value);
+        }
+
+        /// <summary>
+        /// 是否使用自适应阈值
+        /// </summary>
+        [JsonProperty("useAdaptiveThreshold")]
+        public bool UseAdaptiveThreshold
+        {
+            get => _useAdaptiveThreshold;
+            set => SetProperty(ref _useAdaptiveThreshold, value);
+        }
+
+        /// <summary>
+        /// 是否使用预测性擦除
+        /// </summary>
+        [JsonProperty("usePredictiveErasing")]
+        public bool UsePredictiveErasing
+        {
+            get => _usePredictiveErasing;
+            set => SetProperty(ref _usePredictiveErasing, value);
+        }
+
+        /// <summary>
+        /// 手掌概率阈值（0-1）
+        /// </summary>
+        [JsonProperty("palmProbabilityThreshold")]
+        public double PalmProbabilityThreshold
+        {
+            get => _palmProbabilityThreshold;
+            set => SetProperty(ref _palmProbabilityThreshold, value);
+        }
+
+        /// <summary>
+        /// 触摸历史记录大小
+        /// </summary>
+        [JsonProperty("touchHistorySize")]
+        public int TouchHistorySize
+        {
+            get => _touchHistorySize;
+            set => SetProperty(ref _touchHistorySize, value);
+        }
+
+        /// <summary>
+        /// 是否启用触觉反馈
+        /// </summary>
+        [JsonProperty("enableHapticFeedback")]
+        public bool EnableHapticFeedback
+        {
+            get => _enableHapticFeedback;
+            set => SetProperty(ref _enableHapticFeedback, value);
+        }
+
+        /// <summary>
+        /// 手掌橡皮擦速度阈值
+        /// </summary>
+        [JsonProperty("palmEraserVelocityThreshold")]
+        public double PalmEraserVelocityThreshold
+        {
+            get => _palmEraserVelocityThreshold;
+            set => SetProperty(ref _palmEraserVelocityThreshold, value);
         }
     }
 }

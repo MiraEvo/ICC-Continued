@@ -1527,6 +1527,9 @@ namespace Ink_Canvas {
                 }
 
                  if (Settings.Gesture != null) {
+                    // 初始化现代化的手掌橡皮擦服务
+                    InitializePalmEraserService();
+
                     if (Settings.Gesture.IsEnableMultiTouchMode) {
                         if (!isInMultiTouchMode) {
                             inkCanvas.StylusDown += MainWindow_StylusDown;
