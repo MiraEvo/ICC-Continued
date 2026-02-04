@@ -19,9 +19,9 @@
                 </Grid.ColumnDefinitions>
                 <Viewbox HorizontalAlignment="Center" Margin="20,0">
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="50" MinHeight="470">
-                        <Label FontSize="130" Content="{Binding OutputText}" Block.TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <Label FontSize="130" Visibility="{Binding IsOutput2Visible, Converter={StaticResource BoolToVisibilityConverter}}" Content="{Binding OutputText2}" Block.TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <Label FontSize="130" Visibility="{Binding IsOutput3Visible, Converter={StaticResource BoolToVisibilityConverter}}" Content="{Binding OutputText3}" Block.TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock FontSize="130" Text="{Binding OutputText}" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                        <TextBlock FontSize="130" Visibility="{Binding IsOutput2Visible, Converter={StaticResource BoolToVisibilityConverter}}" Text="{Binding OutputText2}" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                        <TextBlock FontSize="130" Visibility="{Binding IsOutput3Visible, Converter={StaticResource BoolToVisibilityConverter}}" Text="{Binding OutputText3}" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
                     </ui:SimpleStackPanel>
                 </Viewbox>
                 <ui:SimpleStackPanel Spacing="8" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Opacity="{Binding ControlPanelOpacity}" IsEnabled="{Binding IsControlPanelEnabled}" Name="PeopleControlPane" Width="256">
