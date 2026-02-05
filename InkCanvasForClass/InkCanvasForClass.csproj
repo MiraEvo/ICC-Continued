@@ -62,6 +62,12 @@
       <Aliases>XamlBehaviors</Aliases>
     </PackageReference>
     <PackageReference Include="Sentry" Version="6.0.0" />
+    <PackageReference Include="Sentry.Serilog" Version="6.0.0" />
+    <PackageReference Include="Serilog" Version="4.2.0" />
+    <PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 
     <!-- 显式添加以修复 CVE-2021-26701 漏洞 -->
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.1" />

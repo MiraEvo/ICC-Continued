@@ -39,6 +39,9 @@ namespace Ink_Canvas
         public IServiceProvider Services { get; private set; }
 
         public App() {
+            // 尽早初始化日志服务
+            InitializeLogging();
+
             // 尽早初始化 Sentry，以便捕获所有异常
             InitializeSentry();
 
@@ -50,6 +53,37 @@ namespace Ink_Canvas
 
             // 初始化依赖注入
             ConfigureServices();
+        }
+
+        /// <summary>
+        /// 初始化日志服务
+        /// </summary>
+        private static void InitializeLogging()
+        {
+            try
+            {
+                // 仅在 Debug 构建时启用控制台输出
+#if DEBUG
+                bool enableConsole = true;
+#else
+                bool enableConsole = false;
+#endif
+
+                // 初始化新的日志服务
+                LogHelper.Initialize(
+                    sentryDsn: null, // Sentry 通过 SentryHelper 单独管理
+                    enableConsole: enableConsole,
+                    enableFile: true
+                );
+
+                LogHelper.NewLog("日志服务初始化完成");
+            }
+            catch (Exception ex)
+            {
+                // 如果初始化失败，回退到旧版日志
+                LogHelper.UseModernLogger = false;
+                LogHelper.NewLog($"现代化日志服务初始化失败，使用回退模式: {ex.Message}");
+            }
         }
 
         /// <summary>

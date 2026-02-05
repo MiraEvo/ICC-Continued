@@ -1,4 +1,5 @@
-﻿using Sentry;
+using Ink_Canvas.Services.Logging;
+using Sentry;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -7,12 +8,25 @@ using System.Text;
 
 namespace Ink_Canvas.Helpers
 {
+    /// <summary>
+    /// 日志帮助类 - 兼容层，内部使用现代化的 LoggerService
+    /// </summary>
     public class LogHelper
     {
         /// <summary>
         /// 是否启用 Sentry 面包屑集成
         /// </summary>
         public static bool EnableSentryBreadcrumbs { get; set; } = true;
+
+        /// <summary>
+        /// 日志文件名（向后兼容）
+        /// </summary>
+        public static string LogFile = "Log.txt";
+
+        /// <summary>
+        /// 是否使用新的日志服务（默认启用）
+        /// </summary>
+        public static bool UseModernLogger { get; set; } = true;
 
         static LogHelper()
         {
@@ -30,16 +44,27 @@ namespace Ink_Canvas.Helpers
             }
         }
 
-        public static string LogFile = "Log.txt";
-
+        /// <summary>
+        /// 记录信息日志（兼容旧版）
+        /// </summary>
         public static void NewLog(string str,
             [CallerFilePath] string sourceFilePath = "",
             [CallerMemberName] string memberName = "",
             [CallerLineNumber] int sourceLineNumber = 0)
         {
-            WriteLogToFile(str, LogType.Info, sourceFilePath, memberName, sourceLineNumber);
+            if (UseModernLogger)
+            {
+                LoggerService.Instance.Information(str, sourceFilePath, memberName, sourceLineNumber);
+            }
+            else
+            {
+                WriteLogToFile(str, LogType.Info, sourceFilePath, memberName, sourceLineNumber);
+            }
         }
 
+        /// <summary>
+        /// 记录异常日志（兼容旧版）
+        /// </summary>
         public static void NewLog(Exception ex,
             [CallerFilePath] string sourceFilePath = "",
             [CallerMemberName] string memberName = "",
@@ -47,18 +72,87 @@ namespace Ink_Canvas.Helpers
         {
             if (ex == null) return;
 
-            var errorMessage = $"Exception: {ex.Message}\nStackTrace: {ex.StackTrace}";
-            if (ex.InnerException != null)
+            if (UseModernLogger)
             {
-                errorMessage += $"\nInner Exception: {ex.InnerException.Message}";
+                LoggerService.Instance.Exception(ex, null, sourceFilePath, memberName, sourceLineNumber);
             }
-            WriteLogToFile(errorMessage, LogType.Error, sourceFilePath, memberName, sourceLineNumber);
+            else
+            {
+                var errorMessage = $"Exception: {ex.Message}\nStackTrace: {ex.StackTrace}";
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $"\nInner Exception: {ex.InnerException.Message}";
+                }
+                WriteLogToFile(errorMessage, LogType.Error, sourceFilePath, memberName, sourceLineNumber);
+            }
         }
 
+        /// <summary>
+        /// 写入日志到文件（兼容旧版，现在使用新的日志服务）
+        /// </summary>
         public static void WriteLogToFile(string str, LogType logType = LogType.Info,
             [CallerFilePath] string sourceFilePath = "",
             [CallerMemberName] string memberName = "",
             [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            if (UseModernLogger)
+            {
+                // 映射到新的日志级别
+                switch (logType)
+                {
+                    case LogType.Trace:
+                        LoggerService.Instance.Debug(str, sourceFilePath, memberName, sourceLineNumber);
+                        break;
+                    case LogType.Error:
+                        LoggerService.Instance.Error(str, sourceFilePath, memberName, sourceLineNumber);
+                        break;
+                    case LogType.Warning:
+                        LoggerService.Instance.Warning(str, sourceFilePath, memberName, sourceLineNumber);
+                        break;
+                    case LogType.Fatal:
+                        LoggerService.Instance.Fatal(str, sourceFilePath, memberName, sourceLineNumber);
+                        break;
+                    case LogType.Info:
+                    case LogType.Event:
+                    default:
+                        LoggerService.Instance.Information(str, sourceFilePath, memberName, sourceLineNumber);
+                        break;
+                }
+                return;
+            }
+
+            // 旧版实现（作为回退）
+            LegacyWriteLogToFile(str, logType, sourceFilePath, memberName, sourceLineNumber);
+        }
+
+        /// <summary>
+        /// 初始化日志服务（新功能）
+        /// </summary>
+        public static void Initialize(string? sentryDsn = null, bool enableConsole = true, bool enableFile = true)
+        {
+            LoggerService.Instance.Initialize(sentryDsn, enableConsole, enableFile);
+        }
+
+        /// <summary>
+        /// 关闭日志服务
+        /// </summary>
+        public static void Close()
+        {
+            LoggerService.Instance.Close();
+        }
+
+        /// <summary>
+        /// 刷新日志缓冲区
+        /// </summary>
+        public static void Flush()
+        {
+            LoggerService.Instance.Flush();
+        }
+
+        #region Legacy Implementation (Fallback)
+
+        private static void LegacyWriteLogToFile(string str, LogType logType,
+            string sourceFilePath, string memberName, int sourceLineNumber)
         {
             string strLogType = "信息";
             ConsoleColor consoleColor = ConsoleColor.White;
@@ -89,7 +183,7 @@ namespace Ink_Canvas.Helpers
                 case LogType.Fatal:
                     strLogType = "致命";
                     consoleColor = ConsoleColor.DarkRed;
-                    sentryLevel = BreadcrumbLevel.Error; // Sentry 6.0.0 没有 Critical 级别，使用 Error
+                    sentryLevel = BreadcrumbLevel.Error;
                     break;
                 case LogType.Info:
                     strLogType = "信息";
@@ -156,24 +250,26 @@ namespace Ink_Canvas.Helpers
             }
             catch (UnauthorizedAccessException ex)
             {
-                // Fallback: write to debug output if file logging fails due to access permissions
                 Debug.WriteLine($"[LogHelper] Failed to write to log file (Access denied): {ex.Message}");
                 Debug.WriteLine($"[LogHelper] Original message: {fullLogMessage}");
             }
             catch (DirectoryNotFoundException ex)
             {
-                // Fallback: write to debug output if file logging fails due to missing directory
                 Debug.WriteLine($"[LogHelper] Failed to write to log file (Directory not found): {ex.Message}");
                 Debug.WriteLine($"[LogHelper] Original message: {fullLogMessage}");
             }
             catch (IOException ex)
             {
-                // Fallback: write to debug output if file logging fails due to IO error
                 Debug.WriteLine($"[LogHelper] Failed to write to log file (IO error): {ex.Message}");
                 Debug.WriteLine($"[LogHelper] Original message: {fullLogMessage}");
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// 日志类型枚举（向后兼容）
+        /// </summary>
         public enum LogType
         {
             Info,
