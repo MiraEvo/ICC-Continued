@@ -103,7 +103,7 @@
                         </Grid.ColumnDefinitions>
                         <ui:TextBlock Text="文件名模板" VerticalAlignment="Center" Margin="0,0,16,0"/>
                         <TextBox Grid.Column="1" Text="{Binding Snapshot.ScreenshotFileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
-                        <ui:Button Grid.Column="2" Content="重置" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        <ui:Button Grid.Column="2" Content="重置" Margin="12,0,0,0" VerticalAlignment="Center" Click="ResetFileNameButton_Click"/>
                     </Grid>
                     
                     <ui:TextBlock Text="模板变量参考：" FontTypography="BodyStrong" Margin="0,0,0,8"/>

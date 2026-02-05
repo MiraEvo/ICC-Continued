@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Controls;
 using Ink_Canvas.Core;
 using Ink_Canvas.ViewModels;
@@ -14,6 +15,14 @@ namespace Ink_Canvas.Views.Settings.Pages
         {
             InitializeComponent();
             DataContext = ServiceLocator.GetRequiredService<SettingsViewModel>();
+        }
+
+        private void ResetFileNameButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is SettingsViewModel viewModel)
+            {
+                viewModel.Snapshot.ResetScreenshotFileName();
+            }
         }
     }
 }

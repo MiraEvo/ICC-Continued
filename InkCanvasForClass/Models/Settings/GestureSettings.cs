@@ -7,21 +7,78 @@ namespace Ink_Canvas.Models.Settings
     /// </summary>
     public class GestureSettings : SettingsBase
     {
+        #region 常量
+
+        /// <summary>
+        /// 最小检测阈值
+        /// </summary>
+        public const int MinDetectionThreshold = 1;
+
+        /// <summary>
+        /// 最大检测阈值
+        /// </summary>
+        public const int MaxDetectionThreshold = 10;
+
+        /// <summary>
+        /// 最小更新间隔（毫秒）
+        /// </summary>
+        public const int MinIntervalMs = 5;
+
+        /// <summary>
+        /// 最大更新间隔（毫秒）
+        /// </summary>
+        public const int MaxIntervalMs = 50;
+
+        /// <summary>
+        /// 最小触摸历史记录大小
+        /// </summary>
+        public const int MinTouchHistorySize = 5;
+
+        /// <summary>
+        /// 最大触摸历史记录大小
+        /// </summary>
+        public const int MaxTouchHistorySize = 50;
+
+        /// <summary>
+        /// 最小速度阈值
+        /// </summary>
+        public const double MinVelocityThreshold = 0.1;
+
+        /// <summary>
+        /// 最大速度阈值
+        /// </summary>
+        public const double MaxVelocityThreshold = 2.0;
+
+        #endregion
+
+        #region 字段
+
+        // 双指手势设置
         private bool _isEnableMultiTouchMode = true;
         private bool _isEnableTwoFingerZoom = true;
         private bool _isEnableTwoFingerTranslate = true;
         private bool _autoSwitchTwoFingerGesture = true;
         private bool _isEnableTwoFingerRotation = false;
         private bool _isEnableTwoFingerRotationOnSelection = false;
+
+        // 手势橡皮擦设置
         private bool _disableGestureEraser = true;
+
+        // 多点手写设置
         private int _defaultMultiPointHandWritingMode = 2;
+
+        // 光标设置
         private bool _hideCursorWhenUsingTouchDevice = true;
         private int _hideCursorMode = 0;
+
+        // 鼠标手势设置
         private bool _enableMouseGesture = true;
         private bool _enableMouseRightBtnGesture = true;
         private bool _enableMouseWheelGesture = true;
         private int _mouseWheelAction = 0;
         private int _mouseWheelDirection = 0;
+
+        // 手掌橡皮擦设置
         private int _palmEraserDetectionThreshold = 3;
         private int _palmEraserMinIntervalMs = 12;
         private bool _palmEraserDetectOnMove = true;
@@ -31,6 +88,10 @@ namespace Ink_Canvas.Models.Settings
         private int _touchHistorySize = 10;
         private bool _enableHapticFeedback = true;
         private double _palmEraserVelocityThreshold = 0.5;
+
+        #endregion
+
+        #region 辅助属性
 
         /// <summary>
         /// 是否启用双指手势（缩放、平移或旋转）
@@ -43,6 +104,28 @@ namespace Ink_Canvas.Models.Settings
         /// </summary>
         [JsonIgnore]
         public bool IsEnableTwoFingerGestureTranslateOrRotation => IsEnableTwoFingerTranslate || IsEnableTwoFingerRotation;
+
+        /// <summary>
+        /// 手掌橡皮擦是否启用（不禁用手势橡皮擦时启用）
+        /// </summary>
+        [JsonIgnore]
+        public bool IsPalmEraserEnabled => !DisableGestureEraser;
+
+        /// <summary>
+        /// 鼠标滚轮操作是否为缩放画布
+        /// </summary>
+        [JsonIgnore]
+        public bool IsMouseWheelZoom => MouseWheelAction == 0;
+
+        /// <summary>
+        /// 鼠标滚轮操作是否为调整笔粗细
+        /// </summary>
+        [JsonIgnore]
+        public bool IsMouseWheelAdjustInkWidth => MouseWheelAction == 1;
+
+        #endregion
+
+        #region 双指手势属性
 
         /// <summary>
         /// 是否启用多点触控模式
@@ -104,6 +187,10 @@ namespace Ink_Canvas.Models.Settings
             set => SetProperty(ref _isEnableTwoFingerRotationOnSelection, value);
         }
 
+        #endregion
+
+        #region 手势橡皮擦属性
+
         /// <summary>
         /// 是否禁用手势橡皮擦
         /// </summary>
@@ -114,6 +201,10 @@ namespace Ink_Canvas.Models.Settings
             set => SetProperty(ref _disableGestureEraser, value);
         }
 
+        #endregion
+
+        #region 多点手写属性
+
         /// <summary>
         /// 默认多点手写模式
         /// </summary>
@@ -123,6 +214,10 @@ namespace Ink_Canvas.Models.Settings
             get => _defaultMultiPointHandWritingMode;
             set => SetProperty(ref _defaultMultiPointHandWritingMode, value);
         }
+
+        #endregion
+
+        #region 光标属性
 
         /// <summary>
         /// 使用触摸设备时是否隐藏光标
@@ -141,8 +236,12 @@ namespace Ink_Canvas.Models.Settings
         public int HideCursorMode
         {
             get => _hideCursorMode;
-            set => SetProperty(ref _hideCursorMode, value);
+            set => SetProperty(ref _hideCursorMode, ClampRange(value, 0, 1));
         }
+
+        #endregion
+
+        #region 鼠标手势属性
 
         /// <summary>
         /// 是否启用鼠标手势
@@ -181,7 +280,7 @@ namespace Ink_Canvas.Models.Settings
         public int MouseWheelAction
         {
             get => _mouseWheelAction;
-            set => SetProperty(ref _mouseWheelAction, value);
+            set => SetProperty(ref _mouseWheelAction, ClampRange(value, 0, 1));
         }
 
         /// <summary>
@@ -191,27 +290,31 @@ namespace Ink_Canvas.Models.Settings
         public int MouseWheelDirection
         {
             get => _mouseWheelDirection;
-            set => SetProperty(ref _mouseWheelDirection, value);
+            set => SetProperty(ref _mouseWheelDirection, ClampRange(value, 0, 1));
         }
 
+        #endregion
+
+        #region 手掌橡皮擦属性
+
         /// <summary>
-        /// 手掌橡皮触发连续检测次数
+        /// 手掌橡皮触发连续检测次数（1-10）
         /// </summary>
         [JsonProperty("palmEraserDetectionThreshold")]
         public int PalmEraserDetectionThreshold
         {
             get => _palmEraserDetectionThreshold;
-            set => SetProperty(ref _palmEraserDetectionThreshold, value);
+            set => SetProperty(ref _palmEraserDetectionThreshold, ClampRange(value, MinDetectionThreshold, MaxDetectionThreshold));
         }
 
         /// <summary>
-        /// 手掌橡皮最小更新间隔（毫秒）
+        /// 手掌橡皮最小更新间隔（毫秒，5-50）
         /// </summary>
         [JsonProperty("palmEraserMinIntervalMs")]
         public int PalmEraserMinIntervalMs
         {
             get => _palmEraserMinIntervalMs;
-            set => SetProperty(ref _palmEraserMinIntervalMs, value);
+            set => SetProperty(ref _palmEraserMinIntervalMs, ClampRange(value, MinIntervalMs, MaxIntervalMs));
         }
 
         /// <summary>
@@ -245,23 +348,23 @@ namespace Ink_Canvas.Models.Settings
         }
 
         /// <summary>
-        /// 手掌概率阈值（0-1）
+        /// 手掌概率阈值（0.0-1.0）
         /// </summary>
         [JsonProperty("palmProbabilityThreshold")]
         public double PalmProbabilityThreshold
         {
             get => _palmProbabilityThreshold;
-            set => SetProperty(ref _palmProbabilityThreshold, value);
+            set => SetProperty(ref _palmProbabilityThreshold, ClampRange(value, 0.0, 1.0));
         }
 
         /// <summary>
-        /// 触摸历史记录大小
+        /// 触摸历史记录大小（5-50）
         /// </summary>
         [JsonProperty("touchHistorySize")]
         public int TouchHistorySize
         {
             get => _touchHistorySize;
-            set => SetProperty(ref _touchHistorySize, value);
+            set => SetProperty(ref _touchHistorySize, ClampRange(value, MinTouchHistorySize, MaxTouchHistorySize));
         }
 
         /// <summary>
@@ -275,13 +378,15 @@ namespace Ink_Canvas.Models.Settings
         }
 
         /// <summary>
-        /// 手掌橡皮擦速度阈值
+        /// 手掌橡皮擦速度阈值（0.1-2.0）
         /// </summary>
         [JsonProperty("palmEraserVelocityThreshold")]
         public double PalmEraserVelocityThreshold
         {
             get => _palmEraserVelocityThreshold;
-            set => SetProperty(ref _palmEraserVelocityThreshold, value);
+            set => SetProperty(ref _palmEraserVelocityThreshold, ClampRange(value, MinVelocityThreshold, MaxVelocityThreshold));
         }
+
+        #endregion
     }
 }

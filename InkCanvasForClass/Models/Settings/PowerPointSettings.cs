@@ -7,6 +7,9 @@ namespace Ink_Canvas.Models.Settings
     /// </summary>
     public class PowerPointSettings : SettingsBase
     {
+        #region 字段
+
+        // PPT 按钮设置
         private bool _showPPTButton = true;
         private int _pptButtonsDisplayOption = 2222;
         private int _pptLSButtonPosition = 0;
@@ -14,23 +17,79 @@ namespace Ink_Canvas.Models.Settings
         private int _pptSButtonsOption = 221;
         private int _pptBButtonsOption = 121;
         private bool _enablePPTButtonPageClickable = true;
+
+        // PowerPoint 支持设置
         private bool _powerPointSupport = true;
+        private bool _isSupportWPS = true;
+        private bool _isEnablePPTEnhancedSupport = false;
+
+        // 幻灯片放映设置
         private bool _isShowCanvasAtNewSlideShow = true;
         private bool _isNoClearStrokeOnSelectWhenInPowerPoint = true;
         private bool _isShowStrokeOnSelectInPowerPoint = false;
+        private bool _isEnableTwoFingerGestureInPresentationMode = false;
+        private bool _isAutoEnterAnnotationMode = true;
+        private bool _isRememberLastPlaybackPosition = false;
+
+        // 自动保存设置
         private bool _isAutoSaveStrokesInPowerPoint = true;
         private bool _isAutoSaveScreenShotInPowerPoint = false;
+
+        // 通知设置
         private bool _isNotifyPreviousPage = false;
         private bool _isNotifyHiddenPage = true;
         private bool _isNotifyAutoPlayPresentation = true;
-        private bool _isEnableTwoFingerGestureInPresentationMode = false;
-        private bool _isSupportWPS = true;
-        private bool _isEnablePPTEnhancedSupport = false;
+
+        // 注册表设置
         private bool _registryShowSlideShowToolbar = false;
         private bool _registryShowBlackScreenLastSlideShow = false;
         private bool _registryDisableSideToolbar = false;
-        private bool _isAutoEnterAnnotationMode = true;
-        private bool _isRememberLastPlaybackPosition = false;
+
+        #endregion
+
+        #region 辅助属性
+
+        /// <summary>
+        /// PPT 按钮显示选项的各个位值
+        /// 每一位代表一个按钮的显示状态
+        /// </summary>
+        [JsonIgnore]
+        public int[] PPTButtonsDisplayOptionDigits
+        {
+            get
+            {
+                var option = PPTButtonsDisplayOption;
+                var digits = new int[4];
+                for (int i = 3; i >= 0; i--)
+                {
+                    digits[i] = option % 10;
+                    option /= 10;
+                }
+                return digits;
+            }
+        }
+
+        /// <summary>
+        /// 是否启用了任何 PPT 支持
+        /// </summary>
+        [JsonIgnore]
+        public bool IsAnyPPTSupportEnabled => PowerPointSupport || IsSupportWPS;
+
+        /// <summary>
+        /// 是否启用了自动保存功能
+        /// </summary>
+        [JsonIgnore]
+        public bool IsAnyAutoSaveEnabled => IsAutoSaveStrokesInPowerPoint || IsAutoSaveScreenShotInPowerPoint;
+
+        /// <summary>
+        /// 是否启用了任何通知功能
+        /// </summary>
+        [JsonIgnore]
+        public bool IsAnyNotificationEnabled => IsNotifyPreviousPage || IsNotifyHiddenPage || IsNotifyAutoPlayPresentation;
+
+        #endregion
+
+        #region 注册表设置属性
 
         /// <summary>
         /// 注册表：强制禁用两侧工具栏按钮
@@ -41,6 +100,30 @@ namespace Ink_Canvas.Models.Settings
             get => _registryDisableSideToolbar;
             set => SetProperty(ref _registryDisableSideToolbar, value);
         }
+
+        /// <summary>
+        /// 注册表：显示幻灯片放映工具栏
+        /// </summary>
+        [JsonProperty("registryShowSlideShowToolbar")]
+        public bool RegistryShowSlideShowToolbar
+        {
+            get => _registryShowSlideShowToolbar;
+            set => SetProperty(ref _registryShowSlideShowToolbar, value);
+        }
+
+        /// <summary>
+        /// 注册表：最后一张幻灯片显示黑屏
+        /// </summary>
+        [JsonProperty("registryShowBlackScreenLastSlideShow")]
+        public bool RegistryShowBlackScreenLastSlideShow
+        {
+            get => _registryShowBlackScreenLastSlideShow;
+            set => SetProperty(ref _registryShowBlackScreenLastSlideShow, value);
+        }
+
+        #endregion
+
+        #region 幻灯片放映设置属性
 
         /// <summary>
         /// 进入 PPT 放映时自动进入批注模式
@@ -61,6 +144,50 @@ namespace Ink_Canvas.Models.Settings
             get => _isRememberLastPlaybackPosition;
             set => SetProperty(ref _isRememberLastPlaybackPosition, value);
         }
+
+        /// <summary>
+        /// 新幻灯片放映时是否显示画布
+        /// </summary>
+        [JsonProperty("isShowCanvasAtNewSlideShow")]
+        public bool IsShowCanvasAtNewSlideShow
+        {
+            get => _isShowCanvasAtNewSlideShow;
+            set => SetProperty(ref _isShowCanvasAtNewSlideShow, value);
+        }
+
+        /// <summary>
+        /// 在 PowerPoint 中选择时是否不清除笔画
+        /// </summary>
+        [JsonProperty("isNoClearStrokeOnSelectWhenInPowerPoint")]
+        public bool IsNoClearStrokeOnSelectWhenInPowerPoint
+        {
+            get => _isNoClearStrokeOnSelectWhenInPowerPoint;
+            set => SetProperty(ref _isNoClearStrokeOnSelectWhenInPowerPoint, value);
+        }
+
+        /// <summary>
+        /// 在 PowerPoint 中选择时是否显示笔画
+        /// </summary>
+        [JsonProperty("isShowStrokeOnSelectInPowerPoint")]
+        public bool IsShowStrokeOnSelectInPowerPoint
+        {
+            get => _isShowStrokeOnSelectInPowerPoint;
+            set => SetProperty(ref _isShowStrokeOnSelectInPowerPoint, value);
+        }
+
+        /// <summary>
+        /// 演示模式下是否启用双指手势
+        /// </summary>
+        [JsonProperty("isEnableTwoFingerGestureInPresentationMode")]
+        public bool IsEnableTwoFingerGestureInPresentationMode
+        {
+            get => _isEnableTwoFingerGestureInPresentationMode;
+            set => SetProperty(ref _isEnableTwoFingerGestureInPresentationMode, value);
+        }
+
+        #endregion
+
+        #region PPT 按钮设置属性
 
         /// <summary>
         /// 是否显示 PPT 按钮
@@ -132,6 +259,10 @@ namespace Ink_Canvas.Models.Settings
             set => SetProperty(ref _enablePPTButtonPageClickable, value);
         }
 
+        #endregion
+
+        #region PowerPoint 支持设置属性
+
         /// <summary>
         /// 是否支持 PowerPoint
         /// </summary>
@@ -143,34 +274,30 @@ namespace Ink_Canvas.Models.Settings
         }
 
         /// <summary>
-        /// 新幻灯片放映时是否显示画布
+        /// 是否支持 WPS
         /// </summary>
-        [JsonProperty("isShowCanvasAtNewSlideShow")]
-        public bool IsShowCanvasAtNewSlideShow
+        [JsonProperty("isSupportWPS")]
+        public bool IsSupportWPS
         {
-            get => _isShowCanvasAtNewSlideShow;
-            set => SetProperty(ref _isShowCanvasAtNewSlideShow, value);
+            get => _isSupportWPS;
+            set => SetProperty(ref _isSupportWPS, value);
         }
 
         /// <summary>
-        /// 在 PowerPoint 中选择时是否不清除笔画
+        /// 是否启用 PPT 联动增强功能
+        /// 基于智绘教 Inkeys 的 PPT 演示助手 3 技术方案
+        /// 提供增强的 COM 兼容性，支持 COM 注册损坏的环境
         /// </summary>
-        [JsonProperty("isNoClearStrokeOnSelectWhenInPowerPoint")]
-        public bool IsNoClearStrokeOnSelectWhenInPowerPoint
+        [JsonProperty("enablePPTEnhancedSupport")]
+        public bool IsEnablePPTEnhancedSupport
         {
-            get => _isNoClearStrokeOnSelectWhenInPowerPoint;
-            set => SetProperty(ref _isNoClearStrokeOnSelectWhenInPowerPoint, value);
+            get => _isEnablePPTEnhancedSupport;
+            set => SetProperty(ref _isEnablePPTEnhancedSupport, value);
         }
 
-        /// <summary>
-        /// 在 PowerPoint 中选择时是否显示笔画
-        /// </summary>
-        [JsonProperty("isShowStrokeOnSelectInPowerPoint")]
-        public bool IsShowStrokeOnSelectInPowerPoint
-        {
-            get => _isShowStrokeOnSelectInPowerPoint;
-            set => SetProperty(ref _isShowStrokeOnSelectInPowerPoint, value);
-        }
+        #endregion
+
+        #region 自动保存设置属性
 
         /// <summary>
         /// 是否在 PowerPoint 中自动保存笔画
@@ -191,6 +318,10 @@ namespace Ink_Canvas.Models.Settings
             get => _isAutoSaveScreenShotInPowerPoint;
             set => SetProperty(ref _isAutoSaveScreenShotInPowerPoint, value);
         }
+
+        #endregion
+
+        #region 通知设置属性
 
         /// <summary>
         /// 是否通知上一页
@@ -222,56 +353,6 @@ namespace Ink_Canvas.Models.Settings
             set => SetProperty(ref _isNotifyAutoPlayPresentation, value);
         }
 
-        /// <summary>
-        /// 演示模式下是否启用双指手势
-        /// </summary>
-        [JsonProperty("isEnableTwoFingerGestureInPresentationMode")]
-        public bool IsEnableTwoFingerGestureInPresentationMode
-        {
-            get => _isEnableTwoFingerGestureInPresentationMode;
-            set => SetProperty(ref _isEnableTwoFingerGestureInPresentationMode, value);
-        }
-
-        /// <summary>
-        /// 是否支持 WPS
-        /// </summary>
-        [JsonProperty("isSupportWPS")]
-        public bool IsSupportWPS
-        {
-            get => _isSupportWPS;
-            set => SetProperty(ref _isSupportWPS, value);
-        }
-
-        /// <summary>
-        /// 是否启用 PPT 联动增强功能
-        /// 基于智绘教 Inkeys 的 PPT 演示助手 3 技术方案
-        /// 提供增强的 COM 兼容性，支持 COM 注册损坏的环境
-        /// </summary>
-        [JsonProperty("enablePPTEnhancedSupport")]
-        public bool IsEnablePPTEnhancedSupport
-        {
-            get => _isEnablePPTEnhancedSupport;
-            set => SetProperty(ref _isEnablePPTEnhancedSupport, value);
-        }
-
-        /// <summary>
-        /// 注册表：显示幻灯片放映工具栏
-        /// </summary>
-        [JsonProperty("registryShowSlideShowToolbar")]
-        public bool RegistryShowSlideShowToolbar
-        {
-            get => _registryShowSlideShowToolbar;
-            set => SetProperty(ref _registryShowSlideShowToolbar, value);
-        }
-
-        /// <summary>
-        /// 注册表：最后一张幻灯片显示黑屏
-        /// </summary>
-        [JsonProperty("registryShowBlackScreenLastSlideShow")]
-        public bool RegistryShowBlackScreenLastSlideShow
-        {
-            get => _registryShowBlackScreenLastSlideShow;
-            set => SetProperty(ref _registryShowBlackScreenLastSlideShow, value);
-        }
+        #endregion
     }
 }

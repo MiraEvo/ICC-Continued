@@ -402,6 +402,17 @@ namespace Ink_Canvas.ViewModels
             get => _snapshot.ScreenshotFileName;
             set { if (SetProperty(_snapshot.ScreenshotFileName, value, _snapshot, (s, v) => s.ScreenshotFileName = v)) _saveAction?.Invoke(); }
         }
+
+        public void ResetScreenshotFileName()
+        {
+            _snapshot.ResetToDefaultFileName();
+            OnPropertyChanged(nameof(ScreenshotFileName));
+            _saveAction?.Invoke();
+        }
+
+        public string FormattedFileName => _snapshot.FormattedFileName;
+        public bool HasValidPlaceholders => _snapshot.HasValidPlaceholders;
+        public string FileExtension => _snapshot.FileExtension;
     }
 
     /// <summary>
@@ -471,6 +482,52 @@ namespace Ink_Canvas.ViewModels
             get => _inkToShape.ExpandShapeVariantsByDefault;
             set { if (SetProperty(_inkToShape.ExpandShapeVariantsByDefault, value, _inkToShape, (i, v) => i.ExpandShapeVariantsByDefault = v)) _saveAction?.Invoke(); }
         }
+
+        public double ConfidenceThreshold
+        {
+            get => _inkToShape.ConfidenceThreshold;
+            set { if (SetProperty(_inkToShape.ConfidenceThreshold, value, _inkToShape, (i, v) => i.ConfidenceThreshold = v)) _saveAction?.Invoke(); }
+        }
+
+        public double MinimumShapeSize
+        {
+            get => _inkToShape.MinimumShapeSize;
+            set { if (SetProperty(_inkToShape.MinimumShapeSize, value, _inkToShape, (i, v) => i.MinimumShapeSize = v)) _saveAction?.Invoke(); }
+        }
+
+        public bool EnablePolygonRecognition
+        {
+            get => _inkToShape.EnablePolygonRecognition;
+            set { if (SetProperty(_inkToShape.EnablePolygonRecognition, value, _inkToShape, (i, v) => i.EnablePolygonRecognition = v)) _saveAction?.Invoke(); }
+        }
+
+        public bool EnableShapeSmoothing
+        {
+            get => _inkToShape.EnableShapeSmoothing;
+            set { if (SetProperty(_inkToShape.EnableShapeSmoothing, value, _inkToShape, (i, v) => i.EnableShapeSmoothing = v)) _saveAction?.Invoke(); }
+        }
+
+        public int ResamplePointCount
+        {
+            get => _inkToShape.ResamplePointCount;
+            set { if (SetProperty(_inkToShape.ResamplePointCount, value, _inkToShape, (i, v) => i.ResamplePointCount = v)) _saveAction?.Invoke(); }
+        }
+
+        public bool EnableAdaptiveResampling
+        {
+            get => _inkToShape.EnableAdaptiveResampling;
+            set { if (SetProperty(_inkToShape.EnableAdaptiveResampling, value, _inkToShape, (i, v) => i.EnableAdaptiveResampling = v)) _saveAction?.Invoke(); }
+        }
+
+        public double GeometryValidationStrength
+        {
+            get => _inkToShape.GeometryValidationStrength;
+            set { if (SetProperty(_inkToShape.GeometryValidationStrength, value, _inkToShape, (i, v) => i.GeometryValidationStrength = v)) _saveAction?.Invoke(); }
+        }
+
+        public bool IsAnyShapeRecognitionEnabled => _inkToShape.IsAnyShapeRecognitionEnabled;
+        public bool IsAdvancedRecognitionEnabled => _inkToShape.IsAdvancedRecognitionEnabled;
+        public int EnabledShapeTypeCount => _inkToShape.EnabledShapeTypeCount;
     }
 
     /// <summary>
