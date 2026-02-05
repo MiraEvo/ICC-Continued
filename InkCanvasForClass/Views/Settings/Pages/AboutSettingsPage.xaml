@@ -7,110 +7,214 @@
              xmlns:local="clr-namespace:Ink_Canvas.Views.Settings.Pages"
              xmlns:vm="clr-namespace:Ink_Canvas.ViewModels.Settings"
              mc:Ignorable="d"
-             d:DesignHeight="1200" d:DesignWidth="600"
+             d:DesignHeight="1200" d:DesignWidth="800"
              Background="Transparent"
              d:DataContext="{d:DesignInstance vm:AboutSettingsViewModel, IsDesignTimeCreatable=True}">
 
     <ui:DynamicScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
         <StackPanel Margin="0,0,12,24">
+            
+            <!-- 页面标题 -->
             <ui:TextBlock Text="关于" FontTypography="Title" Margin="0,0,0,8"/>
-            <ui:TextBlock Text="版本信息与开源许可" FontTypography="Body" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,24"/>
+            <ui:TextBlock Text="版本信息、开源许可与项目链接" 
+                          FontTypography="Body" 
+                          Foreground="{DynamicResource TextFillColorSecondaryBrush}" 
+                          Margin="0,0,0,24"/>
 
-            <!-- UI Banner Placeholder -->
-            <Border CornerRadius="8" Margin="0,0,0,24" Height="200" ClipToBounds="True">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#1E3A8A" Offset="0"/>
-                        <GradientStop Color="#1E1B4B" Offset="0.5"/>
-                        <GradientStop Color="#312E81" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>
+            <!-- 应用信息卡片 -->
+            <ui:Card Margin="0,0,0,16">
                 <Grid>
-                    <!-- Futuristic Grid Pattern Overlay -->
-                    <Grid Opacity="0.3">
-                        <Grid.Background>
-                            <DrawingBrush TileMode="Tile" Viewport="0,0,20,20" ViewportUnits="Absolute">
-                                <DrawingBrush.Drawing>
-                                    <GeometryDrawing>
-                                        <GeometryDrawing.Geometry>
-                                            <RectangleGeometry Rect="0,0,20,20"/>
-                                        </GeometryDrawing.Geometry>
-                                        <GeometryDrawing.Pen>
-                                            <Pen Brush="#60A5FA" Thickness="0.5"/>
-                                        </GeometryDrawing.Pen>
-                                    </GeometryDrawing>
-                                </DrawingBrush.Drawing>
-                            </DrawingBrush>
-                        </Grid.Background>
-                    </Grid>
-
-                    <!-- Content -->
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- 应用图标 -->
+                    <Border Grid.Column="0" 
+                            Width="80" 
+                            Height="80" 
+                            CornerRadius="16"
+                            Background="{DynamicResource SystemAccentColorTertiaryBrush}"
+                            Margin="0,0,20,0">
+                        <ui:FontIcon Glyph="&#xE70F;" 
+                                     FontSize="40"
+                                     Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"/>
+                    </Border>
+                    
+                    <!-- 应用信息 -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <ui:TextBlock Text="{Binding ApplicationName}"
-                                   FontTypography="TitleLarge"
-                                   FontWeight="Bold"
-                                   Foreground="#F0F9FF"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,8"/>
-                        <ui:TextBlock Text="{Binding Version, StringFormat='Version:{0}'}"
-                                   FontTypography="Subtitle"
-                                   Foreground="#93C5FD"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,4"/>
-                        <ui:TextBlock Text="{Binding CodeName, StringFormat='Codename:{0}'}"
-                                   FontTypography="Body"
-                                   Foreground="#DBEAFE"
-                                   HorizontalAlignment="Center"
-                                   TextWrapping="Wrap"
-                                   MaxWidth="400"/>
-                    </StackPanel>
-
-                    <!-- Glowing Accent Lines -->
-                    <Border BorderBrush="#60A5FA"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Opacity="0.5"
-                            Margin="2"/>
-                </Grid>
-            </Border>
-
-            <!-- Version Info -->
-            <StackPanel Margin="0,0,0,24">
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <ui:TextBlock Text="{Binding Version, StringFormat='Release Version: {0}'}" FontTypography="Subtitle" FontWeight="Bold"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <ui:TextBlock Text="{Binding BundleVersion, StringFormat='Bundle Version: {0}'}" FontTypography="Subtitle" FontWeight="Bold"/>
-                </StackPanel>
-            </StackPanel>
-
-
-            <!-- License Box -->
-            <ui:Card Margin="0,0,0,24">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
-                        <ui:SymbolIcon Symbol="Certificate24" FontSize="24" Margin="0,0,12,0"/>
-                        <StackPanel>
-                            <ui:TextBlock Text="{Binding LicenseDescription}" FontTypography="Caption" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
-                            <ui:TextBlock Text="{Binding LicenseName}" FontTypography="Subtitle" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                      FontTypography="TitleLarge"
+                                      FontWeight="Bold"
+                                      Margin="0,0,0,4"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <ui:TextBlock Text="版本 " 
+                                          FontTypography="Body" 
+                                          Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <ui:TextBlock Text="{Binding Version}"
+                                          FontTypography="BodyStrong"
+                                          Margin="4,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:TextBlock Text="代号 " 
+                                          FontTypography="Caption" 
+                                          Foreground="{DynamicResource TextFillColorTertiaryBrush}"/>
+                            <ui:TextBlock Text="{Binding CodeName}"
+                                          FontTypography="Caption"
+                                          FontWeight="SemiBold"
+                                          Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
+                                          Margin="4,0,0,0"/>
                         </StackPanel>
                     </StackPanel>
+                </Grid>
+            </ui:Card>
+
+            <!-- 版本详情 -->
+            <ui:TextBlock Text="版本详情" FontTypography="BodyStrong" Margin="0,0,0,8"/>
+            
+            <ui:CardControl Margin="0,0,0,4">
+                <ui:CardControl.Icon>
+                    <ui:SymbolIcon Symbol="Document24"/>
+                </ui:CardControl.Icon>
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock Text="Release Version" FontTypography="Body"/>
+                        <ui:TextBlock Text="应用程序发布版本号" 
+                                      FontTypography="Caption" 
+                                      Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:TextBlock Text="{Binding Version}"
+                              FontTypography="BodyStrong"
+                              VerticalAlignment="Center"/>
+            </ui:CardControl>
+
+            <ui:CardControl Margin="0,0,0,16">
+                <ui:CardControl.Icon>
+                    <ui:SymbolIcon Symbol="DocumentCopy24"/>
+                </ui:CardControl.Icon>
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock Text="Bundle Version" FontTypography="Body"/>
+                        <ui:TextBlock Text="应用程序文件版本号" 
+                                      FontTypography="Caption" 
+                                      Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:TextBlock Text="{Binding BundleVersion}"
+                              FontTypography="BodyStrong"
+                              VerticalAlignment="Center"/>
+            </ui:CardControl>
+
+            <!-- 许可证信息 -->
+            <ui:TextBlock Text="许可证" FontTypography="BodyStrong" Margin="0,0,0,8"/>
+            
+            <ui:CardExpander Margin="0,0,0,16" IsExpanded="False">
+                <ui:CardExpander.Icon>
+                    <ui:SymbolIcon Symbol="Certificate24"/>
+                </ui:CardExpander.Icon>
+                <ui:CardExpander.Header>
+                    <StackPanel>
+                        <ui:TextBlock Text="{Binding LicenseName}" FontTypography="Body"/>
+                        <ui:TextBlock Text="点击展开查看许可证详情" 
+                                      FontTypography="Caption" 
+                                      Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                </ui:CardExpander.Header>
+                <StackPanel>
                     <ui:TextBlock Text="{Binding LicenseDescription}"
-                               FontTypography="Body"
-                               TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
+                                  FontTypography="Body"
+                                  TextWrapping="Wrap"
+                                  Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                  Margin="0,0,0,12"/>
+                    <ui:HyperlinkButton Content="查看完整许可证文本"
+                                        NavigateUri="{Binding LicenseUrl}">
+                        <ui:HyperlinkButton.Icon>
+                            <ui:SymbolIcon Symbol="Open24"/>
+                        </ui:HyperlinkButton.Icon>
+                    </ui:HyperlinkButton>
+                </StackPanel>
+            </ui:CardExpander>
+
+            <!-- 项目链接 -->
+            <ui:TextBlock Text="项目链接" FontTypography="BodyStrong" Margin="0,0,0,8"/>
+            
+            <ui:Card Margin="0,0,0,16">
+                <StackPanel>
+                    <ui:HyperlinkButton Content="GitHub 仓库"
+                                        NavigateUri="{Binding GitHubUrl}"
+                                        Margin="0,0,0,8">
+                        <ui:HyperlinkButton.Icon>
+                            <ui:SymbolIcon Symbol="Branch24"/>
+                        </ui:HyperlinkButton.Icon>
+                    </ui:HyperlinkButton>
+                    <ui:HyperlinkButton Content="原始项目地址"
+                                        NavigateUri="{Binding OriginalProjectUrl}"
+                                        Margin="0,0,0,8">
+                        <ui:HyperlinkButton.Icon>
+                            <ui:SymbolIcon Symbol="Link24"/>
+                        </ui:HyperlinkButton.Icon>
+                    </ui:HyperlinkButton>
+                    <ui:HyperlinkButton Content="检查更新"
+                                        NavigateUri="{Binding CheckUpdateUrl}">
+                        <ui:HyperlinkButton.Icon>
+                            <ui:SymbolIcon Symbol="ArrowDownload24"/>
+                        </ui:HyperlinkButton.Icon>
+                    </ui:HyperlinkButton>
                 </StackPanel>
             </ui:Card>
 
-            <!-- Acknowledgment -->
-            <StackPanel Margin="0,0,0,16">
-                <ui:TextBlock Text="致谢：" FontTypography="Subtitle" FontWeight="Bold" Margin="0,0,0,8"/>
-                <TextBlock>
-                    <Run Text="InkCanvasForClass" FontWeight="Bold"/>
-                    <Hyperlink NavigateUri="{Binding OriginalProjectUrl}" Foreground="#60A5FA" RequestNavigate="OnHyperlinkRequestNavigate">
-                        <Run Text="{Binding OriginalProjectUrl, Mode=OneWay}"/>
-                    </Hyperlink>
-                </TextBlock>
-            </StackPanel>
+            <!-- 致谢 -->
+            <ui:TextBlock Text="致谢" FontTypography="BodyStrong" Margin="0,0,0,8"/>
+            
+            <ui:Card Margin="0,0,0,16">
+                <StackPanel>
+                    <ui:TextBlock Text="本项目基于以下开源项目构建："
+                                  FontTypography="Body"
+                                  Margin="0,0,0,12"/>
+                    
+                    <ui:CardControl Margin="0,0,0,8">
+                        <ui:CardControl.Icon>
+                            <ui:SymbolIcon Symbol="Code24"/>
+                        </ui:CardControl.Icon>
+                        <ui:CardControl.Header>
+                            <StackPanel>
+                                <ui:TextBlock Text="InkCanvasForClass" FontTypography="Body"/>
+                                <ui:TextBlock Text="原始项目" 
+                                              FontTypography="Caption" 
+                                              Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                        </ui:CardControl.Header>
+                        <ui:HyperlinkButton Content="访问"
+                                            NavigateUri="{Binding OriginalProjectUrl}"
+                                            Appearance="Primary"/>
+                    </ui:CardControl>
+
+                    <ui:CardControl Margin="0,0,0,0">
+                        <ui:CardControl.Icon>
+                            <ui:SymbolIcon Symbol="DesignIdeas24"/>
+                        </ui:CardControl.Icon>
+                        <ui:CardControl.Header>
+                            <StackPanel>
+                                <ui:TextBlock Text="WPF UI" FontTypography="Body"/>
+                                <ui:TextBlock Text="Fluent Design 样式库" 
+                                              FontTypography="Caption" 
+                                              Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                        </ui:CardControl.Header>
+                        <ui:HyperlinkButton Content="访问"
+                                            NavigateUri="https://github.com/lepoco/wpfui"
+                                            Appearance="Primary"/>
+                    </ui:CardControl>
+                </StackPanel>
+            </ui:Card>
+
+            <!-- 版权信息 -->
+            <ui:InfoBar Title="开源声明"
+                        Message="本软件是自由软件，在自由软件基金会发布的 GNU 通用公共许可证的条款下重新分发和/或修改。"
+                        Severity="Informational"
+                        IsOpen="True"
+                        IsClosable="False"/>
 
         </StackPanel>
     </ui:DynamicScrollViewer>

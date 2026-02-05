@@ -41,6 +41,21 @@ namespace Ink_Canvas.ViewModels.Settings
         public string LicenseDescription => "本强许可协议的许可条件是，在相同许可协议下，提供许可作品的完整源代码和修改，包括使用许可作品的大型作品。版权和许可声明必须保留。贡献者明确授予专利权。";
 
         /// <summary>
+        /// 许可证URL
+        /// </summary>
+        public string LicenseUrl => "https://www.gnu.org/licenses/gpl-3.0.html";
+
+        /// <summary>
+        /// GitHub仓库URL
+        /// </summary>
+        public string GitHubUrl => "https://github.com/InkCanvasForClass-Continued";
+
+        /// <summary>
+        /// 检查更新URL
+        /// </summary>
+        public string CheckUpdateUrl => "https://github.com/InkCanvasForClass-Continued/releases";
+
+        /// <summary>
         /// 原始项目URL
         /// </summary>
         public string OriginalProjectUrl => "https://github.com/InkCanvas/InkCanvasForClass";
