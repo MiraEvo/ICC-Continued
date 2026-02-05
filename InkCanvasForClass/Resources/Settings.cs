@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using Newtonsoft.Json;
 
@@ -219,54 +219,6 @@ namespace Ink_Canvas
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    // 为了向后兼容，保留原有类名的类型别名
-    // 这些别名允许现有代码继续使用旧的类名
-    
-    /// <summary>
-    /// 截图设置类（向后兼容别名）
-    /// </summary>
-    public class Snapshot : SnapshotSettings { }
-
-    /// <summary>
-    /// 存储设置类（向后兼容别名）
-    /// </summary>
-    public class Storage : StorageSettings { }
-
-    /// <summary>
-    /// 画布设置类（向后兼容别名）
-    /// </summary>
-    public class Canvas : CanvasSettings { }
-
-    /// <summary>
-    /// 手势设置类（向后兼容别名）
-    /// </summary>
-    public class Gesture : GestureSettings { }
-
-    /// <summary>
-    /// 启动设置类（向后兼容别名）
-    /// </summary>
-    public class Startup : StartupSettings { }
-
-    /// <summary>
-    /// 外观设置类（向后兼容别名）
-    /// </summary>
-    public class Appearance : AppearanceSettings { }
-
-    /// <summary>
-    /// 自动化设置类（向后兼容别名）
-    /// </summary>
-    public class Automation : AutomationSettings { }
-
-    /// <summary>
-    /// 高级设置类（向后兼容别名）
-    /// </summary>
-    public class Advanced : AdvancedSettings { }
-
-    /// <summary>
-    /// 墨迹转形状设置类（向后兼容别名）
-    /// </summary>
-    public class InkToShape : InkToShapeSettings { }
 
     // 枚举类型需要在 Ink_Canvas 命名空间中定义，以便现有代码可以使用
     // 这些枚举与 Ink_Canvas.Models.Settings 中的枚举值相同
