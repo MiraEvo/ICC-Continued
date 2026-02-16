@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // MW_AppearanceSettingsHandler.cs - 外观设置实时更新处理
 // ============================================================================
 //
@@ -194,8 +194,8 @@ namespace Ink_Canvas
         private void ApplyNibModeTogglerVisibility()
         {
             // 检查控件是否存在，如果不存在则跳过
-            var nibModePanel = this.FindName("NibModeSimpleStackPanel") as FrameworkElement;
-            var boardNibModePanel = this.FindName("BoardNibModeSimpleStackPanel") as FrameworkElement;
+            var nibModePanel = this.FindName("NibModePanel") as FrameworkElement;
+            var boardNibModePanel = this.FindName("BoardNibModePanel") as FrameworkElement;
             
             if (nibModePanel == null && boardNibModePanel == null)
             {
@@ -345,3 +345,4 @@ namespace Ink_Canvas
         }
     }
 }
+

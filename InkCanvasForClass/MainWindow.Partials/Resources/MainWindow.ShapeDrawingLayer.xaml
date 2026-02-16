@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Ink_Canvas"
-             xmlns:modern="http://schemas.inkore.net/lib/ui/wpf/modern"
+             xmlns:modern="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:helpers="clr-namespace:Ink_Canvas.Helpers"
              mc:Ignorable="d"
+             xmlns:layout="clr-namespace:Ink_Canvas.Helpers"
              d:DesignWidth="1920" d:DesignHeight="1080">
     <Grid>
         <helpers:DrawingVisualCanvas IsHitTestVisible="False" x:Name="GridCanvas" Visibility="Collapsed"/>
@@ -30,18 +31,12 @@
                 <Button Foreground="White" Content="完成" Padding="16,6" FontSize="16" Click="DoneButtonClicked"
                         HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                     <Button.Resources>
-                        <SolidColorBrush
-                            x:Key="{x:Static modern:ThemeKeys.ButtonBackgroundKey}"
-                            Color="#2563eb" />
-                        <SolidColorBrush
-                            x:Key="{x:Static modern:ThemeKeys.ButtonBackgroundPointerOverKey}"
-                            Color="#2563eb" />
-                        <SolidColorBrush
-                            x:Key="{x:Static modern:ThemeKeys.ButtonBackgroundPressedKey}"
-                            Color="#1e40af" />
+                        <SolidColorBrush x:Key="ButtonBackground" Color="#2563eb" />
+                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#2563eb" />
+                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#1e40af" />
                     </Button.Resources>
                 </Button>
-                <modern:SimpleStackPanel Margin="30,0,82,0" Spacing="4" Orientation="Horizontal">
+                <StackPanel Margin="30,0,82,0" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                     <Border Name="CursorButton" Padding="9,0" Height="36" Width="36" CornerRadius="5">
                         <Image Width="23" Height="23" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <Image.Source>
@@ -172,8 +167,8 @@
                             </Image.Source>
                         </Image>
                     </Border>
-                </modern:SimpleStackPanel>
-                <modern:SimpleStackPanel Spacing="8" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,-42,0,48">
+                </StackPanel>
+                <StackPanel layout:LayoutSpacing.Spacing="8" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,-42,0,48">
                     <Border Padding="12,0" Height="32" Background="#bb450a0a" CornerRadius="4">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock FontSize="14" Foreground="White" FontWeight="Bold" Text="形状绘制模式 : "/>
@@ -198,8 +193,10 @@
                             <TextBlock FontSize="14" Foreground="White" FontWeight="Bold" Name="PenSizeText" Text="4 像素"/>
                         </StackPanel>
                     </Border>
-                </modern:SimpleStackPanel>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>
 </UserControl>
+
+

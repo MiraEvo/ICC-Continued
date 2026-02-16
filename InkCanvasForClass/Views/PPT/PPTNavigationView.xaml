@@ -1,10 +1,11 @@
-<UserControl x:Class="Ink_Canvas.Views.PPT.PPTNavigationView"
+﻿<UserControl x:Class="Ink_Canvas.Views.PPT.PPTNavigationView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-             mc:Ignorable="d" 
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             xmlns:layout="clr-namespace:Ink_Canvas.Helpers" 
              d:DesignHeight="200" d:DesignWidth="120">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -20,7 +21,7 @@
                  Width="56" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Border BorderThickness="1" BorderBrush="#a1a1aa" Name="PPTBtnLSBorder"
                     Background="#f4f4f5" Opacity="1" CornerRadius="6" Margin="6,0,0,0">
-                <ui:SimpleStackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
                     <!-- Previous Button -->
                     <Border Width="50" Height="50" 
                             MouseUp="GridPPTControlPrevious_MouseUp"
@@ -43,13 +44,13 @@
                         <Grid>
                             <Border Margin="3,0" CornerRadius="5" Name="PPTLSPageButtonFeedbackBorder"
                                     Background="#18181b" Opacity="0" />
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Orientation="Vertical" Spacing="0.5">
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical" layout:LayoutSpacing.Spacing="0.5">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                            FontSize="17" FontWeight="Bold"
                                            Text="{Binding CurrentPage}" Name="PPTBtnPageNow" />
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                            FontSize="10" Text="{Binding TotalPagesText}" Name="PPTBtnPageTotal" />
-                            </ui:SimpleStackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
 
@@ -64,7 +65,7 @@
                                    Height="28" Width="28" Source="{DynamicResource PPTDownArrowIcon}"/>
                         </Grid>
                     </Border>
-                </ui:SimpleStackPanel>
+                </StackPanel>
             </Border>
         </Viewbox>
         
@@ -73,7 +74,7 @@
                  Width="56" HorizontalAlignment="Right" VerticalAlignment="Center">
             <Border BorderThickness="1" BorderBrush="#a1a1aa" Name="PPTBtnRSBorder"
                     Background="#f4f4f5" Opacity="1" CornerRadius="6" Margin="0,0,6,0">
-                <ui:SimpleStackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
                     <!-- Previous Button -->
                     <Border Width="50" Height="50" MouseUp="GridPPTControlPrevious_MouseUp"
                             Name="PPTRSPreviousButtonBorder"
@@ -95,13 +96,13 @@
                         <Grid>
                             <Border Margin="3,0" CornerRadius="5" Name="PPTRSPageButtonFeedbackBorder"
                                     Background="#18181b" Opacity="0" />
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Orientation="Vertical" Spacing="0.5">
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical" layout:LayoutSpacing.Spacing="0.5">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                            FontSize="17" FontWeight="Bold"
                                            Text="{Binding CurrentPage}" />
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                            FontSize="10" Text="{Binding TotalPagesText}" />
-                            </ui:SimpleStackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
                     
@@ -116,8 +117,10 @@
                                    Height="28" Width="28" Source="{DynamicResource PPTDownArrowIcon}"/>
                         </Grid>
                     </Border>
-                </ui:SimpleStackPanel>
+                </StackPanel>
             </Border>
         </Viewbox>
     </Grid>
 </UserControl>
+
+

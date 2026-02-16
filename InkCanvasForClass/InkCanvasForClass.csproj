@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <!-- 项目基本配置 -->
@@ -59,7 +59,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135">
-      <Aliases>XamlBehaviors</Aliases>
+      <Aliases>global,XamlBehaviors</Aliases>
     </PackageReference>
     <PackageReference Include="Sentry" Version="6.0.0" />
     <PackageReference Include="Sentry.Serilog" Version="6.0.0" />
@@ -72,7 +72,6 @@
     <!-- 显式添加以修复 CVE-2021-26701 漏洞 -->
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.1" />
-    <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.9.27" NoWarn="NU1701" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     <PackageReference Include="Lierda.WPFHelper" Version="1.0.3" NoWarn="NU1701" />
     <PackageReference Include="Microsoft.Office.Interop.PowerPoint" Version="15.0.4420.1018" />
@@ -137,3 +136,4 @@
   </ItemGroup>
 
 </Project>
+

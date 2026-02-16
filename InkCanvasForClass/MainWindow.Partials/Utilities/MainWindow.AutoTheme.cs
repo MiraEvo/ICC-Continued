@@ -1,18 +1,35 @@
 using Microsoft.Win32;
-using iNKORE.UI.WPF.Modern;
 using System;
 using Ink_Canvas.Helpers;
 using System.Windows;
 using System.Windows.Media;
 using Application = System.Windows.Application;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
+using static Wpf.Ui.Appearance.ApplicationThemeManager;
 
 namespace Ink_Canvas {
     public partial class MainWindow : System.Windows.Window {
         private Color FloatBarForegroundColor = Color.FromRgb(102, 102, 102);
 
+        private void EnsureMainWindowTransparentBackground()
+        {
+            if (!AllowsTransparency)
+            {
+                return;
+            }
+
+            Background = Brushes.Transparent;
+
+            if (Main_Grid != null)
+            {
+                Main_Grid.Background = Brushes.Transparent;
+            }
+        }
+
         private void SetTheme(string theme) {
             string themeXaml = theme == "Light" ? "Resources/Styles/Light.xaml" : "Resources/Styles/Dark.xaml";
-            ElementTheme elementTheme = theme == "Light" ? ElementTheme.Light : ElementTheme.Dark;
+            ApplicationTheme appTheme = theme == "Light" ? ApplicationTheme.Light : ApplicationTheme.Dark;
 
             var dictionaries = new string[] {
                 themeXaml,
@@ -26,7 +43,12 @@ namespace Ink_Canvas {
                  Application.Current.Resources.MergedDictionaries.Add(rd);
             }
 
-            ThemeManager.SetRequestedTheme((System.Windows.Window)this, elementTheme);
+            // Transparent overlay window: avoid Wpf.Ui window background manager overriding window background.
+            if (!AllowsTransparency)
+            {
+                Apply(appTheme, WindowBackdropType.None, false);
+            }
+            EnsureMainWindowTransparentBackground();
 
             FloatBarForegroundColor = (Color)Application.Current.FindResource("FloatBarForegroundColor");
         }

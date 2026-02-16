@@ -1,5 +1,4 @@
-﻿using iNKORE.UI.WPF.Modern.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +21,7 @@ namespace Ink_Canvas.Popups {
             SelectionModeTabButtonBorders = new Border[] {
                 LassoTabButton, RectangleTabButton
             };
-            SelectionModeTabButtonIndicators = new SimpleStackPanel[] {
+            SelectionModeTabButtonIndicators = new StackPanel[] {
                 LassoTabButtonIndicator, RectangleTabButtonIndicator
             };
             SelectionModeTabButtonIcons = new GeometryDrawing[] {
@@ -71,7 +70,7 @@ namespace Ink_Canvas.Popups {
         }
 
         public Border[] SelectionModeTabButtonBorders;
-        public SimpleStackPanel[] SelectionModeTabButtonIndicators;
+        public StackPanel[] SelectionModeTabButtonIndicators;
         public GeometryDrawing[] SelectionModeTabButtonIcons;
         public TextBlock[] SelectionModeTabButtonTexts;
 
@@ -181,3 +180,4 @@ namespace Ink_Canvas.Popups {
         }
     }
 }
+

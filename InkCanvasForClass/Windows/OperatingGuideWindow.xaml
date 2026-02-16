@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:Ink_Canvas.ViewModels"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         Topmost="True" Background="Transparent"
-        WindowState="{Binding WindowState}"
+        WindowState="{Binding WindowState}" Style="{x:Null}"
         mc:Ignorable="d" WindowStyle="None" AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
         Title="Ink Canvas Annotation 使用指南"

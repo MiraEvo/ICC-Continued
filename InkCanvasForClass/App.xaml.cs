@@ -3,7 +3,6 @@ using Ink_Canvas.Helpers;
 using Ink_Canvas.Services;
 using Ink_Canvas.ViewModels;
 using Ink_Canvas.ViewModels.Settings;
-using iNKORE.UI.WPF.Modern.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
@@ -450,20 +449,10 @@ namespace Ink_Canvas
 
             mainWin = new();
 
-            if (isUsingWindowChrome && DwmCompositionHelper.DwmIsCompositionEnabled()) {
-                mainWin.AllowsTransparency = false;
-                WindowChrome wc = new()
-                {
-                    GlassFrameThickness = new Thickness(-1),
-                    CaptionHeight = 0,
-                    CornerRadius = new CornerRadius(0),
-                    ResizeBorderThickness = new Thickness(0)
-                };
-                WindowChrome.SetWindowChrome(mainWin, wc);
-            } else {
-                mainWin.AllowsTransparency = true;
-                WindowChrome.SetWindowChrome(mainWin, null);
-            }
+            // MainWindow is a desktop-annotation overlay and must stay transparent.
+            // Enabling WindowChrome here forces AllowsTransparency=false and breaks the transparent background.
+            mainWin.AllowsTransparency = true;
+            WindowChrome.SetWindowChrome(mainWin, null);
             mainWin.Show();
 
             LierdaCracker cracker = new();

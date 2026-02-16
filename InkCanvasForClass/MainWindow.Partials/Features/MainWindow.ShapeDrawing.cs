@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // MW_ShapeDrawing.cs - 形状绘制逻辑
 // ============================================================================
 //
@@ -73,9 +73,9 @@ namespace Ink_Canvas {
             IsDrawShapeBorderAutoHide = !IsDrawShapeBorderAutoHide;
 
             if (IsDrawShapeBorderAutoHide)
-                ((iNKORE.UI.WPF.Modern.Controls.FontIcon)sender).Glyph = "\uE718";
+                ((Wpf.Ui.Controls.FontIcon)sender).Glyph = "\uE718";
             else
-                ((iNKORE.UI.WPF.Modern.Controls.FontIcon)sender).Glyph = "\uE77A";
+                ((Wpf.Ui.Controls.FontIcon)sender).Glyph = "\uE77A";
         }
 
         private object lastMouseDownSender = null;
@@ -1040,3 +1040,4 @@ namespace Ink_Canvas {
         #endregion
     }
 }
+

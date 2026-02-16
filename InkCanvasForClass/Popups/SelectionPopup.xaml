@@ -4,20 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Ink_Canvas.Popups"
-             xmlns:modern="http://schemas.inkore.net/lib/ui/wpf/modern"
-             mc:Ignorable="d" Width="300" Height="209" UseLayoutRounding="True">
+             xmlns:modern="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             xmlns:layout="clr-namespace:Ink_Canvas.Helpers" Width="300" Height="209" UseLayoutRounding="True">
     <Grid>
         <Border Margin="8" Background="#f4f4f5" BorderBrush="#3b82f6" BorderThickness="2" CornerRadius="6">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="5" Opacity="0.2" />
             </Border.Effect>
             <Grid>
-                <modern:SimpleStackPanel Spacing="4" Margin="8,0" Height="40" VerticalAlignment="Top" Orientation="Horizontal">
+                <StackPanel layout:LayoutSpacing.Spacing="4" Margin="8,0" Height="40" VerticalAlignment="Top" Orientation="Horizontal">
                     <Border x:Name="LassoTabButton" VerticalAlignment="Bottom"
                             Background="#223b82f6" Height="34" Width="96"
                             CornerRadius="6" MouseDown="SelectionModeTabButton_MouseDown">
                         <Grid>
-                            <modern:SimpleStackPanel
+                            <StackPanel
                                 x:Name="LassoTabButtonIndicator"
                                 Visibility="Visible"
                                 Orientation="Horizontal"
@@ -25,9 +26,9 @@
                                 VerticalAlignment="Bottom">
                                 <Border Width="32" Height="4"
                                         Background="#2563eb" CornerRadius="2" />
-                            </modern:SimpleStackPanel>
-                            <modern:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2">
-                                <modern:SimpleStackPanel
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2">
+                                <StackPanel
                                     VerticalAlignment="Center"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Center">
@@ -49,15 +50,15 @@
                                         FontSize="14" TextAlignment="Center"
                                         VerticalAlignment="Center"
                                         Text="套索选择" Margin="4,0,0,0" />
-                                </modern:SimpleStackPanel>
-                            </modern:SimpleStackPanel>
+                                </StackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
                     <Border x:Name="RectangleTabButton" VerticalAlignment="Bottom"
                             Background="#223b82f6" Height="34" Width="96"
                             CornerRadius="6" MouseDown="SelectionModeTabButton_MouseDown">
                         <Grid>
-                            <modern:SimpleStackPanel
+                            <StackPanel
                                 x:Name="RectangleTabButtonIndicator"
                                 Visibility="Visible"
                                 Orientation="Horizontal"
@@ -65,9 +66,9 @@
                                 VerticalAlignment="Bottom">
                                 <Border Width="32" Height="4"
                                         Background="#2563eb" CornerRadius="2" />
-                            </modern:SimpleStackPanel>
-                            <modern:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2">
-                                <modern:SimpleStackPanel
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2">
+                                <StackPanel
                                     VerticalAlignment="Center"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Center">
@@ -89,11 +90,11 @@
                                         FontSize="14" TextAlignment="Center"
                                         VerticalAlignment="Center"
                                         Text="矩形框选" Margin="4,0,0,0" />
-                                </modern:SimpleStackPanel>
-                            </modern:SimpleStackPanel>
+                                </StackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
-                </modern:SimpleStackPanel>
+                </StackPanel>
                 <Border Name="CloseButtonBorder" MouseDown="CloseButtonBorder_MouseDown" MouseUp="CloseButtonBorder_MouseUp" MouseLeave="CloseButtonBorder_MouseLeave"
                         Height="34" Width="34" CornerRadius="6" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,6,8,0">
                     <Image Height="24" Width="24">
@@ -108,11 +109,11 @@
                         </Image.Source>
                     </Image>
                 </Border>
-                <Grid Margin="0,40,0,0" modern:ThemeManager.RequestedTheme="Light">
+                <Grid Margin="0,40,0,0">
                     <!--main menu-->
                     <Border Margin="6" CornerRadius="6" Background="#fafafa" BorderBrush="#d4d4d8" BorderThickness="1">
                         <Grid>
-                            <modern:SimpleStackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Vertical">
                                 <Grid Margin="8,9,8,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
@@ -120,7 +121,7 @@
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
                                     <Button Click="SelectAllButtonClicked" Grid.Column="0" HorizontalAlignment="Stretch" Margin="0,0,3,0">
-                                        <modern:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                                        <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="4">
                                             <Image Height="19" Width="19">
                                                 <Image.Source>
                                                     <DrawingImage>
@@ -133,10 +134,10 @@
                                                 </Image.Source>
                                             </Image>
                                             <TextBlock Text="全选" VerticalAlignment="Center"></TextBlock>
-                                        </modern:SimpleStackPanel>
+                                        </StackPanel>
                                     </Button>
                                     <Button Click="UnSelectButtonClicked" ClipToBounds="False" Grid.Column="1" HorizontalAlignment="Stretch" Margin="3,0,3,0">
-                                        <modern:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                                        <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="4">
                                             <Image Height="19" Width="19">
                                                 <Image.Source>
                                                     <DrawingImage>
@@ -149,10 +150,10 @@
                                                 </Image.Source>
                                             </Image>
                                             <TextBlock Text="清选" VerticalAlignment="Center"></TextBlock>
-                                        </modern:SimpleStackPanel>
+                                        </StackPanel>
                                     </Button>
                                     <Button Click="ReverseSelectButtonClicked" Grid.Column="2" HorizontalAlignment="Stretch" Margin="3,0,0,0">
-                                        <modern:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                                        <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="4">
                                             <Image Height="19" Width="19">
                                                 <Image.Source>
                                                     <DrawingImage>
@@ -165,15 +166,15 @@
                                                 </Image.Source>
                                             </Image>
                                             <TextBlock Text="反选" VerticalAlignment="Center"></TextBlock>
-                                        </modern:SimpleStackPanel>
+                                        </StackPanel>
                                     </Button>
                                 </Grid>
-                                <modern:SimpleStackPanel Spacing="-4" Orientation="Vertical" Margin="11,4,0,0">
+                                <StackPanel layout:LayoutSpacing.Spacing="-4" Orientation="Vertical" Margin="11,4,0,0">
                                     <CheckBox Name="cb1" Checked="cb1cked" Unchecked="cb1cked" Content="将墨迹缩放应用于触笔笔尖" IsChecked="True"></CheckBox>
                                     <CheckBox Name="cb2" Checked="cb2cked" Unchecked="cb2cked" Content="仅命中全部包含的墨迹" IsChecked="True"></CheckBox>
                                     <CheckBox Name="cb3" Checked="cb3cked" Unchecked="cb3cked" Content="允许点选命中被锁定的墨迹" IsChecked="True"></CheckBox>
-                                </modern:SimpleStackPanel>
-                            </modern:SimpleStackPanel>
+                                </StackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </Grid>
@@ -181,3 +182,5 @@
         </Border>
     </Grid>
 </UserControl>
+
+

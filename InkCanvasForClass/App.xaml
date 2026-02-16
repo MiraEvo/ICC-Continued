@@ -1,14 +1,13 @@
-<Application x:Class="Ink_Canvas.App"
+﻿<Application x:Class="Ink_Canvas.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:layout="clr-namespace:Ink_Canvas.Helpers"
              xmlns:local="clr-namespace:Ink_Canvas"
-             xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources RequestedTheme="Light"/>
-                <ui:XamlControlsResources />
                 <ResourceDictionary Source="Resources/SeewoImageDictionary.xaml"/>
                 <ResourceDictionary Source="Resources/DrawShapeImageDictionary.xaml"/>
                 <ResourceDictionary Source="Resources/IconImageDictionary.xaml"/>
@@ -18,18 +17,18 @@
                 <wpfui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
 
-            <Style TargetType="ui:ScrollViewerEx">
+            <Style TargetType="ScrollViewer">
                 <EventSetter Event="PreviewMouseWheel" Handler="ScrollViewer_PreviewMouseWheel"/>
             </Style>
             <Style TargetType="wpfui:DynamicScrollViewer">
                 <EventSetter Event="PreviewMouseWheel" Handler="ScrollViewer_PreviewMouseWheel"/>
             </Style>
-            <ContextMenu Opened="SysTrayMenu_Opened" x:Key="SysTrayMenu" Padding="6" Background="#F8FAFC" BorderBrush="#D1D5DB" BorderThickness="1" ui:ThemeManager.RequestedTheme="Light">
+            <ContextMenu Opened="SysTrayMenu_Opened" x:Key="SysTrayMenu" Padding="6" Background="#F8FAFC" BorderBrush="#D1D5DB" BorderThickness="1">
                 <MenuItem IsCheckable="True" IsChecked="False" Checked="HideICCMainWindowTrayIconMenuItem_Checked" Unchecked="HideICCMainWindowTrayIconMenuItem_UnChecked" Name="HideICCMainWindowTrayIconMenuItem">
                     <MenuItem.Header>
-                        <ui:SimpleStackPanel Orientation="Horizontal" Margin="-4,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="-4,0,0,0">
                             <TextBlock Name="HideICCMainWindowTrayIconMenuItemHeaderText" FontSize="14" VerticalAlignment="Center" Foreground="#1F2937" Text="隐藏ICC主窗口" />
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </MenuItem.Header>
                     <MenuItem.Icon>
                         <Image Width="28" Height="28" Margin="-2">
@@ -48,9 +47,9 @@
                 <Separator Margin="0,3" />
                 <MenuItem>
                     <MenuItem.Header>
-                        <ui:SimpleStackPanel Orientation="Horizontal" Margin="-4,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="-4,0,0,0">
                             <TextBlock FontSize="14" VerticalAlignment="Center" Foreground="#1F2937" Text="禁用所有快捷键" />
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </MenuItem.Header>
                     <MenuItem.Icon>
                         <Image Width="28" Height="28" Margin="-2">
@@ -68,9 +67,9 @@
                 </MenuItem>
                 <MenuItem Name="ForceFullScreenTrayIconMenuItem" Click="ForceFullScreenTrayIconMenuItem_Clicked">
                     <MenuItem.Header>
-                        <ui:SimpleStackPanel Orientation="Horizontal" Margin="-4,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="-4,0,0,0">
                             <TextBlock FontSize="14" VerticalAlignment="Center" Foreground="#1F2937" Text="强制全屏化" />
-                            <ui:SimpleStackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="4" Margin="16,0,0,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" layout:LayoutSpacing.Spacing="4" Margin="16,0,0,0">
                                 <Border Padding="4,2,4,1" Background="#EEF2F7" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="2.5">
                                     <TextBlock FontSize="8" Foreground="#475569" FontWeight="Bold" Text="CTRL" />
                                 </Border>
@@ -78,8 +77,8 @@
                                 <Border Padding="4,2,4,1" Background="#EEF2F7" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="2.5">
                                     <TextBlock FontSize="8" Foreground="#475569" FontWeight="Bold" Text="F" />
                                 </Border>
-                            </ui:SimpleStackPanel>
-                        </ui:SimpleStackPanel>
+                            </StackPanel>
+                        </StackPanel>
                     </MenuItem.Header>
                     <MenuItem.Icon>
                         <Image Width="28" Height="28" Margin="-2">
@@ -101,9 +100,9 @@
                 </MenuItem>
                 <MenuItem Name="FoldFloatingBarTrayIconMenuItem" Click="FoldFloatingBarTrayIconMenuItem_Clicked">
                     <MenuItem.Header>
-                        <ui:SimpleStackPanel Orientation="Horizontal" Margin="-4,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="-4,0,0,0">
                             <TextBlock Name="FoldFloatingBarTrayIconMenuItemHeaderText" FontSize="14" VerticalAlignment="Center" Foreground="#1F2937" Text="切换为收纳模式" />
-                            <ui:SimpleStackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="4" Margin="16,0,0,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" layout:LayoutSpacing.Spacing="4" Margin="16,0,0,0">
                                 <Border Padding="4,2,4,1" Background="#EEF2F7" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="2.5">
                                     <TextBlock FontSize="8" Foreground="#475569" FontWeight="Bold" Text="CTRL" />
                                 </Border>
@@ -111,8 +110,8 @@
                                 <Border Padding="4,2,4,1" Background="#EEF2F7" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="2.5">
                                     <TextBlock FontSize="8" Foreground="#475569" FontWeight="Bold" Text="S" />
                                 </Border>
-                            </ui:SimpleStackPanel>
-                        </ui:SimpleStackPanel>
+                            </StackPanel>
+                        </StackPanel>
                     </MenuItem.Header>
                     <MenuItem.Icon>
                         <Grid>
@@ -146,9 +145,9 @@
                 </MenuItem>
                 <MenuItem Name="ResetFloatingBarPositionTrayIconMenuItem" Click="ResetFloatingBarPositionTrayIconMenuItem_Clicked">
                     <MenuItem.Header>
-                        <ui:SimpleStackPanel Orientation="Horizontal" Margin="-4,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="-4,0,0,0">
                             <TextBlock FontSize="14" VerticalAlignment="Center" Foreground="#1F2937" Text="重置工具栏位置" />
-                            <ui:SimpleStackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="4" Margin="16,0,0,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" layout:LayoutSpacing.Spacing="4" Margin="16,0,0,0">
                                 <Border  Padding="4,2,4,1" Background="#EEF2F7" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="2.5">
                                     <TextBlock FontSize="8" Foreground="#475569" FontWeight="Bold" Text="CTRL" />
                                 </Border>
@@ -156,8 +155,8 @@
                                 <Border Padding="4,2,4,1" Background="#EEF2F7" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="2.5">
                                     <TextBlock FontSize="8" Foreground="#475569" FontWeight="Bold" Text="T" />
                                 </Border>
-                            </ui:SimpleStackPanel>
-                        </ui:SimpleStackPanel>
+                            </StackPanel>
+                        </StackPanel>
                     </MenuItem.Header>
                     <MenuItem.Icon>
                         <Image Width="28" Height="28" Margin="-2">
@@ -177,9 +176,9 @@
                 <Separator Margin="0,3" />
                 <MenuItem Name="RestartAppTrayIconMenuItem" Click="RestartAppTrayIconMenuItem_Clicked">
                     <MenuItem.Header>
-                        <ui:SimpleStackPanel Orientation="Horizontal" Margin="-4,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="-4,0,0,0">
                             <TextBlock FontSize="14" FontWeight="Bold" VerticalAlignment="Center" Foreground="#2563eb" Text="重启软件" />
-                            <ui:SimpleStackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="4" Margin="16,0,0,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" layout:LayoutSpacing.Spacing="4" Margin="16,0,0,0">
                                 <Border  Padding="4,2,4,1" Background="#EEF2F7" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="2.5">
                                     <TextBlock FontSize="8" Foreground="#475569" FontWeight="Bold" Text="CTRL" />
                                 </Border>
@@ -187,8 +186,8 @@
                                 <Border Padding="4,2,4,1" Background="#EEF2F7" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="2.5">
                                     <TextBlock FontSize="8" Foreground="#475569" FontWeight="Bold" Text="R" />
                                 </Border>
-                            </ui:SimpleStackPanel>
-                        </ui:SimpleStackPanel>
+                            </StackPanel>
+                        </StackPanel>
                     </MenuItem.Header>
                     <MenuItem.Icon>
                         <Image Width="24" Height="24">
@@ -209,9 +208,9 @@
                 </MenuItem>
                 <MenuItem Name="CloseAppTrayIconMenuItem" Click="CloseAppTrayIconMenuItem_Clicked">
                     <MenuItem.Header>
-                        <ui:SimpleStackPanel Orientation="Horizontal" Margin="-4,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="-4,0,0,0">
                             <TextBlock FontSize="14" FontWeight="Bold" VerticalAlignment="Center" Foreground="#dc2626" Text="退出软件" />
-                            <ui:SimpleStackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="4" Margin="16,0,0,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" layout:LayoutSpacing.Spacing="4" Margin="16,0,0,0">
                                 <Border  Padding="4,2,4,1" Background="#EEF2F7" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="2.5">
                                     <TextBlock FontSize="8" Foreground="#475569" FontWeight="Bold" Text="CTRL" />
                                 </Border>
@@ -219,8 +218,8 @@
                                 <Border Padding="4,2,4,1" Background="#EEF2F7" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="2.5">
                                     <TextBlock FontSize="8" Foreground="#475569" FontWeight="Bold" Text="Q" />
                                 </Border>
-                            </ui:SimpleStackPanel>
-                        </ui:SimpleStackPanel>
+                            </StackPanel>
+                        </StackPanel>
                     </MenuItem.Header>
                     <MenuItem.Icon>
                         <Image Width="24" Height="24">
@@ -243,3 +242,5 @@
         </ResourceDictionary>
     </Application.Resources>
 </Application>
+
+

@@ -1,6 +1,5 @@
 using Ink_Canvas.Helpers;
 using Ink_Canvas.Core;
-using iNKORE.UI.WPF.Modern;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -12,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
+using static Wpf.Ui.Appearance.ApplicationThemeManager;
 
 namespace Ink_Canvas {
     public partial class MainWindow : System.Windows.Window {
@@ -31,7 +33,7 @@ namespace Ink_Canvas {
             WaterMarkDate.Visibility = Visibility.Collapsed;
             BlackBoardWaterMark.Visibility = Visibility.Collapsed;
             BtnSwitch_Click(null, null);
-            ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+            Apply(ApplicationTheme.Dark, WindowBackdropType.None, false);
             new Thread(new ThreadStart(() => {
                 Thread.Sleep(Constants.ThemeSwitchDelayMilliseconds);
                 Application.Current.Dispatcher.Invoke(() => { isDisplayingOrHidingBlackboard = false; });

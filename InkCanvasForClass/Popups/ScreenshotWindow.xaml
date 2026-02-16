@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ink_Canvas.Popups"
-        xmlns:modern="http://schemas.inkore.net/lib/ui/wpf/modern"
-        mc:Ignorable="d" AllowsTransparency="True" Background="Transparent" 
-        WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False" WindowState="Maximized"
+         xmlns:modern="http://schemas.lepo.co/wpfui/2022/xaml"
+         mc:Ignorable="d"
+             xmlns:layout="clr-namespace:Ink_Canvas.Helpers" Style="{x:Null}" AllowsTransparency="True" Background="Transparent" 
+         WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False" WindowState="Maximized"
         KeyDown="ScreenshotWindow_OnKeyDown"
         Title="ScreenshotWindow" Width="1920" Height="1080" Topmost="True">
     <Window.Resources>
@@ -30,7 +31,7 @@
         <Border Name="ScreenshotPanel" VerticalAlignment="Bottom" Height="180" Width="430" Background="#fafafa" BorderBrush="#3b82f6" BorderThickness="2" CornerRadius="24,12,24,24" Margin="0,0,0,32">
             <Grid>
                 <Grid>
-                    <modern:SimpleStackPanel Name="MainFuncPanel" Orientation="Vertical" Spacing="2">
+                    <StackPanel Name="MainFuncPanel" Orientation="Vertical" layout:LayoutSpacing.Spacing="2">
                         <Grid Margin="13.5,16,13.5,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
@@ -39,7 +40,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Border Name="FullScreenIcon" Margin="2.5,0,2.5,0" Grid.Column="0" CornerRadius="16" Background="#1618181b" Height="78">
-                                <modern:SimpleStackPanel Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
+                                <StackPanel layout:LayoutSpacing.Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
                                     <Image Width="40" Height="40">
                                         <Image.Source>
                                             <DrawingImage>
@@ -52,10 +53,10 @@
                                         </Image.Source>
                                     </Image>
                                     <TextBlock Name="FullScreenIconText" Text="全屏截图" FontSize="14" HorizontalAlignment="Center"></TextBlock>
-                                </modern:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                             <Border Name="WindowIcon" Margin="2.5,0,2.5,0" Grid.Column="1" CornerRadius="16" Background="#1618181b" Height="78">
-                                <modern:SimpleStackPanel Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
+                                <StackPanel layout:LayoutSpacing.Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
                                     <Image Width="40" Height="40">
                                         <Image.Source>
                                             <DrawingImage>
@@ -68,10 +69,10 @@
                                         </Image.Source>
                                     </Image>
                                     <TextBlock Name="WindowIconText" Text="窗口截图" FontSize="14" HorizontalAlignment="Center"></TextBlock>
-                                </modern:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                             <Border Name="SelectionIcon" Margin="2.5,0,2.5,0" Grid.Column="2" CornerRadius="16" Background="#1618181b" Height="78">
-                                <modern:SimpleStackPanel Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
+                                <StackPanel layout:LayoutSpacing.Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
                                     <Image Width="40" Height="40">
                                         <Image.Source>
                                             <DrawingImage>
@@ -84,10 +85,10 @@
                                         </Image.Source>
                                     </Image>
                                     <TextBlock Name="SelectionIconText" Text="选区截图" FontSize="14" HorizontalAlignment="Center"></TextBlock>
-                                </modern:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                             <Border Name="DesktopIcon" Margin="2.5,0,2.5,0" Grid.Column="3" CornerRadius="16" Background="#1618181b" Height="78">
-                                <modern:SimpleStackPanel Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
+                                <StackPanel layout:LayoutSpacing.Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
                                     <Image Width="40" Height="40">
                                         <Image.Source>
                                             <DrawingImage>
@@ -100,12 +101,12 @@
                                         </Image.Source>
                                     </Image>
                                     <TextBlock Name="DesktopIconText" Text="显示桌面" FontSize="14" HorizontalAlignment="Center"></TextBlock>
-                                </modern:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Grid>
                         <Grid>
-                            <modern:SimpleStackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
-                                <modern:SimpleStackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" layout:LayoutSpacing.Spacing="24">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                     <CheckBox MinWidth="0" Name="ToggleSwitchCopyToClipBoard" IsChecked="True" FontWeight="Bold"/>
                                     <Image Width="18" Height="18" Margin="0,0,3,0">
                                         <Image.Source>
@@ -120,8 +121,8 @@
                                     </Image>
                                     <TextBlock Foreground="#18181b" Text="复制到剪贴板" VerticalAlignment="Center"
                                        FontSize="14" />
-                                </modern:SimpleStackPanel>
-                                <modern:SimpleStackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                     <CheckBox MinWidth="0" Name="ToggleSwitchAttachInk" IsChecked="True"
                                                  FontFamily="Microsoft YaHei UI" FontWeight="Bold"/>
                                     <Image Width="18" Height="18" Margin="0,0,3,0">
@@ -138,12 +139,12 @@
                                     </Image>
                                     <TextBlock Foreground="#18181b" Text="附带批注墨迹" VerticalAlignment="Center"
                                        FontSize="14" />
-                                </modern:SimpleStackPanel>
-                            </modern:SimpleStackPanel>
+                                </StackPanel>
+                            </StackPanel>
                         </Grid>
-                    </modern:SimpleStackPanel>
+                    </StackPanel>
                     <Border Padding="0,0,0,24" CornerRadius="24" Background="#88FFFFFF" Name="LoadingOverlay" Visibility="Collapsed">
-                        <modern:SimpleStackPanel RenderTransformOrigin="0.5,0.5" Orientation="Vertical" Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <StackPanel RenderTransformOrigin="0.5,0.5" Orientation="Vertical" layout:LayoutSpacing.Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <Image Width="32" Height="32" Source="{StaticResource LoadingBlackDrawingImage}">
                                 <Image.RenderTransform>
                                     <RotateTransform CenterX="16" CenterY="16" />
@@ -161,7 +162,7 @@
                                 </Image.Triggers>
                             </Image>
                             <TextBlock FontSize="14" Foreground="#1b1b1f" VerticalAlignment="Center" Text="截图中..."></TextBlock>
-                        </modern:SimpleStackPanel>
+                        </StackPanel>
                     </Border>
                 </Grid>
                 <Border VerticalAlignment="Bottom" Height="34" CornerRadius="0,0,24,24" Background="#f4f4f5" BorderBrush="#d4d4d8" BorderThickness="0,1,0,0" Padding="24,0">
@@ -193,16 +194,16 @@
         </Border>
         <Border Name="WindowScreenshotOverlay" Background="#dd09090b" Visibility="Collapsed">
             <Grid>
-                <modern:SimpleStackPanel Margin="48,36" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <StackPanel Margin="48,36" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <TextBlock Text="窗口截图" FontWeight="Bold" Foreground="White" FontSize="48"/>
                     <TextBlock Text="点击需要截取的窗口即可截图" Margin="0,8,0,0" Foreground="#d4d4d8" FontSize="18"/>
                     <StackPanel Name="NeedAdminTextPanel" Orientation="Horizontal" Margin="0,8,0,0">
                         <Image VerticalAlignment="Center" Width="26" Height="26" Source="../Resources/Icons-png/uac_icon.png"/>
                         <TextBlock FontWeight="Bold" VerticalAlignment="Center" Text="您当前未以管理员权限运行 icc ，这会导致部分以管理员权限运行的程序窗口无法被截取" Margin="6,0,0,0" Foreground="White" FontSize="18"/>
                     </StackPanel>
-                </modern:SimpleStackPanel>
+                </StackPanel>
                 <Grid Name="WindowScreenshotWindowsGrid">
-                    <modern:ScrollViewerEx Name="WindowsItemsScrollViewer" PreviewMouseWheel="WindowsItemsScrollViewer_PreviewMouseWheel" IsManipulationEnabled="True" VerticalScrollBarVisibility="Hidden" Margin="36,178,36,0">
+                    <ScrollViewer Name="WindowsItemsScrollViewer" PreviewMouseWheel="WindowsItemsScrollViewer_PreviewMouseWheel" IsManipulationEnabled="True" VerticalScrollBarVisibility="Hidden" Margin="36,178,36,0">
                         <ItemsControl Name="WindowsItemsControl">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -211,7 +212,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <modern:SimpleStackPanel MouseUp="WindowItem_MouseUp" Cursor="Hand" Visibility="{Binding Visibility}" Width="{Binding Width}" Tag="{Binding}" Orientation="Vertical" Margin="14">
+                                    <StackPanel MouseUp="WindowItem_MouseUp" Cursor="Hand" Visibility="{Binding Visibility}" Width="{Binding Width}" Tag="{Binding}" Orientation="Vertical" Margin="14">
                                         <Grid Height="24">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0">
                                                 <Image Width="24" Height="24" Source="{Binding Icon}"/>
@@ -228,14 +229,14 @@
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
-                                    </modern:SimpleStackPanel>
+                                    </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                    </modern:ScrollViewerEx>
+                    </ScrollViewer>
                 </Grid>
                 <Border Padding="0,0,0,24" CornerRadius="24" Background="#8809090b" Name="WindowsSnapshotLoadingOverlay" Visibility="Collapsed">
-                    <modern:SimpleStackPanel RenderTransformOrigin="0.5,0.5" Orientation="Vertical" Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel RenderTransformOrigin="0.5,0.5" Orientation="Vertical" layout:LayoutSpacing.Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <Image Width="32" Height="32" Source="{StaticResource LoadingWhiteDrawingImage}">
                             <Image.RenderTransform>
                                 <RotateTransform CenterX="16" CenterY="16" />
@@ -253,12 +254,12 @@
                             </Image.Triggers>
                         </Image>
                         <TextBlock FontSize="14" Foreground="White" VerticalAlignment="Center" Text="加载中..."></TextBlock>
-                    </modern:SimpleStackPanel>
+                    </StackPanel>
                 </Border>
                 <Border Padding="16,0" Height="56" VerticalAlignment="Bottom" Background="#18181b" BorderBrush="#3f3f46" BorderThickness="0,2,0,0">
-                    <modern:SimpleStackPanel Orientation="Horizontal" Spacing="48">
+                    <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="48">
                         <Border Name="EscBorder" Padding="12,0">
-                            <modern:SimpleStackPanel Orientation="Horizontal" Spacing="10" Height="56">
+                            <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="10" Height="56">
                                 <Image Height="28" VerticalAlignment="Center">
                                     <Image.Source>
                                         <DrawingImage>
@@ -271,11 +272,13 @@
                                     </Image.Source>
                                 </Image>
                                 <TextBlock FontSize="18" Foreground="White" VerticalAlignment="Center" Text="退出窗口截图"/>
-                            </modern:SimpleStackPanel>
+                            </StackPanel>
                         </Border>
-                    </modern:SimpleStackPanel>
+                    </StackPanel>
                 </Border>
             </Grid>
         </Border>
     </Grid>
 </Window>
+
+

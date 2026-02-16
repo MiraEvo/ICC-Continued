@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Ink_Canvas.Popups"
-             xmlns:modern="http://schemas.inkore.net/lib/ui/wpf/modern"
-             mc:Ignorable="d" Width="570" Height="380" UseLayoutRounding="True">
+             xmlns:modern="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             xmlns:layout="clr-namespace:Ink_Canvas.Helpers" Width="570" Height="380" UseLayoutRounding="True">
     <UserControl.Resources>
         <DrawingImage x:Key="LineIcon">
             <DrawingImage.Drawing>
@@ -224,10 +225,10 @@
                 <DropShadowEffect BlurRadius="5" Opacity="0.2" />
             </Border.Effect>
             <Grid>
-                <modern:SimpleStackPanel Spacing="4" Margin="8,0" Height="40" VerticalAlignment="Top" Orientation="Horizontal">
+                <StackPanel layout:LayoutSpacing.Spacing="4" Margin="8,0" Height="40" VerticalAlignment="Top" Orientation="Horizontal">
                     <Border VerticalAlignment="Bottom" Height="34" Padding="6,0">
                         <Grid>
-                            <modern:SimpleStackPanel
+                            <StackPanel
                                     VerticalAlignment="Center"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Center">
@@ -248,10 +249,10 @@
                                         FontSize="17" TextAlignment="Center"
                                         VerticalAlignment="Center"
                                         Text="形状绘制" Margin="4,0,0,0" />
-                            </modern:SimpleStackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
-                </modern:SimpleStackPanel>
+                </StackPanel>
                 <Border Name="CloseButtonBorder" MouseDown="CloseButtonBorder_MouseDown" MouseUp="CloseButtonBorder_MouseUp" MouseLeave="CloseButtonBorder_MouseLeave"
                         Height="34" Width="34" CornerRadius="6" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,6,8,0">
                     <Image Height="24" Width="24">
@@ -266,7 +267,7 @@
                         </Image.Source>
                     </Image>
                 </Border>
-                <Grid Margin="0,40,0,0" modern:ThemeManager.RequestedTheme="Light">
+                <Grid Margin="0,40,0,0">
                     <!--main menu-->
                     <Border Margin="6" Height="272" VerticalAlignment="Top" CornerRadius="6" Background="#fafafa" BorderBrush="#d4d4d8" BorderThickness="1">
                         <Grid>
@@ -289,9 +290,9 @@
                         </Grid>
                     </Border>
                     <Grid Height="40" VerticalAlignment="Bottom" Margin="12,0">
-                        <modern:SimpleStackPanel HorizontalAlignment="Left" Orientation="Horizontal" Spacing="16">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" layout:LayoutSpacing.Spacing="16">
                             <CheckBox Content="仅单次绘制" MinWidth="0"/>
-                        </modern:SimpleStackPanel>
+                        </StackPanel>
                         <StackPanel Margin="0,0,6,0" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Foreground="#18181b" FontSize="14" Text="粗细 : " VerticalAlignment="Center"/>
                             <TextBlock FontWeight="Bold" Margin="0,0,24,0" Foreground="#18181b" FontSize="14" Text="4" VerticalAlignment="Center"/>
@@ -304,3 +305,5 @@
         </Border>
     </Grid>
 </UserControl>
+
+

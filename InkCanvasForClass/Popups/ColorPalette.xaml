@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Ink_Canvas.Popups"
-             xmlns:modern="http://schemas.inkore.net/lib/ui/wpf/modern"
+             xmlns:modern="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:colorPicker="clr-namespace:ColorPicker;assembly=ColorPicker"
              xmlns:helpers="clr-namespace:Ink_Canvas.Helpers"
-             mc:Ignorable="d" Width="300" Height="462" UseLayoutRounding="True">
+             mc:Ignorable="d"
+             xmlns:layout="clr-namespace:Ink_Canvas.Helpers" Width="300" Height="462" UseLayoutRounding="True">
     <UserControl.Resources>
         <DrawingImage x:Key="CheckedLightIcon">
             <DrawingImage.Drawing>
@@ -296,12 +297,12 @@
                 <DropShadowEffect BlurRadius="5" Opacity="0.2" />
             </Border.Effect>
             <Grid>
-                <modern:SimpleStackPanel Spacing="4" Margin="8,0" Height="40" VerticalAlignment="Top" Orientation="Horizontal">
+                <StackPanel layout:LayoutSpacing.Spacing="4" Margin="8,0" Height="40" VerticalAlignment="Top" Orientation="Horizontal">
                     <Border x:Name="PenTabButton" VerticalAlignment="Bottom"
                             Background="#223b82f6" Height="34" Width="69"
                             CornerRadius="6" MouseDown="PenTabButton_MouseDown">
                         <Grid>
-                            <modern:SimpleStackPanel
+                            <StackPanel
                                 x:Name="PenTabButtonIndicator"
                                 Visibility="Visible"
                                 Orientation="Horizontal"
@@ -309,9 +310,9 @@
                                 VerticalAlignment="Bottom">
                                 <Border Width="32" Height="4"
                                         Background="#2563eb" CornerRadius="2" />
-                            </modern:SimpleStackPanel>
-                            <modern:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2">
-                                <modern:SimpleStackPanel
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2">
+                                <StackPanel
                                     VerticalAlignment="Center"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Center">
@@ -333,15 +334,15 @@
                                         FontSize="14" TextAlignment="Center"
                                         VerticalAlignment="Center"
                                         Text="软笔" Margin="4,0,0,0" />
-                                </modern:SimpleStackPanel>
-                            </modern:SimpleStackPanel>
+                                </StackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
                     <Border x:Name="HighlighterTabButton" VerticalAlignment="Bottom"
                             Background="#223b82f6" Height="34" Width="69"
                             CornerRadius="6" MouseDown="PenTabButton_MouseDown">
                         <Grid>
-                            <modern:SimpleStackPanel
+                            <StackPanel
                                 x:Name="HighlighterTabButtonIndicator"
                                 Visibility="Visible"
                                 Orientation="Horizontal"
@@ -349,9 +350,9 @@
                                 VerticalAlignment="Bottom">
                                 <Border Width="32" Height="4"
                                         Background="#2563eb" CornerRadius="2" />
-                            </modern:SimpleStackPanel>
-                            <modern:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2">
-                                <modern:SimpleStackPanel
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2">
+                                <StackPanel
                                     VerticalAlignment="Center"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Center">
@@ -373,15 +374,15 @@
                                         FontSize="14" TextAlignment="Center"
                                         VerticalAlignment="Center"
                                         Text="荧光" Margin="4,0,0,0" />
-                                </modern:SimpleStackPanel>
-                            </modern:SimpleStackPanel>
+                                </StackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
                     <Border x:Name="LaserPenTabButton" VerticalAlignment="Bottom"
                             Background="#223b82f6" Height="34" Width="69"
                             CornerRadius="6" MouseDown="PenTabButton_MouseDown">
                         <Grid>
-                            <modern:SimpleStackPanel
+                            <StackPanel
                                 x:Name="LaserPenTabButtonIndicator"
                                 Visibility="Visible"
                                 Orientation="Horizontal"
@@ -389,9 +390,9 @@
                                 VerticalAlignment="Bottom">
                                 <Border Width="32" Height="4"
                                         Background="#2563eb" CornerRadius="2" />
-                            </modern:SimpleStackPanel>
-                            <modern:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2">
-                                <modern:SimpleStackPanel
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2">
+                                <StackPanel
                                     VerticalAlignment="Center"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Center">
@@ -413,11 +414,11 @@
                                         FontSize="14" TextAlignment="Center"
                                         VerticalAlignment="Center"
                                         Text="激光" Margin="4,0,0,0" />
-                                </modern:SimpleStackPanel>
-                            </modern:SimpleStackPanel>
+                                </StackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
-                </modern:SimpleStackPanel>
+                </StackPanel>
                 <Border Name="CloseButtonBorder" MouseDown="CloseButtonBorder_MouseDown" MouseUp="CloseButtonBorder_MouseUp" MouseLeave="CloseButtonBorder_MouseLeave"
                         Height="34" Width="34" CornerRadius="6" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,6,8,0">
                     <Image Height="24" Width="24">
@@ -432,11 +433,11 @@
                         </Image.Source>
                     </Image>
                 </Border>
-                <Grid Margin="0,40,0,0" modern:ThemeManager.RequestedTheme="Light">
+                <Grid Margin="0,40,0,0">
                     <!--main menu-->
                     <Border Margin="6" CornerRadius="6" Background="#fafafa" BorderBrush="#d4d4d8" BorderThickness="1">
                         <Grid>
-                            <modern:SimpleStackPanel Orientation="Vertical" Spacing="6">
+                            <StackPanel Orientation="Vertical" layout:LayoutSpacing.Spacing="6">
                                 <Grid>
                                     <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Bottom" Foreground="#27272a" Margin="16,12,10,2" Text="墨迹粗细"></TextBlock>
                                     <TextBlock x:Name="PenWidthDisplayText" HorizontalAlignment="Right" FontSize="12" VerticalAlignment="Bottom" Foreground="#52525b" Text="20pt 中等" Margin="0,0,16,3"></TextBlock>
@@ -489,11 +490,11 @@
                                 </Grid>
                                 <Line X1="0" Y1="0" X2="240" Y2="0" Margin="0,2" Name="_QuickAction_Line1" HorizontalAlignment="Center" Stroke="#a1a1aa" />
                                 <Grid Name="_QuickAction_Grid">
-                                    <modern:ScrollViewerEx ScrollChanged="QuickActionsScrollViewer_ScrollChanged" Name="QuickActionScrollViewer" PreviewMouseWheel="QuickActionsScrollViewer_PreviewMouseWheel" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" PanningMode="HorizontalOnly" Orientation="Horizontal" ManipulationBoundaryFeedback="SCManipulationBoundaryFeedback">
-                                        <modern:SimpleStackPanel Margin="14,0,14,0" Orientation="Horizontal" Spacing="6" Name="QuickActionItems">
+                                    <ScrollViewer ScrollChanged="QuickActionsScrollViewer_ScrollChanged" Name="QuickActionScrollViewer" PreviewMouseWheel="QuickActionsScrollViewer_PreviewMouseWheel" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" PanningMode="HorizontalOnly" ManipulationBoundaryFeedback="SCManipulationBoundaryFeedback">
+                                        <StackPanel Margin="14,0,14,0" Orientation="Horizontal" layout:LayoutSpacing.Spacing="6" Name="QuickActionItems">
                                             <Border Width="117" Height="96" Background="#f4f4f5" BorderBrush="#d4d4d8" CornerRadius="3" BorderThickness="1">
                                                 <Grid>
-                                                    <modern:SimpleStackPanel Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
+                                                    <StackPanel layout:LayoutSpacing.Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
                                                         <Image Height="28" Width="28">
                                                             <Image.Source>
                                                                 <DrawingImage>
@@ -509,7 +510,7 @@
                                                         <Button Name="InkRecognitionToggleSwitchButton" Click="InkRecognitionToggleSwitchButton_Clicked" Style="{x:Null}" ClipToBounds="False" BorderBrush="Transparent" BorderThickness="0" Padding="0" Background="Transparent" HorizontalAlignment="Center" Margin="0,6,0,0">
                                                             <Image Name="InkRecognitionToggleSwitchImage" Height="20" Source="{StaticResource SwitchOnImage}" />
                                                         </Button>
-                                                    </modern:SimpleStackPanel>
+                                                    </StackPanel>
                                                     <Border Name="InkRecognitionMoreButton" MouseDown="InkRecognitionMoreButton_MouseDown" Height="26" Width="26" CornerRadius="3" Background="#2227272a" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,4,4,0">
                                                         <Image Height="24" Width="24">
                                                             <Image.Source>
@@ -527,7 +528,7 @@
                                             </Border>
                                             <Border Width="117" Height="96" Background="#f4f4f5" BorderBrush="#d4d4d8" CornerRadius="3" BorderThickness="1">
                                                 <Grid>
-                                                    <modern:SimpleStackPanel Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
+                                                    <StackPanel layout:LayoutSpacing.Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
                                                         <Image Height="28" Width="28">
                                                             <Image.Source>
                                                                 <DrawingImage>
@@ -543,7 +544,7 @@
                                                         <Button Name="SimulatePressureToggleSwitchButton" Click="SimulatePressureToggleSwitchButton_Clicked" Style="{x:Null}" ClipToBounds="False" BorderBrush="Transparent" BorderThickness="0" Padding="0" Background="Transparent" HorizontalAlignment="Center" Margin="0,6,0,0">
                                                             <Image Name="SimulatePressureToggleSwitchImage" Height="20" Source="{StaticResource SwitchOnImage}" />
                                                         </Button>
-                                                    </modern:SimpleStackPanel>
+                                                    </StackPanel>
                                                     <Border Name="SimulatePressureMoreButton" MouseDown="SimulatePressureMoreButton_MouseDown" Height="26" Width="26" CornerRadius="3" Background="#2227272a" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,4,4,0">
                                                         <Image Height="24" Width="24">
                                                             <Image.Source>
@@ -561,7 +562,7 @@
                                             </Border>
                                             <Border Width="117" Height="96" Background="#f4f4f5" BorderBrush="#d4d4d8" CornerRadius="3" BorderThickness="1">
                                                 <Grid>
-                                                    <modern:SimpleStackPanel Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
+                                                    <StackPanel layout:LayoutSpacing.Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
                                                         <Image Height="28" Width="28">
                                                             <Image.Source>
                                                                 <DrawingImage>
@@ -577,12 +578,12 @@
                                                         <Button Name="StylusTipShapeButton" Click="SimulatePressureToggleSwitchButton_Clicked" Style="{x:Null}" ClipToBounds="False" BorderBrush="Transparent" BorderThickness="0" Padding="0" Background="Transparent" HorizontalAlignment="Center" Margin="0,6,0,0">
                                                             <Image Name="StylusTipShapeToggleSwitchImage" Height="20" Source="{StaticResource SwitchOnImage}" />
                                                         </Button>
-                                                    </modern:SimpleStackPanel>
+                                                    </StackPanel>
                                                 </Grid>
                                             </Border>
                                             <Border Width="117" Height="96" Background="#f4f4f5" BorderBrush="#d4d4d8" CornerRadius="3" BorderThickness="1">
                                                 <Grid>
-                                                    <modern:SimpleStackPanel Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
+                                                    <StackPanel layout:LayoutSpacing.Spacing="2" Orientation="Vertical" VerticalAlignment="Center">
                                                         <Image Height="28" Width="28">
                                                             <Image.Source>
                                                                 <DrawingImage>
@@ -603,11 +604,11 @@
                                                         <Button Name="FingerModeButton" Click="SimulatePressureToggleSwitchButton_Clicked" Style="{x:Null}" ClipToBounds="False" BorderBrush="Transparent" BorderThickness="0" Padding="0" Background="Transparent" HorizontalAlignment="Center" Margin="0,6,0,0">
                                                             <Image Name="FingerModeToggleSwitchImage" Height="20" Source="{StaticResource SwitchOnImage}" />
                                                         </Button>
-                                                    </modern:SimpleStackPanel>
+                                                    </StackPanel>
                                                 </Grid>
                                             </Border>
-                                        </modern:SimpleStackPanel>
-                                    </modern:ScrollViewerEx>
+                                        </StackPanel>
+                                    </ScrollViewer>
                                     <Border Width="14" HorizontalAlignment="Left">
                                         <Border.Background>
                                             <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
@@ -632,10 +633,10 @@
                                     </Border>
                                 </Grid>
                                 <Grid Margin="14,3,14,0" Height="5" Name="_QuickAction_Dots">
-                                    <modern:SimpleStackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="3">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="3">
                                         <Border Height="5" Width="5" Name="QuickActionDot1" CornerRadius="2.5" Background="#d4d4d8"/>
                                         <Border Height="5" Width="5" Name="QuickActionDot2" CornerRadius="2.5" Background="#27272a"/>
-                                    </modern:SimpleStackPanel>
+                                    </StackPanel>
                                 </Grid>
                                 <Line Name="_QuickAction_Line2" X1="0" Y1="0" X2="240" Y2="0" Margin="0,2" HorizontalAlignment="Center" Stroke="#a1a1aa" />
                                 <Grid>
@@ -692,7 +693,7 @@
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
                                     <Button Click="RandomColorButton_Clicked" Grid.Column="0" HorizontalAlignment="Stretch" Margin="0,0,3,0">
-                                        <modern:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                                        <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="4">
                                             <Image Height="19" Width="19">
                                                 <Image.Source>
                                                     <DrawingImage>
@@ -705,10 +706,10 @@
                                                 </Image.Source>
                                             </Image>
                                             <TextBlock Text="随机" VerticalAlignment="Center"></TextBlock>
-                                        </modern:SimpleStackPanel>
+                                        </StackPanel>
                                     </Button>
                                     <Button Name="CustomColorButton" Click="CustomColorButton_Clicked" ClipToBounds="False" Grid.Column="1" HorizontalAlignment="Stretch" Margin="3,0,3,0">
-                                        <modern:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                                        <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="4">
                                             <Border Name="CustomColorButtonColorBorder" VerticalAlignment="Center" Width="19" Height="19" Visibility="Collapsed" CornerRadius="3" BorderBrush="#5518181b" BorderThickness="1">
                                                 <Image HorizontalAlignment="Center" VerticalAlignment="Center" Name="CustomColorButtonColorBorderCheckIcon" Height="16" Width="16" Source="{StaticResource CheckedDarkIcon}" />
                                             </Border>
@@ -724,10 +725,10 @@
                                                 </Image.Source>
                                             </Image>
                                             <TextBlock Text="自定" VerticalAlignment="Center"></TextBlock>
-                                        </modern:SimpleStackPanel>
+                                        </StackPanel>
                                     </Button>
                                     <Button Name="ColorModeChangeButton" Click="ColorModeChangeButton_Clicked" Grid.Column="2" HorizontalAlignment="Stretch" Margin="3,0,0,0">
-                                        <modern:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                                        <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="4">
                                             <Image Height="19" Width="19">
                                                 <Image.Source>
                                                     <DrawingImage>
@@ -740,16 +741,16 @@
                                                 </Image.Source>
                                             </Image>
                                             <TextBlock Text="亮色" VerticalAlignment="Center"></TextBlock>
-                                        </modern:SimpleStackPanel>
+                                        </StackPanel>
                                     </Button>
                                 </Grid>
-                            </modern:SimpleStackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
                     <!--custom color panel-->
                     <Border Name="CustomColorPanel" Visibility="Collapsed" Margin="6" CornerRadius="6" Background="#fafafa" BorderBrush="#d4d4d8" BorderThickness="1">
                         <Grid>
-                            <modern:SimpleStackPanel Orientation="Vertical" Spacing="6">
+                            <StackPanel Orientation="Vertical" layout:LayoutSpacing.Spacing="6">
                                 <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Bottom" Foreground="#27272a" Margin="16,12,10,2" Text="自定义颜色"></TextBlock>
                                 <Grid>
                                     <colorPicker:SquarePicker Name="CustomColorPicker" ColorChanged="CustomColorPicker_ColorChanged" HorizontalAlignment="Center" Width="242" Height="242" />
@@ -759,7 +760,7 @@
                                     <TextBox Name="CustomColorHexTextBox" Margin="36,0,0,0" HorizontalAlignment="Stretch" Text="#000000"></TextBox>
                                 </Grid>
                                 <Button Click="BackToPaletteButton_Clicked" HorizontalAlignment="Stretch" Margin="12,0">
-                                    <modern:SimpleStackPanel Orientation="Horizontal" Spacing="4">
+                                    <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="4">
                                         <Image Height="19" Width="19">
                                             <Image.Source>
                                                 <DrawingImage>
@@ -772,9 +773,9 @@
                                             </Image.Source>
                                         </Image>
                                         <TextBlock Text="返回调色盘" VerticalAlignment="Center"></TextBlock>
-                                    </modern:SimpleStackPanel>
+                                    </StackPanel>
                                 </Button>
-                            </modern:SimpleStackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </Grid>
@@ -782,3 +783,5 @@
         </Border>
     </Grid>
 </UserControl>
+
+

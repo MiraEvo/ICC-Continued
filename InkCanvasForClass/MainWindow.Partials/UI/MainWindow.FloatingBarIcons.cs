@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // MW_FloatingBarIcons.cs - 浮动工具栏图标和交互逻辑
 // ============================================================================
 //
@@ -40,12 +40,10 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using iNKORE.UI.WPF.Modern;
 using System.Threading;
 using Application = System.Windows.Application;
 using Point = System.Windows.Point;
 using System.Diagnostics;
-using iNKORE.UI.WPF.Modern.Controls;
 using System.IO;
 using System.Windows.Media.Effects;
 using System.Text;
@@ -533,7 +531,7 @@ namespace Ink_Canvas {
                 }
             }
 
-            //ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+            // Legacy theme switch removed; ApplicationThemeManager is used now.
 
             new Thread(new ThreadStart(() => {
                 Thread.Sleep(200);
@@ -606,7 +604,7 @@ namespace Ink_Canvas {
                 LassoSelectIconGeometry
             };
 
-            SimpleStackPanel[] floatingBarIconsSimpleStackPanels = new SimpleStackPanel[] {
+            StackPanel[] floatingBarIconPanels = new StackPanel[] {
                 Cursor_Icon,
                 Pen_Icon,
                 EraserByStrokes_Icon,
@@ -701,7 +699,7 @@ namespace Ink_Canvas {
                 iconTextBlocksFloatingBar[(int)mode].Foreground = UIStyleHelper.WhiteBrush;
                 ngdf.Geometry = Geometry.Parse(iconGeometryPathStringsFloatingBar[(int)mode+5]);
                 FloatingbarSelectionBG.Visibility = Visibility.Visible;
-                var iconPosI = final_items.IndexOf(floatingBarIconsSimpleStackPanels[(int)mode])*highlightStepWidth;
+                var iconPosI = final_items.IndexOf(floatingBarIconPanels[(int)mode])*highlightStepWidth;
                 System.Windows.Controls.Canvas.SetLeft(FloatingbarSelectionBG, iconPosI);
 
                 // whiteboard
@@ -1286,7 +1284,7 @@ namespace Ink_Canvas {
                 Fold_Icon
             };
             var barHeight = Settings.Appearance.FloatingBarButtonLabelVisibility ? 36 : 28;
-            foreach (SimpleStackPanel elem in IconsArray.Cast<SimpleStackPanel>()) {
+            foreach (StackPanel elem in IconsArray.Cast<StackPanel>()) {
                 if (elem.Children[0] is Image) {
                     ((Image)elem.Children[0]).Margin = new Thickness(0, Settings.Appearance.FloatingBarButtonLabelVisibility ? 3 : 5, 0, 0);
                     ((Image)elem.Children[0]).Height = Settings.Appearance.FloatingBarButtonLabelVisibility ? 17 : 15;
@@ -1992,6 +1990,19 @@ namespace Ink_Canvas {
                     ClearStrokes(true);
                     RestoreStrokes();
                 }
+                else
+                {
+                    // 当前处于白板模式但笔层已隐藏时，仍需先正确切回桌面模式。
+                    currentMode = 0;
+                    GridBackgroundCover.Visibility = Visibility.Collapsed;
+                    AnimationsHelper.HideWithSlideAndFade(BlackboardLeftSide);
+                    AnimationsHelper.HideWithSlideAndFade(BlackboardCenterSide);
+                    AnimationsHelper.HideWithSlideAndFade(BlackboardRightSide);
+
+                    SaveStrokes();
+                    ClearStrokes(true);
+                    RestoreStrokes(true);
+                }
 
                 Topmost = true;
                 BtnHideInkCanvas_Click(null, e);
@@ -2115,3 +2126,4 @@ namespace Ink_Canvas {
         #endregion
     }
 }
+

@@ -1,5 +1,4 @@
 using Ink_Canvas.Helpers;
-using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -18,7 +17,7 @@ namespace Ink_Canvas
             var FoldFloatingBarTrayIconMenuItemIconEyeOn =
                 (Image)((Grid)((MenuItem)s.Items[s.Items.Count - 5]).Icon).Children[1];
             var FoldFloatingBarTrayIconMenuItemHeaderText =
-                (TextBlock)((SimpleStackPanel)((MenuItem)s.Items[s.Items.Count - 5]).Header).Children[0];
+                (TextBlock)((StackPanel)((MenuItem)s.Items[s.Items.Count - 5]).Header).Children[0];
             var ResetFloatingBarPositionTrayIconMenuItem = (MenuItem)s.Items[s.Items.Count - 4];
             var HideICCMainWindowTrayIconMenuItem = (MenuItem)s.Items[s.Items.Count - 9];
             var mainWin = (MainWindow)Application.Current.MainWindow;

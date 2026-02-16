@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:local="clr-namespace:Ink_Canvas" FontFamily="Microsoft YaHei UI"
-        Topmost="True" Background="Transparent"
+        Topmost="True" Background="Transparent" Style="{x:Null}"
         mc:Ignorable="d" WindowStyle="None" AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
         Title="Ink Canvas 抽奖" Height="500" Width="900">

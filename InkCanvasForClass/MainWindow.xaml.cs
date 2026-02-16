@@ -4,7 +4,6 @@ using Ink_Canvas.Services;
 using Ink_Canvas.ViewModels;
 using Ink_Canvas.Views.Settings;
 using Ink_Canvas.Services.Events;
-using iNKORE.UI.WPF.Modern;
 using Ink_Canvas.Models.Settings;
 using OSVersionExtension;
 using Ookii.Dialogs.Wpf;
@@ -29,11 +28,13 @@ using Microsoft.Win32;
 using System.Text;
 using System.Windows.Documents;
 using Ink_Canvas.Popups;
-using iNKORE.UI.WPF.Modern.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Vanara.PInvoke;
+using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using static Wpf.Ui.Appearance.ApplicationThemeManager;
 using Application = System.Windows.Application;
 using Button = System.Windows.Controls.Button;
 using TextBox = System.Windows.Controls.TextBox;
@@ -1285,6 +1286,39 @@ namespace Ink_Canvas {
             }
         }
 
+        private void ForceDesktopTransparentStartupState(string phase)
+        {
+            // Startup guard: keep overlay in desktop transparent state even if theme/window managers write background values.
+            Background = System.Windows.Media.Brushes.Transparent;
+            if (Main_Grid != null)
+            {
+                Main_Grid.Background = System.Windows.Media.Brushes.Transparent;
+            }
+
+            if (GridTransparencyFakeBackground != null)
+            {
+                GridTransparencyFakeBackground.Opacity = 0;
+                GridTransparencyFakeBackground.Background = System.Windows.Media.Brushes.Transparent;
+            }
+
+            if (GridBackgroundCover != null)
+            {
+                GridBackgroundCover.Visibility = Visibility.Collapsed;
+            }
+
+            if (GridBackgroundCoverHolder != null)
+            {
+                GridBackgroundCoverHolder.Visibility = Visibility.Collapsed;
+            }
+
+            currentMode = 0;
+            Topmost = true;
+
+            LogHelper.WriteLogToFile(
+                $"[StartupTransparency:{phase}] AllowsTransparency={AllowsTransparency}, MainWindowBackground={Background}, MainGridBackground={Main_Grid?.Background}, FakeOpacity={GridTransparencyFakeBackground?.Opacity}, FakeBackground={GridTransparencyFakeBackground?.Background}, CoverHolder={GridBackgroundCoverHolder?.Visibility}, Cover={GridBackgroundCover?.Visibility}, Mode={currentMode}",
+                LogHelper.LogType.Info);
+        }
+
         [RequiresUnmanagedCode("Uses user32 GetSystemMenu/EnableMenuItem for window system menu adjustments.")]
         private void Window_Loaded(object sender, RoutedEventArgs e) {
             loadPenCanvas();
@@ -1307,8 +1341,15 @@ namespace Ink_Canvas {
             // 注意：旧版 IA 库不支持 64 位，但新的 Windows.UI.Input.Inking.Analysis API 支持 x64
             // 因此移除了 64 位进程检查
 
-            ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+            EnsureMainWindowTransparentBackground();
             SystemEvents_UserPreferenceChanged(null, null);
+            ForceDesktopTransparentStartupState("loaded");
+            Dispatcher.BeginInvoke(new Action(() => ForceDesktopTransparentStartupState("context-idle")), DispatcherPriority.ContextIdle);
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(300);
+                await Dispatcher.InvokeAsync(() => ForceDesktopTransparentStartupState("delay-300ms"));
+            });
 
             //TextBlockVersion.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             LogHelper.WriteLogToFile("Ink Canvas 已加载", LogHelper.LogType.Event);

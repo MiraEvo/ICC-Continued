@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="SelectionCaptureOverlay"
+        Style="{x:Null}"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"

@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Ink_Canvas"
-             xmlns:modern="http://schemas.inkore.net/lib/ui/wpf/modern"
-             mc:Ignorable="d">
+             xmlns:modern="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             xmlns:layout="clr-namespace:Ink_Canvas.Helpers">
     <UserControl.Resources>
         <DrawingImage x:Key="ErrorIcon">
             <DrawingImage.Drawing>
@@ -64,10 +65,12 @@
                     <GradientStop x:Name="GradientStop2" Color="#D42525" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>
-            <modern:SimpleStackPanel Orientation="Horizontal" Spacing="14">
+            <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="14">
                 <Image Name="ToastIconImage" Width="32" Height="32" VerticalAlignment="Center" Source="{StaticResource ErrorIcon}"/>
                 <TextBlock Name="ToastTextBlock" Foreground="White" VerticalAlignment="Center" Margin="0,-1,0,0" FontSize="17" Text="這是 InkCanvasForClass 新版Toast控件測試"></TextBlock>
-            </modern:SimpleStackPanel>
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>
+
+

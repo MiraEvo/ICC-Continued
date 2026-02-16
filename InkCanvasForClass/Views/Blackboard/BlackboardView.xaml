@@ -1,11 +1,12 @@
-<UserControl x:Class="Ink_Canvas.Views.Blackboard.BlackboardView"
+﻿<UserControl x:Class="Ink_Canvas.Views.Blackboard.BlackboardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:vm="clr-namespace:Ink_Canvas.ViewModels"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
+             xmlns:layout="clr-namespace:Ink_Canvas.Helpers" 
              d:DesignHeight="100" d:DesignWidth="1200"
              d:DataContext="{d:DesignInstance Type=vm:BlackboardViewModel}">
     
@@ -27,10 +28,10 @@
             </Viewbox.LayoutTransform>
             <Grid x:Name="BlackboardLeftSide" Visibility="Visible" Margin="0,0,0,3" Height="50"
                   HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="5">
+                <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="5">
                     <!-- 页面导航按钮组 -->
                     <Border CornerRadius="5" Background="#F8FAFC" BorderBrush="#D1D5DB" BorderThickness="1">
-                        <ui:SimpleStackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <!-- 上一页按钮 -->
                             <Border x:Name="BtnWhiteBoardSwitchPreviousL" Style="{StaticResource BlackboardNavButtonStyle}"
                                     BorderThickness="1,1,0,1"
@@ -62,9 +63,9 @@
                                         Margin="-134,-465,-60,50" Opacity="1"
                                         Style="{StaticResource PageListPopupStyle}"
                                         Visibility="{Binding IsPageListVisible, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <ui:ScrollViewerEx x:Name="BlackBoardLeftSidePageListScrollViewer"
+                                    <ScrollViewer x:Name="BlackBoardLeftSidePageListScrollViewer"
                                                        Height="460" VerticalScrollBarVisibility="Hidden"
-                                                       ForceUseSmoothScroll="True">
+                                                      >
                                         <ListView x:Name="BlackBoardLeftSidePageListView"
                                                   ScrollViewer.CanContentScroll="False" SelectionMode="Single"
                                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -72,7 +73,7 @@
                                                   ItemsSource="{Binding PageThumbnails}">
                                             <ListView.ItemTemplate>
                                                 <DataTemplate>
-                                                    <ui:SimpleStackPanel Orientation="Vertical"
+                                                    <StackPanel Orientation="Vertical"
                                                                          MouseUp="PageListItem_MouseUp">
                                                         <Border Style="{StaticResource PageThumbnailBorderStyle}">
                                                             <Grid>
@@ -86,11 +87,11 @@
                                                                 </Border>
                                                             </Grid>
                                                         </Border>
-                                                    </ui:SimpleStackPanel>
+                                                    </StackPanel>
                                                 </DataTemplate>
                                             </ListView.ItemTemplate>
                                         </ListView>
-                                    </ui:ScrollViewerEx>
+                                    </ScrollViewer>
                                 </Border>
                             </Grid>
                             
@@ -105,7 +106,7 @@
                                     <TextBlock Text="下一页" Style="{StaticResource BlackboardButtonTextStyle}" />
                                 </Grid>
                             </Border>
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </Border>
                     
                     <!-- 新页面按钮 -->
@@ -118,7 +119,7 @@
                             <TextBlock Text="新页面" Style="{StaticResource BlackboardButtonTextStyle}" />
                         </Grid>
                     </Border>
-                </ui:SimpleStackPanel>
+                </StackPanel>
             </Grid>
         </Viewbox>
         
@@ -131,10 +132,10 @@
             </Viewbox.LayoutTransform>
             <Grid x:Name="BlackboardCenterSide" Visibility="Visible" Margin="0,0,0,3" Height="50"
                   HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                <ui:SimpleStackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
                     <Border CornerRadius="5" Background="#F8FAFC" BorderBrush="#D1D5DB" BorderThickness="1" Margin="0,0,5,0">
                         <Grid>
-                            <ui:SimpleStackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
                                 <!-- 手势按钮 -->
                                 <Border x:Name="BoardGesture" Style="{StaticResource BlackboardNavButtonStyle}"
                                         CornerRadius="5,0,0,5"
@@ -158,10 +159,10 @@
                                         <TextBlock Text="背景" Style="{StaticResource BlackboardButtonTextStyle}" />
                                     </Grid>
                                 </Border>
-                            </ui:SimpleStackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
-                </ui:SimpleStackPanel>
+                </StackPanel>
             </Grid>
         </Viewbox>
         
@@ -174,7 +175,7 @@
             </Viewbox.LayoutTransform>
             <Grid x:Name="BlackboardRightSide" Visibility="Visible" Margin="0,0,0,3" Height="50"
                   HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="5">
+                <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="5">
                     <!-- 新页面按钮 -->
                     <Border x:Name="BtnWhiteboardAddRight" Style="{StaticResource BlackboardNavButtonStyle}"
                             BorderThickness="1" CornerRadius="5"
@@ -188,7 +189,7 @@
                     
                     <!-- 页面导航按钮组 -->
                     <Border CornerRadius="5" Background="#F8FAFC" BorderBrush="#D1D5DB" BorderThickness="1">
-                        <ui:SimpleStackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <!-- 上一页按钮 -->
                             <Border x:Name="BtnWhiteBoardSwitchPreviousR" Style="{StaticResource BlackboardNavButtonStyle}"
                                     BorderThickness="1,1,0,1"
@@ -225,10 +226,13 @@
                                     <TextBlock Text="下一页" Style="{StaticResource BlackboardButtonTextStyle}" />
                                 </Grid>
                             </Border>
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </Border>
-                </ui:SimpleStackPanel>
+                </StackPanel>
             </Grid>
         </Viewbox>
     </Grid>
 </UserControl>
+
+
+

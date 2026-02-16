@@ -1,9 +1,9 @@
-<Window Name="window" x:Class="Ink_Canvas.MainWindow"
+﻿<Window Name="window" x:Class="Ink_Canvas.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:Controls="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
         xmlns:popups="clr-namespace:Ink_Canvas.Popups"
         xmlns:inkCanvas="clr-namespace:Ink_Canvas"
@@ -19,6 +19,8 @@
         xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
         mc:Ignorable="d"
+             xmlns:layout="clr-namespace:Ink_Canvas.Helpers"
+        Style="{x:Null}"
         WindowStyle="None"
         AllowsTransparency="True"
         ResizeMode="NoResize"
@@ -126,7 +128,7 @@
                         Executed="KeyDrawLine" />
     </Window.CommandBindings>
 
-    <Grid x:Name="Main_Grid">
+    <Grid x:Name="Main_Grid" Background="Transparent">
 
         <tray:NotifyIcon x:Name="TrayIcon"
                          FocusOnLeftClick="True"
@@ -149,12 +151,14 @@
 
         <!--// 黑/白 板幕布 //-->
         <Image Name="FreezeFrameBackgroundImage" Visibility="Collapsed" />
-        <Grid Name="GridBackgroundCoverHolder">
+        <Grid Name="GridBackgroundCoverHolder" Visibility="Collapsed" Background="Transparent">
             <Grid Name="GridBackgroundCover" Visibility="Collapsed" Background="#1F1F1F" />
         </Grid>
-        <Grid Name="GridTransparencyFakeBackground" Opacity="0" />
+        <Grid Name="GridTransparencyFakeBackground"
+              Opacity="0"
+              Background="{x:Static Brushes.Transparent}" />
         <Label Name="Label" Visibility="Collapsed" Foreground="Gray" Content="0" />
-        <Grid Name="InkCanvasGridForInkReplay">
+        <Grid Name="InkCanvasGridForInkReplay" Background="Transparent">
             <helpers:RectangleSelectionViewer x:Name="RectangleSelection" />
             <inkCanvas:IccInkCanvasModern x:Name="inkCanvas" ForceCursor="False"
                                     TouchUp="Main_Grid_TouchUp" TouchDown="Main_Grid_TouchDown"
@@ -177,16 +181,16 @@
                                     StrokeCollected="inkCanvas_StrokeCollected" ClipToBounds="False" Background="Transparent" />
         </Grid>
         <Canvas IsHitTestVisible="False">
-            <ui:SimpleStackPanel Canvas.Left="25" Canvas.Top="15" Orientation="Vertical">
+            <StackPanel Canvas.Left="25" Canvas.Top="15" Orientation="Vertical">
                 <TextBlock Text="{Binding NowTime}" Name="WaterMarkTime" Visibility="Collapsed" FontSize="30"
                            FontWeight="Bold" Foreground="White" Opacity="0.6" />
                 <TextBlock Text="{Binding NowDate}" Name="WaterMarkDate" Visibility="Collapsed" Margin="2,0,0,0"
                            FontSize="16" Foreground="White" Opacity="0.45" />
-            </ui:SimpleStackPanel>
+            </StackPanel>
             <TextBlock Canvas.Right="25" Canvas.Top="15" Text="多一份理解，少一份抱怨" Name="BlackBoardWaterMark"
                        Visibility="Collapsed" FontSize="24" FontWeight="Bold" Foreground="White" Opacity="0.5" />
         </Canvas>
-        <Grid Visibility="{Binding ElementName=inkCanvas, Path=Visibility}">
+        <Grid Visibility="{Binding ElementName=inkCanvas, Path=Visibility}" Background="Transparent">
             <Grid Name="GridInkCanvasSelectionCover"
                   MouseDown="GridInkCanvasSelectionCover_MouseDown"
                   MouseUp="GridInkCanvasSelectionCover_MouseUp"
@@ -264,9 +268,9 @@
                         CornerRadius="6" Height="48"
                         Background="#f4f4f5"
                         BorderThickness="1" BorderBrush="#a1a1aa">
-                    <ui:SimpleStackPanel Orientation="Horizontal" Height="44" Margin="2,0">
+                    <StackPanel Orientation="Horizontal" Height="44" Margin="2,0">
                         <Border Padding="10,0" Margin="-3,-2,3,-2" CornerRadius="6,0,0,6" Background="#2563eb">
-                            <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                 <Image Width="24" Height="24">
                                     <Image.Source>
                                         <DrawingImage>
@@ -278,12 +282,12 @@
                                         </DrawingImage>
                                     </Image.Source>
                                 </Image>
-                            </ui:SimpleStackPanel>
+                            </StackPanel>
                         </Border>
                         <Border Name="BorderStrokeSelectionClone" Background="Transparent" MouseDown="BorderStrokeSelectionToolButton_MouseDown" MouseLeave="BorderStrokeSelectionToolButton_MouseLeave"
                                 MouseUp="BorderStrokeSelectionClone_MouseUp">
                             <Border Padding="7,0" Margin="3" CornerRadius="4">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                     <Image Width="24" Height="24">
                                         <Image.Source>
                                             <DrawingImage>
@@ -295,13 +299,13 @@
                                             </DrawingImage>
                                         </Image.Source>
                                     </Image>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
                         <Border Name="BorderStrokeSelectionCloneToNewBoard" Background="Transparent" MouseDown="BorderStrokeSelectionToolButton_MouseDown" MouseLeave="BorderStrokeSelectionToolButton_MouseLeave"
                                 MouseUp="BorderStrokeSelectionCloneToNewBoard_MouseUp">
                             <Border Padding="9,0" Margin="3" CornerRadius="4">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="5" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="5" Orientation="Horizontal">
                                     <Image Width="24" Height="24">
                                         <Image.Source>
                                             <DrawingImage>
@@ -314,14 +318,14 @@
                                         </Image.Source>
                                     </Image>
                                     <TextBlock Name="BorderStrokeSelectionCloneToNewBoardTextBlock" Text="克隆至新页" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#18181b" />
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
                         <Line X1="0" X2="0" Y1="0" Y2="47" Height="47" Margin="2,-2" StrokeThickness="1" Stroke="#66a1a1aa" />
                         <Border Name="BorderImageRotateClockwise" Background="Transparent" RenderTransformOrigin="0.5,0.5"
                                 MouseDown="BorderStrokeSelectionToolButton_MouseDown" MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" MouseUp="ImageRotateClockwise_MouseUp">
                             <Border Padding="7,0" Margin="3" CornerRadius="4">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                     <Image Width="24" Height="24">
                                         <Image.Source>
                                             <DrawingImage>
@@ -333,13 +337,13 @@
                                             </DrawingImage>
                                         </Image.Source>
                                     </Image>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
                         <Border Name="BorderImageRotate45" Background="Transparent"
                                 MouseDown="BorderStrokeSelectionToolButton_MouseDown" MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" MouseUp="ImageRotate_MouseUp">
                             <Border Padding="7,0" Margin="3" CornerRadius="4">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                     <Image Height="18">
                                         <Image.Source>
                                             <DrawingImage>
@@ -356,13 +360,13 @@
                                             </DrawingImage>
                                         </Image.Source>
                                     </Image>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
                         <Border Name="BorderImageRotate90" Background="Transparent"
                                 MouseDown="BorderStrokeSelectionToolButton_MouseDown" MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" MouseUp="ImageRotate_MouseUp">
                             <Border Padding="7,0" Margin="3" CornerRadius="4">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                     <Image Height="18">
                                         <Image.Source>
                                             <DrawingImage>
@@ -376,14 +380,14 @@
                                             </DrawingImage>
                                         </Image.Source>
                                     </Image>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
                         <Line X1="0" X2="0" Y1="0" Y2="47" Height="47" Margin="2,-2" StrokeThickness="1" Stroke="#66a1a1aa" />
                         <Border Name="BorderImageFlipHorizontal" Background="Transparent"
                                 MouseDown="BorderStrokeSelectionToolButton_MouseDown" MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" MouseUp="ImageFlip_MouseUp">
                             <Border Padding="7,0" Margin="3" CornerRadius="4">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                     <Image Width="24" Height="24">
                                         <Image.Source>
                                             <DrawingImage>
@@ -395,13 +399,13 @@
                                             </DrawingImage>
                                         </Image.Source>
                                     </Image>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
                         <Border Name="BorderImageFlipVertical" Background="Transparent"
                                 MouseDown="BorderStrokeSelectionToolButton_MouseDown" MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" MouseUp="ImageFlip_MouseUp">
                             <Border Padding="7,0" Margin="3" CornerRadius="4">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                     <Image Width="24" Height="24">
                                         <Image.Source>
                                             <DrawingImage>
@@ -413,14 +417,14 @@
                                             </DrawingImage>
                                         </Image.Source>
                                     </Image>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
                         <Line X1="0" X2="0" Y1="0" Y2="47" Height="47" Margin="2,-2" StrokeThickness="1" Stroke="#66a1a1aa" />
                         <Border Name="BorderStrokeSelectionLock" Background="Transparent"
                                 MouseDown="BorderStrokeSelectionToolButton_MouseDown" MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" MouseUp="BorderStrokeSelectionLock_MouseUp">
                             <Border Padding="7,0" Margin="3" CornerRadius="4">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                     <Image Width="24" Height="24" Name="BorderStrokeSelectionLock_LockClose" Visibility="Collapsed">
                                         <Image.Source>
                                             <DrawingImage>
@@ -443,13 +447,13 @@
                                             </DrawingImage>
                                         </Image.Source>
                                     </Image>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
                         <Border Name="BorderStrokePaletteButton" Background="Transparent"
                                 MouseDown="Border_MouseDown">
                             <Border Padding="7,0" Margin="3" CornerRadius="4" Background="#1809090b">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                     <Image Width="24" Height="24">
                                         <Image.Source>
                                             <DrawingImage>
@@ -461,13 +465,13 @@
                                             </DrawingImage>
                                         </Image.Source>
                                     </Image>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
                         <Border Name="BorderStrokeSelectionDelete" Background="Transparent"
                                 MouseDown="BorderStrokeSelectionToolButton_MouseDown" MouseLeave="BorderStrokeSelectionToolButton_MouseLeave" MouseUp="BorderStrokeSelectionDelete_MouseUp">
                             <Border Padding="7,0" Margin="3" CornerRadius="4">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                     <Image Width="24" Height="24">
                                         <Image.Source>
                                             <DrawingImage>
@@ -479,7 +483,7 @@
                                             </DrawingImage>
                                         </Image.Source>
                                     </Image>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
                         <Line X1="0" X2="0" Y1="0" Y2="47" Height="47" Margin="2,-2" StrokeThickness="1" Stroke="#66a1a1aa" />
@@ -487,7 +491,7 @@
                                 MouseDown="BorderStrokeSelectionToolButton_MouseDown" MouseLeave="BorderStrokeSelectionToolButton_MouseLeave"
                                 MouseUp="BorderStrokeMoreMenuButton_MouseUp">
                             <Border Padding="7,0" Margin="3" CornerRadius="4">
-                                <ui:SimpleStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4" Orientation="Horizontal">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" layout:LayoutSpacing.Spacing="4" Orientation="Horizontal">
                                     <Image Width="24" Height="24">
                                         <Image.Source>
                                             <DrawingImage>
@@ -499,10 +503,10 @@
                                             </DrawingImage>
                                         </Image.Source>
                                     </Image>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                         </Border>
-                    </ui:SimpleStackPanel>
+                    </StackPanel>
                 </Border>
             </Border>
         </Grid>
@@ -528,8 +532,9 @@
             2. 移除下方的 ViewboxBlackboardLeftSide、ViewboxBlackboardCenterSide、ViewboxBlackboardRightSide
             3. 更新相关代码引用
         -->
-        <Grid Name="BlackboardUIGridForInkReplay">
-            <Grid Visibility="{Binding ElementName=GridBackgroundCoverHolder, Path=Visibility}">
+        <Grid Name="BlackboardUIGridForInkReplay" Background="Transparent">
+            <Grid Visibility="{Binding ElementName=GridBackgroundCoverHolder, Path=Visibility}"
+                  Background="Transparent">
                 <!-- 左下角 -->
                 <Viewbox x:Name="ViewboxBlackboardLeftSide" Margin="3,0,0,0" Height="55" HorizontalAlignment="Left"
                          VerticalAlignment="Bottom">
@@ -538,9 +543,9 @@
                     </Viewbox.LayoutTransform>
                     <Grid Name="BlackboardLeftSide" Visibility="Visible" Margin="0,0,0,3" Height="50"
                           HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="5">
+                        <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="5">
                             <Border CornerRadius="5,5,5,5" Background="#f4f4f5" Margin="0,0,0,0">
-                                <ui:SimpleStackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal">
                                     <Border Width="60" Height="50" Name="BtnWhiteBoardSwitchPreviousL"
                                             IsEnabled="{Binding ElementName=BtnWhiteBoardSwitchPrevious, Path=IsEnabled}"
                                             BorderThickness="1,1,0,1" BorderBrush="#a1a1aa"
@@ -585,17 +590,17 @@
                                                 CornerRadius="8"
                                                 Background="#fafafa" Opacity="1" BorderBrush="#a1a1aa"
                                                 BorderThickness="1">
-                                            <ui:ScrollViewerEx Name="BlackBoardLeftSidePageListScrollViewer"
+                                            <ScrollViewer Name="BlackBoardLeftSidePageListScrollViewer"
                                                                Height="460"
                                                                VerticalScrollBarVisibility="Hidden"
-                                                               ForceUseSmoothScroll="True">
+                                                              >
                                                 <ListView ScrollViewer.CanContentScroll="False" SelectionMode="Single"
                                                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                           ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                                           Name="BlackBoardLeftSidePageListView">
                                                     <ListView.ItemTemplate>
                                                         <DataTemplate>
-                                                            <ui:SimpleStackPanel Orientation="Vertical"
+                                                            <StackPanel Orientation="Vertical"
                                                                                  MouseUp="BlackBoardLeftSidePageListView_OnMouseUp">
                                                                 <Border Margin="0,4" Width="160" BorderBrush="#a1a1aa"
                                                                         BorderThickness="1">
@@ -622,11 +627,11 @@
                                                                         </Border>
                                                                     </Grid>
                                                                 </Border>
-                                                            </ui:SimpleStackPanel>
+                                                            </StackPanel>
                                                         </DataTemplate>
                                                     </ListView.ItemTemplate>
                                                 </ListView>
-                                            </ui:ScrollViewerEx>
+                                            </ScrollViewer>
                                         </Border>
                                     </Grid>
                                     <Border Width="60" Height="50" MouseUp="BtnWhiteBoardSwitchNext_Click"
@@ -653,7 +658,7 @@
                                                        x:Name="BtnLeftWhiteBoardSwitchNextLabel" />
                                         </Grid>
                                     </Border>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                             <Border Width="60" Height="50" Name="BtnWhiteboardAddLeft"
                                     BorderThickness="1" BorderBrush="#a1a1aa"
@@ -677,7 +682,7 @@
                                                HorizontalAlignment="Center" FontSize="12" Name="BtnWhiteboardAddTextBlockLeft" />
                                 </Grid>
                             </Border>
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </Grid>
                 </Viewbox>
                 <!-- 中间 -->
@@ -688,10 +693,10 @@
                     </Viewbox.LayoutTransform>
                     <Grid x:Name="BlackboardCenterSide" Visibility="Visible" Margin="0,0,0,3" Height="50"
                           HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <ui:SimpleStackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <Border CornerRadius="5,5,5,5" Background="#f4f4f5" Margin="0,0,5,0">
                                 <Grid>
-                                    <ui:SimpleStackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal">
                                         <Border Width="60" Height="50" MouseDown="BoardSideBtnMouseDown" MouseLeave="BoardSideBtnMouseLeave" Name="BoardGesture"
                                                 MouseUp="BoardGestureMouseUp" CornerRadius="5,0,0,5"
                                                 Background="#f4f4f5"
@@ -755,7 +760,7 @@
                                                     CornerRadius="8"
                                                     Background="#fafafa" Opacity="1" BorderBrush="#2563eb"
                                                     BorderThickness="1">
-                                                <ui:SimpleStackPanel Margin="0">
+                                                <StackPanel Margin="0">
                                                     <Border BorderBrush="#1e3a8a" BorderThickness="0,0,0,1"
                                                             CornerRadius="8,8,0,0"
                                                             Background="#2563eb" Margin="-1,-1,-1,1">
@@ -768,9 +773,9 @@
                                                     </Border>
                                                     <Viewbox Width="182" HorizontalAlignment="Center">
                                                         <StackPanel Orientation="Vertical">
-                                                            <ui:SimpleStackPanel Margin="12,8">
+                                                            <StackPanel Margin="12,8">
                                                                 <TextBlock FontSize="12" Foreground="#18181b" Text="背景颜色" />
-                                                                <ui:SimpleStackPanel Spacing="4" Orientation="Horizontal"
+                                                                <StackPanel layout:LayoutSpacing.Spacing="4" Orientation="Horizontal"
                                                                                      Margin="0,5,0,0">
                                                                     <Border Width="46" Height="46" CornerRadius="4"
                                                                             Background="#27272a" BorderBrush="#18181b"
@@ -819,8 +824,8 @@
                                                                                        FontSize="10" Foreground="#18181b" Text="白" />
                                                                         </Canvas>
                                                                     </Border>
-                                                                </ui:SimpleStackPanel>
-                                                                <ui:SimpleStackPanel Spacing="4" Orientation="Horizontal"
+                                                                </StackPanel>
+                                                                <StackPanel layout:LayoutSpacing.Spacing="4" Orientation="Horizontal"
                                                                                      Margin="0,5,0,0">
                                                                     <Border Width="46" Height="46" CornerRadius="4"
                                                                             Background="#0f172a" BorderBrush="#020617"
@@ -869,11 +874,11 @@
                                                                                        FontSize="10" Foreground="White" Text="纯黑" />
                                                                         </Canvas>
                                                                     </Border>
-                                                                </ui:SimpleStackPanel>
-                                                            </ui:SimpleStackPanel>
-                                                            <ui:SimpleStackPanel Margin="12,2,12,0">
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                            <StackPanel Margin="12,2,12,0">
                                                                 <TextBlock FontSize="12" Foreground="#18181b" Text="稿纸格式" />
-                                                                <ui:SimpleStackPanel Spacing="4" Orientation="Horizontal"
+                                                                <StackPanel layout:LayoutSpacing.Spacing="4" Orientation="Horizontal"
                                                                                      Margin="0,5,0,0">
                                                                     <Border Width="46" Height="46" CornerRadius="4"
                                                                             Background="#eaebed" BorderBrush="#a1a1aa"
@@ -971,14 +976,14 @@
                                                                             </Border>
                                                                         </Canvas>
                                                                     </Border>
-                                                                </ui:SimpleStackPanel>
-                                                            </ui:SimpleStackPanel>
+                                                                </StackPanel>
+                                                            </StackPanel>
                                                         </StackPanel>
                                                     </Viewbox>
-                                                </ui:SimpleStackPanel>
+                                                </StackPanel>
                                             </Border>
                                         </Grid>
-                                    </ui:SimpleStackPanel>
+                                    </StackPanel>
                                     <Border Name="BoardSideBtnMouseFeedbakBorder" Visibility="Collapsed" IsHitTestVisible="False" Width="60" HorizontalAlignment="Left" Height="50" Padding="1">
                                         <Border CornerRadius="4.5,0,0,0" Background="#2509090b" />
                                     </Border>
@@ -987,7 +992,7 @@
 
                             <Border CornerRadius="5,5,5,5" Background="#f4f4f5" Margin="0,0,5,0">
                                 <Grid>
-                                    <ui:SimpleStackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal">
                                         <Border x:Name="BoardSelect" Width="60" Height="50" MouseDown="BoardToolBtnMouseDown" MouseLeave="BoardToolBtnMouseLeave"
                                                 BorderThickness="1,1,0,1" BorderBrush="#a1a1aa"
                                                 MouseUp="BoardSelectMouseUp" CornerRadius="5,0,0,5"
@@ -1170,7 +1175,7 @@
                                                            HorizontalAlignment="Center" FontSize="12" />
                                             </Grid>
                                         </Border>
-                                    </ui:SimpleStackPanel>
+                                    </StackPanel>
                                     <Border Name="BoardMouseFeedbakBorder" Visibility="Collapsed" IsHitTestVisible="False" Width="60" HorizontalAlignment="Left" Height="50" Padding="1">
                                         <Border CornerRadius="4.5,0,0,0" Background="#2509090b" />
                                     </Border>
@@ -1178,7 +1183,7 @@
                             </Border>
 
                             <Border CornerRadius="5,5,5,5" Background="#f4f4f5">
-                                <ui:SimpleStackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal">
                                     <Border Width="60" Height="50" MouseDown="Border_MouseDown"
                                             MouseUp="SymbolIconTools_MouseUp" Background="#f4f4f5" Opacity="0.95"
                                             BorderThickness="1,1,0,1" BorderBrush="#a1a1aa"
@@ -1214,7 +1219,7 @@
                                             <Border Name="BoardBorderTools" Visibility="Collapsed" />
                                         </Grid>
                                     </Border>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                                     <Border Width="60" Height="50" MouseDown="Border_MouseDown"
                                             MouseUp="ImageBlackboard_MouseUp"
@@ -1239,7 +1244,7 @@
                                                        HorizontalAlignment="Center" FontSize="12" />
                                         </Grid>
                                     </Border>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Grid>
                         </Viewbox>
 
@@ -1253,7 +1258,7 @@
                     </Viewbox.LayoutTransform>
                     <Grid Name="BlackboardRightSide" Visibility="Visible" Margin="0,0,0,3" Height="50"
                           HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="5">
+                        <StackPanel Orientation="Horizontal" layout:LayoutSpacing.Spacing="5">
                             <Border Width="60" Height="50" Name="BtnWhiteboardAddRight"
                                     BorderThickness="1" BorderBrush="#a1a1aa"
                                     MouseUp="BtnWhiteBoardAdd_Click" CornerRadius="5" Background="#f4f4f5"
@@ -1277,7 +1282,7 @@
                                 </Grid>
                             </Border>
                             <Border CornerRadius="5,5,5,5" Background="#f4f4f5" Margin="0,0,0,0">
-                                <ui:SimpleStackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal">
                                     <Border Width="60" Height="50" Name="BtnWhiteBoardSwitchPreviousR"
                                             BorderThickness="1,1,0,1" BorderBrush="#a1a1aa"
                                             MouseUp="BtnWhiteBoardSwitchPrevious_Click" CornerRadius="5,0,0,5"
@@ -1322,17 +1327,17 @@
                                                 CornerRadius="8"
                                                 Background="#fafafa" Opacity="1" BorderBrush="#a1a1aa"
                                                 BorderThickness="1">
-                                            <ui:ScrollViewerEx Name="BlackBoardRightSidePageListScrollViewer"
+                                            <ScrollViewer Name="BlackBoardRightSidePageListScrollViewer"
                                                                Height="460"
                                                                VerticalScrollBarVisibility="Hidden"
-                                                               ForceUseSmoothScroll="True">
+                                                              >
                                                 <ListView ScrollViewer.CanContentScroll="False" SelectionMode="Single"
                                                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                           ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                                           Name="BlackBoardRightSidePageListView">
                                                     <ListView.ItemTemplate>
                                                         <DataTemplate>
-                                                            <ui:SimpleStackPanel Orientation="Vertical"
+                                                            <StackPanel Orientation="Vertical"
                                                                                  MouseUp="BlackBoardRightSidePageListView_OnMouseUp">
                                                                 <Border Margin="0,4" Width="160" BorderBrush="#a1a1aa"
                                                                         BorderThickness="1">
@@ -1359,11 +1364,11 @@
                                                                         </Border>
                                                                     </Grid>
                                                                 </Border>
-                                                            </ui:SimpleStackPanel>
+                                                            </StackPanel>
                                                         </DataTemplate>
                                                     </ListView.ItemTemplate>
                                                 </ListView>
-                                            </ui:ScrollViewerEx>
+                                            </ScrollViewer>
                                         </Border>
                                     </Grid>
                                     <Border Width="60" Height="50" MouseUp="BtnWhiteBoardSwitchNext_Click"
@@ -1391,7 +1396,7 @@
                                                        Name="BtnRightWhiteBoardSwitchNextLabel" />
                                         </Grid>
                                     </Border>
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Border>
                             <Border Width="60" Height="50" Name="BtnWhiteboardAddRightSecondary"
                                     BorderThickness="1" BorderBrush="#a1a1aa"
@@ -1415,7 +1420,7 @@
                                                HorizontalAlignment="Center" FontSize="12" Name="BtnWhiteboardAddTextBlockRightSecondary" />
                                 </Grid>
                             </Border>
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </Grid>
                 </Viewbox>
             </Grid>
@@ -1557,7 +1562,7 @@
                          HorizontalAlignment="Left" VerticalAlignment="Bottom">
                     <Border BorderThickness="1" BorderBrush="#a1a1aa" Name="PPTBtnLBBorder"
                             Background="#f4f4f5" Opacity="1" CornerRadius="6">
-                        <ui:SimpleStackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <Border Width="50" Height="50" MouseUp="GridPPTControlPrevious_MouseUp"
                                     Name="PPTLBPreviousButtonBorder"
                                     MouseDown="GridPPTControlPrevious_MouseDown"
@@ -1588,15 +1593,15 @@
                                 <Grid>
                                     <Border Margin="0,3" CornerRadius="5" Name="PPTLBPageButtonFeedbackBorder"
                                             Background="#18181b" Opacity="0" />
-                                    <ui:SimpleStackPanel VerticalAlignment="Center" Orientation="Vertical"
-                                                         Spacing="0.5" Margin="12,0">
+                                    <StackPanel VerticalAlignment="Center" Orientation="Vertical"
+                                                         layout:LayoutSpacing.Spacing="0.5" Margin="12,0">
                                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                    FontSize="17" FontWeight="Bold"
                                                    Text="{Binding ElementName=PPTBtnPageNow, Path=Text}" />
                                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                    FontSize="10"
                                                    Text="{Binding ElementName=PPTBtnPageTotal, Path=Text}" />
-                                    </ui:SimpleStackPanel>
+                                    </StackPanel>
 
                                 </Grid>
                             </Border>
@@ -1622,14 +1627,14 @@
                                     </Image>
                                 </Grid>
                             </Border>
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </Border>
                 </Viewbox>
                 <Viewbox x:Name="RightBottomPanelForPPTNavigation" Visibility="Collapsed" Margin="0,0,6,6" Height="50"
                          HorizontalAlignment="Right" VerticalAlignment="Bottom">
                     <Border BorderThickness="1" BorderBrush="#a1a1aa" Name="PPTBtnRBBorder"
                             Background="#f4f4f5" Opacity="1" CornerRadius="6">
-                        <ui:SimpleStackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <Border Width="50" Height="50" MouseUp="GridPPTControlPrevious_MouseUp"
                                     Name="PPTRBPreviousButtonBorder"
                                     MouseDown="GridPPTControlPrevious_MouseDown"
@@ -1660,15 +1665,15 @@
                                 <Grid>
                                     <Border Margin="0,3" CornerRadius="5" Name="PPTRBPageButtonFeedbackBorder"
                                             Background="#18181b" Opacity="0" />
-                                    <ui:SimpleStackPanel VerticalAlignment="Center" Orientation="Vertical"
-                                                         Spacing="0.5" Margin="12,0">
+                                    <StackPanel VerticalAlignment="Center" Orientation="Vertical"
+                                                         layout:LayoutSpacing.Spacing="0.5" Margin="12,0">
                                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                    FontSize="17" FontWeight="Bold"
                                                    Text="{Binding ElementName=PPTBtnPageNow, Path=Text}" />
                                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                    FontSize="10"
                                                    Text="{Binding ElementName=PPTBtnPageTotal, Path=Text}" />
-                                    </ui:SimpleStackPanel>
+                                    </StackPanel>
 
                                 </Grid>
                             </Border>
@@ -1694,7 +1699,7 @@
                                     </Image>
                                 </Grid>
                             </Border>
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </Border>
                 </Viewbox>
             </Grid>
@@ -1717,7 +1722,7 @@
                  HorizontalAlignment="Left" VerticalAlignment="Center">
             <Border BorderThickness="1" BorderBrush="#a1a1aa" Name="PPTBtnLSBorder"
                     Background="#f4f4f5" Opacity="1" CornerRadius="6" Margin="6,0,0,0">
-                <ui:SimpleStackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
                     <Border Width="50" Height="50" MouseUp="GridPPTControlPrevious_MouseUp"
                             Name="PPTLSPreviousButtonBorder"
                             MouseDown="GridPPTControlPrevious_MouseDown" MouseLeave="GridPPTControlPrevious_MouseLeave"
@@ -1746,13 +1751,13 @@
                         <Grid>
                             <Border Margin="3,0" CornerRadius="5" Name="PPTLSPageButtonFeedbackBorder"
                                     Background="#18181b" Opacity="0" />
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Orientation="Vertical" Spacing="0.5">
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical" layout:LayoutSpacing.Spacing="0.5">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                            FontSize="17" FontWeight="Bold"
                                            Text="999" Name="PPTBtnPageNow" />
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                            FontSize="10" Text="/ 999" Name="PPTBtnPageTotal" />
-                            </ui:SimpleStackPanel>
+                            </StackPanel>
 
                         </Grid>
                     </Border>
@@ -1776,14 +1781,14 @@
                             </Image>
                         </Grid>
                     </Border>
-                </ui:SimpleStackPanel>
+                </StackPanel>
             </Border>
         </Viewbox>
         <Viewbox x:Name="RightSidePanelForPPTNavigation" Visibility="Visible" Width="56"
                  HorizontalAlignment="Right" VerticalAlignment="Center">
             <Border BorderThickness="1" BorderBrush="#a1a1aa" Name="PPTBtnRSBorder"
                     Background="#f4f4f5" Opacity="1" CornerRadius="6" Margin="0,0,6,0">
-                <ui:SimpleStackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
                     <Border Width="50" Height="50" MouseUp="GridPPTControlPrevious_MouseUp"
                             Name="PPTRSPreviousButtonBorder"
                             MouseDown="GridPPTControlPrevious_MouseDown" MouseLeave="GridPPTControlPrevious_MouseLeave"
@@ -1812,14 +1817,14 @@
                         <Grid>
                             <Border Margin="3,0" CornerRadius="5" Name="PPTRSPageButtonFeedbackBorder"
                                     Background="#18181b" Opacity="0" />
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Orientation="Vertical" Spacing="0.5">
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical" layout:LayoutSpacing.Spacing="0.5">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                            FontSize="17" FontWeight="Bold"
                                            Text="{Binding ElementName=PPTBtnPageNow, Path=Text}" />
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                            FontSize="10"
                                            Text="{Binding ElementName=PPTBtnPageTotal, Path=Text}" />
-                            </ui:SimpleStackPanel>
+                            </StackPanel>
                         </Grid>
                     </Border>
                     <Border Width="50" Height="50" MouseUp="GridPPTControlNext_MouseUp"
@@ -1842,7 +1847,7 @@
                             </Image>
                         </Grid>
                     </Border>
-                </ui:SimpleStackPanel>
+                </StackPanel>
             </Border>
         </Viewbox>
 
@@ -1883,9 +1888,9 @@
                 <Viewbox.LayoutTransform>
                     <ScaleTransform ScaleX="1" ScaleY="1" />
                 </Viewbox.LayoutTransform>
-                <ui:SimpleStackPanel Orientation="Horizontal" Name="_FloatingBar_SimpleStackPanel">
+                <StackPanel Orientation="Horizontal" Name="_FloatingBarPanel">
                     <Grid ZIndex="1000" Width="0" Height="0" Margin="0,0,0,0" VerticalAlignment="Top">
-                        <Canvas Name="FloatingBarUpSidePopupArea" VerticalAlignment="Bottom" Width="{Binding ElementName=_FloatingBar_SimpleStackPanel , Path=ActualWidth}" Height="78">
+                        <Canvas Name="FloatingBarUpSidePopupArea" VerticalAlignment="Bottom" Width="{Binding ElementName=_FloatingBarPanel , Path=ActualWidth}" Height="78">
                             <Grid Width="{Binding ElementName=FloatingBarUpSidePopupArea, Path=ActualWidth}" Height="{Binding ElementName=FloatingBarUpSidePopupArea, Path=ActualHeight}">
                                 <Border Name="MouseRightButtonGestureTipPopup" Visibility="Collapsed" Width="196" Height="24" VerticalAlignment="Bottom" Margin="0,0,0,8" Background="#DD18181b" CornerRadius="3">
                                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
@@ -1915,10 +1920,10 @@
                             Background="#F8FAFC" BorderThickness="1" BorderBrush="#D1D5DB"
                             Style="{StaticResource FloatingBarMoveControlStyle}"
                             MouseDown="SymbolIconEmoji_MouseDown" MouseUp="SymbolIconEmoji_MouseUp">
-                        <ui:SimpleStackPanel Margin="0,2,0,2" Orientation="Horizontal"
+                        <StackPanel Margin="0,2,0,2" Orientation="Horizontal"
                                              HorizontalAlignment="Center">
                             <Image Margin="0" Name="FloatingbarHeadIconImg" Source="/Resources/Icons-png/icc.png" />
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </Border>
                     <Border Margin="2,0,0,0" Padding="2" Visibility="Visible" Height="36"
                             Name="BorderFloatingBarMainControls" Background="#F8FAFC" CornerRadius="8"
@@ -1938,9 +1943,9 @@
                                 <Border Name="FloatingbarHandBtnBG" Visibility="Hidden" Width="{Binding ElementName=Cursor_Icon, Path=Width}" Height="34"
                                         Canvas.Left="224" Margin="0,-2,0,-2" Background="#2563eb" />
                             </Canvas>
-                            <ui:SimpleStackPanel Margin="2,0" Name="StackPanelFloatingBar" Orientation="Horizontal">
-                                <!--<ui:SimpleStackPanel Name="Cursor_Icon" MouseDown="Border_MouseDown" MouseUp="CursorIcon_Click"-->
-                                <ui:SimpleStackPanel Name="Cursor_Icon"
+                            <StackPanel Margin="2,0" Name="StackPanelFloatingBar" Orientation="Horizontal">
+                                <!--<StackPanel Name="Cursor_Icon" MouseDown="Border_MouseDown" MouseUp="CursorIcon_Click"-->
+                                <StackPanel Name="Cursor_Icon"
                                                      behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToCursorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                      behaviors:FloatingBarButton.IsSelected="{Binding ViewModel.IsCursorMode, RelativeSource={RelativeSource AncestorType=Window}}"
                                                      Background="Transparent" Orientation="Vertical"
@@ -1960,8 +1965,8 @@
                                     <TextBlock x:Name="SelectionToolBarTextBlock" Text="鼠标" Foreground="Black"
                                                FontSize="8" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}"
                                                Margin="0,1,0,0" TextAlignment="Center" />
-                                </ui:SimpleStackPanel>
-                                <ui:SimpleStackPanel Name="Pen_Icon"
+                                </StackPanel>
+                                <StackPanel Name="Pen_Icon"
                                                      behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToPenCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                      behaviors:FloatingBarButton.IsSelected="{Binding ViewModel.IsPenMode, RelativeSource={RelativeSource AncestorType=Window}}"
                                                      Background="Transparent" Orientation="Vertical"
@@ -1981,8 +1986,8 @@
                                     </Image>
                                     <TextBlock x:Name="PenToolbarTextBlock" Text="批注" Foreground="Black" FontSize="8"
                                                Margin="0,1,0,0" TextAlignment="Center" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}" />
-                                </ui:SimpleStackPanel>
-                                <ui:SimpleStackPanel Name="SymbolIconDelete"
+                                </StackPanel>
+                                <StackPanel Name="SymbolIconDelete"
                                                      behaviors:FloatingBarButton.Command="{Binding ViewModel.ClearCanvasCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                      behaviors:FloatingBarButton.IsDeleteButton="True"
                                                      Background="Transparent" Orientation="Vertical"
@@ -2001,17 +2006,17 @@
                                     </Image>
                                     <TextBlock x:Name="TrashBinToolbarTextBlock" Text="清空" Foreground="#B91C1C" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}"
                                                FontWeight="Bold" FontSize="8" Margin="0,1,0,0" TextAlignment="Center" />
-                                </ui:SimpleStackPanel>
-                                <ui:SimpleStackPanel Name="StackPanelCanvasControls" Visibility="Visible"
+                                </StackPanel>
+                                <StackPanel Name="StackPanelCanvasControls" Visibility="Visible"
                                                      Orientation="{Binding ElementName=StackPanelFloatingBar, Path=Orientation}">
-                                    <ui:SimpleStackPanel Width="0"
+                                    <StackPanel Width="0"
                                                          Orientation="{Binding ElementName=StackPanelFloatingBar, Path=Orientation}">
                                         <Grid Margin="0,5,0,5" Width="0" RenderTransformOrigin="0.5,0.5">
                                             <Grid Name="PenPalette" Visibility="Collapsed" />
                                         </Grid>
-                                    </ui:SimpleStackPanel>
+                                    </StackPanel>
 
-                                    <ui:SimpleStackPanel Name="EraserByStrokes_Icon"
+                                    <StackPanel Name="EraserByStrokes_Icon"
                                                          behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToEraseByStrokeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          behaviors:FloatingBarButton.IsSelected="{Binding ViewModel.IsEraseByStrokeMode, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          Background="Transparent" Orientation="Vertical" Width="28"
@@ -2032,8 +2037,8 @@
                                         </Image>
                                         <TextBlock x:Name="InkEraserToolbarTextBlock" Text="线擦" Foreground="Black" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}"
                                                    FontSize="8" Margin="0,1,0,0" TextAlignment="Center" />
-                                    </ui:SimpleStackPanel>
-                                    <ui:SimpleStackPanel Name="Eraser_Icon"
+                                    </StackPanel>
+                                    <StackPanel Name="Eraser_Icon"
                                                          behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToEraseByGeometryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          behaviors:FloatingBarButton.IsSelected="{Binding ViewModel.IsEraseByGeometryMode, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          Background="Transparent" Orientation="Vertical"
@@ -2054,8 +2059,8 @@
                                         </Image>
                                         <TextBlock x:Name="CircleEraserToolbarTextBlock" Text="板擦" Foreground="Black"
                                                    FontSize="8" Margin="0,1,0,0" TextAlignment="Center" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}" />
-                                    </ui:SimpleStackPanel>
-                                    <ui:SimpleStackPanel Name="SymbolIconSelect"
+                                    </StackPanel>
+                                    <StackPanel Name="SymbolIconSelect"
                                                          behaviors:FloatingBarButton.Command="{Binding ViewModel.SwitchToLassoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          behaviors:FloatingBarButton.IsSelected="{Binding ViewModel.IsLassoMode, RelativeSource={RelativeSource AncestorType=Window}}"
                                                          Background="Transparent" Orientation="Vertical" Margin="0,-2" Width="28"
@@ -2075,8 +2080,8 @@
                                         </Image>
                                         <TextBlock x:Name="LassoToolToolbarTextBlock" Text="套选" Foreground="Black" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}"
                                                    FontSize="8" Margin="0,1,0,0" TextAlignment="Center" />
-                                    </ui:SimpleStackPanel>
-                                    <ui:SimpleStackPanel
+                                    </StackPanel>
+                                    <StackPanel
                                         Name="ShapeDrawFloatingBarBtn"
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
@@ -2099,7 +2104,7 @@
                                         </Image>
                                         <TextBlock x:Name="ShapesToolbarTextBlock" Text="几何" Foreground="Black" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}"
                                                    FontSize="8" Margin="0,1,0,0" TextAlignment="Center" />
-                                    </ui:SimpleStackPanel>
+                                    </StackPanel>
                                     <Grid Width="0">
                                         <Border x:Name="BorderDrawShape" Background="#fafafa" Opacity="1"
                                                 Visibility="Visible" BorderBrush="#2563eb"
@@ -2108,7 +2113,7 @@
                                             <shapeDrawing:ShapeDrawingPanel />
                                         </Border>
                                     </Grid>
-                                    <ui:SimpleStackPanel
+                                    <StackPanel
                                         Name="FreezeFloatingBarBtn"
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
@@ -2129,8 +2134,8 @@
                                         </Image>
                                         <TextBlock x:Name="FreezeToolbarTextBlock" Text="冻结" Foreground="Black" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}"
                                                    FontSize="8" Margin="0,1,0,0" TextAlignment="Center" />
-                                    </ui:SimpleStackPanel>
-                                    <ui:SimpleStackPanel
+                                    </StackPanel>
+                                    <StackPanel
                                         Name="HandFloatingBarBtn"
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
@@ -2151,8 +2156,8 @@
                                         </Image>
                                         <TextBlock x:Name="HandToolbarTextBlock" Text="漫游" Foreground="Black" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}"
                                                    FontSize="8" Margin="0,1,0,0" TextAlignment="Center" />
-                                    </ui:SimpleStackPanel>
-                                    <ui:SimpleStackPanel
+                                    </StackPanel>
+                                    <StackPanel
                                         Name="SymbolIconUndo"
                                         behaviors:FloatingBarButton.Command="{Binding ViewModel.UndoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Background="Transparent" Orientation="Vertical"
@@ -2177,8 +2182,8 @@
                                                    Opacity="{Binding ElementName=SymbolIconUndo, Path=IsEnabled, Converter={StaticResource IsEnabledToOpacityConverter}}"
                                                    Foreground="Black" FontSize="8" Margin="0,1,0,0"
                                                    TextAlignment="Center" />
-                                    </ui:SimpleStackPanel>
-                                    <ui:SimpleStackPanel
+                                    </StackPanel>
+                                    <StackPanel
                                         Name="SymbolIconRedo"
                                         behaviors:FloatingBarButton.Command="{Binding ViewModel.RedoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         Background="Transparent" Orientation="Vertical"
@@ -2203,8 +2208,8 @@
                                                    Opacity="{Binding ElementName=SymbolIconRedo, Path=IsEnabled, Converter={StaticResource IsEnabledToOpacityConverter}}"
                                                    Foreground="Black" FontSize="8" Margin="0,1,0,0"
                                                    TextAlignment="Center" />
-                                    </ui:SimpleStackPanel>
-                                    <ui:SimpleStackPanel
+                                    </StackPanel>
+                                    <StackPanel
                                         Name="CursorWithDelFloatingBarBtn"
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
@@ -2226,18 +2231,18 @@
                                         </Image>
                                         <TextBlock x:Name="ClearAndMouseToolbarTextBlock" Text="清并鼠" Foreground="Black"
                                                    FontSize="8" Margin="0,1,0,0" TextAlignment="Center" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}" />
-                                    </ui:SimpleStackPanel>
-                                </ui:SimpleStackPanel>
+                                    </StackPanel>
+                                </StackPanel>
                                 <Grid Width="0">
                                     <Border Visibility="Collapsed" ClipToBounds="True" Name="EraserSizePanel"
                                             Margin="-203,-128,83,37" CornerRadius="5" Background="#fafafa" Opacity="1"
                                             BorderBrush="#2563eb" BorderThickness="1">
                                     </Border>
                                 </Grid>
-                                <ui:SimpleStackPanel
+                                <StackPanel
                                     Orientation="{Binding ElementName=StackPanelFloatingBar, Path=Orientation}">
                                     <Border Margin="2,0,2,0" BorderBrush="#71717a" BorderThickness="1,0,0,0" />
-                                    <ui:SimpleStackPanel
+                                    <StackPanel
                                         Name="WhiteboardFloatingBarBtn"
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
@@ -2260,8 +2265,8 @@
                                         </Image>
                                         <TextBlock x:Name="WhiteboardToolbarTextBlock" Text="白板" Foreground="Black"
                                                    FontSize="8" Margin="0,1,0,0" TextAlignment="Center" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}" />
-                                    </ui:SimpleStackPanel>
-                                    <ui:SimpleStackPanel
+                                    </StackPanel>
+                                    <StackPanel
                                         Name="ToolsFloatingBarBtn"
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
@@ -2285,8 +2290,8 @@
                                         <TextBlock x:Name="ToolsToolbarTextBlock" Text="工具" Foreground="Black"
                                                    FontSize="8" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}"
                                                    Margin="0,1,0,0" TextAlignment="Center" />
-                                    </ui:SimpleStackPanel>
-                                    <ui:SimpleStackPanel
+                                    </StackPanel>
+                                    <StackPanel
                                         x:Name="Fold_Icon"
                                         MouseDown="FloatingBarToolBtnMouseDownFeedback_Panel"
                                         MouseLeave="FloatingBarToolBtnMouseLeaveFeedback_Panel"
@@ -2310,16 +2315,16 @@
                                         <TextBlock x:Name="HideToolbarTextBlock" Text="隐藏" Foreground="Black"
                                                    FontSize="8" Visibility="{Binding ElementName=FloatingBarTextVisibilityBindingLikeAPieceOfShit, Path=Visibility}"
                                                    Margin="0,1,0,0" TextAlignment="Center" />
-                                    </ui:SimpleStackPanel>
+                                    </StackPanel>
                                     <Grid Width="0">
                                         <Border ClipToBounds="True" Name="BorderTools" Margin="-133,-156,14,37"
                                                 CornerRadius="5" Background="#fafafa" Opacity="1" BorderThickness="1"
                                                 BorderBrush="#2563eb">
-                                            <ui:SimpleStackPanel Margin="-1,0,0,0">
+                                            <StackPanel Margin="-1,0,0,0">
                                                 <Border BorderBrush="#1e3a8a" BorderThickness="0,0,0,1"
                                                         CornerRadius="6,6,0,0" Background="#2563eb" Margin="-1,-1,-1,0"
                                                         Padding="1,1,1,0">
-                                                    <ui:SimpleStackPanel Orientation="Horizontal"
+                                                    <StackPanel Orientation="Horizontal"
                                                                          HorizontalAlignment="Stretch">
                                                         <TextBlock Text="更多功能" Foreground="White" Padding="8,5,44,5"
                                                                    FontSize="11" FontWeight="Bold"
@@ -2330,13 +2335,13 @@
                                                                Height="16"
                                                                Width="16" MouseDown="Border_MouseDown"
                                                                MouseUp="CloseBordertools_MouseUp" />
-                                                    </ui:SimpleStackPanel>
+                                                    </StackPanel>
                                                 </Border>
                                                 <!---->
-                                                <ui:SimpleStackPanel Margin="10,3,10,2" Spacing="-2">
-                                                    <ui:SimpleStackPanel Margin="0,0,0,0" Height="40" Spacing="0"
+                                                <StackPanel Margin="10,3,10,2" layout:LayoutSpacing.Spacing="-2">
+                                                    <StackPanel Margin="0,0,0,0" Height="40" layout:LayoutSpacing.Spacing="0"
                                                                          Orientation="Horizontal">
-                                                        <ui:SimpleStackPanel MouseDown="Border_MouseDown"
+                                                        <StackPanel MouseDown="Border_MouseDown"
                                                                              MouseUp="ImageCountdownTimer_MouseUp"
                                                                              Margin="0,0,0,0" Height="38" Width="32"
                                                                              Orientation="Vertical">
@@ -2355,8 +2360,8 @@
                                                             </Image>
                                                             <Label Content="计时器" FontSize="8"
                                                                    HorizontalAlignment="Center" />
-                                                        </ui:SimpleStackPanel>
-                                                        <ui:SimpleStackPanel MouseDown="Border_MouseDown"
+                                                        </StackPanel>
+                                                        <StackPanel MouseDown="Border_MouseDown"
                                                                              MouseUp="SymbolIconRand_MouseUp"
                                                                              Margin="0,0,0,0" Height="38" Width="32"
                                                                              Orientation="Vertical">
@@ -2375,8 +2380,8 @@
                                                             </Image>
                                                             <Label Content="随机抽" FontSize="8"
                                                                    HorizontalAlignment="Center" />
-                                                        </ui:SimpleStackPanel>
-                                                        <ui:SimpleStackPanel MouseDown="Border_MouseDown"
+                                                        </StackPanel>
+                                                        <StackPanel MouseDown="Border_MouseDown"
                                                                              MouseUp="SymbolIconRandOne_MouseUp"
                                                                              Margin="0,0,0,0" Height="38" Width="32"
                                                                              Orientation="Vertical">
@@ -2395,11 +2400,11 @@
                                                             </Image>
                                                             <Label Content="单次抽选" FontSize="8"
                                                                    HorizontalAlignment="Center" />
-                                                        </ui:SimpleStackPanel>
-                                                    </ui:SimpleStackPanel>
-                                                    <ui:SimpleStackPanel Margin="0,0,0,0" Height="40" Spacing="0"
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                    <StackPanel Margin="0,0,0,0" Height="40" layout:LayoutSpacing.Spacing="0"
                                                                          Orientation="Horizontal">
-                                                        <ui:SimpleStackPanel MouseDown="Border_MouseDown"
+                                                        <StackPanel MouseDown="Border_MouseDown"
                                                                              MouseUp="SymbolIconSaveStrokes_MouseUp"
                                                                              Margin="0,0,0,0" Height="38" Width="32"
                                                                              Orientation="Vertical">
@@ -2418,8 +2423,8 @@
                                                             </Image>
                                                             <Label Content="保存" FontSize="8"
                                                                    HorizontalAlignment="Center" />
-                                                        </ui:SimpleStackPanel>
-                                                        <ui:SimpleStackPanel MouseDown="Border_MouseDown"
+                                                        </StackPanel>
+                                                        <StackPanel MouseDown="Border_MouseDown"
                                                                              MouseUp="SymbolIconOpenStrokes_MouseUp"
                                                                              Margin="0,0,0,0" Height="38" Width="32"
                                                                              Orientation="Vertical">
@@ -2438,8 +2443,8 @@
                                                             </Image>
                                                             <Label Content="打开..." FontSize="8"
                                                                    HorizontalAlignment="Center" />
-                                                        </ui:SimpleStackPanel>
-                                                        <ui:SimpleStackPanel MouseDown="Border_MouseDown"
+                                                        </StackPanel>
+                                                        <StackPanel MouseDown="Border_MouseDown"
                                                                              MouseUp="GridInkReplayButton_MouseUp"
                                                                              Margin="0,0,0,0" Height="38" Width="32"
                                                                              Orientation="Vertical">
@@ -2458,11 +2463,11 @@
                                                             </Image>
                                                             <Label Content="重播" FontSize="8"
                                                                    HorizontalAlignment="Center" />
-                                                        </ui:SimpleStackPanel>
-                                                    </ui:SimpleStackPanel>
-                                                    <ui:SimpleStackPanel Margin="0,0,0,0" Height="40" Spacing="0"
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                    <StackPanel Margin="0,0,0,0" Height="40" layout:LayoutSpacing.Spacing="0"
                                                                          Orientation="Horizontal">
-                                                        <ui:SimpleStackPanel MouseDown="Border_MouseDown"
+                                                        <StackPanel MouseDown="Border_MouseDown"
                                                                              MouseUp="SymbolIconScreenshot_MouseUp"
                                                                              Margin="0,0,0,0" Height="38" Width="32"
                                                                              Orientation="Vertical">
@@ -2481,8 +2486,8 @@
                                                             </Image>
                                                             <Label Content="截屏" FontSize="8"
                                                                    HorizontalAlignment="Center" />
-                                                        </ui:SimpleStackPanel>
-                                                        <ui:SimpleStackPanel MouseDown="Border_MouseDown"
+                                                        </StackPanel>
+                                                        <StackPanel MouseDown="Border_MouseDown"
                                                                              MouseUp="OperatingGuideWindowIcon_MouseUp"
                                                                              Margin="0,0,0,0" Height="38" Width="32"
                                                                              Orientation="Vertical">
@@ -2501,8 +2506,8 @@
                                                             </Image>
                                                             <Label Content="说明书" FontSize="8"
                                                                    HorizontalAlignment="Center" />
-                                                        </ui:SimpleStackPanel>
-                                                        <ui:SimpleStackPanel MouseDown="Border_MouseDown"
+                                                        </StackPanel>
+                                                        <StackPanel MouseDown="Border_MouseDown"
                                                                              MouseUp="SymbolIconSettings_Click"
                                                                              Margin="0,0,0,0" Height="38" Width="32"
                                                                              Orientation="Vertical">
@@ -2521,14 +2526,14 @@
                                                             </Image>
                                                             <Label Content="设置" FontSize="8"
                                                                    HorizontalAlignment="Center" />
-                                                        </ui:SimpleStackPanel>
-                                                    </ui:SimpleStackPanel>
-                                                </ui:SimpleStackPanel>
-                                            </ui:SimpleStackPanel>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </StackPanel>
                                         </Border>
                                     </Grid>
-                                </ui:SimpleStackPanel>
-                            </ui:SimpleStackPanel>
+                                </StackPanel>
+                            </StackPanel>
                         </Grid>
 
                     </Border>
@@ -2542,7 +2547,7 @@
                             Background="{DynamicResource FloatBarBackground}" CornerRadius="4" BorderThickness="1"
                             BorderBrush="{DynamicResource FloatBarBorderBrush}"
                             Visibility="Collapsed">
-                        <ui:SimpleStackPanel Background="Transparent" Orientation="Vertical"
+                        <StackPanel Background="Transparent" Orientation="Vertical"
                                              HorizontalAlignment="Center"
                                              Width="28" Margin="0,0">
                             <Image Source="/Resources/new-icons/end-slides-show.png"
@@ -2550,9 +2555,9 @@
                                    Margin="0,3,0,0" />
                             <TextBlock Text="退出" Foreground="Black" FontSize="8" Margin="0,1,0,0"
                                        TextAlignment="Center" />
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </Border>
-                </ui:SimpleStackPanel>
+                </StackPanel>
             </Viewbox>
         </Grid>
 
@@ -2566,9 +2571,9 @@
                     Visibility="Collapsed"
                     VerticalAlignment="Bottom" Margin="0,0,0,16" Background="#fafafa" CornerRadius="5"
                     BorderBrush="#a1a1aa" BorderThickness="1">
-                <ui:SimpleStackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
                     <Border CornerRadius="5,0,0,5" Margin="-1" Padding="12" Background="#b91c1c">
-                        <ui:SimpleStackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <Image Width="24" Height="24">
                                 <Image.Source>
                                     <DrawingImage>
@@ -2581,14 +2586,14 @@
                                     </DrawingImage>
                                 </Image.Source>
                             </Image>
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                     </Border>
                     <StackPanel Width="128" Orientation="Vertical" VerticalAlignment="Center" Margin="8,0,0,0">
                         <TextBlock Name="InkReplayPanelStatusText" FontSize="17" FontWeight="Bold" Foreground="#b91c1c"
                                    Text="正在重播墨迹..." VerticalAlignment="Center" />
                         <TextBlock FontSize="12" Foreground="#b91c1c" Text="双击屏幕退出播放" VerticalAlignment="Center" />
                     </StackPanel>
-                    <ui:SimpleStackPanel Orientation="Horizontal" Margin="9,0,0,0" Spacing="6">
+                    <StackPanel Orientation="Horizontal" Margin="9,0,0,0" layout:LayoutSpacing.Spacing="6">
                         <Border Name="InkReplayPlayPauseBorder" MouseDown="InkReplayPlayPauseBorder_OnMouseDown"
                                 MouseUp="InkReplayPlayPauseBorder_OnMouseUp" CornerRadius="16" Height="32" Width="32">
                             <Grid>
@@ -2712,81 +2717,81 @@
                             </TextBlock>
                         </StackPanel>
 
-                    </ui:SimpleStackPanel>
-                </ui:SimpleStackPanel>
+                    </StackPanel>
+                </StackPanel>
             </Border>
         </Grid>
 
         <!--// 侧边栏 //-->
         <Viewbox x:Name="LeftSidePanel" MouseUp="LeftUnFoldButtonDisplayQuickPanel_MouseUp" Visibility="Visible"
                  Height="50" Width="32" Margin="-60,0,0,-150" HorizontalAlignment="Left" VerticalAlignment="Center">
-            <ui:SimpleStackPanel>
+            <StackPanel>
                 <Border Background="#9918181b" Opacity="1" CornerRadius="0,25,25,0" Height="50" Width="32">
                     <Image x:Name="LeftUnFoldBtnImgChevron" Margin="10,0,0,0"
                            Source="/Resources/new-icons/unfold-chevron.png"
                            RenderOptions.BitmapScalingMode="HighQuality" Height="14" Width="14" />
                 </Border>
-            </ui:SimpleStackPanel>
+            </StackPanel>
         </Viewbox>
         <Viewbox Width="50" Visibility="Collapsed" Name="LeftUnFoldButtonQuickPanel" Margin="-1,0,0,-150"
                  HorizontalAlignment="Left" VerticalAlignment="Center">
             <Border ClipToBounds="True" Visibility="Visible" CornerRadius="0,6,6,0" Background="#fafafa" Opacity="1"
                     BorderThickness="1" BorderBrush="{DynamicResource FloatBarBorderBrush}" Width="32">
-                <ui:SimpleStackPanel Orientation="Vertical" Spacing="0" Margin="0,5">
-                    <ui:SimpleStackPanel
+                <StackPanel Orientation="Vertical" layout:LayoutSpacing.Spacing="0" Margin="0,5">
+                    <StackPanel
                         MouseUp="SymbolIconRandOne_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
                         <Image Source="/Resources/Icons-Fluent/ic_fluent_person_money_24_regular.png"
                                RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="单次抽" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel
+                    </StackPanel>
+                    <StackPanel
                         MouseUp="SymbolIconRand_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
                         <Image Source="/Resources/Icons-Fluent/ic_fluent_people_money_24_regular.png"
                                RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="随机抽" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel
+                    </StackPanel>
+                    <StackPanel
 
                         MouseUp="ImageCountdownTimer_MouseUp" Background="Transparent"
                         Orientation="Vertical" HorizontalAlignment="Center" Width="32" Margin="0">
                         <Image Source="/Resources/Icons-Fluent/ic_fluent_timer_24_regular.png"
                                RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="计时器" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel
+                    </StackPanel>
+                    <StackPanel
                         MouseUp="ImageBlackboard_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
                         <Image Source="/Resources/new-icons/blackboard.png"
                                RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="白板" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel
+                    </StackPanel>
+                    <StackPanel
                         MouseUp="UnFoldFloatingBar_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
                         <Image Source="/Resources/new-icons/eye.png" RenderOptions.BitmapScalingMode="HighQuality"
                                Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="显示" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel
+                    </StackPanel>
+                    <StackPanel
                         MouseUp="HideQuickPanel_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
                         <Image Source="/Resources/new-icons/chevron-left.png"
                                RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,3" />
-                    </ui:SimpleStackPanel>
-                </ui:SimpleStackPanel>
+                    </StackPanel>
+                </StackPanel>
             </Border>
         </Viewbox>
         <Viewbox x:Name="RightSidePanel" MouseUp="RightUnFoldButtonDisplayQuickPanel_MouseUp"
                  Visibility="{Binding ElementName=LeftSidePanel, Path=Visibility}" Height="50" Width="32"
                  Margin="0,0,-60,-150" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <ui:SimpleStackPanel>
+            <StackPanel>
                 <Border Background="#9918181b" Opacity="1" CornerRadius="25,0,0,25" Height="50" Width="32">
                     <Image Margin="0,0,10,0" x:Name="RightUnFoldBtnImgChevron"
                            Source="/Resources/new-icons/unfold-chevron.png"
@@ -2799,54 +2804,54 @@
                         </Image.RenderTransform>
                     </Image>
                 </Border>
-            </ui:SimpleStackPanel>
+            </StackPanel>
         </Viewbox>
         <Viewbox Width="50" Visibility="Collapsed" Name="RightUnFoldButtonQuickPanel" Margin="0,0,-1,-150"
                  HorizontalAlignment="Right" VerticalAlignment="Center">
             <Border ClipToBounds="True" Visibility="Visible" CornerRadius="6,0,0,6" Background="#fafafa" Opacity="1"
                     BorderThickness="1" BorderBrush="{DynamicResource FloatBarBorderBrush}" Width="32">
-                <ui:SimpleStackPanel Orientation="Vertical" Spacing="0" Margin="0,5">
-                    <ui:SimpleStackPanel
+                <StackPanel Orientation="Vertical" layout:LayoutSpacing.Spacing="0" Margin="0,5">
+                    <StackPanel
                         MouseUp="SymbolIconRandOne_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
                         <Image Source="/Resources/Icons-Fluent/ic_fluent_person_money_24_regular.png"
                                RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="单次抽" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel
+                    </StackPanel>
+                    <StackPanel
                         MouseUp="SymbolIconRand_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
                         <Image Source="/Resources/Icons-Fluent/ic_fluent_people_money_24_regular.png"
                                RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="随机抽" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel
+                    </StackPanel>
+                    <StackPanel
 
                         MouseUp="ImageCountdownTimer_MouseUp" Background="Transparent"
                         Orientation="Vertical" HorizontalAlignment="Center" Width="32" Margin="0">
                         <Image Source="/Resources/Icons-Fluent/ic_fluent_timer_24_regular.png"
                                RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="计时器" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel
+                    </StackPanel>
+                    <StackPanel
                         MouseUp="ImageBlackboard_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
                         <Image Source="/Resources/new-icons/blackboard.png"
                                RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="白板" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel
+                    </StackPanel>
+                    <StackPanel
                         MouseUp="UnFoldFloatingBar_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
                         <Image Source="/Resources/new-icons/eye.png" RenderOptions.BitmapScalingMode="HighQuality"
                                Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="显示" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel
+                    </StackPanel>
+                    <StackPanel
                         MouseUp="HideQuickPanel_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
@@ -2862,8 +2867,8 @@
                                 </TransformGroup>
                             </Image.RenderTransform>
                         </Image>
-                    </ui:SimpleStackPanel>
-                </ui:SimpleStackPanel>
+                    </StackPanel>
+                </StackPanel>
             </Border>
         </Viewbox>
 
@@ -2877,3 +2882,7 @@
         </Grid>
     </Grid>
 </Window>
+
+
+
+

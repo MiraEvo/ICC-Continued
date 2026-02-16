@@ -41,7 +41,6 @@ using System.Windows.Threading;
 using Application = System.Windows.Application;
 using File = System.IO.File;
 using MessageBox = System.Windows.MessageBox;
-using iNKORE.UI.WPF.Modern;
 using Microsoft.Office.Core;
 
 using System.Collections.Concurrent;

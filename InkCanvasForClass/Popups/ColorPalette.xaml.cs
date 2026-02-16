@@ -1,5 +1,4 @@
-﻿using iNKORE.UI.WPF.Modern.Controls;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +14,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ColorPicker;
-using iNKORE.UI.WPF.Helpers;
 using static Ink_Canvas.Popups.ColorPalette;
 using System.Drawing;
 using Ink_Canvas.Helpers;
@@ -88,7 +86,7 @@ namespace Ink_Canvas.Popups {
 
         public Border[] ColorPaletteColorButtonBorders;
         public Border[] PenModeTabButtonBorders;
-        public SimpleStackPanel[] PenModeTabButtonIndicators;
+        public StackPanel[] PenModeTabButtonIndicators;
         public GeometryDrawing[] PenModeTabButtonIcons;
         public TextBlock[] PenModeTabButtonTexts;
 
@@ -369,7 +367,7 @@ namespace Ink_Canvas.Popups {
 
             ChangedColorButtonsTransparentVisibility(_penModeSelected == PenMode.HighlighterMode);
 
-            var tb = ((SimpleStackPanel)ColorModeChangeButton.Content).Children.OfType<TextBlock>().Single();
+            var tb = ((StackPanel)ColorModeChangeButton.Content).Children.OfType<TextBlock>().Single();
             tb.Text = _usingDarkColors ? "亮色" : "暗色";
         }
 
@@ -1217,7 +1215,7 @@ namespace Ink_Canvas.Popups {
             PenModeTabButtonBorders = new Border[] {
                 PenTabButton, HighlighterTabButton, LaserPenTabButton
             };
-            PenModeTabButtonIndicators = new SimpleStackPanel[] {
+            PenModeTabButtonIndicators = new StackPanel[] {
                 PenTabButtonIndicator, HighlighterTabButtonIndicator, LaserPenTabButtonIndicator
             };
             PenModeTabButtonIcons = new GeometryDrawing[] {
@@ -1241,3 +1239,4 @@ namespace Ink_Canvas.Popups {
         }
     }
 }
+
