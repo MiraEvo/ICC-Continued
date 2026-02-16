@@ -11,30 +11,31 @@
         MinHeight="640" MinWidth="960"
         WindowStartupLocation="CenterScreen"
         WindowBackdropType="Mica"
-        ExtendsContentIntoTitleBar="True">
+        ExtendsContentIntoTitleBar="True"
+        Background="{DynamicResource ApplicationBackgroundBrush}">
 
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- 导航视图专用颜色 -->
-            <Color x:Key="NavigationBackgroundColor">Transparent</Color>
-            <Color x:Key="NavigationItemHoverColor">#E9E9E9</Color>
-            <Color x:Key="NavigationItemSelectedColor">#E5E5E5</Color>
-            <Color x:Key="SelectedIndicatorColor">#0067C0</Color>
+            <SolidColorBrush x:Key="SettingsSurfaceBrush" Color="#99FFFFFF"/>
+            <SolidColorBrush x:Key="SettingsBorderBrush" Color="#26000000"/>
 
-            <!-- 导航视图专用画刷 -->
-            <SolidColorBrush x:Key="NavigationBackgroundBrush" Color="{StaticResource NavigationBackgroundColor}"/>
-            <SolidColorBrush x:Key="NavigationItemHoverBrush" Color="{StaticResource NavigationItemHoverColor}"/>
-            <SolidColorBrush x:Key="NavigationItemSelectedBrush" Color="{StaticResource NavigationItemSelectedColor}"/>
-            <SolidColorBrush x:Key="SelectedIndicatorBrush" Color="{StaticResource SelectedIndicatorColor}"/>
-            
-            <!-- 兼容性画刷 -->
-
-            <!-- 默认 TextBlock 样式 - 确保所有文字可见 -->
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+            </Style>
+
+            <Style TargetType="ui:CardControl">
+                <Setter Property="Margin" Value="0,0,0,8"/>
+            </Style>
+
+            <Style TargetType="ui:CardExpander">
+                <Setter Property="Margin" Value="0,0,0,12"/>
+            </Style>
+
+            <Style TargetType="ui:NavigationViewItem">
+                <Setter Property="Margin" Value="6,2,6,2"/>
             </Style>
         </ResourceDictionary>
     </Window.Resources>
@@ -45,43 +46,62 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Title="应用设置" Icon="pack://application:,,,/Resources/icc.ico" />
+        <ui:TitleBar Grid.Row="0" Title="应用设置" Icon="pack://application:,,,/Resources/icc.ico" Margin="8,8,8,0"/>
 
         <Grid Grid.Row="1">
-            <ui:NavigationView x:Name="NavView"
-                           IsBackButtonVisible="Collapsed"
-                           IsPaneToggleVisible="True"
-                           PaneDisplayMode="Left"
-                           OpenPaneLength="280"
-                           CompactPaneLength="56"
-                           MenuItemsSource="{Binding NavigationItems}"
-                           FooterMenuItemsSource="{Binding NavigationFooter}">
+            <Border Margin="8"
+                    Background="{StaticResource SettingsSurfaceBrush}"
+                    BorderBrush="{StaticResource SettingsBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12">
+                <ui:NavigationView x:Name="NavView"
+                                   IsBackButtonVisible="Collapsed"
+                                   IsPaneToggleVisible="True"
+                                   PaneDisplayMode="Left"
+                                   OpenPaneLength="300"
+                                   CompactPaneLength="56"
+                                   MenuItemsSource="{Binding NavigationItems}"
+                                   FooterMenuItemsSource="{Binding NavigationFooter}">
 
-            <ui:NavigationView.PaneHeader>
-                <Grid Margin="12,16,12,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8"
-                            Background="{DynamicResource SystemAccentColorTertiaryBrush}" Margin="0,0,12,0">
-                        <ui:FontIcon Glyph="&#xE713;" FontSize="18"
-                                     Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
-                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="设置"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                        <TextBlock Text="InkCanvasForClass"
-                                   FontSize="11"
-                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                   Margin="0,2,0,0"/>
-                    </StackPanel>
-                </Grid>
-            </ui:NavigationView.PaneHeader>
-            </ui:NavigationView>
+                    <ui:NavigationView.PaneHeader>
+                        <Grid Margin="12,14,12,18">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0"
+                                    Width="40"
+                                    Height="40"
+                                    CornerRadius="10"
+                                    Background="{DynamicResource SystemAccentColorTertiaryBrush}"
+                                    Margin="0,0,12,0">
+                                <ui:SymbolIcon Symbol="Settings24"
+                                               Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="设置" FontSize="18" FontWeight="SemiBold"/>
+                                <TextBlock Text="InkCanvasForClass"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </ui:NavigationView.PaneHeader>
+
+                    <ui:NavigationView.PaneFooter>
+                        <Border Margin="8,8,8,12"
+                                Padding="10,8"
+                                CornerRadius="8"
+                                Background="{DynamicResource ControlFillColorSecondaryBrush}">
+                            <TextBlock Text="Fluent UI / WPF UI"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                        </Border>
+                    </ui:NavigationView.PaneFooter>
+                </ui:NavigationView>
+            </Border>
         </Grid>
 
         <ui:ContentDialogHost x:Name="RootContentDialogPresenter" Grid.RowSpan="2" />
