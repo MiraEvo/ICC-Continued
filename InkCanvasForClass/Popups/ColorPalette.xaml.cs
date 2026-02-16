@@ -410,7 +410,7 @@ namespace Ink_Canvas.Popups {
         #region 隨機切換顏色按鈕 邏輯
 
         public static int StrictNext(int maxValue = int.MaxValue) {
-            return new Random(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0)).Next(maxValue);
+            return Random.Shared.Next(maxValue);
         }
 
         private void RandomColorButton_Clicked(object sender, RoutedEventArgs e) {

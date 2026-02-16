@@ -405,7 +405,7 @@ namespace Ink_Canvas {
 
                 try {
                     if (e.Stroke.StylusPoints.Count > 3) {
-                        var random = new Random();
+                        var random = Random.Shared;
                         var _speed = GetPointSpeed(
                             e.Stroke.StylusPoints[random.Next(0, e.Stroke.StylusPoints.Count - 1)].ToPoint(),
                             e.Stroke.StylusPoints[random.Next(0, e.Stroke.StylusPoints.Count - 1)].ToPoint(),

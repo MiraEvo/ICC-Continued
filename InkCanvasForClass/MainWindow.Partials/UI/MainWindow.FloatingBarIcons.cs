@@ -453,13 +453,13 @@ namespace Ink_Canvas {
                 }
 
                 if (Settings.Appearance.ChickenSoupSource == 0) {
-                    int randChickenSoupIndex = new Random().Next(ChickenSoup.OSUPlayerYuLu.Length);
+                    int randChickenSoupIndex = Random.Shared.Next(ChickenSoup.OSUPlayerYuLu.Length);
                     BlackBoardWaterMark.Text = ChickenSoup.OSUPlayerYuLu[randChickenSoupIndex];
                 } else if (Settings.Appearance.ChickenSoupSource == 1) {
-                    int randChickenSoupIndex = new Random().Next(ChickenSoup.MingYanJingJu.Length);
+                    int randChickenSoupIndex = Random.Shared.Next(ChickenSoup.MingYanJingJu.Length);
                     BlackBoardWaterMark.Text = ChickenSoup.MingYanJingJu[randChickenSoupIndex];
                 } else if (Settings.Appearance.ChickenSoupSource == 2) {
-                    int randChickenSoupIndex = new Random().Next(ChickenSoup.GaoKaoPhrases.Length);
+                    int randChickenSoupIndex = Random.Shared.Next(ChickenSoup.GaoKaoPhrases.Length);
                     BlackBoardWaterMark.Text = ChickenSoup.GaoKaoPhrases[randChickenSoupIndex];
                 }
 
