@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ink_Canvas.Popups"
-         xmlns:modern="http://schemas.lepo.co/wpfui/2022/xaml"
-         mc:Ignorable="d"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d"
              xmlns:layout="clr-namespace:Ink_Canvas.Helpers" Style="{x:Null}" AllowsTransparency="True" Background="Transparent" 
          WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False" WindowState="Maximized"
         KeyDown="ScreenshotWindow_OnKeyDown"
@@ -172,7 +172,8 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="#52525b" Margin="0,-0.5,4,0" FontWeight="Bold" Text="保存路径: "/>
-                            <Image Width="16" Height="16" VerticalAlignment="Center" Source="../Resources/Icons-png/classic-icons/desktop-small-icon.png"></Image>
+                            <ui:SymbolIcon VerticalAlignment="Center" Symbol="Desktop24"
+                                           Filled="False" FontSize="16"/>
                             <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="#52525b" Margin="4,-0.5,0,0" Text="桌面"/>
                         </StackPanel>
                     </Grid>
@@ -198,7 +199,8 @@
                     <TextBlock Text="窗口截图" FontWeight="Bold" Foreground="White" FontSize="48"/>
                     <TextBlock Text="点击需要截取的窗口即可截图" Margin="0,8,0,0" Foreground="#d4d4d8" FontSize="18"/>
                     <StackPanel Name="NeedAdminTextPanel" Orientation="Horizontal" Margin="0,8,0,0">
-                        <Image VerticalAlignment="Center" Width="26" Height="26" Source="../Resources/Icons-png/uac_icon.png"/>
+                        <ui:SymbolIcon VerticalAlignment="Center" Symbol="Shield24"
+                                       Filled="False" FontSize="26"/>
                         <TextBlock FontWeight="Bold" VerticalAlignment="Center" Text="您当前未以管理员权限运行 icc ，这会导致部分以管理员权限运行的程序窗口无法被截取" Margin="6,0,0,0" Foreground="White" FontSize="18"/>
                     </StackPanel>
                 </StackPanel>
@@ -223,7 +225,8 @@
                                             <Image Height="226" Source="{Binding Snapshot}"/>
                                             <Border BorderBrush="#991b1b" BorderThickness="2" Background="#18181b" Visibility="{Binding ShouldDisplayFailedBorder}" Height="226" Width="{Binding Width}">
                                                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <Image HorizontalAlignment="Center" Height="32" Width="32" Source="../Resources/Icons-png/uac_icon.png"/>
+                                                    <ui:SymbolIcon HorizontalAlignment="Center" Symbol="Shield24"
+                                                                   Filled="False" FontSize="32"/>
                                                     <TextBlock HorizontalAlignment="Center" Foreground="White" FontWeight="Bold" FontSize="18" Margin="0,6,0,0">无法截取</TextBlock>
                                                     <TextBlock HorizontalAlignment="Center" Foreground="#d4d4d8" FontSize="14" Margin="0,6,0,0">ICC的权限不足</TextBlock>
                                                 </StackPanel>

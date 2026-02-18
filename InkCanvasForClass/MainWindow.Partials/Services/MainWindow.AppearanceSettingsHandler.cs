@@ -258,27 +258,21 @@ namespace Ink_Canvas
             switch (Settings.Appearance.UnFoldButtonImageType)
             {
                 case 0:
-                    RightUnFoldBtnImgChevron.Source =
-                        new BitmapImage(new Uri("pack://application:,,,/Resources/new-icons/unfold-chevron.png"));
-                    RightUnFoldBtnImgChevron.Width = 14;
-                    RightUnFoldBtnImgChevron.Height = 14;
-                    RightUnFoldBtnImgChevron.RenderTransform = new RotateTransform(180);
-                    LeftUnFoldBtnImgChevron.Source =
-                        new BitmapImage(new Uri("pack://application:,,,/Resources/new-icons/unfold-chevron.png"));
-                    LeftUnFoldBtnImgChevron.Width = 14;
-                    LeftUnFoldBtnImgChevron.Height = 14;
+                    RightUnFoldBtnImgChevron.Symbol = Wpf.Ui.Controls.SymbolRegular.ChevronLeft24;
+                    RightUnFoldBtnImgChevron.FontSize = 14;
+                    RightUnFoldBtnImgChevron.RenderTransform = null;
+                    
+                    LeftUnFoldBtnImgChevron.Symbol = Wpf.Ui.Controls.SymbolRegular.ChevronRight24;
+                    LeftUnFoldBtnImgChevron.FontSize = 14;
                     LeftUnFoldBtnImgChevron.RenderTransform = null;
                     break;
                 case 1:
-                    RightUnFoldBtnImgChevron.Source =
-                        new BitmapImage(new Uri("pack://application:,,,/Resources/new-icons/pen-white.png"));
-                    RightUnFoldBtnImgChevron.Width = 18;
-                    RightUnFoldBtnImgChevron.Height = 18;
+                    RightUnFoldBtnImgChevron.Symbol = Wpf.Ui.Controls.SymbolRegular.Edit24;
+                    RightUnFoldBtnImgChevron.FontSize = 18;
                     RightUnFoldBtnImgChevron.RenderTransform = null;
-                    LeftUnFoldBtnImgChevron.Source =
-                        new BitmapImage(new Uri("pack://application:,,,/Resources/new-icons/pen-white.png"));
-                    LeftUnFoldBtnImgChevron.Width = 18;
-                    LeftUnFoldBtnImgChevron.Height = 18;
+
+                    LeftUnFoldBtnImgChevron.Symbol = Wpf.Ui.Controls.SymbolRegular.Edit24;
+                    LeftUnFoldBtnImgChevron.FontSize = 18;
                     LeftUnFoldBtnImgChevron.RenderTransform = null;
                     break;
             }

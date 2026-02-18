@@ -36,7 +36,7 @@
                             CornerRadius="16"
                             Background="{DynamicResource SystemAccentColorTertiaryBrush}"
                             Margin="0,0,20,0">
-                        <ui:FontIcon Glyph="&#xE70F;" 
+                        <ui:SymbolIcon Symbol="Edit24" 
                                      FontSize="40"
                                      Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"/>
                     </Border>

@@ -13,9 +13,9 @@ namespace Ink_Canvas
         private void SysTrayMenu_Opened(object sender, RoutedEventArgs e) {
             var s = (ContextMenu)sender;
             var FoldFloatingBarTrayIconMenuItemIconEyeOff =
-                (Image)((Grid)((MenuItem)s.Items[s.Items.Count-5]).Icon).Children[0];
+                (Wpf.Ui.Controls.SymbolIcon)((Grid)((MenuItem)s.Items[s.Items.Count-5]).Icon).Children[0];
             var FoldFloatingBarTrayIconMenuItemIconEyeOn =
-                (Image)((Grid)((MenuItem)s.Items[s.Items.Count - 5]).Icon).Children[1];
+                (Wpf.Ui.Controls.SymbolIcon)((Grid)((MenuItem)s.Items[s.Items.Count - 5]).Icon).Children[1];
             var FoldFloatingBarTrayIconMenuItemHeaderText =
                 (TextBlock)((StackPanel)((MenuItem)s.Items[s.Items.Count - 5]).Header).Children[0];
             var ResetFloatingBarPositionTrayIconMenuItem = (MenuItem)s.Items[s.Items.Count - 4];

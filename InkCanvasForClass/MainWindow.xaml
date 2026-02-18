@@ -2725,9 +2725,8 @@
                  Height="50" Width="32" Margin="-60,0,0,-150" HorizontalAlignment="Left" VerticalAlignment="Center">
             <StackPanel>
                 <Border Background="#9918181b" Opacity="1" CornerRadius="0,25,25,0" Height="50" Width="32">
-                    <Image x:Name="LeftUnFoldBtnImgChevron" Margin="10,0,0,0"
-                           Source="/Resources/new-icons/unfold-chevron.png"
-                           RenderOptions.BitmapScalingMode="HighQuality" Height="14" Width="14" />
+                    <ui:SymbolIcon x:Name="LeftUnFoldBtnImgChevron" Margin="10,0,0,0"
+                           Symbol="ChevronRight24" FontSize="14" />
                 </Border>
             </StackPanel>
         </Viewbox>
@@ -2740,48 +2739,48 @@
                         MouseUp="SymbolIconRandOne_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
-                        <Image Source="/Resources/Icons-Fluent/ic_fluent_person_money_24_regular.png"
-                               RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
+                        <ui:SymbolIcon Symbol="PersonMoney24"
+                               Filled="False" Height="17" Margin="0,3,0,0" />
                         <TextBlock Text="单次抽" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
                     </StackPanel>
                     <StackPanel
                         MouseUp="SymbolIconRand_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
-                        <Image Source="/Resources/Icons-Fluent/ic_fluent_people_money_24_regular.png"
-                               RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
+                        <ui:SymbolIcon Symbol="PeopleMoney24"
+                               Filled="False" FontSize="17" Margin="0,3,0,0" />
                         <TextBlock Text="随机抽" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
                     </StackPanel>
                     <StackPanel
 
                         MouseUp="ImageCountdownTimer_MouseUp" Background="Transparent"
                         Orientation="Vertical" HorizontalAlignment="Center" Width="32" Margin="0">
-                        <Image Source="/Resources/Icons-Fluent/ic_fluent_timer_24_regular.png"
-                               RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
+                        <ui:SymbolIcon Symbol="Timer24"
+                               Filled="False" FontSize="17" Margin="0,3,0,0" />
                         <TextBlock Text="计时器" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
                     </StackPanel>
                     <StackPanel
                         MouseUp="ImageBlackboard_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
-                        <Image Source="/Resources/new-icons/blackboard.png"
-                               RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
+                        <ui:SymbolIcon Symbol="Board24"
+                               Filled="False" FontSize="17" Margin="0,3,0,0" />
                         <TextBlock Text="白板" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
                     </StackPanel>
                     <StackPanel
                         MouseUp="UnFoldFloatingBar_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
-                        <Image Source="/Resources/new-icons/eye.png" RenderOptions.BitmapScalingMode="HighQuality"
-                               Height="17" Margin="0,3,0,0" />
+                        <ui:SymbolIcon Symbol="Eye24"
+                               Filled="False" FontSize="17" Margin="0,3,0,0" />
                         <TextBlock Text="显示" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
                     </StackPanel>
                     <StackPanel
                         MouseUp="HideQuickPanel_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
-                        <Image Source="/Resources/new-icons/chevron-left.png"
-                               RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,3" />
+                        <ui:SymbolIcon Symbol="ChevronLeft24"
+                               Filled="False" FontSize="17" Margin="0,3,0,3" />
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -2791,16 +2790,9 @@
                  Margin="0,0,-60,-150" HorizontalAlignment="Right" VerticalAlignment="Center">
             <StackPanel>
                 <Border Background="#9918181b" Opacity="1" CornerRadius="25,0,0,25" Height="50" Width="32">
-                    <Image Margin="0,0,10,0" x:Name="RightUnFoldBtnImgChevron"
-                           Source="/Resources/new-icons/unfold-chevron.png"
-                           RenderOptions.BitmapScalingMode="HighQuality" Height="14" Width="14"
-                           RenderTransformOrigin="0.5,0.5">
-                        <Image.RenderTransform>
-                            <TransformGroup>
-                                <RotateTransform Angle="180" />
-                            </TransformGroup>
-                        </Image.RenderTransform>
-                    </Image>
+                    <ui:SymbolIcon Margin="0,0,10,0" x:Name="RightUnFoldBtnImgChevron"
+                           Symbol="ChevronLeft24" FontSize="14"
+                           RenderTransformOrigin="0.5,0.5" />
                 </Border>
             </StackPanel>
         </Viewbox>
@@ -2813,58 +2805,49 @@
                         MouseUp="SymbolIconRandOne_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
-                        <Image Source="/Resources/Icons-Fluent/ic_fluent_person_money_24_regular.png"
-                               RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
+                        <ui:SymbolIcon Symbol="PersonMoney24"
+                               Filled="False" FontSize="17" Margin="0,3,0,0" />
                         <TextBlock Text="单次抽" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
                     </StackPanel>
                     <StackPanel
                         MouseUp="SymbolIconRand_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
-                        <Image Source="/Resources/Icons-Fluent/ic_fluent_people_money_24_regular.png"
-                               RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
+                        <ui:SymbolIcon Symbol="PeopleMoney24"
+                               Filled="False" FontSize="17" Margin="0,3,0,0" />
                         <TextBlock Text="随机抽" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
                     </StackPanel>
                     <StackPanel
 
                         MouseUp="ImageCountdownTimer_MouseUp" Background="Transparent"
                         Orientation="Vertical" HorizontalAlignment="Center" Width="32" Margin="0">
-                        <Image Source="/Resources/Icons-Fluent/ic_fluent_timer_24_regular.png"
-                               RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
+                        <ui:SymbolIcon Symbol="Timer24"
+                               Filled="False" FontSize="17" Margin="0,3,0,0" />
                         <TextBlock Text="计时器" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
                     </StackPanel>
                     <StackPanel
                         MouseUp="ImageBlackboard_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
-                        <Image Source="/Resources/new-icons/blackboard.png"
-                               RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,0" />
+                        <ui:SymbolIcon Symbol="Board24"
+                               Filled="False" FontSize="17" Margin="0,3,0,0" />
                         <TextBlock Text="白板" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
                     </StackPanel>
                     <StackPanel
                         MouseUp="UnFoldFloatingBar_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
-                        <Image Source="/Resources/new-icons/eye.png" RenderOptions.BitmapScalingMode="HighQuality"
-                               Height="17" Margin="0,3,0,0" />
+                        <ui:SymbolIcon Symbol="Eye24"
+                               Filled="False" FontSize="17" Margin="0,3,0,0" />
                         <TextBlock Text="显示" Foreground="Black" FontSize="8" Margin="0,2,0,3" TextAlignment="Center" />
                     </StackPanel>
                     <StackPanel
                         MouseUp="HideQuickPanel_MouseUp"
                         Background="Transparent" Orientation="Vertical" HorizontalAlignment="Center"
                         Width="32" Margin="0">
-                        <Image Source="/Resources/new-icons/chevron-left.png"
-                               RenderOptions.BitmapScalingMode="HighQuality" Height="17" Margin="0,3,0,3"
-                               RenderTransformOrigin="0.5,0.5">
-                            <Image.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform />
-                                    <SkewTransform />
-                                    <RotateTransform Angle="180" />
-                                    <TranslateTransform />
-                                </TransformGroup>
-                            </Image.RenderTransform>
-                        </Image>
+                        <ui:SymbolIcon Symbol="ChevronRight24"
+                               Filled="False" FontSize="17" Margin="0,3,0,3"
+                               RenderTransformOrigin="0.5,0.5" />
                     </StackPanel>
                 </StackPanel>
             </Border>
