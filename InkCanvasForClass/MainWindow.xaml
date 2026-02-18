@@ -151,14 +151,13 @@
 
         <!--// 黑/白 板幕布 //-->
         <Image Name="FreezeFrameBackgroundImage" Visibility="Collapsed" />
-        <Grid Name="GridBackgroundCoverHolder" Visibility="Collapsed" Background="Transparent">
+        <Grid Name="GridBackgroundCoverHolder">
             <Grid Name="GridBackgroundCover" Visibility="Collapsed" Background="#1F1F1F" />
         </Grid>
         <Grid Name="GridTransparencyFakeBackground"
-              Opacity="0"
-              Background="{x:Static Brushes.Transparent}" />
+              Opacity="0" />
         <Label Name="Label" Visibility="Collapsed" Foreground="Gray" Content="0" />
-        <Grid Name="InkCanvasGridForInkReplay" Background="Transparent">
+        <Grid Name="InkCanvasGridForInkReplay">
             <helpers:RectangleSelectionViewer x:Name="RectangleSelection" />
             <inkCanvas:IccInkCanvasModern x:Name="inkCanvas" ForceCursor="False"
                                     TouchUp="Main_Grid_TouchUp" TouchDown="Main_Grid_TouchDown"
@@ -190,7 +189,7 @@
             <TextBlock Canvas.Right="25" Canvas.Top="15" Text="多一份理解，少一份抱怨" Name="BlackBoardWaterMark"
                        Visibility="Collapsed" FontSize="24" FontWeight="Bold" Foreground="White" Opacity="0.5" />
         </Canvas>
-        <Grid Visibility="{Binding ElementName=inkCanvas, Path=Visibility}" Background="Transparent">
+        <Grid Visibility="{Binding ElementName=inkCanvas, Path=Visibility}">
             <Grid Name="GridInkCanvasSelectionCover"
                   MouseDown="GridInkCanvasSelectionCover_MouseDown"
                   MouseUp="GridInkCanvasSelectionCover_MouseUp"
@@ -532,9 +531,8 @@
             2. 移除下方的 ViewboxBlackboardLeftSide、ViewboxBlackboardCenterSide、ViewboxBlackboardRightSide
             3. 更新相关代码引用
         -->
-        <Grid Name="BlackboardUIGridForInkReplay" Background="Transparent">
-            <Grid Visibility="{Binding ElementName=GridBackgroundCoverHolder, Path=Visibility}"
-                  Background="Transparent">
+        <Grid Name="BlackboardUIGridForInkReplay">
+            <Grid Visibility="{Binding ElementName=GridBackgroundCoverHolder, Path=Visibility}">
                 <!-- 左下角 -->
                 <Viewbox x:Name="ViewboxBlackboardLeftSide" Margin="3,0,0,0" Height="55" HorizontalAlignment="Left"
                          VerticalAlignment="Bottom">

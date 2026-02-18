@@ -915,6 +915,9 @@ namespace Ink_Canvas {
             if (Pen_Icon.Background == null || StackPanelCanvasControls.Visibility == Visibility.Collapsed) {
 
                 inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
+                forceEraser = false;
+                drawingShapeMode = 0;
+                inkCanvas.IsManipulationEnabled = true;
 
                 GridTransparencyFakeBackground.Opacity = 1;
                 GridTransparencyFakeBackground.Background = new SolidColorBrush(StringToColor("#01FFFFFF"));
@@ -1021,6 +1024,9 @@ namespace Ink_Canvas {
                 else
                 {
                     inkCanvas.EditingMode = InkCanvasEditingMode.Ink;
+                    forceEraser = false;
+                    drawingShapeMode = 0;
+                    inkCanvas.IsManipulationEnabled = true;
 
                     // 恢复颜色 - 根据当前模式恢复对应的颜色
                     // Requirements: 3.1, 3.2, 3.3
