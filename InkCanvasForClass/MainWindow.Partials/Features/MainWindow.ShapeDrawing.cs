@@ -1004,6 +1004,14 @@ namespace Ink_Canvas {
             };
         }
 
+
+        public void CommitShapeDrawingV2Strokes(StrokeCollection strokes) {
+            _currentCommitType = CommitReason.ShapeDrawing;
+            inkCanvas.Strokes.Add(strokes);
+            _currentCommitType = CommitReason.UserInput;
+            timeMachine.CommitStrokeUserInputHistory(strokes);
+        }
+
         public enum ShapeDrawingType {
             Line,
             DottedLine,

@@ -211,7 +211,7 @@ namespace Ink_Canvas {
                 // Convert MainWindow.ShapeDrawingType to ShapeDrawing.Core.ShapeDrawingType
                 var coreShapeType = (Ink_Canvas.ShapeDrawing.Core.ShapeDrawingType)_shapeType.Value;
                 var strokes = _shapeDrawingService.CreateShape(points[0], points[1], coreShapeType, MainWindow.inkCanvas.DefaultDrawingAttributes);
-                MainWindow.inkCanvas.Strokes.Add(strokes);
+                MainWindow.CommitShapeDrawingV2Strokes(strokes);
             }
             points.Clear();
             AngleTooltip.Visibility = Visibility.Collapsed;
