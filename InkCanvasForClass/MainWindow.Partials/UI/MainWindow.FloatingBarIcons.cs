@@ -741,6 +741,7 @@ namespace Ink_Canvas {
         }
 
         private async void ApplyFreezeFrame() {
+            try {
             if (!isFreezeFrameLoaded) return;
             if (_isAnnotationFreezeOn) {
                 var bmp = await GetFreezedFrameAsync();
@@ -753,6 +754,9 @@ namespace Ink_Canvas {
                     FreezeFrameBackgroundImage.Source = null;
                     FreezeFrameBackgroundImage.Visibility = Visibility.Collapsed;
                 });
+            }
+            } catch (Exception ex) {
+                LogHelper.WriteLogToFile("ApplyFreezeFrame error: " + ex.Message, LogHelper.LogType.Error);
             }
         }
 
@@ -791,6 +795,7 @@ namespace Ink_Canvas {
         #region 主要的工具按鈕事件
 
         private async void SymbolIconCursor_Click(object sender, RoutedEventArgs e) {
+            try {
             if (ShapeDrawingV2Layer.IsInShapeDrawingMode) ShapeDrawingV2Layer.EndShapeDrawing();
             if (currentMode != 0) {
                 ImageBlackboard_MouseUp(null, null);
@@ -801,6 +806,9 @@ namespace Ink_Canvas {
                     await Task.Delay(100);
                     ViewboxFloatingBarMarginAnimation(60);
                 }
+            }
+            } catch (Exception ex) {
+                LogHelper.WriteLogToFile("SymbolIconCursor_Click error: " + ex.Message, LogHelper.LogType.Error);
             }
         }
 
@@ -814,6 +822,7 @@ namespace Ink_Canvas {
 
         private async void CursorIcon_Click(object sender, RoutedEventArgs e)
         {
+            try {
             if (lastBorderMouseDownObject is Panel panel)
                 panel.Background = CachedTransparentBrush;
             if (sender == Cursor_Icon && lastBorderMouseDownObject != Cursor_Icon) return;
@@ -894,6 +903,9 @@ namespace Ink_Canvas {
                 ViewboxFloatingBarMarginAnimation(100, true);
 
             RectangleSelectionHitTestBorder.Visibility = Visibility.Collapsed;
+            } catch (Exception ex) {
+                LogHelper.WriteLogToFile("CursorIcon_Click error: " + ex.Message, LogHelper.LogType.Error);
+            }
         }
 
         private bool ____isHideSubPanel = true;
@@ -1345,11 +1357,15 @@ namespace Ink_Canvas {
         }
 
         private async void SymbolIconScreenshot_MouseUp(object sender, MouseButtonEventArgs e) {
+            try {
             HideSubPanelsImmediately();
             await Task.Delay(50);
             //SaveScreenShotToDesktop();
             var scrwin = new ScreenshotWindow(this,Settings);
             scrwin.Show();
+            } catch (Exception ex) {
+                LogHelper.WriteLogToFile("SymbolIconScreenshot_MouseUp error: " + ex.Message, LogHelper.LogType.Error);
+            }
         }
 
         private void ImageCountdownTimer_MouseUp(object sender, MouseButtonEventArgs e) {

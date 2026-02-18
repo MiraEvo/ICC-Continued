@@ -547,23 +547,6 @@ namespace Ink_Canvas {
         /// 显示帮助信息
         /// </summary>
         private void ShowHelpInfo() {
-            var helpText = @"几何图形绘制工具
-
-快捷键：
-• 网格辅助线：显示网格帮助精确绘制
-• 顶点吸附：自动吸附到网格点或笔画端点
-• 多指绘制：启用多点触控支持
-
-使用方法：
-1. 点击对应按钮启用功能
-2. 开始绘制几何图形
-3. 激活的按钮显示蓝色背景
-
-提示：
-• 网格大小：20像素
-• 吸附距离：15像素
-• 按钮可以组合使用";
-
             var helpWindow = new Ink_Canvas.Views.ShapeDrawing.GeometryHelpWindow();
             helpWindow.ShowDialog();
         }

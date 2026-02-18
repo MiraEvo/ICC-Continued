@@ -539,6 +539,7 @@ namespace Ink_Canvas {
         }
 
         private async void PptApplication_SlideShowBegin(SlideShowWindow Wn) {
+            try {
             if (Settings.Automation.IsAutoFoldInPPTSlideShow && !isFloatingBarFolded)
                 await FoldFloatingBar(new object());
             else if (isFloatingBarFolded) await UnFoldFloatingBar(new object());
@@ -705,6 +706,9 @@ namespace Ink_Canvas {
                     LogHelper.WriteLogToFile($"SlideShowBegin 异常：{ex.Message}", LogHelper.LogType.Error);
                 }
             });
+            } catch (Exception ex) {
+                LogHelper.NewLog(ex);
+            }
         }
 
         private bool isEnteredSlideShowEndEvent = false; //防止重复调用本函数导致墨迹保存失效
@@ -1015,6 +1019,7 @@ namespace Ink_Canvas {
         }
 
         private async void PPTNavigationBtn_MouseUp(object sender, MouseButtonEventArgs e) {
+            try {
             if (lastBorderMouseDownObject != sender) return;
 
             if (sender == PPTLSPageButton)
@@ -1051,6 +1056,9 @@ namespace Ink_Canvas {
                 await Task.Delay(100);
                 ViewboxFloatingBarMarginAnimation(60);
             }
+            } catch (Exception ex) {
+                LogHelper.NewLog(ex);
+            }
         }
 
         private void BtnPPTSlideShow_Click(object sender, RoutedEventArgs e) {
@@ -1066,6 +1074,7 @@ namespace Ink_Canvas {
         }
 
         private async void BtnPPTSlideShowEnd_Click(object sender, RoutedEventArgs e) {
+            try {
             if (!IsSlideShowRunning()) return;
             Application.Current.Dispatcher.Invoke(() => {
                 try {
@@ -1099,6 +1108,9 @@ namespace Ink_Canvas {
             ForceUpdateToolSelection(null);
             await Task.Delay(150);
             ViewboxFloatingBarMarginAnimation(100, true);
+            } catch (Exception ex) {
+                LogHelper.NewLog(ex);
+            }
         }
 
         private void GridPPTControlPrevious_MouseDown(object sender, MouseButtonEventArgs e)

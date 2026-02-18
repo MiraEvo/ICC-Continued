@@ -11,6 +11,8 @@ using Microsoft.Extensions.Caching.Memory;
 using Windows.UI.Input.Inking;
 using Windows.UI.Input.Inking.Analysis;
 
+using Ink_Canvas.Helpers;
+
 namespace Ink_Canvas.Services.Ink
 {
     /// <summary>
@@ -129,7 +131,10 @@ namespace Ink_Canvas.Services.Ink
             {
                 await _processingTask.WaitAsync(TimeSpan.FromSeconds(5));
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LogHelper.NewLog(ex);
+            }
         }
 
         /// <summary>

@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
 using Microsoft.Extensions.Caching.Memory;
+using Ink_Canvas.Helpers;
 
 namespace Ink_Canvas.Services.Ink
 {
@@ -393,7 +394,10 @@ namespace Ink_Canvas.Services.Ink
             {
                 _processingTask?.Wait(TimeSpan.FromSeconds(5));
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LogHelper.NewLog(ex);
+            }
 
             _processingCts.Dispose();
             _recognitionCache.Dispose();

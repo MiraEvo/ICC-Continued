@@ -1347,8 +1347,15 @@ namespace Ink_Canvas {
             Dispatcher.BeginInvoke(new Action(() => ForceDesktopTransparentStartupState("context-idle")), DispatcherPriority.ContextIdle);
             _ = Task.Run(async () =>
             {
-                await Task.Delay(300);
-                await Dispatcher.InvokeAsync(() => ForceDesktopTransparentStartupState("delay-300ms"));
+                try
+                {
+                    await Task.Delay(300);
+                    await Dispatcher.InvokeAsync(() => ForceDesktopTransparentStartupState("delay-300ms"));
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.WriteLogToFile("Startup delay task failed: " + ex.Message, LogHelper.LogType.Error);
+                }
             });
 
             //TextBlockVersion.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
