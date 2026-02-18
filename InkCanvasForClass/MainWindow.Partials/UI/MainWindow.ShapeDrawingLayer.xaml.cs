@@ -213,6 +213,10 @@ namespace Ink_Canvas {
                 var strokes = _shapeDrawingService.CreateShape(points[0], points[1], coreShapeType, MainWindow.inkCanvas.DefaultDrawingAttributes);
                 MainWindow.CommitShapeDrawingV2Strokes(strokes);
             }
+            // Clear the preview drawing
+            using (DrawingContext dc = DrawingVisualCanvas.DrawingVisual.RenderOpen()) {
+                if (_isGridEnabled) DrawGrid(dc);
+            }
             points.Clear();
             AngleTooltip.Visibility = Visibility.Collapsed;
             LengthTooltip.Visibility = Visibility.Collapsed;
