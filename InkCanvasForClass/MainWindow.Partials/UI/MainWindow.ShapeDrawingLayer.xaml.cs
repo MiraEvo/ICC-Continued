@@ -564,27 +564,7 @@ namespace Ink_Canvas {
 • 吸附距离：15像素
 • 按钮可以组合使用";
 
-            var helpWindow = new Window
-            {
-                Title = "几何图形绘制帮助",
-                Width = 400,
-                Height = 350,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                ResizeMode = ResizeMode.NoResize,
-                WindowStyle = WindowStyle.ToolWindow,
-                Topmost = true,
-                Content = new System.Windows.Controls.ScrollViewer
-                {
-                    VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto,
-                    Content = new System.Windows.Controls.TextBlock
-                    {
-                        Text = helpText,
-                        TextWrapping = TextWrapping.Wrap,
-                        Margin = new Thickness(15),
-                        FontSize = 14
-                    }
-                }
-            };
+            var helpWindow = new Ink_Canvas.Views.ShapeDrawing.GeometryHelpWindow();
             helpWindow.ShowDialog();
         }
 

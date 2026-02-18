@@ -1,0 +1,53 @@
+<ui:FluentWindow x:Class="Ink_Canvas.Views.ShapeDrawing.GeometryHelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d"
+        Title="几何图形绘制帮助" Height="400" Width="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowBackdropType="Mica"
+        ExtendsContentIntoTitleBar="True"
+        Topmost="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="几何图形绘制帮助" Icon="pack://application:,,,/Resources/icc.ico"/>
+
+        <Grid Grid.Row="1" Margin="20">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <ui:CardExpander Header="快捷键" IsExpanded="True" Icon="Keyboard24">
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="• 网格辅助线：显示网格帮助精确绘制" Margin="0,0,0,5"/>
+                            <TextBlock Text="• 顶点吸附：自动吸附到网格点或笔画端点" Margin="0,0,0,5"/>
+                            <TextBlock Text="• 多指绘制：启用多点触控支持"/>
+                        </StackPanel>
+                    </ui:CardExpander>
+
+                    <ui:CardExpander Header="使用方法" IsExpanded="True" Icon="Pen24" Margin="0,10,0,0">
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="1. 点击对应按钮启用功能" Margin="0,0,0,5"/>
+                            <TextBlock Text="2. 开始绘制几何图形" Margin="0,0,0,5"/>
+                            <TextBlock Text="3. 激活的按钮显示蓝色背景"/>
+                        </StackPanel>
+                    </ui:CardExpander>
+
+                    <ui:CardExpander Header="提示" IsExpanded="True" Icon="Lightbulb24" Margin="0,10,0,0">
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="• 网格大小：20像素" Margin="0,0,0,5"/>
+                            <TextBlock Text="• 吸附距离：15像素" Margin="0,0,0,5"/>
+                            <TextBlock Text="• 按钮可以组合使用"/>
+                        </StackPanel>
+                    </ui:CardExpander>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>
