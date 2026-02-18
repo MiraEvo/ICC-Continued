@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:Ink_Canvas" FontFamily="Microsoft YaHei UI"
         Topmost="True" Background="Transparent" Style="{x:Null}"
         mc:Ignorable="d" WindowStyle="None" AllowsTransparency="True"
@@ -26,14 +27,24 @@
                 </Viewbox>
                 <StackPanel Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Opacity="{Binding ControlPanelOpacity}" IsEnabled="{Binding IsControlPanelEnabled}" Name="PeopleControlPane" Width="256">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Border x:Name="BorderBtnMinus" MouseUp="BorderBtnMinus_MouseUp" Background="#FBFBFD" Height="70" Width="70" CornerRadius="100" Opacity="{Binding DecrementCountCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
+                        <Border x:Name="BorderBtnMinus" Background="#FBFBFD" Height="70" Width="70" CornerRadius="100" Opacity="{Binding DecrementCountCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="MouseLeftButtonUp">
+                                    <b:InvokeCommandAction Command="{Binding DecrementCountCommand}"/>
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
                             <Border.Effect>
                                 <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.15" BlurRadius="3"/>
                             </Border.Effect>
                             <ui:SymbolIcon Symbol="Subtract24" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
                         </Border>
                         <TextBlock Text="{Binding TotalCount}" FontFamily="Consolas" FontSize="55" Margin="10" Width="80" TextAlignment="Center" VerticalAlignment="Center"/>
-                        <Border x:Name="BorderBtnAdd" MouseUp="BorderBtnAdd_MouseUp" Background="#FBFBFD" Height="70" Width="70" CornerRadius="100" Opacity="{Binding IncrementCountCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
+                        <Border x:Name="BorderBtnAdd" Background="#FBFBFD" Height="70" Width="70" CornerRadius="100" Opacity="{Binding IncrementCountCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="MouseLeftButtonUp">
+                                    <b:InvokeCommandAction Command="{Binding IncrementCountCommand}"/>
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
                             <Border.Effect>
                                 <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.15" BlurRadius="3"/>
                             </Border.Effect>
@@ -59,7 +70,12 @@
                             <ComboBoxItem>只抽女</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
-                    <Border x:Name="BorderBtnRand" MouseUp="BorderBtnRand_MouseUp" Background="#0066BF" Height="70" Width="200" CornerRadius="35" Opacity="{Binding StartRandomSelectionCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
+                    <Border x:Name="BorderBtnRand" Background="#0066BF" Height="70" Width="200" CornerRadius="35" Opacity="{Binding StartRandomSelectionCommand.CanExecute, Converter={StaticResource BooleanToOpacityConverter}}">
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="MouseLeftButtonUp">
+                                <b:InvokeCommandAction Command="{Binding StartRandomSelectionCommand}"/>
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
                         <StackPanel Margin="3,0" Orientation="Horizontal" HorizontalAlignment="Center">
                             <ui:SymbolIcon Symbol="{Binding StartButtonIcon}" Foreground="White" FontSize="24" VerticalAlignment="Center"/>
                             <TextBlock Text="开抽" Foreground="White" FontSize="32" Margin="10,0,4,0" VerticalAlignment="Center"/>
@@ -67,7 +83,12 @@
                     </Border>
                 </StackPanel>
             </Grid>
-            <Border UseLayoutRounding="True" Canvas.Bottom="8" Canvas.Right="8" x:Name="BorderBtnHelp" MouseUp="BorderBtnHelp_MouseUp" Background="#FBFBFD" Grid.Column="1" Margin="10,10,60,10" Height="40" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="20" Visibility="{Binding IsHelpButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border UseLayoutRounding="True" Canvas.Bottom="8" Canvas.Right="8" x:Name="BorderBtnHelp" Background="#FBFBFD" Grid.Column="1" Margin="10,10,60,10" Height="40" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="20" Visibility="{Binding IsHelpButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="MouseLeftButtonUp">
+                        <b:InvokeCommandAction Command="{Binding OpenHelpCommand}"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
                 <Border.Effect>
                     <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.15" BlurRadius="3"/>
                 </Border.Effect>
@@ -76,7 +97,12 @@
                     <TextBlock Margin="0,12,15,12" Text="{Binding PeopleCountText}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
-            <Border UseLayoutRounding="True" Canvas.Bottom="8" Canvas.Right="8" x:Name="BtnClose" MouseUp="BtnClose_MouseUp" HorizontalAlignment="Right" VerticalAlignment="{Binding ElementName=BorderBtnHelp, Path=VerticalAlignment}" Margin="10" Grid.Column="1" Background="#E32A34" Height="40" Width="40" CornerRadius="100">
+            <Border UseLayoutRounding="True" Canvas.Bottom="8" Canvas.Right="8" x:Name="BtnClose" HorizontalAlignment="Right" VerticalAlignment="{Binding ElementName=BorderBtnHelp, Path=VerticalAlignment}" Margin="10" Grid.Column="1" Background="#E32A34" Height="40" Width="40" CornerRadius="100">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="MouseLeftButtonUp">
+                        <b:InvokeCommandAction Command="{Binding CloseCommand}"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
                 <Border.Effect>
                     <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.1" BlurRadius="3"/>
                 </Border.Effect>

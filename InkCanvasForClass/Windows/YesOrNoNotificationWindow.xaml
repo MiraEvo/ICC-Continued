@@ -19,8 +19,8 @@
             </Viewbox>
             <ui:TextBlock TextWrapping="Wrap" Text="{Binding MessageText}" Margin="60,0,10,0" VerticalAlignment="Center" FontTypography="Body"/>
             <StackPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,10,0,0">
-                <ui:Button Margin="0,0,10,0" Content="{Binding YesButtonText}" Width="100" FontFamily="Microsoft YaHei UI" Click="ButtonYes_Click" Appearance="Success"/>
-                <ui:Button Content="{Binding NoButtonText}" Width="100" FontFamily="Microsoft YaHei UI" Click="ButtonNo_Click" Appearance="Secondary"/>
+                <ui:Button Margin="0,0,10,0" Content="{Binding YesButtonText}" Width="100" FontFamily="Microsoft YaHei UI" Command="{Binding YesCommand}" Appearance="Success"/>
+                <ui:Button Content="{Binding NoButtonText}" Width="100" FontFamily="Microsoft YaHei UI" Command="{Binding NoCommand}" Appearance="Secondary"/>
             </StackPanel>
         </Grid>
     </Grid>

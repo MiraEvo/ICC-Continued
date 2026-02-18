@@ -61,16 +61,9 @@ namespace Ink_Canvas
                 var result = MessageBox.Show("是否保存？", "名单导入", MessageBoxButton.YesNoCancel);
                 if (result == MessageBoxResult.Yes)
                 {
-                    // 异步保存，但关闭事件是同步的，所以直接调用同步方法
-                    try
+                    if (!ViewModel.SaveNamesSync())
                     {
-                        string namesPath = System.IO.Path.Combine(App.RootPath, "Names.txt");
-                        System.IO.File.WriteAllText(namesPath, ViewModel.NamesText);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"保存失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                        e.Cancel = true; // 保存失败，取消关闭
+                        e.Cancel = true;
                     }
                 }
                 else if (result == MessageBoxResult.Cancel)
@@ -78,14 +71,6 @@ namespace Ink_Canvas
                     e.Cancel = true; // 取消关闭
                 }
             }
-        }
-
-        /// <summary>
-        /// 关闭按钮点击事件
-        /// </summary>
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
         }
 
         #endregion

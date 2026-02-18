@@ -26,7 +26,6 @@ namespace Ink_Canvas.Dialogs
 
             // 订阅 ViewModel 事件
             ViewModel.RequestClose += OnRequestClose;
-            ViewModel.DragMoveRequested += OnDragMoveRequested;
 
             AnimationsHelper.ShowWithSlideFromBottomAndFade(this, 0.25);
         }
@@ -39,30 +38,12 @@ namespace Ink_Canvas.Dialogs
             Close();
         }
 
-        /// <summary>
-        /// 请求拖动窗口
-        /// </summary>
-        private void OnDragMoveRequested(object sender, EventArgs e)
-        {
-            DragMove();
-        }
-
-        private void BtnClose_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            ViewModel?.CloseCommand.Execute(null);
-        }
-
         private void WindowDragMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                ViewModel?.DragMoveCommand.Execute(null);
+                DragMove();
             }
-        }
-
-        private void BtnFullscreen_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            ViewModel?.ToggleFullscreenCommand.Execute(null);
         }
 
         private void ScrollViewerManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
@@ -79,7 +60,6 @@ namespace Ink_Canvas.Dialogs
             if (ViewModel != null)
             {
                 ViewModel.RequestClose -= OnRequestClose;
-                ViewModel.DragMoveRequested -= OnDragMoveRequested;
                 ViewModel.Cleanup();
             }
 

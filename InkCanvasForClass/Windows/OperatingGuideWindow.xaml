@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Ink_Canvas.Dialogs"
         xmlns:vm="clr-namespace:Ink_Canvas.ViewModels"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         Topmost="True" Background="Transparent"
         WindowState="{Binding WindowState}" Style="{x:Null}"
         mc:Ignorable="d" WindowStyle="None" AllowsTransparency="True"
@@ -78,9 +79,14 @@
             </ScrollViewer>
             <Viewbox Visibility="{Binding IsNormalState, Converter={StaticResource BoolToVisibilityConverter}}" Margin="20,20,20,20" HorizontalAlignment="Right">
                 <StackPanel Height="180" Orientation="Horizontal">
-                    <Border MouseUp="BtnFullscreen_MouseUp" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Bottom"
                             Margin="5"
                             Background="#FBFBFD" Height="20" Width="20" CornerRadius="100">
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="MouseLeftButtonUp">
+                                <b:InvokeCommandAction Command="{Binding ToggleFullscreenCommand}"/>
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
                         <Border.Effect>
                             <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.1" BlurRadius="3"/>
                         </Border.Effect>
@@ -88,9 +94,14 @@
                             <ui:SymbolIcon Symbol="{Binding FullscreenButtonIcon}" Foreground="Black"/>
                         </Viewbox>
                     </Border>
-                    <Border MouseUp="BtnClose_MouseUp" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Bottom"
                         Margin="5"
                         Background="#E32A34" Height="20" Width="20" CornerRadius="100">
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="MouseLeftButtonUp">
+                                <b:InvokeCommandAction Command="{Binding CloseCommand}"/>
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
                         <Border.Effect>
                             <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.1" BlurRadius="3"/>
                         </Border.Effect>

@@ -73,28 +73,6 @@ namespace Ink_Canvas.Dialogs
         }
 
         /// <summary>
-        /// "是"按钮点击事件
-        /// </summary>
-        private void ButtonYes_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel?.YesCommand.CanExecute(null) == true)
-            {
-                ViewModel.YesCommand.Execute(null);
-            }
-        }
-
-        /// <summary>
-        /// "否"按钮点击事件
-        /// </summary>
-        private void ButtonNo_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel?.NoCommand.CanExecute(null) == true)
-            {
-                ViewModel.NoCommand.Execute(null);
-            }
-        }
-
-        /// <summary>
         /// 窗口已关闭事件
         /// </summary>
         private void Window_Closed(object sender, EventArgs e)

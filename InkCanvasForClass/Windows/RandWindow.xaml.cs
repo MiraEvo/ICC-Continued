@@ -95,50 +95,6 @@ namespace Ink_Canvas
 
         #endregion
 
-        #region UI 事件处理
-
-        private void BorderBtnAdd_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (ViewModel?.IncrementCountCommand.CanExecute(null) == true)
-            {
-                ViewModel.IncrementCountCommand.Execute(null);
-            }
-        }
-
-        private void BorderBtnMinus_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (ViewModel?.DecrementCountCommand.CanExecute(null) == true)
-            {
-                ViewModel.DecrementCountCommand.Execute(null);
-            }
-        }
-
-        private async void BorderBtnRand_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (ViewModel?.StartRandomSelectionCommand.CanExecute(null) == true)
-            {
-                await ViewModel.StartRandomSelectionCommand.ExecuteAsync(null);
-            }
-        }
-
-        private void BorderBtnHelp_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (ViewModel?.OpenHelpCommand.CanExecute(null) == true)
-            {
-                ViewModel.OpenHelpCommand.Execute(null);
-            }
-        }
-
-        private void BtnClose_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (ViewModel?.CloseCommand.CanExecute(null) == true)
-            {
-                ViewModel.CloseCommand.Execute(null);
-            }
-        }
-
-        #endregion
-
         /// <summary>
         /// 窗口关闭时清理资源
         /// </summary>

@@ -32,7 +32,7 @@
                    Content="关闭"
                    FontFamily="Microsoft YaHei UI"
                    Width="100"
-                   Click="Button_Click"
+                   Command="{Binding CloseCommand}"
                    Appearance="Primary"/>
     </Grid>
 </Window>

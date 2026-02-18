@@ -90,7 +90,7 @@ namespace Ink_Canvas.ViewModels
         /// 保存名单命令
         /// </summary>
         [RelayCommand]
-        private async Task SaveNamesAsync()
+        public async Task SaveNamesAsync()
         {
             try
             {
@@ -110,6 +110,36 @@ namespace Ink_Canvas.ViewModels
             catch (Exception ex)
             {
                 ErrorOccurred?.Invoke(this, $"保存名单失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 同步保存名单（用于窗口关闭事件）
+        /// </summary>
+        public bool SaveNamesSync()
+        {
+            try
+            {
+                string namesPath = Path.Combine(App.RootPath, "Names.txt");
+                File.WriteAllText(namesPath, NamesText);
+                OriginalText = NamesText;
+                NamesSaved?.Invoke(this, EventArgs.Empty);
+                return true;
+            }
+            catch (IOException ex)
+            {
+                ErrorOccurred?.Invoke(this, $"保存名单失败（IO错误）: {ex.Message}");
+                return false;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ErrorOccurred?.Invoke(this, $"保存名单失败（无权限）: {ex.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                ErrorOccurred?.Invoke(this, $"保存名单失败: {ex.Message}");
+                return false;
             }
         }
 
