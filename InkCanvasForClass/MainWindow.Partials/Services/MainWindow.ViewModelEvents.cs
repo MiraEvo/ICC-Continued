@@ -206,9 +206,6 @@ namespace Ink_Canvas {
             // 绘制直线请求
             ViewModel.DrawLineRequested += OnDrawLineRequested;
 
-            // 隐藏子面板请求
-            ViewModel.HideSubPanelsRequested += OnHideSubPanelsRequested;
-
             // 工具按钮点击事件 - 每次点击都会触发，用于处理弹窗切换
             ViewModel.ToolButtonClicked += OnToolButtonClicked;
 
@@ -244,9 +241,6 @@ namespace Ink_Canvas {
 
             // 编辑模式变更请求
             ViewModel.TouchEventsViewModel.EditingModeChangeRequested += OnEditingModeChangeRequested;
-
-            // 隐藏子面板请求
-            ViewModel.TouchEventsViewModel.HideSubPanelsRequested += OnHideSubPanelsRequested;
 
             // 橡皮擦反馈请求
             ViewModel.TouchEventsViewModel.EraserFeedbackRequested += OnEraserFeedbackRequested;
@@ -336,13 +330,7 @@ namespace Ink_Canvas {
             }
         }
 
-        /// <summary>
-        /// 处理隐藏子面板请求
-        /// </summary>
-        private void OnHideSubPanelsRequested(object? sender, EventArgs e)
-        {
-            HideSubPanels();
-        }
+
 
         /// <summary>
         /// 处理撤销请求 - 调用原有的撤销方法
@@ -373,7 +361,6 @@ namespace Ink_Canvas {
                 ViewModel.ExitAppRequested -= OnExitAppRequested;
                 ViewModel.ChangeToPenRequested -= OnChangeToPenRequested;
                 ViewModel.DrawLineRequested -= OnDrawLineRequested;
-                ViewModel.HideSubPanelsRequested -= OnHideSubPanelsRequested;
                 ViewModel.ToolButtonClicked -= OnToolButtonClicked;
                 ViewModel.UndoRequested -= OnUndoRequested;
                 ViewModel.RedoRequested -= OnRedoRequested;
@@ -401,7 +388,6 @@ namespace Ink_Canvas {
             if (ViewModel?.TouchEventsViewModel == null) return;
 
             ViewModel.TouchEventsViewModel.EditingModeChangeRequested -= OnEditingModeChangeRequested;
-            ViewModel.TouchEventsViewModel.HideSubPanelsRequested -= OnHideSubPanelsRequested;
             ViewModel.TouchEventsViewModel.EraserFeedbackRequested -= OnEraserFeedbackRequested;
             ViewModel.TouchEventsViewModel.ManipulationDeltaRequested -= OnManipulationDeltaRequested;
         }

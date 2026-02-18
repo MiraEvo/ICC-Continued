@@ -189,11 +189,6 @@ namespace Ink_Canvas.ViewModels
         public event EventHandler<Ink_Canvas.Services.Events.EditingModeChangeRequestedEventArgs> EditingModeChangeRequested;
 
         /// <summary>
-        /// 请求隐藏子面板事件
-        /// </summary>
-        public event EventHandler HideSubPanelsRequested;
-
-        /// <summary>
         /// 请求显示橡皮擦反馈事件
         /// </summary>
         public event EventHandler<Ink_Canvas.Services.Events.EraserFeedbackEventArgs> EraserFeedbackRequested;

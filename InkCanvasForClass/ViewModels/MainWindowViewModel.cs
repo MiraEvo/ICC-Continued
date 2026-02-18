@@ -77,7 +77,6 @@ namespace Ink_Canvas.ViewModels
 
             // 订阅 TouchEventsViewModel 事件
             TouchEventsViewModel.EditingModeChangeRequested += OnEditingModeChangeRequested;
-            TouchEventsViewModel.HideSubPanelsRequested += OnHideSubPanelsRequested;
             TouchEventsViewModel.EraserFeedbackRequested += OnEraserFeedbackRequested;
             TouchEventsViewModel.ManipulationDeltaRequested += OnManipulationDeltaRequested;
         }
@@ -114,11 +113,7 @@ namespace Ink_Canvas.ViewModels
             EditingModeChangeRequested?.Invoke(this, e);
         }
 
-        private void OnHideSubPanelsRequested(object sender, EventArgs e)
-        {
-            // 转发隐藏子面板请求事件到 View
-            HideSubPanelsRequested?.Invoke(this, e);
-        }
+
 
         private void OnEraserFeedbackRequested(object sender, EraserFeedbackEventArgs e)
         {
@@ -146,11 +141,6 @@ namespace Ink_Canvas.ViewModels
         /// 编辑模式变更请求事件
         /// </summary>
         public event EventHandler<EditingModeChangeRequestedEventArgs> EditingModeChangeRequested;
-
-        /// <summary>
-        /// 隐藏子面板请求事件
-        /// </summary>
-        public event EventHandler HideSubPanelsRequested;
 
         /// <summary>
         /// 橡皮擦反馈请求事件

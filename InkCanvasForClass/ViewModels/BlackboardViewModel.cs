@@ -351,17 +351,12 @@ namespace Ink_Canvas.ViewModels
         #endregion
 
         #region 手势设置命令
-
-        /// <summary>
-        /// 手势设置变更事件
-        /// </summary>
-        public event EventHandler<GestureSettingsChangedEventArgs> GestureSettingsChanged;
-
-        /// <summary>
-        /// 切换手势设置面板可见性命令
-        /// </summary>
-        [RelayCommand]
-        private void ToggleGesturePanel()
+ 
+         /// <summary>
+         /// 切换手势设置面板可见性命令
+         /// </summary>
+         [RelayCommand]
+         private void ToggleGesturePanel()
         {
             IsGesturePanelVisible = !IsGesturePanelVisible;
             // 关闭其他面板
@@ -551,7 +546,7 @@ namespace Ink_Canvas.ViewModels
     }
 
     /// <summary>
-    /// 背景变更事件参数
+    /// 背景设置变更事件参数
     /// </summary>
     public class BackgroundChangedEventArgs : EventArgs
     {
@@ -574,21 +569,7 @@ namespace Ink_Canvas.ViewModels
         }
     }
 
-    /// <summary>
-    /// 手势设置变更事件参数
-    /// </summary>
-    public class GestureSettingsChangedEventArgs : EventArgs
-    {
-        /// <summary>
-        /// 是否启用手势
-        /// </summary>
-        public bool IsGestureEnabled { get; }
 
-        public GestureSettingsChangedEventArgs(bool isGestureEnabled)
-        {
-            IsGestureEnabled = isGestureEnabled;
-        }
-    }
 
     #endregion
 }

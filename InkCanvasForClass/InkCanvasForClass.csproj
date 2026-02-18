@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <!-- 项目基本配置 -->
@@ -13,7 +13,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <!-- 禁用特定警告 -->
-    <NoWarn>$(NoWarn);CA1416;CS1998;CS0067;CS8618;CS8600;CS8602;CS8604;CS8625;CS8622;CS8601;CS8603;CS8605;CS8612;CS8629</NoWarn>
+    <NoWarn>$(NoWarn);CA1416;CS1998;CS8618;CS8600;CS8602;CS8604;CS8625;CS8622;CS8601;CS8603;CS8605;CS8612;CS8629</NoWarn>
 
     <!-- 运行时配置 -->
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
