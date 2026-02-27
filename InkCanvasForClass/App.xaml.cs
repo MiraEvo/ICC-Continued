@@ -281,13 +281,13 @@ namespace Ink_Canvas
 
             // 存储设置 ViewModel
             // 依赖: ISettingsService
-            services.AddSingleton<ViewModels.Settings.StorageSettingsViewModel>();
+            services.AddSingleton<StorageSettingsViewModel>();
 
             // 手势设置 ViewModel
-            services.AddSingleton<ViewModels.GestureSettingsViewModel>();
+            services.AddSingleton<GestureSettingsViewModel>();
 
             // 随机选择设置 ViewModel
-            services.AddSingleton<ViewModels.Settings.RandomPickSettingsViewModel>();
+            services.AddSingleton<RandomPickSettingsViewModel>();
 
             // SettingsPageViewModel 已移除，MainWindow 直接使用 SettingsViewModel
 

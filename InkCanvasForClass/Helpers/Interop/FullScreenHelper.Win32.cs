@@ -43,9 +43,7 @@ namespace Ink_Canvas.Helpers
             {
                 public const string LibraryName = "Dwmapi.dll";
 
-                [DllImport(LibraryName, ExactSpelling = true, PreserveSig = false)]
-                [return: MarshalAs(UnmanagedType.Bool)]
-                public static extern bool DwmIsCompositionEnabled();
+
 
                 [DllImport("Dwmapi.dll", ExactSpelling = true, SetLastError = true)]
                 public static extern int DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE dwAttribute,

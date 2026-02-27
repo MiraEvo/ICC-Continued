@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:local="clr-namespace:Ink_Canvas.Views.Settings.Pages"
-             xmlns:converters="clr-namespace:Ink_Canvas.Converter"
+             xmlns:converters="clr-namespace:Ink_Canvas.Converters"
              mc:Ignorable="d"
              d:DesignHeight="1000" d:DesignWidth="800"
              Background="Transparent">

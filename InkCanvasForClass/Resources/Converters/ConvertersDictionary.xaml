@@ -1,7 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:converters="clr-namespace:Ink_Canvas.Converters"
-                    xmlns:legacyConverters="clr-namespace:Ink_Canvas.Converter">
+                    xmlns:converters="clr-namespace:Ink_Canvas.Converters">
 
     <!-- 
     =====================================================
@@ -10,7 +9,7 @@
     
     本资源字典整合了所有值转换器，包括：
     - MVVM 转换器 (Ink_Canvas.Converters 命名空间)
-    - 旧版转换器 (Ink_Canvas.Converter 命名空间)
+    - 旧版转换器（已统一到 Ink_Canvas.Converters 命名空间）
     
     使用方式：
     在 App.xaml 或需要使用转换器的地方合并此资源字典：
@@ -92,15 +91,15 @@
     <!-- ===== 旧版转换器 (Legacy Converters) ===== -->
     
     <!-- 数字转字符串（人数显示） -->
-    <legacyConverters:IntNumberToString x:Key="IntNumberToString" />
+    <converters:IntNumberToString x:Key="IntNumberToString" />
     
     <!-- 数字转字符串（条数显示） -->
-    <legacyConverters:IntNumberToString2 x:Key="IntNumberToString2" />
+    <converters:IntNumberToString2 x:Key="IntNumberToString2" />
     
     <!-- 启用状态转透明度 -->
-    <legacyConverters:IsEnabledToOpacityConverter x:Key="IsEnabledToOpacityConverter" />
+    <converters:IsEnabledToOpacityConverter x:Key="IsEnabledToOpacityConverter" />
     
     <!-- 布尔值转透明度（True -> 1.0, False -> 0.4） -->
-    <legacyConverters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
+    <converters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
 
 </ResourceDictionary>
